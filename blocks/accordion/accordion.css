@@ -140,7 +140,7 @@
 }
 
 .accordion.cards details[open] .accordion-item-label > :is(p, h2, h3, h4, h5, h6) {
-  opacity: var(--opacity-100) 0;
+  opacity: var(--opacity-100);
 }
 
 .accordion.cards .accordion-item:nth-child(3n+2) .accordion-item-body {
