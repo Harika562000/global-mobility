@@ -199,10 +199,6 @@
         "valueType": "string",
         "options": [
           {
-            "name": "Default (Em Accent)",
-            "value": ""
-          },
-          {
             "name": "Two Colored Right",
             "value": "two-colored-right"
           },
