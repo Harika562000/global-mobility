@@ -142,6 +142,94 @@
     ]
   },
   {
+    "id": "accordion",
+    "fields": [
+      {
+        "component": "select",
+        "name": "classes",
+        "label": "Variation",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Default (Large)",
+            "value": ""
+          },
+          {
+            "name": "Cards",
+            "value": "cards"
+          },
+          {
+            "name": "Small (Image + List)",
+            "value": "small"
+          },
+          {
+            "name": "Small + Cards",
+            "value": "small cards"
+          }
+        ],
+        "description": "Adds block classes. Values must be lowercase; multiple classes are space-separated."
+      },
+      {
+        "component": "text",
+        "name": "eyebrow",
+        "label": "Eyebrow Text",
+        "valueType": "string",
+        "value": ""
+      },
+      {
+        "component": "richtext",
+        "name": "heading",
+        "label": "Heading",
+        "valueType": "string",
+        "description": "Use H2–H6 (or styled text) to match your accordion header markup."
+      },
+      {
+        "component": "richtext",
+        "name": "description",
+        "label": "Description",
+        "valueType": "string"
+      },
+      {
+        "component": "container",
+        "name": "items",
+        "label": "Accordion Items",
+        "multi": true,
+        "description": "Each item becomes a row in the block. For the Small variation, include an image per item.",
+        "fields": [
+          {
+            "component": "reference",
+            "name": "itemImage",
+            "label": "Item Image (Small only)",
+            "valueType": "string",
+            "multi": false,
+            "description": "Optional. Used only when the block has the 'small' class."
+          },
+          {
+            "component": "text",
+            "name": "itemImageAlt",
+            "label": "Item Image Alt Text",
+            "valueType": "string",
+            "value": ""
+          },
+          {
+            "component": "richtext",
+            "name": "itemLabel",
+            "label": "Item Label",
+            "valueType": "string",
+            "description": "This is the clickable summary. Use a paragraph or heading (p/h2–h6)."
+          },
+          {
+            "component": "richtext",
+            "name": "itemBody",
+            "label": "Item Body",
+            "valueType": "string",
+            "description": "Accordion panel content. Lists, links, etc. are supported."
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "card",
     "fields": [
       {
