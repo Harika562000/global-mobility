@@ -190,74 +190,26 @@
     ]
   },
   {
-    "id": "accordion",
-    "fields": [
-      {
-        "component": "select",
-        "name": "classes",
-        "label": "Variant",
-        "valueType": "string",
-        "options": [
-          {
-            "name": "Default (Large)",
-            "value": ""
-          },
-          {
-            "name": "Small",
-            "value": "small"
-          },
-          {
-            "name": "Cards",
-            "value": "cards"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "accordion-header",
-    "fields": [
-      {
-        "component": "text",
-        "name": "eyebrow",
-        "label": "Eyebrow",
-        "valueType": "string",
-        "value": ""
-      },
-      {
-        "component": "richtext",
-        "name": "heading",
-        "label": "Heading",
-        "valueType": "string"
-      },
-      {
-        "component": "richtext",
-        "name": "description",
-        "label": "Description",
-        "valueType": "string"
-      }
-    ]
-  },
-  {
     "id": "accordion-item",
     "fields": [
       {
-        "component": "richtext",
-        "name": "label",
-        "label": "Label",
-        "valueType": "string"
+        "component": "text",
+        "valueType": "string",
+        "name": "summary",
+        "value": "",
+        "label": "Accordion Headline"
       },
       {
         "component": "richtext",
-        "name": "description",
-        "label": "Description",
+        "name": "text",
+        "value": "",
+        "label": "Accordion Text",
         "valueType": "string"
       },
       {
-        "component": "reference",
-        "name": "image",
-        "label": "Image (Small variant only)",
-        "multi": false
+        "component": "boolean",
+        "name": "accordionOpen",
+        "label": "Set as Open Panel"
       }
     ]
   },

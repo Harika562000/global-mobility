@@ -27,9 +27,21 @@
   margin: 0;
   font-size: var(--body-font-size-m);
   color: var(--color-grey-700);
-  height: 0;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s ease;
+}
+
+.accordion details.open .accordion-item-body {
+  grid-template-rows: 1fr;
+  padding-bottom: var(--spacing-400);
+}
+
+.accordion .accordion-item-body .accordion-item-content {
   overflow: hidden;
-  transition: height 0.3s ease;
+  font-size: var(--responsive-font-body-400);
+  line-height: var(--responsive-line-height-26);
+  padding-top: var(--spacing-600);
 }
 
 .accordion .accordion-item-body-inner {
