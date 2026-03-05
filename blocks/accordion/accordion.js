@@ -72,6 +72,24 @@ function normalizeHeaderRow(block) {
   return { headerRow, itemRows: children.slice(3) };
 }
 
+const VARIANT_VALUES = ['small', 'cards'];
+
+/**
+ * Applies variant classes from the first row (Accordion Header) to the block.
+ * UE stores "classes" in the first cell of the header row; only remove that cell if it's a variant.
+ */
+function applyHeaderClassesToBlock(block, firstRow) {
+  const firstCell = firstRow.querySelector(':scope > div');
+  if (!firstCell) return;
+  const value = firstCell.textContent?.trim().toLowerCase() || '';
+  const variants = value.split(/\s+/).filter((cls) => VARIANT_VALUES.includes(cls));
+  if (variants.length === 0) return;
+  variants.forEach((cls) => {
+    if (!block.classList.contains(cls)) block.classList.add(cls);
+  });
+  firstCell.remove();
+}
+
 /**
  * Gets label and body elements from an item row (supports DA and UE structures).
  * UE: row can have 3 cells (image, label, body) or 2 (image, content) or 1 (content).
@@ -119,6 +137,8 @@ export default function decorate(block) {
 
   const { headerRow: firstRow, itemRows: rows } = normalizeHeaderRow(block);
   block.replaceChildren(firstRow, ...rows);
+
+  applyHeaderClassesToBlock(block, firstRow);
 
   // Format eyebrow
   const eyebrowSource = firstRow.querySelector('p');
