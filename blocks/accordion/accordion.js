@@ -45,7 +45,7 @@ function closeAccordion(body, details) {
 
 /**
  * Normalize header row into accordion-header element.
- * Supports: (1) UE-style 3 cells [eyebrow, heading, description], (2) single cell with mixed content.
+ * Supports: UE 3 cells [eyebrow, heading, description] or single-cell mixed content.
  * @param {Element} row - First row element
  * @returns {Element} - Header div with class accordion-header
  */
@@ -104,36 +104,46 @@ function parseAccordionItemRow(row, isSmall) {
     if (withPicture >= 0) {
       image = cells[withPicture].querySelector('picture');
       const otherCells = cells.filter((_, i) => i !== withPicture);
-      label = otherCells[0];
-      bodyContent = otherCells.length > 1 ? [otherCells[1]] : [...(otherCells[0]?.children ?? [])];
-      if (bodyContent.length === 1 && bodyContent[0] === otherCells[0]) {
-        bodyContent = [...otherCells[0].children];
+      const [firstOther, secondOther] = otherCells;
+      label = firstOther;
+      bodyContent = otherCells.length > 1 ? [secondOther] : [...(firstOther?.children ?? [])];
+      const [contentFirst] = bodyContent;
+      if (bodyContent.length === 1 && contentFirst === firstOther) {
+        bodyContent = [...firstOther.children];
       }
     } else {
-      label = cells[0];
-      bodyContent = cells.length > 2 ? [cells[2]] : [...(cells[1]?.children ?? [])];
-      if (bodyContent.length === 1 && bodyContent[0] === cells[1]) bodyContent = [...cells[1].children];
+      const [labelCell, bodyCell, thirdCell] = cells;
+      label = labelCell;
+      bodyContent = cells.length > 2 ? [thirdCell] : [...(bodyCell?.children ?? [])];
+      const [onlyContent] = bodyContent;
+      if (bodyContent.length === 1 && onlyContent === bodyCell) {
+        bodyContent = [...bodyCell.children];
+      }
     }
   } else if (isSmall && cells.length === 2) {
-    const firstHasPicture = cells[0].querySelector('picture');
+    const [firstCell, secondCell] = cells;
+    const firstHasPicture = firstCell.querySelector('picture');
     if (firstHasPicture) {
-      image = cells[0].querySelector('picture');
-      const secondCell = cells[1];
+      image = firstCell.querySelector('picture');
       const firstHeading = secondCell.querySelector('h1, h2, h3, h4, h5, h6');
       label = firstHeading || secondCell.firstElementChild;
-      bodyContent = firstHeading ? [...secondCell.children].filter((c) => c !== firstHeading) : [...secondCell.children].slice(1);
+      bodyContent = firstHeading
+        ? [...secondCell.children].filter((c) => c !== firstHeading)
+        : [...secondCell.children].slice(1);
     } else {
-      label = cells[0];
-      bodyContent = [...(cells[1]?.children ?? [])];
+      label = firstCell;
+      bodyContent = [...(secondCell?.children ?? [])];
     }
   } else if (cells.length >= 2) {
-    label = cells[0];
-    bodyContent = [cells[1]];
+    const [labelCell, bodyCell] = cells;
+    label = labelCell;
+    bodyContent = [bodyCell];
   } else {
-    const firstCell = cells[0];
+    const [firstCell] = cells;
     const childArr = firstCell ? [...firstCell.children] : [];
-    label = childArr[0];
-    bodyContent = childArr.slice(1);
+    const [firstChild, ...rest] = childArr;
+    label = firstChild;
+    bodyContent = rest;
   }
 
   if (!label) {
