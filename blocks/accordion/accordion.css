@@ -27,30 +27,18 @@
   margin: 0;
   font-size: var(--body-font-size-m);
   color: var(--color-grey-700);
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.3s ease;
-}
-
-.accordion details.open .accordion-item-body {
-  grid-template-rows: 1fr;
-  padding-bottom: var(--spacing-400);
+  height: 0;
+  overflow: hidden;
+  transition: height 0.3s ease;
 }
 
 .accordion .accordion-item-body .accordion-item-content {
-  overflow: hidden;
-  font-size: var(--responsive-font-body-400);
-  line-height: var(--responsive-line-height-26);
-  padding-top: var(--spacing-600);
-}
-
-.accordion .accordion-item-body-inner {
   padding-top: var(--spacing-600);
   font-size: var(--responsive-font-body-400);
   line-height: var(--responsive-line-height-26);
 }
 
-.accordion .accordion-item-body-inner li::marker {
+.accordion .accordion-item-body .accordion-item-content li::marker {
   font-size: 0.65em;
 }
 
@@ -66,32 +54,7 @@
   transform: rotate(45deg);
 }
 
-.accordion .accordion-header {
-  margin-bottom: var(--spacing-1100);
-}
-
-.accordion .accordion-header-eyebrow {
-  display: block;
-  color: var(--typography-accent-1);
-  margin-bottom: var(--spacing-600);
-}
-
-.accordion .accordion-header-heading {
-  margin: 0;
-  font-size: var(--font-size-700);
-}
-
-.accordion .accordion-header-description {
-  margin-top: var(--spacing-600);
-  font-size: var(--responsive-font-body-400);
-  color: var(--typography-secondary);
-}
-
 /* Cards Variant */
-
-.accordion.cards .accordion-header {
-  margin-bottom: var(--spacing-900);
-}
 
 .accordion.cards .accordion-item {
   padding: var(--size-20);
@@ -108,11 +71,11 @@
   color: var(--typography-inverse);
 }
 
-.accordion.cards .accordion-item-body-inner {
+.accordion.cards .accordion-item-body .accordion-item-content {
   padding-bottom: var(--spacing-700);
 }
 
-.accordion.cards .accordion-item-body-inner ul {
+.accordion.cards .accordion-item-body .accordion-item-content ul {
   display: flex;
   gap: var(--spacing-600);
   flex-direction: column;
@@ -178,15 +141,11 @@
 }
 
 @media (width >= 720px) {
-  .accordion .accordion-header-heading {
-    font-size: var(--font-size-800);
-  }
-
-  .accordion.cards .accordion-item-body-inner {
+  .accordion.cards .accordion-item-body .accordion-item-content {
     padding-right: var(--responsive-spacing-horizontal);
   }
 
-  .accordion.cards .accordion-item-body-inner ul {
+  .accordion.cards .accordion-item-body .accordion-item-content ul {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
   }
@@ -225,9 +184,5 @@
   .accordion.small .accordion-item-image.is-active {
     opacity: 1;
     position: relative;
-  }
-
-  .accordion.small .accordion-header {
-    grid-column: 2;
   }
 }

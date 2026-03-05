@@ -190,6 +190,31 @@
     ]
   },
   {
+    "id": "accordion",
+    "fields": [
+      {
+        "component": "select",
+        "name": "classes",
+        "label": "Variant",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Default (Large)",
+            "value": ""
+          },
+          {
+            "name": "Small",
+            "value": "small"
+          },
+          {
+            "name": "Cards",
+            "value": "cards"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "accordion-item",
     "fields": [
       {
