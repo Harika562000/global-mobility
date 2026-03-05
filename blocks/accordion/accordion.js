@@ -91,48 +91,82 @@ function getUEElements(block) {
 }
 
 /**
+ * Get a field column from a UE element by data-aue-prop or by index.
+ * @param {Element} parent - Header or item wrapper
+ * @param {string} prop - data-aue-prop value (e.g. 'eyebrow', 'heading')
+ * @param {number} index - Fallback index in parent.children
+ * @returns {Element | null}
+ */
+function getUEColumn(parent, prop, index) {
+  const byProp = parent.querySelector(`[data-aue-prop="${prop}"]`);
+  if (byProp) return byProp;
+  const kids = [...parent.children];
+  return kids[index] ?? null;
+}
+
+/**
+ * Get content node or HTML from a UE column (handles nested richtext/divs).
+ * @param {Element} col - Column element
+ * @returns {{ node: Element | null, html: string, text: string }}
+ */
+function getColumnContent(col) {
+  if (!col) return { node: null, html: '', text: '' };
+  const html = col.innerHTML?.trim() || '';
+  const text = col.textContent?.trim() || '';
+  const node = col.querySelector('h1, h2, h3, h4, h5, h6, p, [data-richtext-prop]')
+    || col.firstElementChild;
+  return { node, html, text };
+}
+
+/**
  * Build header row DOM from UE accordion-header element.
- * Model order: eyebrow, heading, description (each a single cell div).
+ * Resolves columns by data-aue-prop or by position; extracts content from full column.
  * @param {Element} headerEl - UE accordion header wrapper
  * @returns {HTMLDivElement}
  */
 function buildHeaderRowFromUE(headerEl) {
   const firstRow = document.createElement('div');
   firstRow.classList.add('accordion-header');
-  const [eyebrowCol, headingCol, descriptionCol] = [...headerEl.children];
+  const eyebrowCol = getUEColumn(headerEl, 'eyebrow', 0) || headerEl.children[0];
+  const headingCol = getUEColumn(headerEl, 'heading', 1) || headerEl.children[1];
+  const descriptionCol = getUEColumn(headerEl, 'description', 2) || headerEl.children[2];
 
-  if (eyebrowCol?.textContent?.trim()) {
-    const eyebrow = eyebrowDecorator(eyebrowCol, 'accordion-header-eyebrow');
+  const eyebrowData = getColumnContent(eyebrowCol);
+  if (eyebrowData.text) {
+    const eyebrow = eyebrowDecorator(eyebrowData.text, 'accordion-header-eyebrow');
     if (eyebrow) {
-      if (headerEl.contains(eyebrowCol)) moveInstrumentation(eyebrowCol, eyebrow);
+      if (eyebrowCol && headerEl.contains(eyebrowCol)) moveInstrumentation(eyebrowCol, eyebrow);
       firstRow.append(eyebrow);
     }
   }
   if (headingCol) {
-    const heading = headingCol.querySelector('h1, h2, h3, h4, h5, h6');
+    const { node, html } = getColumnContent(headingCol);
+    const heading = node && /^[Hh][1-6]$/.test(node.tagName) ? node : null;
     if (heading) {
       heading.classList.add('accordion-header-heading');
       if (headerEl.contains(headingCol)) moveInstrumentation(headingCol, heading);
       firstRow.append(heading);
-    } else if (headingCol.innerHTML?.trim()) {
+    } else if (html) {
       const h2 = document.createElement('h2');
-      h2.innerHTML = headingCol.innerHTML;
+      h2.innerHTML = html;
       h2.classList.add('accordion-header-heading');
       if (headerEl.contains(headingCol)) moveInstrumentation(headingCol, h2);
       firstRow.append(h2);
     }
   }
-  if (descriptionCol?.innerHTML?.trim() || descriptionCol?.textContent?.trim()) {
-    const desc = descriptionCol.querySelector('p') || document.createElement('p');
+  const descData = getColumnContent(descriptionCol);
+  if (descData.html || descData.text) {
+    const desc = descriptionCol?.querySelector('p') || document.createElement('p');
     if (desc.tagName !== 'P') {
       const p = document.createElement('p');
-      p.innerHTML = descriptionCol.innerHTML || descriptionCol.textContent || '';
+      p.innerHTML = descData.html || descData.text;
       p.classList.add('accordion-header-description');
-      if (headerEl.contains(descriptionCol)) moveInstrumentation(descriptionCol, p);
+      if (descriptionCol && headerEl.contains(descriptionCol)) moveInstrumentation(descriptionCol, p);
       firstRow.append(p);
     } else {
+      desc.innerHTML = descData.html || descData.text;
       desc.classList.add('accordion-header-description');
-      if (headerEl.contains(descriptionCol)) moveInstrumentation(descriptionCol, desc);
+      if (descriptionCol && headerEl.contains(descriptionCol)) moveInstrumentation(descriptionCol, desc);
       firstRow.append(desc);
     }
   }
@@ -141,37 +175,39 @@ function buildHeaderRowFromUE(headerEl) {
 
 /**
  * Build one item row DOM from UE accordion-item element.
- * Model order: label, description, image. For small variant with image: [imageCell, contentCell]; else [contentCell].
+ * Resolves columns by data-aue-prop or by position; extracts content from full column.
  * @param {Element} itemEl - UE accordion item wrapper
  * @param {boolean} isSmall - Whether accordion is small variant
  * @returns {HTMLDivElement}
  */
 function buildItemRowFromUE(itemEl, isSmall) {
   const row = document.createElement('div');
-  const [labelCol, descriptionCol, imageCol] = [...itemEl.children];
+  const labelCol = getUEColumn(itemEl, 'label', 0) || itemEl.children[0];
+  const descriptionCol = getUEColumn(itemEl, 'description', 1) || itemEl.children[1];
+  const imageCol = getUEColumn(itemEl, 'image', 2) || itemEl.children[2];
 
-  let label;
-  if (labelCol) {
-    const first = labelCol.firstElementChild;
-    label = first ? first.cloneNode(true) : document.createElement('p');
-    if (label.tagName === 'P' && labelCol.textContent && !label.innerHTML) {
-      label.textContent = labelCol.textContent;
-    }
-  } else {
-    label = document.createElement('p');
+  const labelData = getColumnContent(labelCol);
+  let label = document.createElement('p');
+  if (labelData.node) {
+    label = labelData.node.cloneNode(true);
+    if (label.tagName !== 'P' && !labelData.html) label = document.createElement('p');
   }
+  if (labelData.html && label.tagName === 'P') label.innerHTML = labelData.html;
+  else if (labelData.text && !label.innerHTML) label.textContent = labelData.text;
 
   const contentCell = document.createElement('div');
   contentCell.append(label);
-  if (descriptionCol?.innerHTML?.trim() || descriptionCol?.textContent?.trim()) {
-    const descEl = descriptionCol.firstElementChild?.cloneNode(true)
-      ?? document.createElement('p');
-    if (descEl.tagName !== 'P' && !descriptionCol.firstElementChild) {
-      descEl.innerHTML = descriptionCol.innerHTML || descriptionCol.textContent || '';
-    } else if (descriptionCol.textContent && !descEl.innerHTML) {
-      descEl.textContent = descriptionCol.textContent;
+  const descData = getColumnContent(descriptionCol);
+  if (descData.html || descData.text) {
+    const descEl = descData.node?.cloneNode(true) || document.createElement('p');
+    if (descEl.tagName !== 'P') {
+      const p = document.createElement('p');
+      p.innerHTML = descData.html || descData.text;
+      contentCell.append(p);
+    } else {
+      descEl.innerHTML = descData.html || descData.text;
+      contentCell.append(descEl);
     }
-    contentCell.append(descEl);
   }
 
   const picture = imageCol?.querySelector?.('picture');
