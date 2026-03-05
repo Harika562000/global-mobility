@@ -1,71 +1,49 @@
-import { eyebrowDecorator } from '../../scripts/scripts.js';
+import { moveInstrumentation } from '../../scripts/scripts.js';
 import { decorateButtons } from '../../scripts/aem.js';
- 
+
+/**
+ * Maps block rows to named fields based on the hero model field order.
+ * The `classes` field is applied as a CSS class by the block loader and is NOT a content row.
+ * Remaining model fields are delivered as single-column rows, one per field, in order.
+ */
+function readBlockFields(block) {
+  const fieldNames = [
+    'image', 'imageAlt', 'eyebrow', 'heading', 'description',
+    'ctaLabel', 'ctaUrl', 'secondaryCtaLabel', 'secondaryCtaUrl',
+  ];
+  const fields = {};
+  [...block.children].forEach((row, index) => {
+    if (index >= fieldNames.length) return;
+    const cols = [...row.children];
+    if (cols.length) {
+      const [col] = cols;
+      fields[fieldNames[index]] = col;
+    }
+  });
+  return fields;
+}
+
 export default function decorate(block) {
-  const heading = block.querySelector('h1, h2, h3, h4, h5, h6');
-  if (!heading) return;
- 
-  /* Inject hero-section class so block CSS stays decoupled from global section classes */
   const section = block.closest('.section');
   if (section && section.classList.contains('bg-light-grey')) {
     section.classList.add('hero-section');
   }
- 
+
   const isBlackColoredRight = block.classList.contains('hero-black-colored-right');
   const isTwoColoredRight = block.classList.contains('hero-two-colored-right');
-  const isEmAccent = !isTwoColoredRight && heading.querySelector('em') !== null;
- 
-  let imageWrapper = null;
- 
-  if (isBlackColoredRight) {
-    const allParagraphs = block.querySelectorAll('p');
-    let imageParagraph = null;
- 
-    allParagraphs.forEach((p) => {
-      if (p.querySelector('picture')) {
-        imageParagraph = p;
-      }
-    });
- 
-    if (imageParagraph) {
-      const picture = imageParagraph.querySelector('picture');
-      if (picture) {
-        picture.remove();
-        if (!imageParagraph.textContent.trim()) {
-          imageParagraph.remove();
-        }
-        imageWrapper = document.createElement('div');
-        imageWrapper.className = 'hero-black-colored-right-image';
-        imageWrapper.appendChild(picture);
-      }
-    }
-  } else {
-    let pictureHeading = heading;
-    if (isTwoColoredRight) {
-      const allHeadings = block.querySelectorAll('h1, h2, h3, h4, h5, h6');
-      allHeadings.forEach((h) => {
-        if (h.querySelector('picture')) {
-          pictureHeading = h;
-        }
-      });
-    }
- 
-    const picture = pictureHeading.querySelector('picture');
-    if (picture) {
-      picture.remove();
- 
-      if (isEmAccent) {
-        imageWrapper = document.createElement('div');
-        imageWrapper.className = 'hero-em-accent-background';
-        imageWrapper.appendChild(picture);
-      } else if (isTwoColoredRight) {
-        imageWrapper = document.createElement('div');
-        imageWrapper.className = 'hero-two-colored-right-image';
-        imageWrapper.appendChild(picture);
-      }
-    }
+  const isEmAccent = !isTwoColoredRight && !isBlackColoredRight;
+
+  const fields = readBlockFields(block);
+
+  // Image
+  const picture = fields.image?.querySelector('picture');
+  if (picture) {
+    const img = picture.querySelector('img');
+    const altText = fields.imageAlt?.textContent?.trim();
+    if (img && altText) img.setAttribute('alt', altText);
   }
- 
+
+  // Content wrapper
   const contentWrapper = document.createElement('div');
   if (isEmAccent) {
     contentWrapper.className = 'hero-em-accent-content';
@@ -74,117 +52,114 @@ export default function decorate(block) {
   } else if (isBlackColoredRight) {
     contentWrapper.className = 'hero-black-colored-right-content';
   }
- 
-  /* Flatten nested AEM div structure into content wrapper */
-  const children = Array.from(block.children);
-  children.forEach((child) => {
-    if (child !== imageWrapper && !child.classList.contains('hero-em-accent-background') && !child.classList.contains('hero-two-colored-right-image') && !child.classList.contains('hero-black-colored-right-image')) {
-      if (child.tagName === 'DIV') {
-        const nestedChildren = Array.from(child.children);
-        nestedChildren.forEach((nestedChild) => {
-          if (nestedChild.tagName === 'DIV') {
-            const deepChildren = Array.from(nestedChild.children);
-            deepChildren.forEach((deepChild) => {
-              contentWrapper.appendChild(deepChild);
-            });
-          } else {
-            contentWrapper.appendChild(nestedChild);
-          }
-        });
-      } else {
-        contentWrapper.appendChild(child);
-      }
-    }
-  });
- 
-  const allParagraphs = contentWrapper.querySelectorAll('p');
-  let eyebrowElement = null;
- 
-  allParagraphs.forEach((p) => {
-    const noPicture = !p.querySelector('picture');
-    const noButton = !p.querySelector('a.button');
-    const noStrong = !p.querySelector('strong');
-    const noEm = !p.querySelector('em');
-    const noEyebrowClass = !p.classList.contains('eye-brow-text');
-    if (noPicture && noButton && noStrong && noEm && noEyebrowClass) {
-      const headingElement = contentWrapper.querySelector('h1, h2, h3, h4, h5, h6');
-      const pos = p.compareDocumentPosition(headingElement);
-      const isFollowing = Math.floor(pos / Node.DOCUMENT_POSITION_FOLLOWING) % 2 === 1;
-      if (headingElement && isFollowing) {
-        eyebrowElement = p;
-      }
-    }
-  });
- 
-  if (eyebrowElement) {
-    const eyebrowText = eyebrowElement.textContent.trim();
-    if (eyebrowText) {
-      const formattedEyebrow = eyebrowDecorator(eyebrowElement, 'accent-color');
-      if (formattedEyebrow) {
-        eyebrowElement.replaceWith(formattedEyebrow);
-      }
+
+  // Eyebrow
+  const eyebrowText = fields.eyebrow?.textContent?.trim();
+  if (eyebrowText) {
+    const eyebrowP = document.createElement('p');
+    eyebrowP.className = 'eye-brow-text';
+    eyebrowP.textContent = eyebrowText;
+    if (fields.eyebrow) moveInstrumentation(fields.eyebrow, eyebrowP);
+    contentWrapper.appendChild(eyebrowP);
+  }
+
+  // Heading
+  if (fields.heading) {
+    const heading = fields.heading.querySelector('h1, h2, h3, h4, h5, h6');
+    if (heading) {
+      moveInstrumentation(fields.heading, heading);
+      contentWrapper.appendChild(heading);
+    } else if (fields.heading.innerHTML.trim()) {
+      const h1 = document.createElement('h1');
+      h1.innerHTML = fields.heading.innerHTML;
+      moveInstrumentation(fields.heading, h1);
+      contentWrapper.appendChild(h1);
     }
   }
- 
+
+  // Description
+  if (fields.description) {
+    const descChildren = [...fields.description.children];
+    if (descChildren.length) {
+      moveInstrumentation(fields.description, descChildren[0]);
+      descChildren.forEach((child) => contentWrapper.appendChild(child));
+    } else if (fields.description.textContent.trim()) {
+      const p = document.createElement('p');
+      p.textContent = fields.description.textContent.trim();
+      moveInstrumentation(fields.description, p);
+      contentWrapper.appendChild(p);
+    }
+  }
+
+  // Primary CTA
+  const ctaLabel = fields.ctaLabel?.textContent?.trim();
+  const ctaUrl = fields.ctaUrl?.textContent?.trim();
+  if (ctaLabel && ctaUrl) {
+    const p = document.createElement('p');
+    const strong = document.createElement('strong');
+    const a = document.createElement('a');
+    a.href = ctaUrl;
+    a.title = ctaLabel;
+    a.textContent = ctaLabel;
+    strong.appendChild(a);
+    p.appendChild(strong);
+    contentWrapper.appendChild(p);
+  }
+
+  // Secondary CTA
+  const secondaryLabel = fields.secondaryCtaLabel?.textContent?.trim();
+  const secondaryUrl = fields.secondaryCtaUrl?.textContent?.trim();
+  if (secondaryLabel && secondaryUrl) {
+    const p = document.createElement('p');
+    const em = document.createElement('em');
+    const a = document.createElement('a');
+    a.href = secondaryUrl;
+    a.title = secondaryLabel;
+    a.textContent = secondaryLabel;
+    em.appendChild(a);
+    p.appendChild(em);
+    contentWrapper.appendChild(p);
+  }
+
+  decorateButtons(contentWrapper);
+
+  // Image wrapper
+  let imageWrapper = null;
+  if (picture) {
+    imageWrapper = document.createElement('div');
+    if (isEmAccent) {
+      imageWrapper.className = 'hero-em-accent-background';
+    } else if (isTwoColoredRight) {
+      imageWrapper.className = 'hero-two-colored-right-image';
+    } else if (isBlackColoredRight) {
+      imageWrapper.className = 'hero-black-colored-right-image';
+    }
+    if (fields.image) moveInstrumentation(fields.image, imageWrapper);
+    imageWrapper.appendChild(picture);
+  }
+
+  // Clear and rebuild
   block.innerHTML = '';
- 
+
   if (isEmAccent) {
-    if (imageWrapper) {
-      block.appendChild(imageWrapper);
-    }
+    if (imageWrapper) block.appendChild(imageWrapper);
     block.appendChild(contentWrapper);
-  } else if (isTwoColoredRight || isBlackColoredRight) {
+  } else {
     block.appendChild(contentWrapper);
-    if (imageWrapper) {
-      block.appendChild(imageWrapper);
-    }
+    if (imageWrapper) block.appendChild(imageWrapper);
   }
- 
-  if (isEmAccent || isBlackColoredRight) {
-    const paragraphs = contentWrapper.querySelectorAll('p');
-    paragraphs.forEach((p) => {
-      if (p.querySelector('a')) return;
- 
-      const strong = p.querySelector('strong');
-      if (strong && !strong.querySelector('a') && isEmAccent) {
-        const buttonText = strong.textContent.trim();
-        if (buttonText) {
-          const link = document.createElement('a');
-          link.href = '#';
-          link.title = buttonText;
-          link.textContent = buttonText;
-          strong.innerHTML = '';
-          strong.appendChild(link);
-        }
-      }
- 
-      const em = p.querySelector('em');
-      if (em && isBlackColoredRight && !em.querySelector('a')) {
-        const buttonText = em.textContent.trim();
-        if (buttonText) {
-          const link = document.createElement('a');
-          link.href = '#';
-          link.title = buttonText;
-          link.textContent = buttonText;
-          em.innerHTML = '';
-          em.appendChild(link);
-        }
+
+  // Override button styles for em-accent variation
+  if (isEmAccent) {
+    const allButtons = [...contentWrapper.querySelectorAll('a.button')];
+    allButtons.forEach((button, index) => {
+      if (index === 0) {
+        button.classList.remove('secondary', 'inverted');
+        button.classList.add('primary');
+      } else if (index === 1) {
+        button.classList.remove('primary', 'secondary');
+        button.classList.add('inverted');
       }
     });
- 
-    decorateButtons(contentWrapper);
- 
-    const allButtons = [...contentWrapper.querySelectorAll('a.button')];
-    if (isEmAccent) {
-      allButtons.forEach((button, index) => {
-        if (index === 0) {
-          button.classList.remove('secondary', 'inverted');
-          button.classList.add('primary');
-        } else if (index === 1) {
-          button.classList.remove('primary', 'secondary');
-          button.classList.add('inverted');
-        }
-      });
-    }
   }
 }
