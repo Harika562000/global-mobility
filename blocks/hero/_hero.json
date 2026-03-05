@@ -3,15 +3,15 @@
     {
       "title": "Hero",
       "id": "hero",
+      "model": "hero",
       "plugins": {
-        "xwalk": {
-          "page": {
-            "resourceType": "core/franklin/components/block/v1/block",
-            "template": {
-              "name": "Hero",
-              "model": "hero"
-            }
-          }
+        "da": {
+          "unsafeHTML": "<div class=\"hero\"><div><div><picture><source type=\"image/webp\" srcset=\"\"><source type=\"image/jpeg\" srcset=\"\"><img loading=\"lazy\" alt=\"\"></picture></div></div><div><div><h1></h1></div></div></div>",
+          "fields": [
+            { "name": "image", "selector": "div:nth-child(1)>div>picture>img[src]" },
+            { "name": "imageAlt", "selector": "div:nth-child(1)>div>picture>img[alt]" },
+            { "name": "heading", "selector": "div:nth-child(2)>div>h1" }
+          ]
         }
       }
     }
@@ -20,6 +20,17 @@
     {
       "id": "hero",
       "fields": [
+        {
+          "component": "select",
+          "name": "classes",
+          "label": "Variation",
+          "valueType": "string",
+          "options": [
+            { "name": "Default (Em Accent)", "value": "" },
+            { "name": "Two Colored Right", "value": "two-colored-right" },
+            { "name": "Black Colored Right", "value": "black-colored-right" }
+          ]
+        },
         {
           "component": "reference",
           "valueType": "string",
@@ -31,14 +42,51 @@
           "component": "text",
           "valueType": "string",
           "name": "imageAlt",
-          "label": "Alt",
+          "label": "Image Alt Text",
+          "value": ""
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "eyebrow",
+          "label": "Eyebrow Text",
           "value": ""
         },
         {
           "component": "richtext",
-          "name": "text",
-          "value": "",
-          "label": "Text",
+          "name": "heading",
+          "label": "Heading",
+          "valueType": "string",
+          "description": "Use italic for accent/gradient text"
+        },
+        {
+          "component": "richtext",
+          "name": "description",
+          "label": "Description",
+          "valueType": "string"
+        },
+        {
+          "component": "text",
+          "name": "ctaLabel",
+          "label": "Primary CTA Label",
+          "valueType": "string"
+        },
+        {
+          "component": "text",
+          "name": "ctaUrl",
+          "label": "Primary CTA URL",
+          "valueType": "string"
+        },
+        {
+          "component": "text",
+          "name": "secondaryCtaLabel",
+          "label": "Secondary CTA Label",
+          "valueType": "string"
+        },
+        {
+          "component": "text",
+          "name": "secondaryCtaUrl",
+          "label": "Secondary CTA URL",
           "valueType": "string"
         }
       ]

@@ -1,37 +1,449 @@
-.hero-container .hero-wrapper {
+.hero-container,
+.hero-wrapper {
   max-width: unset;
   padding: 0;
-}
-
-.hero {
-  position: relative;
-  padding: 40px 24px;
-  min-height: 300px;
-}
-
-.hero h1 {
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
-  color: var(--background-color);
-}
-
-.hero picture {
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  object-fit: cover;
+  margin: 0;
+  width: 100%;
   box-sizing: border-box;
 }
 
-.hero img {
-  object-fit: cover;
-  width: 100%;
-  height: 100%;
+main > .hero-container {
+  padding: 0;
 }
 
-@media (width >= 900px) {
-  .hero {
-    padding: 40px 32px;
+/* Break hero section out of main constraints */
+main > .section.hero-section,
+main > div.hero-section {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* ========================================
+   Base Hero Styles
+   ======================================== */
+
+.hero {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: 300px;
+  width: 100%;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+
+  --button-margin: 0;
+}
+
+.hero-section .hero {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.hero .eye-brow-text {
+  display: block;
+  margin: 0 0 var(--spacing-600) 0;
+}
+
+.hero .button-container {
+  margin-top: var(--spacing-700);
+  padding: 0;
+}
+
+/* ========================================
+   Default Hero Variation (em-accent)
+   ======================================== */
+
+.hero:not(.hero-two-colored-right, .hero-black-colored-right) {
+  min-height: 737px;
+  border-radius: var(--radius-12);
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+
+.hero .hero-em-accent-background {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+.hero .hero-em-accent-background picture {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.hero .hero-em-accent-background img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  margin: 0;
+  padding: 0;
+}
+
+.hero:not(.hero-two-colored-right, .hero-black-colored-right)::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(270deg, rgb(0 0 0 / var(--opacity-0)) 0%, rgb(0 0 0 / var(--opacity-90)) 100%);
+}
+
+.hero .hero-em-accent-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 100%;
+  padding: var(--responsive-spacing-hero);
+  box-sizing: border-box;
+  margin: 0;
+}
+
+.hero .hero-em-accent-content > div {
+  max-width: 100%;
+}
+
+.hero .hero-em-accent-content h1 {
+  font-size: var(--font-size-900);  /* TO DO : Need to handled from typography */
+  line-height: var(--line-height-120p);  /* TO DO : Need to handled from typography */
+  padding: 0;
+  color: var(--typography-inverse);
+  max-width: 100%;
+}
+
+.hero .hero-em-accent-content h1 em {
+  font-style: normal;
+  background: linear-gradient(88.41deg, #1C76D3 -2.79%, #B8D6DF 89.07%);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero .hero-em-accent-content p {
+  margin: 0;
+  padding: 0;
+  color: var(--color-grey-300);
+  font-size: var(--type-body-500-size);
+  line-height: var(--type-body-500-line-height);
+  font-weight: var(--type-body-500-weight);
+}
+
+/* TO DO : Need to handled from typography */
+@media (width >= 510px) {
+  .hero .hero-em-accent-content h1 {
+    line-height: var(--line-height-104p);
   }
+}
+
+/* TO DO : Need to handled from typography */
+@media (width >= 720px) {
+  .hero .hero-em-accent-content h1 {
+    font-size: var(--font-size-1200);
+  }
+}
+
+@media (width >= 1025px) {
+  .hero:not(.hero-two-colored-right, .hero-black-colored-right) {
+    min-height: 600px;
+  }
+}
+
+@media (width >= 1440px) {
+  .hero:not(.hero-two-colored-right, .hero-black-colored-right) {
+    min-height: 640px;
+  }
+
+  .hero .hero-em-accent-content {
+    max-width: 50%;
+  }
+}
+
+@media (width >= 1920px) {
+  .hero:not(.hero-two-colored-right, .hero-black-colored-right) {
+    min-height: 737px;
+  }
+
+  .hero .hero-em-accent-content {
+    max-width: 50%;
+  }
+}
+
+/* ========================================
+   Hero Two-Colored-Right Variation
+   ======================================== */
+
+.hero-two-colored-right {
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-600) var(--spacing-600) var(--spacing-600) var(--responsive-spacing-horizontal);
+}
+
+.hero .hero-two-colored-right-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.hero .hero-two-colored-right-image {
+  width: 100%;
+  position: relative;
+  display: none;
+  overflow: hidden;
+  border-radius: var(--radius-12);
+}
+
+.hero .hero-two-colored-right-image picture {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.hero .hero-two-colored-right-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-12);
+}
+
+.hero-two-colored-right h2 {
+  margin: 0;
+  padding: 0;
+  max-width: 100%;
+}
+
+.hero.hero-two-colored-right h2 em {
+  font-style: normal;
+  color: var(--typography-accent-1);
+}
+
+.hero .hero-two-colored-right-content > p {
+  margin: var(--spacing-400) 0 0;
+  padding: 0;
+  color: var(--typography-secondary);
+  font-size: var(--type-body-400-size);
+  line-height: var(--type-body-400-line-height);
+  font-weight: var(--type-body-400-weight);
+}
+
+@media (width >= 720px) {
+  .hero-two-colored-right {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .hero .hero-two-colored-right-content {
+    flex: 1;
+    max-width: 100%;
+  }
+
+  .hero .hero-two-colored-right-content > p {
+    margin: var(--spacing-600) 0 0;
+  }
+
+  .hero .hero-two-colored-right-image {
+    display: none;
+  }
+}
+
+@media (width >= 1025px) {
+  .hero-two-colored-right {
+    gap: var(--spacing-700);
+    height: 496px;
+  }
+
+  .hero .hero-two-colored-right-content {
+    flex: 1 1 0%;
+    max-width: 100%;
+  }
+
+  .hero .hero-two-colored-right-image {
+    display: block;
+    flex: 1 1 0%;
+    max-width: 100%;
+    align-self: stretch;
+  }
+}
+
+@media (width >= 1440px) {
+  .hero-two-colored-right {
+    gap: var(--spacing-1100);
+  }
+
+  .hero .hero-two-colored-right-content {
+    flex: 1 1 0%;
+  }
+
+  .hero .hero-two-colored-right-image {
+    flex: 1 1 0%;
+  }
+}
+
+@media (width >= 1920px) {
+  .hero .hero-two-colored-right-content {
+    max-width: 50%;
+  }
+
+  .hero .hero-two-colored-right-image {
+    max-width: 50%;
+  }
+}
+
+/* ========================================
+   Hero Black-Colored-Right Variation
+   ======================================== */
+
+.hero-black-colored-right {
+  display: flex;
+  flex-direction: column;
+  padding: var(--responsive-spacing-vertical) var(--spacing-600) var(--responsive-spacing-vertical) var(--responsive-spacing-horizontal);
+}
+
+.hero .hero-black-colored-right-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.hero .hero-black-colored-right-content > .tag {
+  display: block;
+  width: fit-content;
+  margin: 0 0 var(--spacing-400) 0;
+}
+
+.hero-black-colored-right h4 {
+  padding: 0;
+  max-width: 100%;
+  line-height: var(--line-height-100p);
+}
+
+.hero .hero-black-colored-right-content > p:first-of-type {
+  margin: var(--spacing-600) 0 var(--spacing-700) 0;
+  padding: 0;
+  font-size: var(--responsive-font-body-400);
+  line-height: var(--responsive-line-height-26);
+  font-weight: var(--type-body-400-weight);
+}
+
+.hero .hero-em-accent-content p:not(.button-container > p) {
+  margin-top: var(--spacing-700);
+}
+
+.hero .hero-black-colored-right-image {
+  width: 100%;
+  position: relative;
+  display: none;
+  overflow: hidden;
+  border-radius: var(--radius-12);
+}
+
+.hero .hero-black-colored-right-image picture {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.hero .hero-black-colored-right-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-12);
+}
+
+@media (width >= 720px) {
+  .hero-black-colored-right {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .hero .hero-black-colored-right-image {
+    display: none;
+  }
+}
+
+@media (width >= 1025px) {
+  .hero-black-colored-right {
+    gap: var(--spacing-700);
+  }
+
+  .hero .hero-black-colored-right-content {
+    flex: 1 1 0%;
+    max-width: 100%;
+  }
+
+  .hero .hero-black-colored-right-image {
+    display: block;
+    flex: 1 0 0%;
+    max-width: 100%;
+    align-self: stretch;
+  }
+}
+
+@media (width >= 1440px) {
+  .hero-black-colored-right {
+    gap: var(--spacing-1100);
+  }
+
+  .hero .hero-black-colored-right-content {
+    flex: 1 1 0%;
+  }
+
+  .hero .hero-black-colored-right-image {
+    flex: 1 0 0%;
+  }
+}
+
+@media (width >= 1920px) {
+  .hero .hero-black-colored-right-content {
+    max-width: 50%;
+  }
+
+  .hero .hero-black-colored-right-image {
+    max-width: 50%;
+  }
+}
+
+/* ========================================
+   Hero Section Overrides
+   (hero-section class injected from hero.js)
+   ======================================== */
+
+.hero-section .hero-wrapper {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.hero-section .hero-two-colored-right-content,
+.hero-section .hero-black-colored-right-content {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.hero-section .hero-two-colored-right-content *,
+.hero-section .hero-black-colored-right-content * {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.hero-section .hero-two-colored-right-content img,
+.hero-section .hero-black-colored-right-content img,
+.hero-section .hero-two-colored-right-content picture,
+.hero-section .hero-black-colored-right-content picture {
+  max-width: 100%;
+  height: auto;
 }

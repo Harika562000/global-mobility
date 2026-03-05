@@ -431,35 +431,134 @@ function wrapTextNodes(block) {
 function decorateButtons(element) {
   element.querySelectorAll('a').forEach((a) => {
     a.title = a.title || a.textContent;
-    if (a.href !== a.textContent) {
-      const up = a.parentElement;
-      const twoup = a.parentElement.parentElement;
-      if (!a.querySelector('img')) {
-        if (up.childNodes.length === 1 && (up.tagName === 'P' || up.tagName === 'DIV')) {
-          a.className = 'button'; // default
-          up.classList.add('button-container');
-        }
-        if (
-          up.childNodes.length === 1
-          && up.tagName === 'STRONG'
-          && twoup.childNodes.length === 1
-          && twoup.tagName === 'P'
-        ) {
-          a.className = 'button primary';
-          twoup.classList.add('button-container');
-        }
-        if (
-          up.childNodes.length === 1
-          && up.tagName === 'EM'
-          && twoup.childNodes.length === 1
-          && twoup.tagName === 'P'
-        ) {
-          a.className = 'button secondary';
-          twoup.classList.add('button-container');
-        }
+    const up = a.parentElement;
+    const twoup = a.parentElement.parentElement;
+
+    // If icons are authored next to the link, move them inside the <a> so `decorateIcons()`
+    // can decorate them and the whole button remains clickable.
+    const moveIconsIntoLink = (container) => {
+      if (!container) return false;
+      // We only expect a single icon per button (left OR right).
+      const children = Array.from(container.children);
+      const iconSpan = children.find((el) => el.tagName === 'SPAN' && el.classList.contains('icon'));
+      if (!iconSpan) return false;
+
+      // If the icon is before the link in DOM order, keep it on the left; otherwise on the right.
+      // Works even when the <a> is nested (e.g. icon is sibling of <em>/<strong>).
+      const pos = iconSpan.compareDocumentPosition(a);
+      // eslint-disable-next-line no-bitwise
+      const iconIsBeforeLink = !!(pos & Node.DOCUMENT_POSITION_FOLLOWING);
+      if (iconIsBeforeLink) a.prepend(iconSpan);
+      else a.append(iconSpan);
+
+      // Decorative icon inside button/link: hide from assistive tech unless explicitly labeled.
+      const label = iconSpan.getAttribute('aria-label') || iconSpan.getAttribute('data-icon-label');
+      if (!label) {
+        iconSpan.setAttribute('aria-hidden', 'true');
+        iconSpan.setAttribute('role', 'presentation');
+      }
+
+      // If the visible label is just the URL (same as href), remove it; use title/aria-label.
+      const labelText = a.textContent.trim();
+      const hrefAttr = (a.getAttribute('href') || '').trim();
+      const normalizeUrlText = (s) => s
+        .toLowerCase()
+        .replace(/^https?:\/\//, '')
+        .replace(/\/$/, '');
+
+      const shouldRemoveLabel = !!labelText && (
+        labelText === hrefAttr
+        || labelText === a.href
+        || normalizeUrlText(labelText) === normalizeUrlText(hrefAttr)
+        || normalizeUrlText(labelText) === normalizeUrlText(a.href)
+      );
+
+      if (shouldRemoveLabel) {
+        // Remove the visible label entirely (including nested tags like <u>),
+        // keeping only the icon span inside the link.
+        Array.from(a.childNodes).forEach((n) => {
+          if (n.nodeType === Node.ELEMENT_NODE && n.tagName === 'SPAN' && n.classList.contains('icon')) return;
+          n.remove();
+        });
+      }
+
+      return true;
+    };
+
+    const hadIcons = moveIconsIntoLink(up) || moveIconsIntoLink(twoup);
+
+    // Existing behavior: don't auto-decorate image links as buttons.
+    if (!a.querySelector('img') && (a.href !== a.textContent || hadIcons)) {
+      // If this is an icon-only button/link, ensure it has an accessible name.
+      const clone = a.cloneNode(true);
+      clone.querySelectorAll('span.icon').forEach((s) => s.remove());
+      const visibleText = clone.textContent.trim();
+      const isIconOnly = !visibleText;
+      if (isIconOnly) a.setAttribute('aria-label', a.title || a.href);
+
+      // primary button: <p><strong><a>...</a></strong></p>
+      if (up.children.length === 1 && up.tagName === 'STRONG' && twoup.children.length === 1 && (twoup.tagName === 'P' || twoup.tagName === 'DIV')) {
+        a.className = `button primary${isIconOnly ? ' icon-only' : ''}`;
+      }
+
+      // secondary button: <p><em><a>...</a></em></p>
+      if (up.children.length === 1 && up.tagName === 'EM' && twoup.children.length === 1 && (twoup.tagName === 'P' || twoup.tagName === 'DIV')) {
+        a.className = `button secondary${isIconOnly ? ' icon-only' : ''}`;
+      }
+
+      // Icon + text (not icon-only) authored without <em>: default to secondary
+      if (hadIcons && !isIconOnly && !a.classList.contains('primary') && !a.classList.contains('secondary')) {
+        a.className = 'button secondary';
+      }
+
+      // default button (fallback)
+      // - icon-only URL buttons stay icon-only
+      // - otherwise, plain single-link paragraphs default to secondary
+      if (!a.classList.contains('button') && up.children.length === 1 && (up.tagName === 'P' || up.tagName === 'DIV')) {
+        a.className = isIconOnly ? 'button secondary icon-only' : 'button secondary';
       }
     }
   });
+
+  /* Group 2+ adjacent button <p> elements into a <div class="button-container"> wrapper.
+     Single buttons remain unwrapped (no button-container class).
+     Also mark document links (PDF, DOCX, …) with a download attribute. */
+  const docExt = /\.(pdf|docx?|xlsx?|pptx?|zip|rar)$/i;
+  const buttonParas = [];
+  element.querySelectorAll('a.button').forEach((btn) => {
+    const p = btn.closest('p');
+    if (p && !p.closest('.button-container') && !buttonParas.includes(p)) {
+      buttonParas.push(p);
+    }
+    try {
+      const { pathname } = new URL(btn.href, window.location.origin);
+      if (docExt.test(pathname)) {
+        btn.setAttribute('download', pathname.split('/').pop());
+      }
+    } catch { /* invalid URL – skip */ }
+  });
+
+  let idx = 0;
+  while (idx < buttonParas.length) {
+    const group = [buttonParas[idx]];
+    const parent = buttonParas[idx].parentElement;
+    let next = idx + 1;
+    while (
+      next < buttonParas.length
+      && buttonParas[next].parentElement === parent
+      && buttonParas[next].previousElementSibling === group[group.length - 1]
+    ) {
+      group.push(buttonParas[next]);
+      next += 1;
+    }
+    if (group.length >= 2) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'button-container';
+      group[0].before(wrapper);
+      group.forEach((p) => wrapper.appendChild(p));
+    }
+    idx = next;
+  }
 }
 
 /**

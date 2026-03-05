@@ -1,0 +1,68 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+/* Set font family, weight, line height and letter spacing for all headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-family-primary);
+  scroll-margin: 40px;
+  vertical-align: middle;
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+h1 {
+  font-size: var(--type-header-1200-size);
+  font-weight: var(--type-header-1200-weight);
+  line-height: var(--type-header-1200-line-height);
+}
+
+h2 {
+  font-size: var(--type-header-1100-responsive-size);
+  font-weight: var(--type-header-1100-weight);
+  line-height: var(--type-header-1100-line-height);
+}
+
+h3 {
+  font-weight: var(--type-header-1000-weight-ultrabold);
+  font-size: var(--type-header-1000-size);
+  line-height: var(--type-header-1000-line-height);
+}
+
+h3.varince {
+  font-weight: var(--font-weight-semibold);
+}
+
+h4 {
+  font-size: var(--type-header-900-size);
+  font-weight: var(--type-header-900-weight);
+  line-height: var(--type-header-900-line-height);
+}
+
+h5 {
+  font-size: var(--type-header-800-size);
+  font-weight: var(--type-header-800-weight);
+  line-height: var(--type-header-800-line-height);
+}
+
+h6 {
+  font-size: var(--type-header-700-responsive-size);
+  font-weight: var(--type-header-700-weight);
+  line-height: var(--type-header-700-line-height);
+}
+
+h6.varince {
+  font-size: var(--font-size-500);
+}

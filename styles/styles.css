@@ -10,64 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
+@import url('./tokens.css');
+@import url('./grid.css');
+@import url('./button.css');
+@import url('./spacing.css');
+@import url('./typography.css');
+
 :root {
-  /* colors */
-  --background-color: white;
-  --light-color: #f8f8f8;
-  --dark-color: #505050;
-  --text-color: #131313;
-  --link-color: #3b63fb;
-  --link-hover-color: #1d3ecf;
-
-  /* fonts */
-  --body-font-family: roboto, roboto-fallback, sans-serif;
-  --heading-font-family: roboto-condensed, roboto-condensed-fallback, sans-serif;
-
-  /* body sizes */
-  --body-font-size-m: 22px;
-  --body-font-size-s: 19px;
-  --body-font-size-xs: 17px;
-
-  /* heading sizes */
-  --heading-font-size-xxl: 55px;
-  --heading-font-size-xl: 44px;
-  --heading-font-size-l: 34px;
-  --heading-font-size-m: 27px;
-  --heading-font-size-s: 24px;
-  --heading-font-size-xs: 22px;
-
-  /* nav height */
   --nav-height: 64px;
-}
-
-/* fallback fonts */
-@font-face {
-  font-family: roboto-condensed-fallback;
-  size-adjust: 88.82%;
-  src: local('Arial');
-}
-
-@font-face {
-  font-family: roboto-fallback;
-  size-adjust: 99.529%;
-  src: local('Arial');
-}
-
-@media (width >= 900px) {
-  :root {
-    /* body sizes */
-    --body-font-size-m: 18px;
-    --body-font-size-s: 16px;
-    --body-font-size-xs: 14px;
-
-    /* heading sizes */
-    --heading-font-size-xxl: 45px;
-    --heading-font-size-xl: 36px;
-    --heading-font-size-l: 28px;
-    --heading-font-size-m: 22px;
-    --heading-font-size-s: 20px;
-    --heading-font-size-xs: 18px;
-  }
+  --light-color: var(--background-color-alt);
 }
 
 body {
@@ -75,7 +26,7 @@ body {
   margin: 0;
   background-color: var(--background-color);
   color: var(--text-color);
-  font-family: var(--body-font-family);
+  font-family: var(--font-family-primary);
   font-size: var(--body-font-size-m);
   line-height: 1.6;
 }
@@ -98,52 +49,29 @@ footer .footer[data-block-status="loaded"] {
   visibility: visible;
 }
 
+/* Reset margin and padding for all headings, UL, li and blockquote tags */
+p,
 h1,
 h2,
 h3,
 h4,
 h5,
-h6 {
-  margin-top: 0.8em;
-  margin-bottom: 0.25em;
-  font-family: var(--heading-font-family);
-  font-weight: 600;
-  line-height: 1.25;
-  scroll-margin: 40px;
-}
-
-h1 { font-size: var(--heading-font-size-xxl); }
-h2 { font-size: var(--heading-font-size-xl); }
-h3 { font-size: var(--heading-font-size-l); }
-h4 { font-size: var(--heading-font-size-m); }
-h5 { font-size: var(--heading-font-size-s); }
-h6 { font-size: var(--heading-font-size-xs); }
-
-p,
+h6,
 dl,
 ol,
 ul,
 pre,
 blockquote {
-  margin-top: 0.8em;
-  margin-bottom: 0.25em;
+  margin: 0;
+  padding: 0;
 }
 
-code,
-pre {
-  font-size: var(--body-font-size-s);
-}
-
-pre {
-  padding: 16px;
-  border-radius: 8px;
-  background-color: var(--light-color);
-  overflow-x: auto;
-  white-space: pre;
-}
-
-main > div {
-  margin: 40px 16px;
+main {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--main-max-width);
+  margin: 40px auto;
+  padding: 0 var(--main-side-margin-x);
 }
 
 input,
@@ -165,51 +93,6 @@ a:hover {
   text-decoration: underline;
 }
 
-/* buttons */
-a.button:any-link,
-button {
-  box-sizing: border-box;
-  display: inline-block;
-  max-width: 100%;
-  margin: 12px 0;
-  border: 2px solid transparent;
-  border-radius: 2.4em;
-  padding: 0.5em 1.2em;
-  font-family: var(--body-font-family);
-  font-style: normal;
-  font-weight: 500;
-  line-height: 1.25;
-  text-align: center;
-  text-decoration: none;
-  background-color: var(--link-color);
-  color: var(--background-color);
-  cursor: pointer;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-a.button:hover,
-a.button:focus,
-button:hover,
-button:focus {
-  background-color: var(--link-hover-color);
-  cursor: pointer;
-}
-
-button:disabled,
-button:disabled:hover {
-  background-color: var(--light-color);
-  cursor: unset;
-}
-
-a.button.secondary,
-button.secondary {
-  background-color: unset;
-  border: 2px solid currentcolor;
-  color: var(--text-color);
-}
-
 main img {
   max-width: 100%;
   width: auto;
@@ -228,30 +111,152 @@ main img {
 }
 
 /* sections */
+
+/*
+ * Section spacing utility (responsive)
+ * Apply to a Franklin section: add class `section-spacing` to the section.
+ *
+ * Mobile Small + Mobile Large: margin 16px, padding 32px
+ * Tablet + Desktop Small:      margin 24px, padding 32px
+ * Desktop Large:               margin 24px, padding 56px
+ * Desktop XL:                  margin 56px, padding 56px
+ */
 main > .section {
-  margin: 40px 0;
+  margin: var(--responsive-spacing-between-section) 0;
+  padding: var(--responsive-spacing-vertical) var(--responsive-spacing-horizontal);
 }
 
-main > .section > div {
-  max-width: 1200px;
-  margin: auto;
-  padding: 0 24px;
+main > .section.reset-margin-left-right {
+  margin-left: var(--spacing-0);
+  margin-right: var(--spacing-0);
 }
 
-main > .section:first-of-type {
-  margin-top: 0;
+main > .section.reset-padding-left-right {
+  padding-left: var(--spacing-0);
+  padding-right: var(--spacing-0);
 }
 
-@media (width >= 900px) {
-  main > .section > div {
-    padding: 0 32px;
+/* Sections background colors */
+main .section.bg-grey {
+  background-color: var(--surface-page-neutral);
+  border-radius: var(--radius-sm);
+}
+
+main .section.bg-light-grey {
+  background-color: var(--surface-light-grey);
+  border-radius: var(--radius-sm);
+}
+
+main .section.bg-dark {
+  background-color: var(--surface-dark);
+  border-radius: var(--radius-sm);
+}
+
+main .section.bg-accent {
+  background-color: var(--surface-page-accent-1);
+  border-radius: var(--radius-sm);
+}
+
+main .section.bg-light {
+  background-color: var(--surface-light);
+  border-radius: var(--radius-sm);
+}
+
+/* Inverted sections */
+main .section.inverted {
+  color: var(--typography-inverse);
+}
+
+/* Eyebrow */
+.eye-brow-text {
+  font-family: var(--font-family-accent);
+  font-size: var(--type-eyebrow-size);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-22);
+  color: var(--typography-main);
+  text-transform: var(--text-transform-capitalize);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+@media (width >= 1025px) {
+  .eye-brow-text {
+    line-height: var(--line-height-26);
   }
 }
 
-/* section metadata */
-main .section.light,
-main .section.highlight {
-  background-color: var(--light-color);
+.eye-brow-text.accent-color {
+  color: var(--typography-accent-1);
+}
+
+.eye-brow-text.accent-color2 {
+  color: var(--typography-accent-2);
+}
+
+/* Tags — labels with asymmetric rounded corners (top-left + bottom-right) */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-200);
+  padding: var(--spacing-300) var(--spacing-400);
+  border-radius: var(--radius-8) 0 var(--radius-8) 0;
+  white-space: nowrap;
+  border: var(--border-width-100) solid transparent;
+  font-family: var(--font-family-accent);
+  font-size: 0.75rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: var(--line-height-104p);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.tag .icon {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+/* Outline: transparent background with border */
+.tag-outline {
+  background-color: transparent;
+  color: var(--tag-text-outline);
+  border-color: var(--tag-border-outline);
+}
+
+/* Fill: solid background */
+.tag-fill {
+  background-color: var(--tag-bg-fill);
+  color: var(--tag-text-outline);
+}
+
+/* Glass: translucent, designed for dark backgrounds */
+.tag-glass {
+  background-color: var(--tag-bg-glass);
+  color: var(--tag-text-glass);
+  border-color: var(--tag-border-glass);
+  backdrop-filter: blur(var(--size-12));
+}
+
+/* Glass and dark variants have white text — invert icon to match */
+.tag-glass .icon img,
+.tag-dark .icon img {
+  filter: brightness(0) invert(1);
+}
+
+/* Dark: solid dark background */
+.tag-dark {
+  background-color: var(--color-black);
+  color: var(--typography-tertiary);
+  border-color: var(--color-black);
+}
+
+/* tag as a block element styling */
+.tag.block > div,
+.tag.block > div > div {
+  display: contents;
+}
+
+.tag.block p {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-200);
   margin: 0;
-  padding: 40px 0;
 }

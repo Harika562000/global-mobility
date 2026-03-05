@@ -193,6 +193,26 @@
     "id": "hero",
     "fields": [
       {
+        "component": "select",
+        "name": "classes",
+        "label": "Variation",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Default (Em Accent)",
+            "value": ""
+          },
+          {
+            "name": "Two Colored Right",
+            "value": "two-colored-right"
+          },
+          {
+            "name": "Black Colored Right",
+            "value": "black-colored-right"
+          }
+        ]
+      },
+      {
         "component": "reference",
         "valueType": "string",
         "name": "image",
@@ -203,14 +223,51 @@
         "component": "text",
         "valueType": "string",
         "name": "imageAlt",
-        "label": "Alt",
+        "label": "Image Alt Text",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "eyebrow",
+        "label": "Eyebrow Text",
         "value": ""
       },
       {
         "component": "richtext",
-        "name": "text",
-        "value": "",
-        "label": "Text",
+        "name": "heading",
+        "label": "Heading",
+        "valueType": "string",
+        "description": "Use italic for accent/gradient text"
+      },
+      {
+        "component": "richtext",
+        "name": "description",
+        "label": "Description",
+        "valueType": "string"
+      },
+      {
+        "component": "text",
+        "name": "ctaLabel",
+        "label": "Primary CTA Label",
+        "valueType": "string"
+      },
+      {
+        "component": "text",
+        "name": "ctaUrl",
+        "label": "Primary CTA URL",
+        "valueType": "string"
+      },
+      {
+        "component": "text",
+        "name": "secondaryCtaLabel",
+        "label": "Secondary CTA Label",
+        "valueType": "string"
+      },
+      {
+        "component": "text",
+        "name": "secondaryCtaUrl",
+        "label": "Secondary CTA URL",
         "valueType": "string"
       }
     ]

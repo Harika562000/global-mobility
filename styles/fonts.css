@@ -1,4 +1,118 @@
 /* stylelint-disable max-line-length */
+
+/* ========================================
+   Brand fonts (from /fonts)
+   ======================================== */
+
+@font-face {
+  font-family: 'NB Akademie Mono Std';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/nb_akademie_mono_std_regular.ttf') format('truetype');
+}
+
+/* Surt Normal */
+@font-face {
+  font-family: 'Surt Normal';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/Surt-Normal-Regular-TRIAL.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Surt Normal';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/Surt-Normal-Regular-Italic-TRIAL.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Surt Normal';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../fonts/Surt-Normal-Medium-TRIAL.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Surt Normal';
+  font-style: italic;
+  font-weight: 500;
+  font-display: swap;
+  src: url('../fonts/Surt-Normal-Medium-Italic-TRIAL.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Surt Normal';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../fonts/Surt-Normal-Semibold-TRIAL.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Surt Normal';
+  font-style: italic;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../fonts/Surt-Normal-Semibold-Italic-TRIAL.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Surt Normal';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/Surt-Normal-Bold-TRIAL.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Surt Normal';
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/Surt-Normal-Bold-Italic-TRIAL.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Surt Normal';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('../fonts/Surt-Normal-Extrabold-TRIAL.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Surt Normal';
+  font-style: italic;
+  font-weight: 800;
+  font-display: swap;
+  src: url('../fonts/Surt-Normal-Extrabold-Italic-TRIAL.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Surt Normal';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('../fonts/Surt-Normal-Black-TRIAL.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Surt Normal';
+  font-style: italic;
+  font-weight: 900;
+  font-display: swap;
+  src: url('../fonts/Surt-Normal-Black-Italic-TRIAL.otf') format('opentype');
+}
+
+/* ========================================
+   System / fallback fonts used in legacy CSS
+   ======================================== */
+
 @font-face {
   font-family: roboto-condensed;
   font-style: normal;
