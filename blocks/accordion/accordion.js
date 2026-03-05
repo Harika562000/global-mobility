@@ -6,6 +6,8 @@ import {
   
   /**
    * Smoothly opens an accordion item
+   * @param {HTMLElement} body
+   * @param {HTMLDetailsElement} details
    */
   function openAccordion(body, details) {
     const inner = body.firstElementChild;
@@ -26,11 +28,16 @@ import {
   
   /**
    * Smoothly closes an accordion item
+   * @param {HTMLElement} body
+   * @param {HTMLDetailsElement} details
    */
   function closeAccordion(body, details) {
     const inner = body.firstElementChild;
     body.style.height = `${inner.scrollHeight}px`;
-    body.offsetHeight; // force reflow
+  
+    // force reflow so transition runs
+    body.offsetHeight; // eslint-disable-line no-unused-expressions
+  
     body.style.height = '0px';
   
     const onEnd = (e) => {
@@ -45,6 +52,10 @@ import {
   export default function decorate(block) {
     const accordionItems = [];
     const isSmall = block.classList.contains('small');
+  
+    /* ----------------------------
+     * Layout containers
+     * ---------------------------- */
     let imagePanel;
     const images = [];
   
@@ -56,105 +67,116 @@ import {
     const listWrapper = document.createElement('div');
     listWrapper.className = 'accordion-list';
   
-    // Treat first row as header and skip accordion logic
+    /* ----------------------------
+     * Header row (eyebrow / heading / description)
+     * ---------------------------- */
     const [firstRow, ...rows] = [...block.children];
   
-    // Format eyebrow
     const eyebrowSource = firstRow?.querySelector('p');
-    const eyebrow = eyebrowDecorator(eyebrowSource, 'accordion-header-eyebrow');
+    const eyebrow = eyebrowDecorator(
+      eyebrowSource,
+      'accordion-header-eyebrow',
+    );
+  
     if (eyebrow && eyebrowSource) {
-      // Preserve UE instrumentation & attributes before replacement
       moveInstrumentation(eyebrowSource, eyebrow);
       moveAttributes(eyebrowSource, eyebrow);
       eyebrowSource.replaceWith(eyebrow);
     }
   
     firstRow.classList.add('accordion-header');
+  
     const heading = firstRow.querySelector('h1, h2, h3, h4, h5, h6');
     if (heading) heading.classList.add('accordion-header-heading');
+  
     const description = firstRow.querySelector('p');
     if (description) description.classList.add('accordion-header-description');
   
-    listWrapper.prepend(firstRow);
+    listWrapper.append(firstRow);
   
+    /* ----------------------------
+     * Accordion items
+     * Each UE item row = 3 columns:
+     * [0] image (optional)
+     * [1] label
+     * [2] body
+     * ---------------------------- */
     rows.forEach((row, index) => {
-      let image;
+      const imageCell = row.children[0];
+      const labelCell = row.children[1];
+      const bodyCell = row.children[2];
   
-      const textCell = isSmall ? row.children[1] : row.children[0];
-      const imageCell = isSmall ? row.children[0] : null;
+      const label =
+        labelCell?.firstElementChild ?? labelCell;
   
-      const cellChildren = isSmall
-        ? [...(row.children[1]?.children ?? [])]
-        : [...(row.children[0]?.children ?? [])];
+      const bodyContent = bodyCell
+        ? [...bodyCell.childNodes]
+        : [];
   
-      if (isSmall) {
-        image = row.children[0]?.querySelector('picture');
-      }
-  
-      const [label, ...restCellChildren] = cellChildren;
-  
-      // Create body wrapper
+      /* Body wrapper */
       const body = document.createElement('div');
       body.className = 'accordion-item-body';
-      restCellChildren.forEach((child) => body.append(child));
+      bodyContent.forEach((n) => body.append(n));
   
-      // Create summary
-      const summary = document.createElement('summary');
-      summary.className = 'accordion-item-label';
-      if (label) summary.append(label);
-  
-      // Wrap body content for height animation
+      /* Inner wrapper for height animation */
       const inner = document.createElement('div');
       inner.className = 'accordion-item-body-inner';
       inner.append(...body.childNodes);
       body.append(inner);
   
-      // Create details
+      /* Summary */
+      const summary = document.createElement('summary');
+      summary.className = 'accordion-item-label';
+      if (label) summary.append(label);
+  
+      /* Details */
       const details = document.createElement('details');
       details.className = 'accordion-item';
       details.append(summary, body);
   
-      /**
-       * 🔑 UE FIX: move instrumentation from the original authored cell(s)
-       * that are about to be removed (row.remove()) onto the new rendered structure.
-       */
-      if (textCell) {
-        moveInstrumentation(textCell, details);
-        moveAttributes(textCell, details);
+      /* ✅ Preserve UE instrumentation before removing authored row */
+      if (labelCell) {
+        moveInstrumentation(labelCell, details);
+        moveAttributes(labelCell, details);
       }
   
+      /* Small variant image handling */
       if (isSmall) {
-        const slot = image || document.createElement('div');
-        slot.classList.add('accordion-item-image');
+        const img =
+          imageCell?.querySelector('picture, img') ||
+          document.createElement('div');
   
-        // If the image was authored in a cell that we remove, preserve instrumentation
+        img.classList.add('accordion-item-image');
+  
         if (imageCell) {
-          moveInstrumentation(imageCell, slot);
-          moveAttributes(imageCell, slot);
+          moveInstrumentation(imageCell, img);
+          moveAttributes(imageCell, img);
         }
   
-        images.push(slot);
+        images.push(img);
         details.dataset.imageIndex = index;
   
         details.addEventListener('toggle', () => {
           if (!details.open) return;
-          const imageIndex = Number(details.dataset.imageIndex);
-          images.forEach((img, idx) => {
-            img.classList.toggle('is-active', idx === imageIndex);
+          const active = Number(details.dataset.imageIndex);
+          images.forEach((el, i) => {
+            el.classList.toggle('is-active', i === active);
           });
         });
       }
   
       accordionItems.push({ details, body });
   
-      // Accordion open/close behavior
+      /* Single-open accordion behavior */
       summary.addEventListener('click', (e) => {
         e.preventDefault();
+  
         accordionItems.forEach((item) => {
           if (item.details !== details && item.details.open) {
             closeAccordion(item.body, item.details);
           }
         });
+  
         if (details.open) {
           closeAccordion(body, details);
         } else {
@@ -164,11 +186,13 @@ import {
   
       listWrapper.append(details);
   
-      // We now safely remove the original authored row
+      /* Remove original UE-authored row */
       row.remove();
     });
   
-    // Build final small variant layout
+    /* ----------------------------
+     * Final layout assembly
+     * ---------------------------- */
     if (isSmall) {
       images.forEach((img, i) => {
         img.classList.toggle('is-active', i === 0);
@@ -179,12 +203,17 @@ import {
       block.append(listWrapper);
     }
   
-    // Open first accordion item on load (skip header row)
+    /* ----------------------------
+     * Open first item by default
+     * ---------------------------- */
     if (accordionItems.length > 0) {
       const firstItem = accordionItems[0];
       firstItem.details.open = true;
       firstItem.body.style.height = 'auto';
     }
   
-    block.querySelectorAll('.button').forEach((btn) => btn.classList.remove('button'));
+    /* Cleanup */
+    block
+      .querySelectorAll('.button')
+      .forEach((btn) => btn.classList.remove('button'));
   }

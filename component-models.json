@@ -170,18 +170,18 @@
         "description": "Adds block classes. Values must be lowercase; multiple classes are space-separated."
       },
       {
-        "component": "text",
+        "component": "richtext",
         "name": "eyebrow",
         "label": "Eyebrow Text",
         "valueType": "string",
-        "value": ""
+        "description": "Use a paragraph for eyebrow styling."
       },
       {
         "component": "richtext",
         "name": "heading",
         "label": "Heading",
         "valueType": "string",
-        "description": "Use H2–H6 (or styled text) to match your accordion header markup."
+        "description": "Use H2–H6 (recommended) to match your accordion header markup."
       },
       {
         "component": "richtext",
@@ -194,36 +194,27 @@
         "name": "items",
         "label": "Accordion Items",
         "multi": true,
-        "description": "Each item becomes a row in the block. For the Small variation, include an image per item.",
+        "description": "Each item becomes a row. Image is optional and used for the 'small' variation.",
         "fields": [
           {
             "component": "reference",
-            "name": "itemImage",
-            "label": "Item Image (Small only)",
+            "name": "image",
+            "label": "Item Image (optional)",
             "valueType": "string",
-            "multi": false,
-            "description": "Optional. Used only when the block has the 'small' class."
-          },
-          {
-            "component": "text",
-            "name": "itemImageAlt",
-            "label": "Item Image Alt Text",
-            "valueType": "string",
-            "value": ""
+            "multi": false
           },
           {
             "component": "richtext",
-            "name": "itemLabel",
+            "name": "label",
             "label": "Item Label",
             "valueType": "string",
-            "description": "This is the clickable summary. Use a paragraph or heading (p/h2–h6)."
+            "description": "Clickable summary. Use p or h2–h6 (your CSS targets these)."
           },
           {
             "component": "richtext",
-            "name": "itemBody",
+            "name": "body",
             "label": "Item Body",
-            "valueType": "string",
-            "description": "Accordion panel content. Lists, links, etc. are supported."
+            "valueType": "string"
           }
         ]
       }
