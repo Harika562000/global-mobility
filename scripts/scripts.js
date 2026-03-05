@@ -13,6 +13,66 @@ import {
 } from './aem.js';
 
 /**
+ * Extracts text from a source element/string and returns it wrapped in:
+ * <span class="eye-brow-text {additionalClass}">Extracted text</span>
+ *
+ * @param {Element|string} source Element (or string) to extract text from
+ * @param {string} [additionalClass=''] Additional CSS class(es) to append
+ * @returns {HTMLSpanElement|null} Span element or null if no text found
+ */
+export function eyebrowDecorator(source, additionalClass = '') {
+  const text = (typeof source === 'string' ? source : source?.textContent || '').trim();
+  if (!text) return null;
+  const span = document.createElement('span');
+  span.className = ['eye-brow-text', additionalClass].filter(Boolean).join(' ');
+  span.textContent = text;
+  return span;
+}
+
+/**
+ * Finds raw "tag" block tables (authored inside other blocks) and replaces
+ * each with a styled <span class="tag tag-{variation}"> element.
+ *
+ * Authored table format (nested inside a parent block):
+ *   Row 1 cell: tag (tag-dark)   — block name + variation
+ *   Row 2 cell: DataSet          — visible label text
+ *
+ * @param {Element} container The container to search for tag tables
+ */
+export function decorateTags(container) {
+  container.querySelectorAll('table').forEach((table) => {
+    const rows = [...table.querySelectorAll('tr')];
+    if (rows.length < 2) return;
+
+    const headerCell = rows[0].querySelector('td, th');
+    if (!headerCell) return;
+
+    const headerText = headerCell.textContent.trim().toLowerCase();
+    const tagMatch = headerText.match(/^tag(?:\s*\(([^)]+)\))?$/);
+    if (!tagMatch) return;
+
+    let classes = 'tag';
+    if (tagMatch[1]) {
+      let variation = tagMatch[1].trim();
+      if (!variation.startsWith('tag-')) {
+        variation = `tag-${variation}`;
+      }
+      classes += ` ${variation}`;
+    }
+
+    const contentCell = rows[1].querySelector('td, th');
+    if (!contentCell) return;
+    const hasContent = contentCell.textContent.trim() || contentCell.querySelector('span.icon');
+    if (!hasContent) return;
+
+    const span = document.createElement('span');
+    span.className = classes;
+    span.append(...contentCell.cloneNode(true).childNodes);
+    table.replaceWith(span);
+  });
+}
+
+/**
  * Moves all the attributes from a given elmenet to another given element.
  * @param {Element} from the element to copy attributes from
  * @param {Element} to the element to copy attributes to
@@ -80,6 +140,7 @@ export function decorateMain(main) {
   // hopefully forward compatible button decoration
   decorateButtons(main);
   decorateIcons(main);
+  decorateTags(main);
   buildAutoBlocks(main);
   decorateSections(main);
   decorateBlocks(main);
