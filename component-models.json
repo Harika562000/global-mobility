@@ -142,7 +142,7 @@
     ]
   },
   {
-    "id": "accordion-header",
+    "id": "accordion",
     "fields": [
       {
         "component": "select",
@@ -151,51 +151,24 @@
         "valueType": "string",
         "options": [
           {
-            "name": "Default (Large)",
+            "name": "Default",
             "value": ""
-          },
-          {
-            "name": "Cards",
-            "value": "cards"
           },
           {
             "name": "Small",
             "value": "small"
+          },
+          {
+            "name": "Cards",
+            "value": "cards"
           }
         ]
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "eyebrow",
-        "label": "Eyebrow Text",
-        "value": ""
-      },
-      {
-        "component": "richtext",
-        "name": "heading",
-        "label": "Heading",
-        "valueType": "string"
-      },
-      {
-        "component": "richtext",
-        "name": "description",
-        "label": "Description",
-        "valueType": "string"
       }
     ]
   },
   {
     "id": "accordion-item",
     "fields": [
-      {
-        "component": "reference",
-        "valueType": "string",
-        "name": "image",
-        "label": "Image",
-        "multi": false,
-        "description": "Used for Small variant only"
-      },
       {
         "component": "richtext",
         "name": "label",
@@ -204,9 +177,17 @@
       },
       {
         "component": "richtext",
-        "name": "body",
-        "label": "Body",
+        "name": "description",
+        "label": "Description",
         "valueType": "string"
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Image",
+        "multi": false,
+        "description": "Optional; used for Small variant"
       }
     ]
   },

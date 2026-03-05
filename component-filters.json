@@ -22,7 +22,6 @@
   {
     "id": "accordion",
     "components": [
-      "accordion-header",
       "accordion-item"
     ]
   },
