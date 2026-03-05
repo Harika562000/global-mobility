@@ -46,15 +46,18 @@ function closeAccordion(body, details) {
 
 /**
  * Detect if block content comes from Universal Editor (typed header/items).
+ * UE may add components as direct children or wrapped in one extra div.
  * @param {Element} block - Accordion block element
  * @returns {boolean}
  */
 function isUEStructure(block) {
-  const first = block.querySelector(':scope > .accordion-header, :scope > .accordion-item');
-  if (first) return true;
+  if (block.querySelector('[data-aue-model="accordion-header"], [data-aue-model="accordion-item"]')) return true;
+  if (block.querySelector(':scope > .accordion-header, :scope > .accordion-item')) return true;
   return Array.from(block.children).some((el) => (
     el.getAttribute?.('data-aue-model') === 'accordion-header'
     || el.getAttribute?.('data-aue-model') === 'accordion-item'
+    || (el.children.length === 1 && (el.firstElementChild?.getAttribute?.('data-aue-model') === 'accordion-header'
+        || el.firstElementChild?.getAttribute?.('data-aue-model') === 'accordion-item'))
   ));
 }
 
@@ -71,15 +74,20 @@ function applyVariantClass(block) {
 
 /**
  * Get header and item elements from UE structure.
+ * Looks for direct children and one level of wrapper (UE sometimes wraps new components in a div).
  * @param {Element} block - Accordion block element
  * @returns {{ headerEl: Element | null, itemEls: Element[] }}
  */
 function getUEElements(block) {
-  const selector = '[data-aue-model="accordion-header"], .accordion-header';
+  const headerSelector = '[data-aue-model="accordion-header"], .accordion-header';
   const itemSelector = '[data-aue-model="accordion-item"], .accordion-item';
-  const headerEl = block.querySelector(`:scope > ${selector}`);
-  const itemEls = Array.from(block.querySelectorAll(`:scope > ${itemSelector}`));
-  return { headerEl, itemEls };
+  let headerEl = block.querySelector(`:scope > ${headerSelector}`)
+    || block.querySelector(`:scope > div > ${headerSelector}`);
+  let itemEls = Array.from(block.querySelectorAll(`:scope > ${itemSelector}`));
+  if (itemEls.length === 0) {
+    itemEls = Array.from(block.querySelectorAll(`:scope > div > ${itemSelector}`));
+  }
+  return { headerEl: headerEl || null, itemEls };
 }
 
 /**
@@ -178,6 +186,25 @@ function buildItemRowFromUE(itemEl, isSmall) {
 }
 
 /**
+ * Get UE-style rows when they have no data-aue-model (e.g. newly added in UE).
+ * Any div with exactly 3 children matches our header/item model (3 fields).
+ * @param {Element} block - Accordion block element
+ * @returns {{ headerEl: Element | null, itemEls: Element[] } | null}
+ */
+function getUEElementsByStructure(block) {
+  const candidates = [];
+  Array.from(block.children).forEach((child) => {
+    const el = child.children.length === 3 ? child : child.firstElementChild;
+    if (el?.children?.length === 3) candidates.push(el);
+  });
+  if (candidates.length === 0) return null;
+  return {
+    headerEl: candidates[0],
+    itemEls: candidates.slice(1),
+  };
+}
+
+/**
  * Normalize block content into a single structure: { firstRow, rows }.
  * Supports both sheet (table) and UE (accordion-header / accordion-item) content.
  * @param {Element} block - Accordion block element
@@ -186,10 +213,26 @@ function buildItemRowFromUE(itemEl, isSmall) {
 function normalizeContent(block) {
   applyVariantClass(block);
 
-  if (isUEStructure(block)) {
-    const { headerEl, itemEls } = getUEElements(block);
-    const isSmall = block.classList.contains('small');
+  let headerEl = null;
+  let itemEls = [];
 
+  if (isUEStructure(block)) {
+    const found = getUEElements(block);
+    headerEl = found.headerEl;
+    itemEls = found.itemEls;
+  }
+
+  // Fallback: newly added UE components may not have data-aue-model yet; detect by structure (div with 3 children)
+  if ((!headerEl && itemEls.length === 0) && block.children.length > 0) {
+    const byStructure = getUEElementsByStructure(block);
+    if (byStructure) {
+      headerEl = byStructure.headerEl;
+      itemEls = byStructure.itemEls;
+    }
+  }
+
+  if (headerEl || itemEls.length > 0) {
+    const isSmall = block.classList.contains('small');
     const firstRow = headerEl
       ? buildHeaderRowFromUE(headerEl)
       : (() => {
@@ -197,7 +240,6 @@ function normalizeContent(block) {
         empty.classList.add('accordion-header');
         return empty;
       })();
-
     const rows = itemEls.map((itemEl) => buildItemRowFromUE(itemEl, isSmall));
     block.innerHTML = '';
     block.append(firstRow, ...rows);
@@ -209,6 +251,9 @@ function normalizeContent(block) {
 }
 
 export default function decorate(block) {
+  // Required for UE: mark block as container so "Add" shows Accordion Header / Accordion Item
+  block.setAttribute('data-aue-filter', 'accordion');
+
   const { firstRow, rows } = normalizeContent(block);
   const accordionItems = [];
   const isSmall = block.classList.contains('small');
