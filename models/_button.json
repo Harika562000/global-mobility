@@ -59,6 +59,51 @@
               "value": "tertiary"
             }
           ]
+        },
+        {
+          "component": "container",
+          "name": "isIconRequired",
+          "label": "Is icon Required",
+          "fields": [
+            {
+              "component": "boolean",
+              "name": "hasIcon",
+              "label": "Do you need icon?",
+              "description": "Enable to add an icon to the button",
+              "valueType": "boolean",
+              "value": false
+            },
+            {
+              "component": "select",
+              "name": "iconName",
+              "label": "Icon name",
+              "description": "Select an icon",
+              "valueType": "string",
+              "required": true,
+              "condition": { "===": [{ "var": ["hasIcon", false] }, true] },
+              "options": [
+                {
+                  "name": "Search",
+                  "value": "search"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "component": "container",
+          "name": "targetSettings",
+          "label": "Target settings",
+          "fields": [
+            {
+              "component": "boolean",
+              "name": "targetLink",
+              "label": "Open link in new tab",
+              "description": "Enable to open the button link in a new browser tab",
+              "valueType": "boolean",
+              "value": false
+            }
+          ]
         }
       ]
     }

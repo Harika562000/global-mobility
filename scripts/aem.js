@@ -434,6 +434,11 @@ function decorateButtons(element) {
     if (a.href !== a.textContent) {
       const up = a.parentElement;
       const twoup = a.parentElement.parentElement;
+
+      // If the next two siblings (rows) are DIVs and the second contains "true",
+      // treat it as "open in new tab" and remove that row so it doesn't render.
+
+
       if (!a.querySelector('img')) {
         if (up.childNodes.length === 1 && (up.tagName === 'P' || up.tagName === 'DIV')) {
           a.className = 'button'; // default
@@ -454,6 +459,12 @@ function decorateButtons(element) {
         ) {
           a.className = 'button secondary';
         }
+      }
+
+      const iconSiblingRow = twoup?.parentElement;
+      const iconRow = iconSiblingRow?.nextElementSibling;
+      if (iconRow?.tagName === 'DIV' && iconRow?.tagName === 'DIV' && iconRow?.textContent?.trim() === 'true') {
+        console.log('icon enabled');
       }
     }
   });
