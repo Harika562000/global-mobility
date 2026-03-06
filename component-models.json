@@ -251,74 +251,80 @@
         "description": "Optional."
       },
       {
-        "component": "text",
-        "name": "ctaLabel",
-        "label": "Primary CTA title",
-        "valueType": "string",
-        "description": "Optional. Only 1 CTA for black-colored."
+        "component": "aem-content",
+        "name": "ctaLink",
+        "label": "Primary CTA link"
       },
       {
         "component": "text",
-        "name": "ctaUrl",
-        "label": "Primary CTA link",
-        "valueType": "string",
-        "description": "Optional."
+        "name": "ctaLinkText",
+        "label": "Primary CTA text"
+      },
+      {
+        "component": "text",
+        "name": "ctaLinkTitle",
+        "label": "Primary CTA title"
       },
       {
         "component": "select",
-        "name": "ctaStyle",
-        "label": "Primary CTA style",
-        "valueType": "string",
+        "name": "ctaLinkType",
+        "label": "Primary CTA type",
         "options": [
           {
-            "name": "Primary",
+            "name": "default",
+            "value": ""
+          },
+          {
+            "name": "primary",
             "value": "primary"
           },
           {
-            "name": "Secondary",
+            "name": "secondary",
             "value": "secondary"
           },
           {
-            "name": "Inverted",
+            "name": "inverted",
             "value": "inverted"
           }
-        ],
-        "description": "Optional."
+        ]
+      },
+      {
+        "component": "aem-content",
+        "name": "secondaryCtaLink",
+        "label": "Secondary CTA link"
       },
       {
         "component": "text",
-        "name": "secondaryCtaLabel",
-        "label": "Secondary CTA title",
-        "valueType": "string",
-        "description": "Optional. Not used in black-colored variation."
+        "name": "secondaryCtaLinkText",
+        "label": "Secondary CTA text"
       },
       {
         "component": "text",
-        "name": "secondaryCtaUrl",
-        "label": "Secondary CTA link",
-        "valueType": "string",
-        "description": "Optional."
+        "name": "secondaryCtaLinkTitle",
+        "label": "Secondary CTA title"
       },
       {
         "component": "select",
-        "name": "secondaryCtaStyle",
-        "label": "Secondary CTA style",
-        "valueType": "string",
+        "name": "secondaryCtaLinkType",
+        "label": "Secondary CTA type",
         "options": [
           {
-            "name": "Primary",
+            "name": "default",
+            "value": ""
+          },
+          {
+            "name": "primary",
             "value": "primary"
           },
           {
-            "name": "Secondary",
+            "name": "secondary",
             "value": "secondary"
           },
           {
-            "name": "Inverted",
+            "name": "inverted",
             "value": "inverted"
           }
-        ],
-        "description": "Optional."
+        ]
       },
       {
         "component": "text",

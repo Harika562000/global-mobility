@@ -70,56 +70,10 @@
           "description": "Optional."
         },
         {
-          "component": "text",
-          "name": "ctaLabel",
-          "label": "Primary CTA title",
-          "valueType": "string",
-          "description": "Optional. Only 1 CTA for black-colored."
+          "...": "../../models/_button-fields.json#/primaryFields"
         },
         {
-          "component": "text",
-          "name": "ctaUrl",
-          "label": "Primary CTA link",
-          "valueType": "string",
-          "description": "Optional."
-        },
-        {
-          "component": "select",
-          "name": "ctaStyle",
-          "label": "Primary CTA style",
-          "valueType": "string",
-          "options": [
-            { "name": "Primary", "value": "primary" },
-            { "name": "Secondary", "value": "secondary" },
-            { "name": "Inverted", "value": "inverted" }
-          ],
-          "description": "Optional."
-        },
-        {
-          "component": "text",
-          "name": "secondaryCtaLabel",
-          "label": "Secondary CTA title",
-          "valueType": "string",
-          "description": "Optional. Not used in black-colored variation."
-        },
-        {
-          "component": "text",
-          "name": "secondaryCtaUrl",
-          "label": "Secondary CTA link",
-          "valueType": "string",
-          "description": "Optional."
-        },
-        {
-          "component": "select",
-          "name": "secondaryCtaStyle",
-          "label": "Secondary CTA style",
-          "valueType": "string",
-          "options": [
-            { "name": "Primary", "value": "primary" },
-            { "name": "Secondary", "value": "secondary" },
-            { "name": "Inverted", "value": "inverted" }
-          ],
-          "description": "Optional."
+          "...": "../../models/_button-fields.json#/secondaryFields"
         },
         {
           "component": "text",
