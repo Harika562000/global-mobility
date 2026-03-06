@@ -63,6 +63,27 @@
             { "name": "Small", "value": "small" },
             { "name": "Cards", "value": "cards" }
           ]
+        },
+        {
+          "component": "text",
+          "name": "eyebrow",
+          "label": "Eyebrow",
+          "valueType": "string",
+          "value": ""
+        },
+        {
+          "component": "richtext",
+          "name": "heading",
+          "label": "Heading",
+          "valueType": "string",
+          "value": ""
+        },
+        {
+          "component": "richtext",
+          "name": "description",
+          "label": "Description",
+          "valueType": "string",
+          "value": ""
         }
       ]
     },
@@ -128,7 +149,6 @@
     {
       "id": "accordion",
       "components": [
-        "accordion-header",
         "accordion-item"
       ]
     }

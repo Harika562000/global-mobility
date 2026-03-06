@@ -3,6 +3,7 @@
  * Based on: https://www.hlx.live/developer/block-collection/accordion
  */
 
+import { readBlockConfig } from '../../scripts/aem.js';
 import { moveInstrumentation, eyebrowDecorator } from '../../scripts/scripts.js';
 
 function openAccordion(body, details) {
@@ -76,6 +77,26 @@ function buildAccordionHeader(headerRow) {
   return header;
 }
 
+function buildAccordionHeaderFromConfig(config) {
+  const header = document.createElement('div');
+  header.className = 'accordion-header';
+  const eyebrow = eyebrowDecorator(config.eyebrow || '', 'accordion-header-eyebrow');
+  if (eyebrow) header.append(eyebrow);
+  if (config.heading) {
+    const headingEl = document.createElement('h2');
+    headingEl.className = 'accordion-header-heading';
+    headingEl.innerHTML = config.heading;
+    header.append(headingEl);
+  }
+  if (config.description) {
+    const descEl = document.createElement('div');
+    descEl.className = 'accordion-header-description';
+    descEl.innerHTML = config.description;
+    header.append(descEl);
+  }
+  return header;
+}
+
 export default function decorate(block) {
   const accordionItems = [];
   const isSmall = block.classList.contains('small');
@@ -87,25 +108,34 @@ export default function decorate(block) {
     imagePanel.className = 'accordion-image-panel';
   }
 
+  const config = readBlockConfig(block);
+  const hasConfigHeader = !!(config.eyebrow || config.heading || config.description);
+  const configRowCount = hasConfigHeader ? 4 : 0;
+
   const rows = [...block.children];
   const firstRow = rows[0];
 
   const thirdCellText = firstRow?.children[2]?.textContent?.trim().toLowerCase();
   const thirdIsBoolean = thirdCellText === 'true' || thirdCellText === 'false';
-  const hasHeader = rows.length >= 2
+  const hasHeaderRow = rows.length >= 2
     && firstRow
     && firstRow.children.length === 3
     && !thirdIsBoolean;
 
+  const hasHeader = hasHeaderRow || hasConfigHeader;
+
   const listWrapper = (hasHeader || isSmall) ? document.createElement('div') : null;
   if (listWrapper) listWrapper.className = 'accordion-list';
 
-  if (hasHeader) {
+  if (hasConfigHeader) {
+    const header = buildAccordionHeaderFromConfig(config);
+    listWrapper.prepend(header);
+  } else if (hasHeaderRow) {
     const header = buildAccordionHeader(firstRow);
     listWrapper.prepend(header);
   }
 
-  const itemRows = hasHeader ? rows.slice(1) : rows;
+  const itemRows = hasConfigHeader ? rows.slice(configRowCount) : (hasHeaderRow ? rows.slice(1) : rows);
 
   itemRows.forEach((row, i) => {
     const label = row.children[0];
