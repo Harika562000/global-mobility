@@ -64,6 +64,8 @@
           "component": "container",
           "name": "isIconRequired",
           "label": "Is icon Required",
+          "valueType": "string",
+          "collapsible": true,
           "fields": [
             {
               "component": "boolean",
@@ -94,6 +96,8 @@
           "component": "container",
           "name": "targetSettings",
           "label": "Target settings",
+          "valueType": "string",
+          "collapsible": true,
           "fields": [
             {
               "component": "boolean",
