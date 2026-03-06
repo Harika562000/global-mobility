@@ -44,7 +44,7 @@
         {
           "component": "richtext",
           "name": "description",
-          "label": "Description",
+          "label": "Long Description",
           "valueType": "string"
         },
         {
