@@ -1,0 +1,49 @@
+/* Logo Set Block */
+
+.logo-set .logo-set-item picture,
+.logo-set .logo-set-item img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-height: var(--size-476, 476px);
+}
+
+@media (width >= 510px) {
+    .logo-set .logo-set-item picture,
+    .logo-set .logo-set-item img {
+        max-height: var(--size728, 728px);
+    }
+}
+
+@media (width >= 720px) {
+    .logo-set .logo-set-item picture,
+    .logo-set .logo-set-item img {
+        max-height: var(--size372, 372px);
+    }
+}
+
+@media (width >= 1025px) {
+    .logo-set .logo-set-item picture,
+    .logo-set .logo-set-item img {
+        max-height: var(--size409, 409px);
+    }
+}
+
+/* Responsive image swap: mobile (second) by default, desktop (first) at 720px+ */
+.logo-set.logo-set-responsive .logo-set-item.desktop-image {
+    display: none;
+}
+
+.logo-set.logo-set-responsive .logo-set-item.mobile-image {
+    display: block;
+}
+
+@media (width >= 720px) {
+    .logo-set.logo-set-responsive .logo-set-item.desktop-image {
+        display: block;
+    }
+
+    .logo-set.logo-set-responsive .logo-set-item.mobile-image {
+        display: none;
+    }
+}

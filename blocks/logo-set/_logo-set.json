@@ -38,8 +38,15 @@
         {
           "component": "reference",
           "valueType": "string",
-          "name": "image",
-          "label": "Image",
+          "name": "desktopImage",
+          "label": "Desktop Image",
+          "multi": false
+        },
+        {
+          "component": "reference",
+          "valueType": "string",
+          "name": "mobileImage",
+          "label": "Mobile Image",
           "multi": false
         },
         {
