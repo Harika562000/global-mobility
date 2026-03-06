@@ -273,7 +273,7 @@
     ]
   },
   {
-    "id": "logo-set",
+    "id": "logo",
     "fields": [
       {
         "component": "reference",

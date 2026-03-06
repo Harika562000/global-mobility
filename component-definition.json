@@ -159,14 +159,14 @@
           }
         },
         {
-          "title": "logo-set",
+          "title": "Logo Set",
           "id": "logo-set",
           "plugins": {
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
-                  "name": "logo-set",
+                  "name": "Logo Set",
                   "filter": "logo-set"
                 }
               }
@@ -174,15 +174,15 @@
           }
         },
         {
-          "title": "logo-set",
-          "id": "logo-set",
+          "title": "Logo",
+          "id": "logo",
           "plugins": {
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block/item",
                 "template": {
-                  "name": "logo-set",
-                  "model": "logo-set"
+                  "name": "Logo",
+                  "model": "logo"
                 }
               }
             }
