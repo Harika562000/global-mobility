@@ -145,7 +145,6 @@
         {
           "title": "Hero",
           "id": "hero",
-          "model": "hero",
           "plugins": {
             "xwalk": {
               "page": {

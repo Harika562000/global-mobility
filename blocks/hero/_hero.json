@@ -3,7 +3,6 @@
     {
       "title": "Hero",
       "id": "hero",
-      "model": "hero",
       "plugins": {
         "xwalk": {
           "page": {
@@ -27,17 +26,19 @@
           "label": "Variation",
           "valueType": "string",
           "options": [
-            { "name": "Default (Em Accent)", "value": "" },
-            { "name": "Two Colored Right", "value": "two-colored-right" },
-            { "name": "Black Colored Right", "value": "black-colored-right" }
-          ]
+            { "name": "Image as background", "value": "" },
+            { "name": "Image on the right (two-colored)", "value": "two-colored-right" },
+            { "name": "Image on the right (black-colored)", "value": "black-colored-right" }
+          ],
+          "description": "Image as background: 2 CTAs. Two-colored: 2 CTAs. Black-colored: Tag, Eyebrow, 1 CTA."
         },
         {
           "component": "reference",
           "valueType": "string",
           "name": "image",
           "label": "Image",
-          "multi": false
+          "multi": false,
+          "description": "Required for all variations."
         },
         {
           "component": "text",
@@ -50,45 +51,83 @@
           "component": "text",
           "valueType": "string",
           "name": "eyebrow",
-          "label": "Eyebrow Text",
-          "value": ""
+          "label": "Eyebrow",
+          "value": "",
+          "description": "Optional. Black-colored variation only."
         },
         {
           "component": "richtext",
           "name": "heading",
           "label": "Heading",
           "valueType": "string",
-          "description": "Use italic for accent/gradient text"
+          "description": "Required. Use italic for accent/gradient (background variation)."
         },
         {
           "component": "richtext",
           "name": "description",
-          "label": "Description",
-          "valueType": "string"
+          "label": "Sub-heading",
+          "valueType": "string",
+          "description": "Optional."
         },
         {
           "component": "text",
           "name": "ctaLabel",
-          "label": "Primary CTA Label",
-          "valueType": "string"
+          "label": "Primary CTA title",
+          "valueType": "string",
+          "description": "Optional. Only 1 CTA for black-colored."
         },
         {
           "component": "text",
           "name": "ctaUrl",
-          "label": "Primary CTA URL",
-          "valueType": "string"
+          "label": "Primary CTA link",
+          "valueType": "string",
+          "description": "Optional."
+        },
+        {
+          "component": "select",
+          "name": "ctaStyle",
+          "label": "Primary CTA style",
+          "valueType": "string",
+          "options": [
+            { "name": "Primary", "value": "primary" },
+            { "name": "Secondary", "value": "secondary" },
+            { "name": "Inverted", "value": "inverted" }
+          ],
+          "description": "Optional."
         },
         {
           "component": "text",
           "name": "secondaryCtaLabel",
-          "label": "Secondary CTA Label",
-          "valueType": "string"
+          "label": "Secondary CTA title",
+          "valueType": "string",
+          "description": "Optional. Not used in black-colored variation."
         },
         {
           "component": "text",
           "name": "secondaryCtaUrl",
-          "label": "Secondary CTA URL",
-          "valueType": "string"
+          "label": "Secondary CTA link",
+          "valueType": "string",
+          "description": "Optional."
+        },
+        {
+          "component": "select",
+          "name": "secondaryCtaStyle",
+          "label": "Secondary CTA style",
+          "valueType": "string",
+          "options": [
+            { "name": "Primary", "value": "primary" },
+            { "name": "Secondary", "value": "secondary" },
+            { "name": "Inverted", "value": "inverted" }
+          ],
+          "description": "Optional."
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "tag",
+          "label": "Tag",
+          "value": "",
+          "description": "Optional. Black-colored variation only."
         }
       ]
     }
