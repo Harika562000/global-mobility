@@ -232,10 +232,10 @@
             "value": false
           },
           {
-            "component": "text",
+            "component": "select",
             "name": "iconName",
             "label": "Icon name",
-            "description": "Enter the icon name",
+            "description": "Select an icon",
             "valueType": "string",
             "required": true,
             "condition": {
@@ -248,7 +248,13 @@
                 },
                 true
               ]
-            }
+            },
+            "options": [
+              {
+                "name": "Search",
+                "value": "search"
+              }
+            ]
           }
         ]
       },

@@ -31,7 +31,7 @@ export default function decorate(block) {
   }
 
   // rows[5] = CTA URL (rendered as anchor by UE)
-  const ctaUrlRow = rows[5];
+  const ctaUrlRow = rows[4];
   if (ctaUrlRow) {
     ctaUrlRow.classList.add('banner-cta');
   }

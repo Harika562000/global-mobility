@@ -437,7 +437,6 @@ function decorateButtons(element) {
       if (!a.querySelector('img')) {
         if (up.childNodes.length === 1 && (up.tagName === 'P' || up.tagName === 'DIV')) {
           a.className = 'button'; // default
-          up.classList.add('button-container');
         }
         if (
           up.childNodes.length === 1
@@ -446,7 +445,6 @@ function decorateButtons(element) {
           && twoup.tagName === 'P'
         ) {
           a.className = 'button primary';
-          twoup.classList.add('button-container');
         }
         if (
           up.childNodes.length === 1
@@ -455,11 +453,15 @@ function decorateButtons(element) {
           && twoup.tagName === 'P'
         ) {
           a.className = 'button secondary';
-          twoup.classList.add('button-container');
         }
       }
     }
   });
+
+  //<span class="icon icon-download" aria-hidden="true" role="presentation"><img data-icon-name="download" src="/icons/download.svg" alt="" loading="lazy"></span>
+
+  //icon icon-download
+  //<img data-icon-name="download" src="/icons/download.svg" alt="" loading="lazy">
 
   /* Group 2+ adjacent button <p> elements into a <div class="button-container"> wrapper.
      Single buttons remain unwrapped (no button-container class).
