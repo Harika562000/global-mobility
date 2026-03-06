@@ -273,7 +273,7 @@
     ]
   },
   {
-    "id": "logo-set",
+    "id": "card",
     "fields": [
       {
         "component": "reference",
