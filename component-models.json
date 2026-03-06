@@ -154,13 +154,6 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "iconAlt",
-        "label": "Icon Alt Text",
-        "value": ""
-      },
-      {
-        "component": "text",
-        "valueType": "string",
         "name": "eyebrow",
         "label": "Eyebrow Text",
         "value": ""

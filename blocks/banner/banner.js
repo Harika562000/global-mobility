@@ -4,75 +4,53 @@ import { eyebrowDecorator } from '../../scripts/scripts.js';
  * Decorates the banner block: icon, eyebrow, heading, description, CTA.
  * Responsive card Layout per Figma (Responsive / Banner).
  *
- * UE model field order: icon, iconAlt, eyebrow, heading, description, ctaLabel, ctaUrl
- * Each field maps to a column: cols[0]=icon, cols[1]=iconAlt, cols[2]=eyebrow,
- * cols[3]=heading, cols[4]=description, cols[5]=ctaLabel, cols[6]=ctaUrl
+ * UE model field order: icon, eyebrow, heading, description, ctaLabel, ctaUrl
+ * Each field renders as a separate row:
+ * rows[0]=icon, rows[1]=eyebrow, rows[2]=heading,
+ * rows[3]=description, rows[4]=ctaLabel, rows[5]=ctaUrl
  */
 export default function decorate(block) {
-  const row = block.querySelector(':scope > div');
-  if (!row) return;
+  const rows = [...block.querySelectorAll(':scope > div')];
+  if (!rows.length) return;
 
-  row.classList.add('banner-content');
-  const cols = [...row.querySelectorAll(':scope > div')];
-
-  // cols[0] = icon image
-  const iconCol = cols[0];
-  if (iconCol) {
-    iconCol.classList.add('banner-icon');
+  // rows[0] = icon image
+  const iconRow = rows[0];
+  if (iconRow) {
+    iconRow.classList.add('banner-icon');
   }
 
-  // cols[1] = icon alt (consumed by image, remove from visual output)
-  const iconAltCol = cols[1];
-  if (iconAltCol) {
-    const altText = iconAltCol.textContent.trim();
-    const img = iconCol?.querySelector('img');
-    if (img && altText) {
-      img.alt = altText;
-    }
-    iconAltCol.remove();
-  }
-
-  // cols[2] = eyebrow text
-  const eyebrowCol = cols[2];
-  if (eyebrowCol) {
-    eyebrowCol.classList.add('banner-eyebrow');
-    const p = eyebrowCol.querySelector('p');
+  // rows[1] = eyebrow text
+  const eyebrowRow = rows[1];
+  if (eyebrowRow) {
+    eyebrowRow.classList.add('banner-eyebrow');
+    const p = eyebrowRow.querySelector('p');
     if (p?.textContent.trim()) {
       const formatted = eyebrowDecorator(p, 'accent-color');
       if (formatted) p.replaceWith(formatted);
     }
   }
 
-  // cols[3] = heading
-  const headingCol = cols[3];
-  if (headingCol) {
-    headingCol.classList.add('banner-heading');
+  // rows[2] = heading
+  const headingRow = rows[2];
+  if (headingRow) {
+    headingRow.classList.add('banner-heading');
   }
 
-  // cols[4] = description
-  const descCol = cols[4];
-  if (descCol) {
-    descCol.classList.add('banner-description');
+  // rows[3] = description
+  const descRow = rows[3];
+  if (descRow) {
+    descRow.classList.add('banner-description');
   }
 
-  // cols[5] & cols[6] = CTA label & URL
-  const ctaLabelCol = cols[5];
-  const ctaUrlCol = cols[6];
-  if (ctaLabelCol && ctaUrlCol) {
-    const label = ctaLabelCol.textContent.trim();
-    const url = ctaUrlCol.textContent.trim();
-    if (label && url) {
-      const ctaWrapper = document.createElement('div');
-      ctaWrapper.classList.add('banner-cta');
-      const link = document.createElement('a');
-      link.href = url;
-      link.textContent = label;
-      link.classList.add('button');
-      ctaWrapper.append(link);
-      ctaLabelCol.replaceWith(ctaWrapper);
-    } else {
-      ctaLabelCol.remove();
-    }
-    ctaUrlCol.remove();
+  // rows[4] = CTA label
+  const ctaLabelRow = rows[4];
+  if (ctaLabelRow) {
+    ctaLabelRow.classList.add('banner-cta-label');
+  }
+
+  // rows[5] = CTA URL (rendered as anchor by UE)
+  const ctaUrlRow = rows[5];
+  if (ctaUrlRow) {
+    ctaUrlRow.classList.add('banner-cta');
   }
 }
