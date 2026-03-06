@@ -104,10 +104,17 @@
   padding-bottom: var(--spacing-700);
 }
 
-.accordion.cards .accordion-item-body .accordion-item-content ul {
-  display: flex;
+/* When content has a ul, the ul is a 3-column grid; when no ul (e.g. only p's), content is a 3-column grid */
+.accordion.cards .accordion-item-body .accordion-item-content:has(ul) ul {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--spacing-600);
-  flex-direction: column;
+}
+
+.accordion.cards .accordion-item-body .accordion-item-content:not(:has(ul)) {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-400);
 }
 
 .accordion.cards .accordion-item-label > :is(p, h2, h3, h4, h5, h6) {
@@ -183,7 +190,7 @@
     padding-right: var(--responsive-spacing-horizontal);
   }
 
-  .accordion.cards .accordion-item-body .accordion-item-content ul {
+  .accordion.cards .accordion-item-body .accordion-item-content:has(ul) ul {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
   }

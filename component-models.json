@@ -217,21 +217,24 @@
         "name": "eyebrow",
         "label": "Eyebrow",
         "valueType": "string",
-        "value": ""
+        "value": "",
+        "required": true
       },
       {
         "component": "richtext",
         "name": "heading",
         "label": "Heading",
         "valueType": "string",
-        "value": ""
+        "value": "",
+        "required": true
       },
       {
         "component": "richtext",
         "name": "description",
         "label": "Description",
         "valueType": "string",
-        "value": ""
+        "value": "",
+        "description": "Optional"
       }
     ]
   },
@@ -269,14 +272,16 @@
         "valueType": "string",
         "name": "summary",
         "value": "",
-        "label": "Accordion Headline"
+        "label": "Accordion Headline",
+        "required": true
       },
       {
         "component": "richtext",
         "name": "text",
         "value": "",
         "label": "Accordion Text",
-        "valueType": "string"
+        "valueType": "string",
+        "required": true
       },
       {
         "component": "boolean",
@@ -288,6 +293,7 @@
         "valueType": "string",
         "name": "image",
         "label": "Image (Small variant)",
+        "description": "Required for Small Accordion variant only",
         "multi": false
       }
     ]
