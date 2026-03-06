@@ -460,18 +460,7 @@ function decorateButtons(element) {
 
       // If the visible label is just the URL (same as href), remove it; use title/aria-label.
       const labelText = a.textContent.trim();
-      const hrefAttr = (a.getAttribute('href') || '').trim();
-      const normalizeUrlText = (s) => s
-        .toLowerCase()
-        .replace(/^https?:\/\//, '')
-        .replace(/\/$/, '');
-
-      const shouldRemoveLabel = !!labelText && (
-        labelText === hrefAttr
-        || labelText === a.href
-        || normalizeUrlText(labelText) === normalizeUrlText(hrefAttr)
-        || normalizeUrlText(labelText) === normalizeUrlText(a.href)
-      );
+      const shouldRemoveLabel = labelText.toLowerCase() === 'button';
 
       if (shouldRemoveLabel) {
         // Remove the visible label entirely (including nested tags like <u>),

@@ -29,7 +29,7 @@
           "name": "labelRequired",
           "label": "Label required",
           "valueType": "boolean",
-          "value": true
+          "value": false
         },
         {
           "component": "text",
@@ -38,6 +38,21 @@
           "valueType": "string",
           "required": true,
           "condition": { "===": [{ "var": ["labelRequired", true] }, true] }
+        },
+        {
+          "component": "boolean",
+          "name": "hasIcon",
+          "label": "Do you need icon?",
+          "valueType": "boolean",
+          "value": false
+        },
+        {
+          "component": "text",
+          "name": "iconName",
+          "label": "Icon name",
+          "valueType": "string",
+          "required": true,
+          "condition": { "===": [{ "var": ["hasIcon", false] }, true] }
         },
         {
           "component": "text",
