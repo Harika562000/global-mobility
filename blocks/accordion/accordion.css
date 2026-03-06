@@ -1,0 +1,221 @@
+/* Default Accordion (Large variant) */
+
+.accordion .accordion-item {
+  border-bottom: var(--border-width-100) solid var(--color-grey-400);
+  padding-bottom: var(--spacing-400);
+  margin-bottom: var(--spacing-900);
+}
+
+.accordion .accordion-item-label {
+  font-weight: var(--font-weight-medium);
+  font-size: var(--responsive-font-body-600);
+  line-height: var(--responsive-line-height-body-800);
+  color: var(--color-black);
+}
+
+.accordion .accordion-item-label::-webkit-details-marker {
+  display: none;
+}
+
+.accordion details summary {
+  cursor: pointer;
+  list-style: none;
+  position: relative;
+}
+
+.accordion .accordion-item-body {
+  margin: 0;
+  font-size: var(--body-font-size-m);
+  color: var(--color-grey-700);
+  height: 0;
+  overflow: hidden;
+  transition: height 0.3s ease;
+}
+
+.accordion .accordion-item-body-inner {
+  padding-top: var(--spacing-600);
+  font-size: var(--responsive-font-body-400);
+  line-height: var(--responsive-line-height-26);
+}
+
+.accordion .accordion-item-body-inner li::marker {
+  font-size: 0.65em;
+}
+
+.accordion details summary > :is(p, h2, h3, h4, h5, h6)::after {
+  content: url('/icons/plus.svg');
+  position: absolute;
+  right: 0;
+  transform: rotate(0deg);
+  transition: transform 0.3s ease;
+}
+
+.accordion details[open] summary > :is(p, h2, h3, h4, h5, h6)::after {
+  transform: rotate(45deg);
+}
+
+.accordion .accordion-header {
+  margin-bottom: var(--spacing-1100);
+}
+
+.accordion .accordion-header-eyebrow {
+  display: block;
+  color: var(--typography-accent-1);
+  margin-bottom: var(--spacing-600);
+}
+
+.accordion .accordion-header-heading {
+  margin: 0;
+  font-size: var(--font-size-700);
+}
+
+.accordion .accordion-header-description {
+  margin-top: var(--spacing-600);
+  font-size: var(--responsive-font-body-400);
+  color: var(--typography-secondary);
+}
+
+/* Cards Variant */
+
+.accordion.cards .accordion-header {
+  margin-bottom: var(--spacing-900);
+}
+
+.accordion.cards .accordion-item {
+  padding: var(--size-20);
+  margin-bottom: 0;
+  border-radius: var(--radius-sm);
+}
+
+.accordion.cards .accordion-item:not(:last-child) {
+  margin-bottom: calc(-1 * var(--size-12));
+}
+
+.accordion.cards .accordion-item-body {
+  padding-left: var(--size-20);
+  color: var(--typography-inverse);
+}
+
+.accordion.cards .accordion-item-body-inner {
+  padding-bottom: var(--spacing-700);
+}
+
+.accordion.cards .accordion-item-body-inner ul {
+  display: flex;
+  gap: var(--spacing-600);
+  flex-direction: column;
+}
+
+.accordion.cards .accordion-item-label > :is(p, h2, h3, h4, h5, h6) {
+  font-size: var(--type-header-500-size);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-30);
+  opacity: var(--opacity-50);
+  transition: opacity 0.3s ease;
+  color: var(--typography-inverse);
+  padding: var(--spacing-200) calc(var(--size-12) + var(--size-29)) var(--spacing-200) 0;
+}
+
+.accordion.cards details summary > :is(p, h2, h3, h4, h5, h6)::after {
+  content: '';
+  display: block;
+  width: var(--size-29);
+  height: var(--size-29);
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  mask: url('/icons/plus-thin.svg') center / contain no-repeat;
+  background-color: currentcolor;
+  transition: opacity 0.3s ease;
+}
+
+.accordion.cards details[open] summary > :is(p, h2, h3, h4, h5, h6)::after {
+  opacity: 0;
+  transform: translateY(-50%);
+}
+
+.accordion.cards .accordion-item:nth-child(3n+2) .accordion-item-label > :is(p, h2, h3, h4, h5, h6) {
+  color: var(--color-brand-200);
+}
+
+.accordion.cards details[open] .accordion-item-label > :is(p, h2, h3, h4, h5, h6) {
+  opacity: var(--opacity-100) 0;
+}
+
+.accordion.cards .accordion-item:nth-child(3n+2) .accordion-item-body {
+  color: var(--typography-black);
+}
+
+.accordion.cards .accordion-item:nth-child(3n+2) {
+  background-color: var(--background-color-accent);
+}
+
+.accordion.cards .accordion-item:nth-child(3n+3) {
+  background-color: var(--graphics-accent-4);
+}
+
+.accordion.cards .accordion-item:nth-child(3n+4) {
+  background-color: var(--surface-dark);
+}
+
+/* Small Variant */
+
+.accordion.small .accordion-image-panel {
+  display: none;
+}
+
+@media (width >= 720px) {
+  .accordion .accordion-header-heading {
+    font-size: var(--font-size-800);
+  }
+
+  .accordion.cards .accordion-item-body-inner {
+    padding-right: var(--responsive-spacing-horizontal);
+  }
+
+  .accordion.cards .accordion-item-body-inner ul {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .accordion.cards .accordion-item-label > :is(p, h2, h3, h4, h5, h6) {
+    font-size: var(--type-header-800-size);
+    font-weight: var(--type-header-800-weight);
+    line-height: var(--type-header-800-line-height);
+  }
+
+  .accordion.cards .accordion-item {
+    padding: var(--size-20) var(--spacing-700);
+  }
+}
+
+@media (width >= 1025px) {
+  .accordion.small {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--spacing-1100);
+    align-items: center;
+  }
+
+  .accordion.small .accordion-image-panel {
+    position: relative;
+    display: block;
+  }
+
+  .accordion.small .accordion-item-image {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+
+  .accordion.small .accordion-item-image.is-active {
+    opacity: 1;
+    position: relative;
+  }
+
+  .accordion.small .accordion-header {
+    grid-column: 2;
+  }
+}

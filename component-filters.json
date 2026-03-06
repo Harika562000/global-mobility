@@ -16,7 +16,15 @@
       "banner",
       "cards",
       "columns",
+      "accordion",
       "fragment"
+    ]
+  },
+  {
+    "id": "accordion",
+    "components": [
+      "accordion-header",
+      "accordion-item"
     ]
   },
   {
