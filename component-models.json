@@ -184,12 +184,12 @@
     "fields": [
       {
         "component": "text",
-        "name": "heading",
-        "label": "Heading",
+        "name": "eyebrow",
+        "label": "Eyebrow",
         "valueType": "string"
       },
       {
-        "component": "richtext",
+        "component": "text",
         "name": "description",
         "label": "Description",
         "valueType": "string"
