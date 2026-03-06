@@ -43,6 +43,30 @@
       },
       {
         "component": "container",
+        "name": "isIconRequired",
+        "label": "Is icon Required",
+        "fields": [
+          {
+            "component": "boolean",
+            "name": "hasIcon",
+            "label": "Do you need icon?",
+            "description": "Enable to add an icon to the button",
+            "valueType": "boolean",
+            "value": false
+          },
+          {
+            "component": "text",
+            "name": "iconName",
+            "label": "Icon name",
+            "description": "Enter the icon name",
+            "valueType": "string",
+            "required": true,
+            "condition": { "===": [{ "var": ["hasIcon", false] }, true] }
+          }
+        ]
+      },
+      {
+        "component": "container",
         "name": "targetSettings",
         "label": "Target settings",
         "fields": [
