@@ -99,6 +99,21 @@
           }
         },
         {
+          "title": "Accordion Header",
+          "id": "accordion-header",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "Accordion Header",
+                  "model": "accordion-header"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Accordion Item",
           "id": "accordion-item",
           "plugins": {

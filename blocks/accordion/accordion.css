@@ -54,7 +54,32 @@
   transform: rotate(45deg);
 }
 
+.accordion .accordion-header {
+  margin-bottom: var(--spacing-1100);
+}
+
+.accordion .accordion-header-eyebrow {
+  display: block;
+  color: var(--typography-accent-1);
+  margin-bottom: var(--spacing-600);
+}
+
+.accordion .accordion-header-heading {
+  margin: 0;
+  font-size: var(--font-size-700);
+}
+
+.accordion .accordion-header-description {
+  margin-top: var(--spacing-600);
+  font-size: var(--responsive-font-body-400);
+  color: var(--typography-secondary);
+}
+
 /* Cards Variant */
+
+.accordion.cards .accordion-header {
+  margin-bottom: var(--spacing-900);
+}
 
 .accordion.cards .accordion-item {
   padding: var(--size-20);
@@ -141,6 +166,10 @@
 }
 
 @media (width >= 720px) {
+  .accordion .accordion-header-heading {
+    font-size: var(--font-size-800);
+  }
+
   .accordion.cards .accordion-item-body .accordion-item-content {
     padding-right: var(--responsive-spacing-horizontal);
   }
@@ -184,5 +213,9 @@
   .accordion.small .accordion-item-image.is-active {
     opacity: 1;
     position: relative;
+  }
+
+  .accordion.small .accordion-header {
+    grid-column: 2;
   }
 }

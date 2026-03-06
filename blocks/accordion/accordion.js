@@ -3,7 +3,7 @@
  * Based on: https://www.hlx.live/developer/block-collection/accordion
  */
 
-import { moveInstrumentation } from '../../scripts/scripts.js';
+import { moveInstrumentation, eyebrowDecorator } from '../../scripts/scripts.js';
 
 function openAccordion(body, details) {
   const inner = body.firstElementChild;
@@ -38,6 +38,44 @@ function closeAccordion(body, details) {
   body.addEventListener('transitionend', onEnd);
 }
 
+function buildAccordionHeader(headerRow) {
+  const header = document.createElement('div');
+  header.className = 'accordion-header';
+
+  const cells = [...headerRow.children].filter((c) => c.tagName === 'DIV');
+  const isThreeColumn = cells.length >= 3;
+
+  if (isThreeColumn) {
+    const [eyebrowCell, headingCell, descCell] = cells;
+    const eyebrow = eyebrowDecorator(eyebrowCell, 'accordion-header-eyebrow');
+    if (eyebrow) header.append(eyebrow);
+    const headingEl = headingCell.querySelector('h1, h2, h3, h4, h5, h6');
+    if (headingEl) {
+      headingEl.classList.add('accordion-header-heading');
+      header.append(headingEl);
+    } else {
+      const wrap = document.createElement('h2');
+      wrap.className = 'accordion-header-heading';
+      wrap.append(...headingCell.childNodes);
+      header.append(wrap);
+    }
+    const descWrap = descCell.cloneNode(true);
+    descWrap.classList.add('accordion-header-description');
+    header.append(descWrap);
+  } else {
+    const eyebrowSource = headerRow.querySelector('p');
+    const eyebrow = eyebrowDecorator(eyebrowSource, 'accordion-header-eyebrow');
+    if (eyebrow && eyebrowSource) eyebrowSource.replaceWith(eyebrow);
+    const heading = headerRow.querySelector('h1, h2, h3, h4, h5, h6');
+    if (heading) heading.classList.add('accordion-header-heading');
+    const description = headerRow.querySelector('p');
+    if (description) description.classList.add('accordion-header-description');
+    while (headerRow.firstElementChild) header.append(headerRow.firstElementChild);
+  }
+
+  return header;
+}
+
 export default function decorate(block) {
   const accordionItems = [];
   const isSmall = block.classList.contains('small');
@@ -49,12 +87,27 @@ export default function decorate(block) {
     imagePanel.className = 'accordion-image-panel';
   }
 
-  const listWrapper = isSmall ? document.createElement('div') : null;
+  const rows = [...block.children];
+  const firstRow = rows[0];
+
+  const thirdCellText = firstRow?.children[2]?.textContent?.trim().toLowerCase();
+  const thirdIsBoolean = thirdCellText === 'true' || thirdCellText === 'false';
+  const hasHeader = rows.length >= 2
+    && firstRow
+    && firstRow.children.length === 3
+    && !thirdIsBoolean;
+
+  const listWrapper = (hasHeader || isSmall) ? document.createElement('div') : null;
   if (listWrapper) listWrapper.className = 'accordion-list';
 
-  const rows = [...block.children];
+  if (hasHeader) {
+    const header = buildAccordionHeader(firstRow);
+    listWrapper.prepend(header);
+  }
 
-  rows.forEach((row, i) => {
+  const itemRows = hasHeader ? rows.slice(1) : rows;
+
+  itemRows.forEach((row, i) => {
     const label = row.children[0];
     const body = row.children[1];
     const defaultOpen = row.children[2];
@@ -106,7 +159,7 @@ export default function decorate(block) {
 
     accordionItems.push({ details, body });
 
-    if (isSmall) {
+    if (listWrapper) {
       listWrapper.append(details);
     } else {
       row.replaceWith(details);
@@ -119,7 +172,7 @@ export default function decorate(block) {
   });
 
   if (accordionItems.length > 0) {
-    const hasOpen = isSmall
+    const hasOpen = (isSmall || hasHeader)
       ? accordionItems.some((item) => item.details.open)
       : block.querySelector('details[open]');
     if (!hasOpen) {
@@ -136,6 +189,8 @@ export default function decorate(block) {
       imagePanel.append(img);
     });
     block.replaceChildren(imagePanel, listWrapper);
+  } else if (hasHeader) {
+    block.replaceChildren(listWrapper);
   }
 
   block.querySelectorAll('summary').forEach((summary) => {
