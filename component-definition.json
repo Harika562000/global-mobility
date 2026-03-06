@@ -101,6 +101,7 @@
         {
           "title": "Accordion Header",
           "id": "accordion-header",
+          "model": "accordion-header",
           "plugins": {
             "xwalk": {
               "page": {
@@ -116,6 +117,7 @@
         {
           "title": "Accordion Item",
           "id": "accordion-item",
+          "model": "accordion-item",
           "plugins": {
             "xwalk": {
               "page": {

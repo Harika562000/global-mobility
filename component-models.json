@@ -228,13 +228,15 @@
         "component": "richtext",
         "name": "heading",
         "label": "Heading",
-        "valueType": "string"
+        "valueType": "string",
+        "value": ""
       },
       {
         "component": "richtext",
         "name": "description",
         "label": "Description",
-        "valueType": "string"
+        "valueType": "string",
+        "value": ""
       }
     ]
   },

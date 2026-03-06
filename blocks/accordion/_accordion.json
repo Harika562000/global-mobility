@@ -19,6 +19,7 @@
     {
       "title": "Accordion Header",
       "id": "accordion-header",
+      "model": "accordion-header",
       "plugins": {
         "xwalk": {
           "page": {
@@ -34,6 +35,7 @@
     {
       "title": "Accordion Item",
       "id": "accordion-item",
+      "model": "accordion-item",
       "plugins": {
         "xwalk": {
           "page": {
@@ -78,13 +80,15 @@
           "component": "richtext",
           "name": "heading",
           "label": "Heading",
-          "valueType": "string"
+          "valueType": "string",
+          "value": ""
         },
         {
           "component": "richtext",
           "name": "description",
           "label": "Description",
-          "valueType": "string"
+          "valueType": "string",
+          "value": ""
         }
       ]
     },
