@@ -194,7 +194,7 @@
             "children": [
               {
                 "name": "Dark Background",
-                "value": "bg-dark inverted"
+                "value": "bg-dark, inverted"
               },
               {
                 "name": "Light Background",
