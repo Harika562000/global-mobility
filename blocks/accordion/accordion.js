@@ -97,6 +97,41 @@ function buildAccordionHeaderFromConfig(config) {
   return header;
 }
 
+function buildAccordionHeaderFromThreeRows(eyebrowRow, headingRow, descRow) {
+  const header = document.createElement('div');
+  header.className = 'accordion-header';
+
+  const eyebrowSource = eyebrowRow.querySelector('p') || eyebrowRow.firstElementChild;
+  const eyebrow = eyebrowDecorator(eyebrowSource, 'accordion-header-eyebrow');
+  if (eyebrow) header.append(eyebrow);
+
+  const headingSource = headingRow.querySelector('h1, h2, h3, h4, h5, h6') || headingRow.firstElementChild;
+  if (headingSource) {
+    if (headingSource.matches('h1, h2, h3, h4, h5, h6')) {
+      headingSource.classList.add('accordion-header-heading');
+      header.append(headingSource);
+    } else {
+      const wrap = document.createElement('h2');
+      wrap.className = 'accordion-header-heading';
+      wrap.append(...headingRow.childNodes);
+      header.append(wrap);
+    }
+  }
+
+  const descSource = descRow.querySelector('p') || descRow.firstElementChild;
+  if (descSource && (descSource.textContent?.trim() || descSource.innerHTML?.trim())) {
+    const descWrap = descSource.cloneNode(true);
+    descWrap.classList.add('accordion-header-description');
+    header.append(descWrap);
+  } else if (descRow.firstElementChild) {
+    const descWrap = descRow.firstElementChild.cloneNode(true);
+    descWrap.classList.add('accordion-header-description');
+    header.append(descWrap);
+  }
+
+  return header;
+}
+
 export default function decorate(block) {
   const accordionItems = [];
   const isSmall = block.classList.contains('small');
@@ -109,20 +144,28 @@ export default function decorate(block) {
   }
 
   const config = readBlockConfig(block);
+  config.eyebrow = config.eyebrow ?? block.dataset?.eyebrow ?? '';
+  config.heading = config.heading ?? block.dataset?.heading ?? '';
+  config.description = config.description ?? block.dataset?.description ?? '';
   const hasConfigHeader = !!(config.eyebrow || config.heading || config.description);
-  const configRowCount = hasConfigHeader ? 4 : 0;
+  const configRowCount = hasConfigHeader ? (config.classes !== undefined && config.classes !== '' ? 4 : 3) : 0;
 
   const rows = [...block.children];
   const firstRow = rows[0];
 
+  const hasHeaderAsThreeRows = rows.length >= 3
+    && rows[0]?.tagName === 'DIV'
+    && rows[1]?.tagName === 'DIV'
+    && rows[2]?.tagName === 'DIV';
+
   const thirdCellText = firstRow?.children[2]?.textContent?.trim().toLowerCase();
   const thirdIsBoolean = thirdCellText === 'true' || thirdCellText === 'false';
-  const hasHeaderRow = rows.length >= 2
+  const hasHeaderRow = rows.length >= 1
     && firstRow
     && firstRow.children.length === 3
     && !thirdIsBoolean;
 
-  const hasHeader = hasHeaderRow || hasConfigHeader;
+  const hasHeader = hasHeaderAsThreeRows || hasHeaderRow || hasConfigHeader;
 
   const listWrapper = (hasHeader || isSmall) ? document.createElement('div') : null;
   if (listWrapper) listWrapper.className = 'accordion-list';
@@ -130,14 +173,26 @@ export default function decorate(block) {
   if (hasConfigHeader) {
     const header = buildAccordionHeaderFromConfig(config);
     listWrapper.prepend(header);
+  } else if (hasHeaderAsThreeRows) {
+    const header = buildAccordionHeaderFromThreeRows(rows[0], rows[1], rows[2]);
+    listWrapper.prepend(header);
   } else if (hasHeaderRow) {
     const header = buildAccordionHeader(firstRow);
     listWrapper.prepend(header);
   }
 
-  const itemRows = hasConfigHeader ? rows.slice(configRowCount) : (hasHeaderRow ? rows.slice(1) : rows);
+  const itemRows = hasConfigHeader ? rows.slice(configRowCount)
+    : hasHeaderAsThreeRows ? rows.slice(3)
+    : (hasHeaderRow ? rows.slice(1) : rows);
 
   itemRows.forEach((row, i) => {
+    if (row.tagName === 'DETAILS') {
+      const body = row.querySelector('.accordion-item-body');
+      if (body) accordionItems.push({ details: row, body });
+      if (listWrapper) listWrapper.append(row);
+      return;
+    }
+
     const label = row.children[0];
     const body = row.children[1];
     const defaultOpen = row.children[2];
