@@ -431,24 +431,32 @@ function wrapTextNodes(block) {
 function decorateButtons(element) {
   element.querySelectorAll('a').forEach((a) => {
     a.title = a.title || a.textContent;
-    const up = a.parentElement;
-    const twoup = a.parentElement.parentElement;
-
-    // Existing behavior: don't auto-decorate image links as buttons.
-    if (!a.querySelector('img') && (a.href !== a.textContent || hadIcons)) {
-      // primary button: <p><strong><a>...</a></strong></p>
-      if (up.children.length === 1 && up.tagName === 'STRONG' && twoup.children.length === 1 && (twoup.tagName === 'P' || twoup.tagName === 'DIV')) {
-        a.className = 'button primary';
-      }
-
-      // secondary button: <p><em><a>...</a></em></p>
-      if (up.children.length === 1 && up.tagName === 'EM' && twoup.children.length === 1 && (twoup.tagName === 'P' || twoup.tagName === 'DIV')) {
-        a.className = 'button secondary';
-      }
-
-      // Icon + text authored without <em>: default to secondary
-      if (hadIcons && !a.classList.contains('primary') && !a.classList.contains('secondary')) {
-        a.className = 'button secondary';
+    if (a.href !== a.textContent) {
+      const up = a.parentElement;
+      const twoup = a.parentElement.parentElement;
+      if (!a.querySelector('img')) {
+        if (up.childNodes.length === 1 && (up.tagName === 'P' || up.tagName === 'DIV')) {
+          a.className = 'button'; // default
+          up.classList.add('button-container');
+        }
+        if (
+          up.childNodes.length === 1
+          && up.tagName === 'STRONG'
+          && twoup.childNodes.length === 1
+          && twoup.tagName === 'P'
+        ) {
+          a.className = 'button primary';
+          twoup.classList.add('button-container');
+        }
+        if (
+          up.childNodes.length === 1
+          && up.tagName === 'EM'
+          && twoup.childNodes.length === 1
+          && twoup.tagName === 'P'
+        ) {
+          a.className = 'button secondary';
+          twoup.classList.add('button-container');
+        }
       }
     }
   });

@@ -48,16 +48,7 @@
           "valueType": "string"
         },
         {
-          "component": "text",
-          "name": "ctaLabel",
-          "label": "CTA Label",
-          "valueType": "string"
-        },
-        {
-          "component": "text",
-          "name": "ctaUrl",
-          "label": "CTA URL",
-          "valueType": "string"
+          "...": "../../models/elements/_button-fields.json"
         }
       ]
     }
