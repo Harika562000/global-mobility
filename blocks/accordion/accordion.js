@@ -58,14 +58,20 @@ export default function decorate(block) {
     const label = row.children[0];
     const body = row.children[1];
     const defaultOpen = row.children[2];
+    const imageCell = row.children[3];
 
     if (!label || !body) return;
 
     let bodyContent = [...body.childNodes];
     let image = null;
-    if (isSmall && body.firstElementChild?.tagName === 'PICTURE') {
-      image = body.firstElementChild;
-      bodyContent = [...body.children].slice(1);
+    if (isSmall) {
+      const imageFromCell = imageCell?.querySelector?.('picture') || imageCell?.querySelector?.('img')?.closest?.('picture');
+      if (imageFromCell) {
+        image = imageFromCell;
+      } else if (body.firstElementChild?.tagName === 'PICTURE') {
+        image = body.firstElementChild;
+        bodyContent = [...body.children].slice(1);
+      }
     }
 
     const summary = document.createElement('summary');
