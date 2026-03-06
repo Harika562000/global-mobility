@@ -463,8 +463,16 @@ function decorateButtons(element) {
 
       const iconSiblingRow = twoup?.parentElement;
       const iconRow = iconSiblingRow?.nextElementSibling;
-      if (iconRow?.tagName === 'DIV' && iconRow?.tagName === 'DIV' && iconRow?.textContent?.trim() === 'true') {
-        console.log('icon enabled');
+      const iconName = iconRow?.nextElementSibling;
+      if (
+        iconRow?.tagName === 'DIV'
+        && iconName?.tagName === 'DIV'
+        && iconRow?.textContent?.trim() === 'true'
+      ) {
+        a.dataset.hasIcon = 'true';
+        a.dataset.iconName = iconName.textContent?.trim() || '';
+        iconRow.remove();
+        iconName.remove();
       }
     }
   });
