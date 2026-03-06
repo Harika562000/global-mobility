@@ -86,24 +86,29 @@
       {
         "component": "aem-content",
         "name": "link",
-        "label": "Link"
+        "label": "Link",
+        "description": "Destination URL for the button"
       },
       {
         "component": "text",
         "name": "linkText",
         "label": "Text",
-        "valueType": "string",
+        "description": "Button label text",
         "required": true
       },
       {
         "component": "text",
         "name": "linkTitle",
-        "label": "Title"
+        "label": "Title",
+        "description": "Accessibility title attribute (optional)"
       },
       {
         "component": "select",
         "name": "linkType",
         "label": "Type",
+        "description": "Button style variant",
+        "valueType": "string",
+        "value": "",
         "options": [
           {
             "name": "Primary",
