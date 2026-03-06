@@ -25,34 +25,11 @@
           "label": "Link"
         },
         {
-          "component": "boolean",
-          "name": "labelRequired",
-          "label": "Label required",
-          "valueType": "boolean",
-          "value": false
-        },
-        {
           "component": "text",
           "name": "linkText",
           "label": "Text",
           "valueType": "string",
-          "required": true,
-          "condition": { "===": [{ "var": ["labelRequired", false] }, true] }
-        },
-        {
-          "component": "boolean",
-          "name": "hasIcon",
-          "label": "Do you need icon?",
-          "valueType": "boolean",
-          "value": false
-        },
-        {
-          "component": "text",
-          "name": "iconName",
-          "label": "Icon name",
-          "valueType": "string",
-          "required": true,
-          "condition": { "===": [{ "var": ["hasIcon", false] }, true] }
+          "required": true
         },
         {
           "component": "text",

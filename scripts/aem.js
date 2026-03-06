@@ -434,77 +434,21 @@ function decorateButtons(element) {
     const up = a.parentElement;
     const twoup = a.parentElement.parentElement;
 
-    // If icons are authored next to the link, move them inside the <a> so `decorateIcons()`
-    // can decorate them and the whole button remains clickable.
-    const moveIconsIntoLink = (container) => {
-      if (!container) return false;
-      // We only expect a single icon per button (left OR right).
-      const children = Array.from(container.children);
-      const iconSpan = children.find((el) => el.tagName === 'SPAN' && el.classList.contains('icon'));
-      if (!iconSpan) return false;
-
-      // If the icon is before the link in DOM order, keep it on the left; otherwise on the right.
-      // Works even when the <a> is nested (e.g. icon is sibling of <em>/<strong>).
-      const pos = iconSpan.compareDocumentPosition(a);
-      // eslint-disable-next-line no-bitwise
-      const iconIsBeforeLink = !!(pos & Node.DOCUMENT_POSITION_FOLLOWING);
-      if (iconIsBeforeLink) a.prepend(iconSpan);
-      else a.append(iconSpan);
-
-      // Decorative icon inside button/link: hide from assistive tech unless explicitly labeled.
-      const label = iconSpan.getAttribute('aria-label') || iconSpan.getAttribute('data-icon-label');
-      if (!label) {
-        iconSpan.setAttribute('aria-hidden', 'true');
-        iconSpan.setAttribute('role', 'presentation');
-      }
-
-      // If the visible label is just the URL (same as href), remove it; use title/aria-label.
-      const labelText = a.textContent.trim();
-      const shouldRemoveLabel = labelText.toLowerCase() === 'button';
-
-      if (shouldRemoveLabel) {
-        // Remove the visible label entirely (including nested tags like <u>),
-        // keeping only the icon span inside the link.
-        Array.from(a.childNodes).forEach((n) => {
-          if (n.nodeType === Node.ELEMENT_NODE && n.tagName === 'SPAN' && n.classList.contains('icon')) return;
-          n.remove();
-        });
-      }
-
-      return true;
-    };
-
-    const hadIcons = moveIconsIntoLink(up) || moveIconsIntoLink(twoup);
-
     // Existing behavior: don't auto-decorate image links as buttons.
     if (!a.querySelector('img') && (a.href !== a.textContent || hadIcons)) {
-      // If this is an icon-only button/link, ensure it has an accessible name.
-      const clone = a.cloneNode(true);
-      clone.querySelectorAll('span.icon').forEach((s) => s.remove());
-      const visibleText = clone.textContent.trim();
-      const isIconOnly = !visibleText;
-      if (isIconOnly) a.setAttribute('aria-label', a.title || a.href);
-
       // primary button: <p><strong><a>...</a></strong></p>
       if (up.children.length === 1 && up.tagName === 'STRONG' && twoup.children.length === 1 && (twoup.tagName === 'P' || twoup.tagName === 'DIV')) {
-        a.className = `button primary${isIconOnly ? ' icon-only' : ''}`;
+        a.className = 'button primary';
       }
 
       // secondary button: <p><em><a>...</a></em></p>
       if (up.children.length === 1 && up.tagName === 'EM' && twoup.children.length === 1 && (twoup.tagName === 'P' || twoup.tagName === 'DIV')) {
-        a.className = `button secondary${isIconOnly ? ' icon-only' : ''}`;
-      }
-
-      // Icon + text (not icon-only) authored without <em>: default to secondary
-      if (hadIcons && !isIconOnly && !a.classList.contains('primary') && !a.classList.contains('secondary')) {
         a.className = 'button secondary';
       }
 
-      // default button (fallback)
-      // - icon-only URL buttons stay icon-only
-      // - otherwise, plain single-link paragraphs default to secondary
-      if (!a.classList.contains('button') && up.children.length === 1 && (up.tagName === 'P' || up.tagName === 'DIV')) {
-        a.className = isIconOnly ? 'button secondary icon-only' : 'button secondary';
+      // Icon + text authored without <em>: default to secondary
+      if (hadIcons && !a.classList.contains('primary') && !a.classList.contains('secondary')) {
+        a.className = 'button secondary';
       }
     }
   });
