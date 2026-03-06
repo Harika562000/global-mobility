@@ -25,9 +25,19 @@
           "label": "Link"
         },
         {
+          "component": "boolean",
+          "name": "labelRequired",
+          "label": "Label required",
+          "valueType": "boolean",
+          "value": true
+        },
+        {
           "component": "text",
           "name": "linkText",
-          "label": "Text"
+          "label": "Text",
+          "valueType": "string",
+          "required": true,
+          "condition": { "===": [{ "var": ["labelRequired", true] }, true] }
         },
         {
           "component": "text",
@@ -40,16 +50,16 @@
           "label": "Type",
           "options": [
             {
-              "name": "default",
-              "value": ""
-            },
-            {
-              "name": "primary",
+              "name": "Primary",
               "value": "primary"
             },
             {
-              "name": "secondary",
+              "name": "Secondary",
               "value": "secondary"
+            },
+            {
+              "name": "Tertiary",
+              "value": "tertiary"
             }
           ]
         }

@@ -30,24 +30,6 @@ export default function decorate(block) {
     }
   }
 
-  // rows[2] = heading
-  const headingRow = rows[2];
-  if (headingRow) {
-    headingRow.classList.add('banner-heading');
-  }
-
-  // rows[3] = description
-  const descRow = rows[3];
-  if (descRow) {
-    descRow.classList.add('banner-description');
-  }
-
-  // rows[4] = CTA label
-  const ctaLabelRow = rows[4];
-  if (ctaLabelRow) {
-    ctaLabelRow.classList.add('banner-cta-label');
-  }
-
   // rows[5] = CTA URL (rendered as anchor by UE)
   const ctaUrlRow = rows[5];
   if (ctaUrlRow) {
