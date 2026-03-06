@@ -176,6 +176,10 @@
   display: none;
 }
 
+.accordion.small .accordion-header {
+    margin-bottom: var(--size-40);
+}
+
 @media (width >= 720px) {
 
   .accordion .accordion-header-eyebrow {
