@@ -55,10 +55,17 @@ function buildAccordionHeader(headerRow) {
       headingEl.classList.add('accordion-header-heading');
       header.append(headingEl);
     } else {
-      const wrap = document.createElement('h2');
-      wrap.className = 'accordion-header-heading';
-      wrap.append(...headingCell.childNodes);
-      header.append(wrap);
+      // Keep author's element as-is (p, div, etc.); only wrap multiple nodes
+      const first = headingCell.firstElementChild;
+      if (first && headingCell.children.length === 1) {
+        first.classList.add('accordion-header-heading');
+        header.append(first);
+      } else {
+        const wrap = document.createElement('div');
+        wrap.className = 'accordion-header-heading';
+        wrap.append(...headingCell.childNodes);
+        header.append(wrap);
+      }
     }
     const descWrap = descCell.cloneNode(true);
     descWrap.classList.add('accordion-header-description');
@@ -83,7 +90,7 @@ function buildAccordionHeaderFromConfig(config) {
   const eyebrow = eyebrowDecorator(config.eyebrow || '', 'accordion-header-eyebrow');
   if (eyebrow) header.append(eyebrow);
   if (config.heading) {
-    const headingEl = document.createElement('h2');
+    const headingEl = document.createElement('div');
     headingEl.className = 'accordion-header-heading';
     headingEl.innerHTML = config.heading;
     header.append(headingEl);
@@ -107,11 +114,11 @@ function buildAccordionHeaderFromThreeRows(eyebrowRow, headingRow, descRow) {
 
   const headingSource = headingRow.querySelector('h1, h2, h3, h4, h5, h6') || headingRow.firstElementChild;
   if (headingSource) {
-    if (headingSource.matches('h1, h2, h3, h4, h5, h6')) {
-      headingSource.classList.add('accordion-header-heading');
+    headingSource.classList.add('accordion-header-heading');
+    if (headingRow.children.length === 1) {
       header.append(headingSource);
     } else {
-      const wrap = document.createElement('h2');
+      const wrap = document.createElement('div');
       wrap.className = 'accordion-header-heading';
       wrap.append(...headingRow.childNodes);
       header.append(wrap);

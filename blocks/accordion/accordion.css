@@ -3,7 +3,7 @@
 .accordion .accordion-item {
   border-bottom: var(--border-width-100) solid var(--color-grey-400);
   padding-bottom: var(--spacing-400);
-  margin-bottom: var(--spacing-900);
+  margin-bottom: var(--spacing-700);
 }
 
 .accordion .accordion-item-label {
@@ -55,18 +55,22 @@
 }
 
 .accordion .accordion-header {
-  margin-bottom: var(--spacing-1100);
+  margin-bottom: var(--spacing-900);
+
 }
 
 .accordion .accordion-header-eyebrow {
   display: block;
   color: var(--typography-accent-1);
-  margin-bottom: var(--spacing-600);
+  margin-bottom: var(--spacing-400);
+  letter-spacing: unset;
 }
 
 .accordion .accordion-header-heading {
   margin: 0;
   font-size: var(--font-size-700);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-103p);
 }
 
 .accordion .accordion-header-description {
@@ -108,12 +112,12 @@
 
 .accordion.cards .accordion-item-label > :is(p, h2, h3, h4, h5, h6) {
   font-size: var(--type-header-500-size);
-  font-weight: var(--font-weight-bold);
-  line-height: var(--line-height-30);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-140p);
   opacity: var(--opacity-50);
   transition: opacity 0.3s ease;
   color: var(--typography-inverse);
-  padding: var(--spacing-200) calc(var(--size-12) + var(--size-29)) var(--spacing-200) 0;
+  padding: var(--spacing-200) 0;
 }
 
 .accordion.cards details summary > :is(p, h2, h3, h4, h5, h6)::after {
@@ -166,8 +170,13 @@
 }
 
 @media (width >= 720px) {
-  .accordion .accordion-header-heading {
-    font-size: var(--font-size-800);
+
+  .accordion .accordion-header-eyebrow {
+    margin-bottom: var(--spacing-600);
+  }
+
+  .accordion.small .accordion-header {
+    margin-bottom: var(--spacing-1100);
   }
 
   .accordion.cards .accordion-item-body .accordion-item-content {
@@ -180,9 +189,9 @@
   }
 
   .accordion.cards .accordion-item-label > :is(p, h2, h3, h4, h5, h6) {
-    font-size: var(--type-header-800-size);
-    font-weight: var(--type-header-800-weight);
-    line-height: var(--type-header-800-line-height);
+    font-size: var(--type-header-700-size);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-140p);
   }
 
   .accordion.cards .accordion-item {
@@ -196,6 +205,10 @@
     grid-template-columns: 1fr 1fr;
     column-gap: var(--spacing-1100);
     align-items: center;
+  }
+
+  .accordion .accordion-header-heading {
+    font-size: var(--font-size-800);
   }
 
   .accordion.small .accordion-image-panel {
