@@ -183,6 +183,25 @@
     "id": "content-module",
     "fields": [
       {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Variation",
+        "options": [
+          {
+            "name": "Default (Standard)",
+            "value": "default-variation"
+          },
+          {
+            "name": "Full Width Headline",
+            "value": "full-width-headline"
+          },
+          {
+            "name": "Default with CTA",
+            "value": "default-with-cta"
+          }
+        ]
+      },
+      {
         "component": "text",
         "name": "eyebrow",
         "label": "Eyebrow",

@@ -1,58 +1,123 @@
-import { moveInstrumentation } from '../../scripts/scripts.js';
+import { eyebrowDecorator, moveInstrumentation } from '../../scripts/scripts.js';
 
 /**
- * Maps block rows to named fields based on the content-module model field order.
+ * Wraps each word in a <span> so they can be animated individually.
+ * @param {HTMLElement} el - The element whose text content to wrap
  */
-function readBlockFields(block) {
-  const fieldNames = ['heading', 'description'];
-  const fields = {};
-  [...block.children].forEach((row, index) => {
-    if (index >= fieldNames.length) return;
-    const cols = [...row.children];
-    if (cols.length) {
-      const [col] = cols;
-      fields[fieldNames[index]] = col;
-    }
+function wrapWords(el) {
+  const text = el.textContent.trim();
+  el.innerHTML = text
+    .split(/\s+/)
+    .map((word) => `<span class="word">${word}</span>`)
+    .join(' ');
+}
+
+/**
+ * Animates word spans to active state one by one.
+ * @param {HTMLElement} container - Element containing .word spans
+ * @param {number} delay - Delay in ms between each word
+ */
+function animateWords(container, delay = 100) {
+  const words = container.querySelectorAll('.word');
+  words.forEach((word, i) => {
+    setTimeout(() => word.classList.add('active'), i * delay);
   });
-  return fields;
+}
+
+/**
+ * Sets up an IntersectionObserver that fires once when
+ * the block reaches the middle of the viewport.
+ * @param {HTMLElement} block - The block element to observe
+ * @param {Function} callback - Called once when triggered
+ */
+function observeScrollReveal(block, callback) {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          callback();
+          observer.disconnect();
+        }
+      });
+    },
+    { rootMargin: '0px 0px -50% 0px', threshold: 0 },
+  );
+  observer.observe(block);
 }
 
 export default function decorate(block) {
-  const fields = readBlockFields(block);
+  const rows = [...block.querySelectorAll(':scope > div')];
+  
+  // Extract fields based on structure (rows or columns)
+  let subtitleCol;
+  let descriptionCol;
+  let ctaCol;
 
-  // Create content wrapper
-  const contentWrapper = document.createElement('div');
-  contentWrapper.className = 'content-module-wrapper';
-
-  // Heading
-  if (fields.heading) {
-    const heading = fields.heading.querySelector('h1, h2, h3, h4, h5, h6');
-    if (heading) {
-      moveInstrumentation(fields.heading, heading);
-      contentWrapper.appendChild(heading);
-    } else if (fields.heading.innerHTML.trim()) {
-      const h2 = document.createElement('h2');
-      h2.innerHTML = fields.heading.innerHTML;
-      moveInstrumentation(fields.heading, h2);
-      contentWrapper.appendChild(h2);
+  if (rows.length > 1) {
+    // New Row-based structure (1 row per field)
+    if (block.classList.contains('default-with-cta')) {
+      [ctaCol, descriptionCol] = rows.map((r) => r.firstElementChild);
+    } else {
+      [subtitleCol, descriptionCol] = rows.map((r) => r.firstElementChild);
+    }
+  } else if (rows.length === 1) {
+    // Single row with columns
+    const cols = [...rows[0].querySelectorAll(':scope > div')];
+    if (block.classList.contains('default-with-cta')) {
+      [ctaCol, descriptionCol] = cols;
+    } else {
+      [subtitleCol, descriptionCol] = cols;
     }
   }
 
-  // Description
-  if (fields.description) {
-    const descChildren = [...fields.description.children];
-    if (descChildren.length) {
-      moveInstrumentation(fields.description, descChildren[0]);
-      descChildren.forEach((child) => contentWrapper.appendChild(child));
-    } else if (fields.description.textContent.trim()) {
-      const p = document.createElement('p');
-      p.textContent = fields.description.textContent.trim();
-      moveInstrumentation(fields.description, p);
-      contentWrapper.appendChild(p);
-    }
+  // Variations handling
+  if (block.classList.contains('full-width-headline')) {
+    descriptionCol = subtitleCol || descriptionCol;
+    subtitleCol = null;
   }
 
-  // Clear and rebuild
+  // Clear and rebuild block structure to match CSS expectations
   block.innerHTML = '';
+  const contentWrapper = document.createElement('div');
+  contentWrapper.className = 'content-wrapper';
+
+  // 1. Subtitle / Eyebrow
+  if (subtitleCol) {
+    const subtitleDiv = document.createElement('div');
+    subtitleDiv.className = 'subtitle';
+    const originalP = subtitleCol.querySelector('p') || subtitleCol;
+    const decorated = eyebrowDecorator(originalP, 'accent-color');
+    if (decorated) {
+      moveInstrumentation(originalP, decorated);
+      subtitleDiv.appendChild(decorated);
+    } else {
+      subtitleDiv.innerHTML = subtitleCol.innerHTML;
+    }
+    contentWrapper.appendChild(subtitleDiv);
+  }
+
+  // 2. CTA
+  if (ctaCol) {
+    const ctaDiv = document.createElement('div');
+    ctaDiv.className = 'cta';
+    ctaDiv.innerHTML = ctaCol.innerHTML;
+    contentWrapper.appendChild(ctaDiv);
+  }
+
+  // 3. Description
+  if (descriptionCol) {
+    const descriptionDiv = document.createElement('div');
+    descriptionDiv.className = 'description';
+    descriptionDiv.innerHTML = descriptionCol.innerHTML;
+    
+    // Animation logic: looks for h4 or p and wraps words
+    const animTarget = descriptionDiv.querySelector('h4') || descriptionDiv.querySelector('p');
+    if (animTarget) {
+      wrapWords(animTarget);
+      observeScrollReveal(block, () => animateWords(animTarget));
+    }
+    contentWrapper.appendChild(descriptionDiv);
+  }
+
   block.appendChild(contentWrapper);
 }

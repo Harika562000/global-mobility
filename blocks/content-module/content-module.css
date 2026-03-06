@@ -1,43 +1,81 @@
-.content-module {
-  margin: var(--responsive-spacing-between-section) 0;
-  padding: 0 var(--main-side-margin-x);
+.content-module p {
+    margin: 0;
 }
 
-.content-module-wrapper {
-  max-width: 800px;
-  margin: 0 auto;
-  text-align: center;
+main > .content-module-container {
+    @media (width < 720px) {
+        padding-left: 0;
+        padding-right: 0;
+    }
 }
 
-.content-module h2 {
-  font-family: var(--font-family-primary);
-  font-size: var(--heading-font-size-s);
-  font-weight: var(--font-weight-bold);
-  line-height: var(--line-height-120p);
-  color: var(--heading-color);
-  margin-bottom: var(--spacing-400);
-  letter-spacing: var(--letter-spacing-tight);
+.content-module .content-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-400);
+
+    @media (width >= 720px) {
+        gap: var(--spacing-600);
+    }
+
+    @media (width >= 1025px) {
+        flex-direction: row;
+        gap: var(--spacing-700);
+    }
+
+    @media (width >= 1440px) {
+        gap: var(--spacing-1100);
+    }
+
 }
 
-.content-module .content-module-description p {
-  font-family: var(--font-family-primary);
-  font-size: var(--body-font-size-m);
-  color: var(--text-color);
-  line-height: var(--line-height-160p);
+.two-col-text .content-wrapper {
+    @media (width >= 720px) {
+        flex-direction: row;
+    }
 }
 
-@media (width >= 720px) {
-  .content-module h2 {
-    font-size: var(--heading-font-size-m);
-  }
-  
-  .content-module .content-module-description p {
-    font-size: var(--body-font-size-l);
-  }
+.default-with-cta .content-wrapper {
+    flex-direction: column-reverse;
+
+    @media (width >= 720px) {
+        flex-direction: row;
+    }
 }
 
-@media (width >= 1025px) {
-  .content-module h2 {
-    font-size: var(--heading-font-size-l);
-  }
+.default-with-cta .content-wrapper .cta {
+    width: fit-content;
+
+    @media (width >= 720px) {
+        width: auto;
+    }
+}
+
+.default-with-cta .cta a.button {
+    margin: 0;
+    white-space: nowrap;
+}
+
+.content-module .subtitle {
+    @media (width >= 1025px) {
+        min-width: 348px;
+    }
+}
+
+.content-module div:not(.cta) p {
+    line-height: var(--line-height-22);
+    letter-spacing: var(--letter-spacing-tight);
+
+    @media (width >= 720px) {
+        line-height: var(--line-height-26);
+    }
+}
+
+.content-module .description .word {
+    color: var(--typography-tertiary);
+    transition: color 0.3s ease;
+}
+
+.content-module .description .word.active {
+    color: var(--typography-black);
 }
