@@ -43,7 +43,7 @@
 }
 
 .accordion details summary > :is(p, h2, h3, h4, h5, h6)::after {
-  content: url('/icons/plus.svg');
+  content: url('../../icons/plus.svg');
   position: absolute;
   right: 0;
   transform: rotate(0deg);
@@ -129,7 +129,7 @@
   right: 0;
   top: 50%;
   transform: translateY(-50%);
-  mask: url('/icons/plus-thin.svg') center / contain no-repeat;
+  mask: url('../../icons/plus-thin.svg') center / contain no-repeat;
   background-color: currentcolor;
   transition: opacity 0.3s ease;
 }

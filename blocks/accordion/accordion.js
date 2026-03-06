@@ -1,11 +1,15 @@
 /*
- * Accordion Block (minimal UE-compatible)
- * Based on: https://www.hlx.live/developer/block-collection/accordion
+ * Accordion Block (UE-compatible)
+ * Renders expandable panels with optional header and small/cards variants.
+ * @see https://www.hlx.live/developer/block-collection/accordion
  */
 
 import { readBlockConfig } from '../../scripts/aem.js';
 import { moveInstrumentation, eyebrowDecorator } from '../../scripts/scripts.js';
 
+/**
+ * Expands an accordion panel with a height transition, then sets height to auto.
+ */
 function openAccordion(body, details) {
   const inner = body.firstElementChild;
   details.open = true;
@@ -23,11 +27,13 @@ function openAccordion(body, details) {
   body.addEventListener('transitionend', onEnd);
 }
 
+/**
+ * Collapses an accordion panel with a height transition, then sets details.open to false.
+ */
 function closeAccordion(body, details) {
   const inner = body.firstElementChild;
   body.style.height = `${inner.scrollHeight}px`;
-  // Force reflow so height transition runs
-  body.offsetHeight; // eslint-disable-line no-unused-expressions
+  body.offsetHeight; // eslint-disable-line no-unused-expressions -- force reflow for transition
   body.style.height = '0px';
 
   const onEnd = (e) => {
@@ -39,6 +45,10 @@ function closeAccordion(body, details) {
   body.addEventListener('transitionend', onEnd);
 }
 
+/**
+ * Builds a header from a single row with one or three cells (eyebrow, heading, description).
+ * Preserves the author’s heading element (e.g. h5, p) instead of forcing an h2.
+ */
 function buildAccordionHeader(headerRow) {
   const header = document.createElement('div');
   header.className = 'accordion-header';
@@ -50,12 +60,12 @@ function buildAccordionHeader(headerRow) {
     const [eyebrowCell, headingCell, descCell] = cells;
     const eyebrow = eyebrowDecorator(eyebrowCell, 'accordion-header-eyebrow');
     if (eyebrow) header.append(eyebrow);
+
     const headingEl = headingCell.querySelector('h1, h2, h3, h4, h5, h6');
     if (headingEl) {
       headingEl.classList.add('accordion-header-heading');
       header.append(headingEl);
     } else {
-      // Keep author's element as-is (p, div, etc.); only wrap multiple nodes
       const first = headingCell.firstElementChild;
       if (first && headingCell.children.length === 1) {
         first.classList.add('accordion-header-heading');
@@ -67,6 +77,7 @@ function buildAccordionHeader(headerRow) {
         header.append(wrap);
       }
     }
+
     const descWrap = descCell.cloneNode(true);
     descWrap.classList.add('accordion-header-description');
     header.append(descWrap);
@@ -84,26 +95,37 @@ function buildAccordionHeader(headerRow) {
   return header;
 }
 
+/**
+ * Builds a header element from block config (eyebrow, heading, description from metadata).
+ */
 function buildAccordionHeaderFromConfig(config) {
   const header = document.createElement('div');
   header.className = 'accordion-header';
+
   const eyebrow = eyebrowDecorator(config.eyebrow || '', 'accordion-header-eyebrow');
   if (eyebrow) header.append(eyebrow);
+
   if (config.heading) {
     const headingEl = document.createElement('div');
     headingEl.className = 'accordion-header-heading';
     headingEl.innerHTML = config.heading;
     header.append(headingEl);
   }
+
   if (config.description) {
     const descEl = document.createElement('div');
     descEl.className = 'accordion-header-description';
     descEl.innerHTML = config.description;
     header.append(descEl);
   }
+
   return header;
 }
 
+/**
+ * Builds a header element from three separate rows (eyebrow, heading, description).
+ * Used when the block has header content as three sibling divs from UE.
+ */
 function buildAccordionHeaderFromThreeRows(eyebrowRow, headingRow, descRow) {
   const header = document.createElement('div');
   header.className = 'accordion-header';
@@ -112,7 +134,8 @@ function buildAccordionHeaderFromThreeRows(eyebrowRow, headingRow, descRow) {
   const eyebrow = eyebrowDecorator(eyebrowSource, 'accordion-header-eyebrow');
   if (eyebrow) header.append(eyebrow);
 
-  const headingSource = headingRow.querySelector('h1, h2, h3, h4, h5, h6') || headingRow.firstElementChild;
+  const headingSource = headingRow.querySelector('h1, h2, h3, h4, h5, h6')
+    || headingRow.firstElementChild;
   if (headingSource) {
     headingSource.classList.add('accordion-header-heading');
     if (headingRow.children.length === 1) {
@@ -139,6 +162,10 @@ function buildAccordionHeaderFromThreeRows(eyebrowRow, headingRow, descRow) {
   return header;
 }
 
+/**
+ * Decorates the accordion block: detects header source, builds header and item rows,
+ * wires open/close behavior and small-variant image panel, and ensures at least one panel is open.
+ */
 export default function decorate(block) {
   const accordionItems = [];
   const isSmall = block.classList.contains('small');
@@ -150,12 +177,17 @@ export default function decorate(block) {
     imagePanel.className = 'accordion-image-panel';
   }
 
+  // Resolve config and header presence
   const config = readBlockConfig(block);
   config.eyebrow = config.eyebrow ?? block.dataset?.eyebrow ?? '';
   config.heading = config.heading ?? block.dataset?.heading ?? '';
   config.description = config.description ?? block.dataset?.description ?? '';
   const hasConfigHeader = !!(config.eyebrow || config.heading || config.description);
-  const configRowCount = hasConfigHeader ? (config.classes !== undefined && config.classes !== '' ? 4 : 3) : 0;
+
+  let configRowCount = 0;
+  if (hasConfigHeader) {
+    configRowCount = (config.classes !== undefined && config.classes !== '') ? 4 : 3;
+  }
 
   const rows = [...block.children];
   const firstRow = rows[0];
@@ -177,6 +209,7 @@ export default function decorate(block) {
   const listWrapper = (hasHeader || isSmall) ? document.createElement('div') : null;
   if (listWrapper) listWrapper.className = 'accordion-list';
 
+  // Build header when present
   if (hasConfigHeader) {
     const header = buildAccordionHeaderFromConfig(config);
     listWrapper.prepend(header);
@@ -188,10 +221,19 @@ export default function decorate(block) {
     listWrapper.prepend(header);
   }
 
-  const itemRows = hasConfigHeader ? rows.slice(configRowCount)
-    : hasHeaderAsThreeRows ? rows.slice(3)
-    : (hasHeaderRow ? rows.slice(1) : rows);
+  // Determine which rows are accordion items (skip header rows)
+  let itemRows;
+  if (hasConfigHeader) {
+    itemRows = rows.slice(configRowCount);
+  } else if (hasHeaderAsThreeRows) {
+    itemRows = rows.slice(3);
+  } else if (hasHeaderRow) {
+    itemRows = rows.slice(1);
+  } else {
+    itemRows = rows;
+  }
 
+  // Build each accordion item (details/summary/body) from a row or reuse existing details
   itemRows.forEach((row, i) => {
     if (row.tagName === 'DETAILS') {
       const body = row.querySelector('.accordion-item-body');
@@ -207,12 +249,19 @@ export default function decorate(block) {
 
     if (!label || !body) return;
 
-    let bodyContent = [...body.childNodes];
+    // Flatten single wrapper div so multiple paragraphs/links are all included
+    const singleWrapper = body.children.length === 1
+      && body.firstElementChild?.tagName === 'DIV';
+    let bodyContent = singleWrapper
+      ? [...body.firstElementChild.childNodes]
+      : [...body.childNodes];
+
     let image = null;
     if (isSmall) {
-      const imageFromCell = imageCell?.querySelector?.('picture') || imageCell?.querySelector?.('img')?.closest?.('picture');
-      if (imageFromCell) {
-        image = imageFromCell;
+      const picture = imageCell?.querySelector?.('picture')
+        || imageCell?.querySelector?.('img')?.closest?.('picture');
+      if (picture) {
+        image = picture;
       } else if (body.firstElementChild?.tagName === 'PICTURE') {
         image = body.firstElementChild;
         bodyContent = [...body.children].slice(1);
@@ -263,6 +312,7 @@ export default function decorate(block) {
     }
   });
 
+  // Ensure at least one panel is open
   if (accordionItems.length > 0) {
     const hasOpen = (isSmall || hasHeader)
       ? accordionItems.some((item) => item.details.open)
@@ -274,10 +324,12 @@ export default function decorate(block) {
     }
   }
 
+  // Finalize block DOM: small gets image panel + list; else header + list or items only
   if (isSmall) {
     const openIndex = accordionItems.findIndex((item) => item.details.open);
+    const activeIndex = openIndex >= 0 ? openIndex : 0;
     images.forEach((img, idx) => {
-      img.classList.toggle('is-active', idx === (openIndex >= 0 ? openIndex : 0));
+      img.classList.toggle('is-active', idx === activeIndex);
       imagePanel.append(img);
     });
     block.replaceChildren(imagePanel, listWrapper);
@@ -285,6 +337,7 @@ export default function decorate(block) {
     block.replaceChildren(listWrapper);
   }
 
+  // Wire summary click: single-open by default, toggle open/close with height animation
   block.querySelectorAll('summary').forEach((summary) => {
     summary.addEventListener('click', (e) => {
       e.preventDefault();
@@ -306,4 +359,6 @@ export default function decorate(block) {
       }
     });
   });
+
+  block.querySelectorAll('.button').forEach((el) => el.classList.remove('button'));
 }
