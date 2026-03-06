@@ -37,7 +37,7 @@
           "label": "Text",
           "valueType": "string",
           "required": true,
-          "condition": { "===": [{ "var": ["labelRequired", true] }, true] }
+          "condition": { "===": [{ "var": ["labelRequired", false] }, true] }
         },
         {
           "component": "boolean",
