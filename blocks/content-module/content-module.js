@@ -110,9 +110,10 @@ export default function decorate(block) {
     descriptionDiv.className = 'description';
     descriptionDiv.innerHTML = descriptionCol.innerHTML;
     
-    // Animation logic: looks for h4 or p and wraps words
+    // Animation logic: only for default and full-width-headline
+    const isAnimVariation = block.classList.contains('default-variation') || block.classList.contains('full-width-headline');
     const animTarget = descriptionDiv.querySelector('h4') || descriptionDiv.querySelector('p');
-    if (animTarget) {
+    if (isAnimVariation && animTarget) {
       wrapWords(animTarget);
       observeScrollReveal(block, () => animateWords(animTarget));
     }
