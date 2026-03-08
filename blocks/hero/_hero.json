@@ -77,6 +77,21 @@
           "...": "../../models/elements/_button-fields.json#/fields"
         },
         {
+          "component": "select",
+          "valueType": "string",
+          "name": "tagVariation",
+          "label": "Tag variation",
+          "value": "",
+          "description": "Black-colored variation only.",
+          "condition": { "===": [{ "var": ["classes", ""] }, "hero-black-colored-right"] },
+          "options": [
+            { "name": "Outline", "value": "dark" },
+            { "name": "Fill", "value": "fill" },
+            { "name": "Glass", "value": "glass" },
+            { "name": "Dark", "value": "dark" }
+          ]
+        },
+        {
           "component": "text",
           "valueType": "string",
           "name": "tag",
