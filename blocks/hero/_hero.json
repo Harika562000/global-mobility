@@ -70,10 +70,7 @@
           "description": "Optional."
         },
         {
-          "...": "../../models/_button-fields.json#/primaryFields"
-        },
-        {
-          "...": "../../models/_button-fields.json#/secondaryFields"
+          "...": "../../models/elements/_button-fields.json#/fields"
         },
         {
           "component": "text",
