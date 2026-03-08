@@ -85,7 +85,7 @@
           "description": "Black-colored variation only.",
           "condition": { "===": [{ "var": ["classes", ""] }, "hero-black-colored-right"] },
           "options": [
-            { "name": "Outline", "value": "dark" },
+            { "name": "Outline", "value": "outline" },
             { "name": "Fill", "value": "fill" },
             { "name": "Glass", "value": "glass" },
             { "name": "Dark", "value": "dark" }
