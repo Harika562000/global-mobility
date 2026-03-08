@@ -47,49 +47,35 @@ function observeScrollReveal(block, callback) {
 
 export default function decorate(block) {
   const rows = [...block.querySelectorAll(':scope > div')];
-  
-  // Extract fields based on structure (rows or columns)
-  let subtitleCol;
-  let descriptionCol;
-  let description2Col; // For two-col-text
-  let ctaCol;
-  let ctaLabel;
-  let ctaUrl;
 
-  const isDefaultWithCta = block.classList.contains('default-with-cta');
   const isTwoCol = block.classList.contains('two-col-text');
   const isDefault = block.classList.contains('default-variation');
   const isFullWidthText = block.classList.contains('full-width-text');
   const isFullWidthHeadline = block.classList.contains('full-width-headline');
+  const isDefaultWithCta = block.classList.contains('default-with-cta');
 
-  // Map rows to properties based on JSON field order
+  /**
+   * Field Mapping based on JSON structure:
+   * row[0] -> eyebrow
+   * row[1] -> description (First Column)
+   * row[2] -> description2 (Second Column)
+   * row[3] -> ctaLabel
+   * row[4] -> ctaUrl
+   */
   const fieldRows = rows.map((r) => r.firstElementChild);
-  
-  if (isDefaultWithCta) {
-    [descriptionCol, ctaLabel, ctaUrl] = fieldRows;
-  } else if (isTwoCol) {
-    [descriptionCol, description2Col] = fieldRows;
-  } else if (isFullWidthText || isFullWidthHeadline) {
-    [descriptionCol] = fieldRows;
-  } else if (isDefault) {
-    [subtitleCol, descriptionCol] = fieldRows;
-  } else {
-    // Fallback for column-based or legacy
-    const cols = rows[0]?.querySelectorAll(':scope > div') || [];
-    [subtitleCol, descriptionCol] = cols;
-  }
+  const [rowEyebrow, rowDesc1, rowDesc2, rowCtaLabel, rowCtaUrl] = fieldRows;
 
-  // Clear and rebuild block structure to match CSS expectations
+  // Clear and rebuild block structure
   block.innerHTML = '';
   const contentWrapper = document.createElement('div');
   contentWrapper.className = 'content-wrapper';
 
-  // 1. Column 1 (Subtitle/Eyebrow OR First Description)
-  if (subtitleCol || (isTwoCol && descriptionCol)) {
+  // 1. Column 1 (Eyebrow for Default OR First Description for Two-Col)
+  if ((isDefault && rowEyebrow) || (isTwoCol && rowDesc1)) {
     const col1Div = document.createElement('div');
-    col1Div.className = 'subtitle'; 
-    
-    const source = subtitleCol || descriptionCol;
+    col1Div.className = 'subtitle';
+    const source = isDefault ? rowEyebrow : rowDesc1;
+
     if (isDefault) {
       const originalP = source.querySelector('p') || source;
       const decorated = eyebrowDecorator(originalP, 'accent-color');
@@ -106,41 +92,40 @@ export default function decorate(block) {
     contentWrapper.appendChild(col1Div);
   }
 
-  // 2. Column 2 (Primary Description OR Second Column Content)
-  // For Default with CTA, Column 1 is usually empty or used for Description
-  // But based on your flex direction, we'll keep mapping logically
-  const col2Source = isTwoCol ? description2Col : descriptionCol;
+  // 2. Column 2 (Description 1 for Standard/Headline OR Description 2 for Two-Col)
+  const col2Source = isTwoCol ? rowDesc2 : rowDesc1;
+
   if (col2Source && !isDefaultWithCta) {
     const descriptionDiv = document.createElement('div');
     descriptionDiv.className = 'description';
     descriptionDiv.innerHTML = col2Source.innerHTML;
     moveInstrumentation(col2Source, descriptionDiv);
-    
-    // Animation logic
+
+    // Animation logic (only for specific variations)
     const animTarget = descriptionDiv.querySelector('h4') || descriptionDiv.querySelector('p');
-    if ((isDefault || isFullWidthHeadline) && animTarget) {
+    if (animTarget && (isDefault || isFullWidthHeadline)) {
       wrapWords(animTarget);
       observeScrollReveal(block, () => animateWords(animTarget));
     }
     contentWrapper.appendChild(descriptionDiv);
   }
 
-  // 3. CTA (Button) - Positioned after description in rows but flex handles UI
-  if (isDefaultWithCta && (ctaCol || (ctaLabel && ctaUrl))) {
-    // Render description first in DOM if using with-cta
-    if (descriptionCol) {
+  // 3. CTA Variation (Description + Button)
+  if (isDefaultWithCta) {
+    if (rowDesc1) {
       const descriptionDiv = document.createElement('div');
       descriptionDiv.className = 'description';
-      descriptionDiv.innerHTML = descriptionCol.innerHTML;
-      moveInstrumentation(descriptionCol, descriptionDiv);
+      descriptionDiv.innerHTML = rowDesc1.innerHTML;
+      moveInstrumentation(rowDesc1, descriptionDiv);
       contentWrapper.appendChild(descriptionDiv);
     }
 
-    const ctaDiv = document.createElement('div');
-    ctaDiv.className = 'cta';
-    if (ctaLabel && ctaUrl) {
-      const labelText = ctaLabel.textContent.trim();
-      const urlText = ctaUrl.textContent.trim();
+    if (rowCtaLabel && rowCtaUrl) {
+      const ctaDiv = document.createElement('div');
+      ctaDiv.className = 'cta';
+      const labelText = rowCtaLabel.textContent.trim();
+      const urlText = rowCtaUrl.textContent.trim();
+
       if (labelText && urlText) {
         const p = document.createElement('p');
         const a = document.createElement('a');
@@ -148,14 +133,12 @@ export default function decorate(block) {
         a.title = labelText;
         a.textContent = labelText;
         a.className = 'button primary';
-        moveInstrumentation(ctaLabel, a);
+        moveInstrumentation(rowCtaLabel, a);
         p.appendChild(a);
         ctaDiv.appendChild(p);
       }
-    } else if (ctaCol) {
-      ctaDiv.innerHTML = ctaCol.innerHTML;
+      contentWrapper.appendChild(ctaDiv);
     }
-    contentWrapper.appendChild(ctaDiv);
   }
 
   block.appendChild(contentWrapper);
