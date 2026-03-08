@@ -71,10 +71,26 @@
           "description": "Optional."
         },
         {
-          "...": "../../models/elements/_button-fields.json#/fields"
+          "component": "container",
+          "name": "button1",
+          "label": "Button 1",
+          "valueType": "object",
+          "collapsible": true,
+          "condition": { "!==": [{ "var": ["classes", ""] }, "hero-two-colored-right"] },
+          "fields": [
+            { "...": "../../models/elements/_button-fields.json#/fields" }
+          ]
         },
         {
-          "...": "../../models/elements/_button-fields.json#/fields"
+          "component": "container",
+          "name": "button2",
+          "label": "Button 2",
+          "valueType": "object",
+          "collapsible": true,
+          "condition": { "===": [{ "var": ["classes", ""] }, ""] },
+          "fields": [
+            { "...": "../../models/elements/_button-fields.json#/fields" }
+          ]
         },
         {
           "component": "select",
