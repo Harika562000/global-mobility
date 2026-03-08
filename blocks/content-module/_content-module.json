@@ -40,13 +40,13 @@
           "condition": { "===": [{ "var": "classes" }, "default-variation"] }
         },
         {
-          "component": "text",
+          "component": "richtext",
           "name": "description",
           "label": "Description / First Column",
           "valueType": "string"
         },
         {
-          "component": "text",
+          "component": "richtext",
           "name": "description2",
           "label": "Second Column Content",
           "valueType": "string",
