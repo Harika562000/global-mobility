@@ -33,6 +33,7 @@ main > .content-module-container {
     font-size: var(--responsive-body-400-size);
     font-weight: var(--responsive-body-400-weight);
     line-height: var(--responsive-body-400-line-height);
+    letter-spacing: var(--letter-spacing-tight);
 }
 
 .content-module .content-wrapper h4 {
@@ -71,15 +72,6 @@ main > .content-module-container {
 .content-module .subtitle {
     @media (width >= 1025px) {
         min-width: 348px;
-    }
-}
-
-.content-module div:not(.cta) p {
-    line-height: var(--line-height-22);
-    letter-spacing: var(--letter-spacing-tight);
-
-    @media (width >= 720px) {
-        line-height: var(--line-height-26);
     }
 }
 
