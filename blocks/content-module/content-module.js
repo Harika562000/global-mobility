@@ -71,8 +71,8 @@ export default function decorate(block) {
   }
 
   // Variations handling
-  if (block.classList.contains('full-width-headline')) {
-    descriptionCol = subtitleCol || descriptionCol;
+  if (block.classList.contains('full-width-headline') || block.classList.contains('full-width-text')) {
+    descriptionCol = descriptionCol || subtitleCol;
     subtitleCol = null;
   }
 

@@ -183,7 +183,7 @@
     "id": "content-module",
     "fields": [
       {
-        "component": "multiselect",
+        "component": "select",
         "name": "classes",
         "label": "Variation",
         "options": [
@@ -194,6 +194,14 @@
           {
             "name": "Full Width Headline",
             "value": "full-width-headline"
+          },
+          {
+            "name": "Full Width Text",
+            "value": "full-width-text"
+          },
+          {
+            "name": "Two Col Text",
+            "value": "two-col-text"
           },
           {
             "name": "Default with CTA",
