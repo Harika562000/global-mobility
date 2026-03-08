@@ -1,11 +1,206 @@
 import { eyebrowDecorator } from '../../scripts/scripts.js';
 import { decorateButtons } from '../../scripts/aem.js';
 
-export default function decorate(block) {
-  const heading = block.querySelector('h1, h2, h3, h4, h5, h6');
-  if (!heading) return;
+/**
+ * Hero block: three variations (UE authoring reference).
+ *
+ * Variation summary (from UE authoring UI):
+ * - Image as background: image, heading, description, 2 buttons.
+ * - Two-colored:        image, heading, description.
+ * - Black-colored:      image, tag, eyebrow, heading, description, 1 button.
+ *
+ * Row indices (idx = 1 when rows[0] is Variation; idx = 0 when no variation row):
+ * - Image as background / Two-colored: heading=idx+2, description=idx+3 (no eyebrow row in DOM). Buttons from idx+4.
+ * - Black-colored: rows[0]=image, rows[1]=eyebrow, rows[2]=heading, rows[3]=description. Buttons from 4. Tag=last.
+ * Button link rows are detected dynamically (scanning for <a>).
+ */
 
-  /* Inject hero-section class so block CSS stays decoupled from global section classes */
+/** Get the value cell (content) from a row; UE often uses row = [label, value]. */
+function getValueCell(row) {
+  if (!row) return null;
+  return row.children.length > 1 ? row.children[1] : row.children[0] || row;
+}
+
+function appendContent(row, target, fallbackHeading = false) {
+  if (!row) return;
+  const cell = getValueCell(row);
+  const scope = cell || row;
+  const contentSelector = 'h1, h2, h3, h4, h5, h6, p';
+  let elements = scope.querySelectorAll(contentSelector);
+  if (elements.length === 0 && scope.querySelector(':scope > div')) {
+    const inner = scope.querySelector(':scope > div');
+    elements = inner.querySelectorAll(contentSelector);
+  }
+  if (elements.length) {
+    elements.forEach((el) => target.appendChild(el));
+  } else {
+    const text = scope.textContent?.trim();
+    if (text) {
+      const el = fallbackHeading ? document.createElement('h2') : document.createElement('p');
+      el.textContent = text;
+      target.appendChild(el);
+    } else {
+      const source = scope.querySelector(':scope > div') || scope;
+      while (source.firstChild) {
+        target.appendChild(source.firstChild);
+      }
+    }
+  }
+}
+
+function findLinkRow(rows, startIdx, endIdx) {
+  for (let i = startIdx; i < endIdx; i += 1) {
+    if (rows[i]?.querySelector('a')) return i;
+  }
+  return -1;
+}
+
+function buildCta(rows, linkIdx, typeRowIdx = -1) {
+  if (linkIdx < 0) return null;
+
+  const linkRow = rows[linkIdx];
+  if (!linkRow) return null;
+
+  const anchor = linkRow.querySelector('a');
+  const linkText = getValueCell(rows[linkIdx + 1])?.textContent?.trim();
+  const linkTitle = getValueCell(rows[linkIdx + 2])?.textContent?.trim();
+
+  let linkType = '';
+  if (anchor) {
+    const parent = anchor.parentElement;
+    if (parent?.tagName === 'EM') linkType = 'secondary';
+    else if (parent?.tagName === 'STRONG') linkType = 'primary';
+  }
+  if (!linkType && typeRowIdx >= 0 && rows[typeRowIdx]) {
+    linkType = (getValueCell(rows[typeRowIdx])?.textContent?.trim() || '').toLowerCase();
+  }
+  if (!linkType) {
+    linkType = (getValueCell(rows[linkIdx + 3])?.textContent?.trim() || '').toLowerCase();
+  }
+  if (!linkType && linkIdx >= 1) {
+    const prevCell = getValueCell(rows[linkIdx - 1]);
+    if (prevCell?.querySelector('em') && !prevCell?.querySelector('a')) linkType = 'secondary';
+    else if (prevCell?.querySelector('strong') && !prevCell?.querySelector('a')) linkType = 'primary';
+  }
+
+  if (!anchor && !linkText) return null;
+
+  const a = anchor || document.createElement('a');
+  if (!anchor) a.href = '#';
+  a.className = '';
+  if (linkText) a.textContent = linkText;
+  if (linkTitle) a.title = linkTitle;
+
+  const p = document.createElement('p');
+
+  if (linkType === 'primary') {
+    const strong = document.createElement('strong');
+    strong.appendChild(a);
+    p.appendChild(strong);
+  } else if (linkType === 'secondary') {
+    const em = document.createElement('em');
+    em.appendChild(a);
+    p.appendChild(em);
+  } else {
+    p.appendChild(a);
+  }
+
+  return p;
+}
+
+function decorateEmAccent(block, rows, picture, primaryIdx, secondaryIdx, rowIndices) {
+  const bgDiv = document.createElement('div');
+  bgDiv.className = 'hero-em-accent-background';
+  if (picture) {
+    picture.querySelector('img')?.setAttribute('loading', 'eager');
+    bgDiv.appendChild(picture);
+  }
+
+  const contentDiv = document.createElement('div');
+  contentDiv.className = 'hero-em-accent-content';
+
+  appendContent(rows[rowIndices.heading], contentDiv, true);
+  appendContent(rows[rowIndices.description], contentDiv);
+
+  const primaryCta = buildCta(rows, primaryIdx, rowIndices.firstButtonRow >= 0 ? rowIndices.firstButtonRow + 3 : -1);
+  if (primaryCta) contentDiv.appendChild(primaryCta);
+
+  const secondaryCta = buildCta(rows, secondaryIdx, rowIndices.firstButtonRow >= 0 ? rowIndices.firstButtonRow + 7 : -1);
+  if (secondaryCta) contentDiv.appendChild(secondaryCta);
+
+  decorateButtons(contentDiv);
+
+  block.appendChild(bgDiv);
+  block.appendChild(contentDiv);
+}
+
+function decorateTwoColoredRight(block, rows, picture, rowIndices) {
+  const contentDiv = document.createElement('div');
+  contentDiv.className = 'hero-two-colored-right-content';
+
+  appendContent(rows[rowIndices.heading], contentDiv, true);
+  appendContent(rows[rowIndices.description], contentDiv);
+
+  const imageDiv = document.createElement('div');
+  imageDiv.className = 'hero-two-colored-right-image';
+  if (picture) imageDiv.appendChild(picture);
+
+  block.appendChild(contentDiv);
+  block.appendChild(imageDiv);
+}
+
+function decorateBlackColoredRight(block, rows, picture, primaryIdx, rowIndices) {
+  const contentDiv = document.createElement('div');
+  contentDiv.className = 'hero-black-colored-right-content';
+
+  const tagRow = rows[rowIndices.tag];
+  const tagText = getValueCell(tagRow)?.textContent?.trim();
+  if (tagText) {
+    const variationRow = rowIndices.tagVariation >= 0 ? rows[rowIndices.tagVariation] : null;
+    const tagVariation = variationRow ? getValueCell(variationRow)?.textContent?.trim()?.toLowerCase() : '';
+    let tagClasses = 'tag';
+    if (tagVariation) {
+      tagClasses += ` tag-${tagVariation}`;
+    } else {
+      tagClasses += ' tag-dark';
+    }
+    const tagSpan = document.createElement('span');
+    tagSpan.className = tagClasses;
+    tagSpan.textContent = tagText;
+    contentDiv.appendChild(tagSpan);
+  }
+
+  if (rowIndices.eyebrow >= 0) {
+    const eyebrowRow = rows[rowIndices.eyebrow];
+    const eyebrowCell = getValueCell(eyebrowRow);
+    const eyebrowText = eyebrowCell?.textContent?.trim();
+    if (eyebrowText) {
+      const eyebrowP = eyebrowCell?.querySelector('p');
+      const formatted = eyebrowDecorator(eyebrowP || eyebrowText, 'accent-color');
+      if (formatted) contentDiv.appendChild(formatted);
+    }
+  }
+
+  appendContent(rows[rowIndices.heading], contentDiv, true);
+  appendContent(rows[rowIndices.description], contentDiv);
+
+  const typeRowIdx = rowIndices.firstButtonRow >= 0 ? rowIndices.firstButtonRow + 3 : -1;
+  const cta = buildCta(rows, primaryIdx, typeRowIdx);
+  if (cta) contentDiv.appendChild(cta);
+  decorateButtons(contentDiv);
+
+  const imageDiv = document.createElement('div');
+  imageDiv.className = 'hero-black-colored-right-image';
+  if (picture) imageDiv.appendChild(picture);
+
+  block.appendChild(contentDiv);
+  block.appendChild(imageDiv);
+}
+
+export default function decorate(block) {
+  const rows = [...block.querySelectorAll(':scope > div')];
+  if (!rows.length) return;
+
   const section = block.closest('.section');
   if (section && section.classList.contains('bg-light-grey')) {
     section.classList.add('hero-section');
@@ -13,178 +208,64 @@ export default function decorate(block) {
 
   const isBlackColoredRight = block.classList.contains('hero-black-colored-right');
   const isTwoColoredRight = block.classList.contains('hero-two-colored-right');
-  const isEmAccent = !isTwoColoredRight && heading.querySelector('em') !== null;
 
-  let imageWrapper = null;
+  const lastDataRow = rows.length - 1;
+  const hasVariationRow = !rows[0]?.querySelector('picture');
+  const idx = hasVariationRow ? 1 : 0;
+
+  const picture = isBlackColoredRight
+    ? rows[0]?.querySelector('picture')
+    : rows[idx]?.querySelector('picture');
 
   if (isBlackColoredRight) {
-    const allParagraphs = block.querySelectorAll('p');
-    let imageParagraph = null;
-
-    allParagraphs.forEach((p) => {
-      if (p.querySelector('picture')) {
-        imageParagraph = p;
-      }
-    });
-
-    if (imageParagraph) {
-      const picture = imageParagraph.querySelector('picture');
-      if (picture) {
-        picture.remove();
-        if (!imageParagraph.textContent.trim()) {
-          imageParagraph.remove();
-        }
-        imageWrapper = document.createElement('div');
-        imageWrapper.className = 'hero-black-colored-right-image';
-        imageWrapper.appendChild(picture);
+    const pictureRow = rows[0];
+    if (picture && pictureRow) {
+      const altCell = getValueCell(pictureRow);
+      const alt = altCell?.textContent?.trim();
+      if (alt) {
+        const img = picture.querySelector('img');
+        if (img) img.setAttribute('alt', alt);
       }
     }
   } else {
-    let pictureHeading = heading;
-    if (isTwoColoredRight) {
-      const allHeadings = block.querySelectorAll('h1, h2, h3, h4, h5, h6');
-      allHeadings.forEach((h) => {
-        if (h.querySelector('picture')) {
-          pictureHeading = h;
-        }
-      });
-    }
-
-    const picture = pictureHeading.querySelector('picture');
-    if (picture) {
-      picture.remove();
-
-      if (isEmAccent) {
-        imageWrapper = document.createElement('div');
-        imageWrapper.className = 'hero-em-accent-background';
-        imageWrapper.appendChild(picture);
-      } else if (isTwoColoredRight) {
-        imageWrapper = document.createElement('div');
-        imageWrapper.className = 'hero-two-colored-right-image';
-        imageWrapper.appendChild(picture);
-      }
+    const altText = getValueCell(rows[idx + 1])?.textContent?.trim();
+    if (picture && altText) {
+      const img = picture.querySelector('img');
+      if (img) img.setAttribute('alt', altText);
     }
   }
 
-  const contentWrapper = document.createElement('div');
-  if (isEmAccent) {
-    contentWrapper.className = 'hero-em-accent-content';
+  const firstButtonRow = isBlackColoredRight ? 4 : idx + 4;
+  const rowIndices = isBlackColoredRight
+    ? {
+      eyebrow: 1,
+      heading: 2,
+      description: 3,
+      tagVariation: lastDataRow - 1,
+      tag: lastDataRow,
+      firstButtonRow: 4,
+    }
+    : {
+      eyebrow: -1,
+      heading: idx + 2,
+      description: idx + 3,
+      tagVariation: -1,
+      tag: lastDataRow,
+      firstButtonRow,
+    };
+
+  const primaryIdx = findLinkRow(rows, firstButtonRow, lastDataRow);
+  const secondaryIdx = primaryIdx >= 0
+    ? findLinkRow(rows, primaryIdx + 4, lastDataRow)
+    : -1;
+
+  if (isBlackColoredRight) {
+    decorateBlackColoredRight(block, rows, picture, primaryIdx, rowIndices);
   } else if (isTwoColoredRight) {
-    contentWrapper.className = 'hero-two-colored-right-content';
-  } else if (isBlackColoredRight) {
-    contentWrapper.className = 'hero-black-colored-right-content';
+    decorateTwoColoredRight(block, rows, picture, rowIndices);
+  } else {
+    decorateEmAccent(block, rows, picture, primaryIdx, secondaryIdx, rowIndices);
   }
 
-  /* Flatten nested AEM div structure into content wrapper */
-  const children = Array.from(block.children);
-  children.forEach((child) => {
-    if (child !== imageWrapper && !child.classList.contains('hero-em-accent-background') && !child.classList.contains('hero-two-colored-right-image') && !child.classList.contains('hero-black-colored-right-image')) {
-      if (child.tagName === 'DIV') {
-        const nestedChildren = Array.from(child.children);
-        nestedChildren.forEach((nestedChild) => {
-          if (nestedChild.tagName === 'DIV') {
-            const deepChildren = Array.from(nestedChild.children);
-            deepChildren.forEach((deepChild) => {
-              contentWrapper.appendChild(deepChild);
-            });
-          } else {
-            contentWrapper.appendChild(nestedChild);
-          }
-        });
-      } else {
-        contentWrapper.appendChild(child);
-      }
-    }
-  });
-
-  const allParagraphs = contentWrapper.querySelectorAll('p');
-  let eyebrowElement = null;
-
-  allParagraphs.forEach((p) => {
-    const noPicture = !p.querySelector('picture');
-    const noButton = !p.querySelector('a.button');
-    const noStrong = !p.querySelector('strong');
-    const noEm = !p.querySelector('em');
-    const noEyebrowClass = !p.classList.contains('eye-brow-text');
-    if (noPicture && noButton && noStrong && noEm && noEyebrowClass) {
-      const headingElement = contentWrapper.querySelector('h1, h2, h3, h4, h5, h6');
-      const pos = p.compareDocumentPosition(headingElement);
-      const isFollowing = Math.floor(pos / Node.DOCUMENT_POSITION_FOLLOWING) % 2 === 1;
-      if (headingElement && isFollowing) {
-        eyebrowElement = p;
-      }
-    }
-  });
-
-  if (eyebrowElement) {
-    const eyebrowText = eyebrowElement.textContent.trim();
-    if (eyebrowText) {
-      const formattedEyebrow = eyebrowDecorator(eyebrowElement, 'accent-color');
-      if (formattedEyebrow) {
-        eyebrowElement.replaceWith(formattedEyebrow);
-      }
-    }
-  }
-
-  block.innerHTML = '';
-
-  if (isEmAccent) {
-    if (imageWrapper) {
-      block.appendChild(imageWrapper);
-    }
-    block.appendChild(contentWrapper);
-  } else if (isTwoColoredRight || isBlackColoredRight) {
-    block.appendChild(contentWrapper);
-    if (imageWrapper) {
-      block.appendChild(imageWrapper);
-    }
-  }
-
-  if (isEmAccent || isBlackColoredRight) {
-    const paragraphs = contentWrapper.querySelectorAll('p');
-    paragraphs.forEach((p) => {
-      if (p.querySelector('a')) return;
-
-      const strong = p.querySelector('strong');
-      if (strong && !strong.querySelector('a') && isEmAccent) {
-        const buttonText = strong.textContent.trim();
-        if (buttonText) {
-          const link = document.createElement('a');
-          link.href = '#';
-          link.title = buttonText;
-          link.textContent = buttonText;
-          strong.innerHTML = '';
-          strong.appendChild(link);
-        }
-      }
-
-      const em = p.querySelector('em');
-      if (em && isBlackColoredRight && !em.querySelector('a')) {
-        const buttonText = em.textContent.trim();
-        if (buttonText) {
-          const link = document.createElement('a');
-          link.href = '#';
-          link.title = buttonText;
-          link.textContent = buttonText;
-          em.innerHTML = '';
-          em.appendChild(link);
-        }
-      }
-    });
-
-    decorateButtons(contentWrapper);
-
-    const allButtons = [...contentWrapper.querySelectorAll('a.button')];
-    if (isEmAccent) {
-      allButtons.forEach((button, index) => {
-        if (index === 0) {
-          button.classList.remove('secondary', 'inverted');
-          button.classList.add('primary');
-        } else if (index === 1) {
-          button.classList.remove('primary', 'secondary');
-          button.classList.add('inverted');
-        }
-      });
-    }
-  }
+  rows.forEach((r) => r.remove());
 }
