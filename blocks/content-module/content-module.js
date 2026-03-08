@@ -62,11 +62,11 @@ export default function decorate(block) {
   const isFullWidthText = block.classList.contains('full-width-text');
   const isFullWidthHeadline = block.classList.contains('full-width-headline');
 
-  // Map rows to properties
+  // Map rows to properties based on JSON field order
   const fieldRows = rows.map((r) => r.firstElementChild);
   
   if (isDefaultWithCta) {
-    [ctaLabel, ctaUrl, descriptionCol] = fieldRows;
+    [descriptionCol, ctaLabel, ctaUrl] = fieldRows;
   } else if (isTwoCol) {
     [descriptionCol, description2Col] = fieldRows;
   } else if (isFullWidthText || isFullWidthHeadline) {
@@ -87,7 +87,7 @@ export default function decorate(block) {
   // 1. Column 1 (Subtitle/Eyebrow OR First Description)
   if (subtitleCol || (isTwoCol && descriptionCol)) {
     const col1Div = document.createElement('div');
-    col1Div.className = 'subtitle'; // Using 'subtitle' class to match existing CSS column 1 styling
+    col1Div.className = 'subtitle'; 
     
     const source = subtitleCol || descriptionCol;
     if (isDefault) {
@@ -106,8 +106,36 @@ export default function decorate(block) {
     contentWrapper.appendChild(col1Div);
   }
 
-  // 2. CTA (Button)
+  // 2. Column 2 (Primary Description OR Second Column Content)
+  // For Default with CTA, Column 1 is usually empty or used for Description
+  // But based on your flex direction, we'll keep mapping logically
+  const col2Source = isTwoCol ? description2Col : descriptionCol;
+  if (col2Source && !isDefaultWithCta) {
+    const descriptionDiv = document.createElement('div');
+    descriptionDiv.className = 'description';
+    descriptionDiv.innerHTML = col2Source.innerHTML;
+    moveInstrumentation(col2Source, descriptionDiv);
+    
+    // Animation logic
+    const animTarget = descriptionDiv.querySelector('h4') || descriptionDiv.querySelector('p');
+    if ((isDefault || isFullWidthHeadline) && animTarget) {
+      wrapWords(animTarget);
+      observeScrollReveal(block, () => animateWords(animTarget));
+    }
+    contentWrapper.appendChild(descriptionDiv);
+  }
+
+  // 3. CTA (Button) - Positioned after description in rows but flex handles UI
   if (isDefaultWithCta && (ctaCol || (ctaLabel && ctaUrl))) {
+    // Render description first in DOM if using with-cta
+    if (descriptionCol) {
+      const descriptionDiv = document.createElement('div');
+      descriptionDiv.className = 'description';
+      descriptionDiv.innerHTML = descriptionCol.innerHTML;
+      moveInstrumentation(descriptionCol, descriptionDiv);
+      contentWrapper.appendChild(descriptionDiv);
+    }
+
     const ctaDiv = document.createElement('div');
     ctaDiv.className = 'cta';
     if (ctaLabel && ctaUrl) {
@@ -128,23 +156,6 @@ export default function decorate(block) {
       ctaDiv.innerHTML = ctaCol.innerHTML;
     }
     contentWrapper.appendChild(ctaDiv);
-  }
-
-  // 3. Column 2 (Primary Description OR Second Column Content)
-  const col2Source = isTwoCol ? description2Col : descriptionCol;
-  if (col2Source) {
-    const descriptionDiv = document.createElement('div');
-    descriptionDiv.className = 'description';
-    descriptionDiv.innerHTML = col2Source.innerHTML;
-    moveInstrumentation(col2Source, descriptionDiv);
-    
-    // Animation logic (standard reveal)
-    const animTarget = descriptionDiv.querySelector('h4') || descriptionDiv.querySelector('p');
-    if ((isDefault || isFullWidthHeadline) && animTarget) {
-      wrapWords(animTarget);
-      observeScrollReveal(block, () => animateWords(animTarget));
-    }
-    contentWrapper.appendChild(descriptionDiv);
   }
 
   block.appendChild(contentWrapper);
