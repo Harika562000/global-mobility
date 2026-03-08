@@ -29,6 +29,18 @@ main > .content-module-container {
 
 }
 
+.content-module .content-wrapper p {
+    font-size: var(--responsive-font-body-400);
+    font-weight: var(--responsive-font-body-400-weight);
+    line-height: var(--responsive-font-body-400-line-height);
+}
+
+.content-module .content-wrapper h4 {
+    font-size: var(--responsive-font-display);
+    font-weight: var(--responsive-font-display-weight);
+    line-height: var(--responsive-font-display-line-height);
+}
+
 .two-col-text .content-wrapper {
     @media (width >= 720px) {
         flex-direction: row;

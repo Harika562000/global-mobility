@@ -102,10 +102,7 @@ export default function decorate(block) {
     moveInstrumentation(col2Source, descriptionDiv);
 
     // Animation logic (only for specific variations)
-    const animTarget = descriptionDiv.querySelector('h4 em') || descriptionDiv.querySelector('h4') || descriptionDiv.querySelector('p');
-    if (animTarget && (animTarget.tagName === 'EM' || animTarget.tagName === 'H4')) {
-      animTarget.classList.add('display-text');
-    }
+    const animTarget = descriptionDiv.querySelector('h4') || descriptionDiv.querySelector('p');
     if (animTarget && (isDefault || isFullWidthHeadline)) {
       wrapWords(animTarget);
       observeScrollReveal(block, () => animateWords(animTarget));
