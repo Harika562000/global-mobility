@@ -37,13 +37,35 @@
           "component": "text",
           "name": "eyebrow",
           "label": "Eyebrow",
-          "valueType": "string"
+          "valueType": "string",
+          "visible": "{classes === 'default-variation'}"
         },
         {
           "component": "text",
           "name": "description",
-          "label": "Description",
+          "label": "Description / First Column",
           "valueType": "string"
+        },
+        {
+          "component": "text",
+          "name": "description2",
+          "label": "Second Column Content",
+          "valueType": "string",
+          "visible": "{classes === 'two-col-text'}"
+        },
+        {
+          "component": "text",
+          "name": "ctaLabel",
+          "label": "CTA Label",
+          "valueType": "string",
+          "visible": "{classes === 'default-with-cta'}"
+        },
+        {
+          "component": "text",
+          "name": "ctaUrl",
+          "label": "CTA Link",
+          "valueType": "string",
+          "visible": "{classes === 'default-with-cta'}"
         }
       ]
     }

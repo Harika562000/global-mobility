@@ -51,29 +51,32 @@ export default function decorate(block) {
   // Extract fields based on structure (rows or columns)
   let subtitleCol;
   let descriptionCol;
+  let description2Col; // For two-col-text
   let ctaCol;
+  let ctaLabel;
+  let ctaUrl;
 
-  if (rows.length > 1) {
-    // New Row-based structure (1 row per field)
-    if (block.classList.contains('default-with-cta')) {
-      [ctaCol, descriptionCol] = rows.map((r) => r.firstElementChild);
-    } else {
-      [subtitleCol, descriptionCol] = rows.map((r) => r.firstElementChild);
-    }
-  } else if (rows.length === 1) {
-    // Single row with columns
-    const cols = [...rows[0].querySelectorAll(':scope > div')];
-    if (block.classList.contains('default-with-cta')) {
-      [ctaCol, descriptionCol] = cols;
-    } else {
-      [subtitleCol, descriptionCol] = cols;
-    }
-  }
+  const isDefaultWithCta = block.classList.contains('default-with-cta');
+  const isTwoCol = block.classList.contains('two-col-text');
+  const isDefault = block.classList.contains('default-variation');
+  const isFullWidthText = block.classList.contains('full-width-text');
+  const isFullWidthHeadline = block.classList.contains('full-width-headline');
 
-  // Variations handling
-  if (block.classList.contains('full-width-headline') || block.classList.contains('full-width-text')) {
-    descriptionCol = descriptionCol || subtitleCol;
-    subtitleCol = null;
+  // Map rows to properties
+  const fieldRows = rows.map((r) => r.firstElementChild);
+  
+  if (isDefaultWithCta) {
+    [ctaLabel, ctaUrl, descriptionCol] = fieldRows;
+  } else if (isTwoCol) {
+    [descriptionCol, description2Col] = fieldRows;
+  } else if (isFullWidthText || isFullWidthHeadline) {
+    [descriptionCol] = fieldRows;
+  } else if (isDefault) {
+    [subtitleCol, descriptionCol] = fieldRows;
+  } else {
+    // Fallback for column-based or legacy
+    const cols = rows[0]?.querySelectorAll(':scope > div') || [];
+    [subtitleCol, descriptionCol] = cols;
   }
 
   // Clear and rebuild block structure to match CSS expectations
@@ -81,43 +84,63 @@ export default function decorate(block) {
   const contentWrapper = document.createElement('div');
   contentWrapper.className = 'content-wrapper';
 
-  // 1. Subtitle / Eyebrow - Style as eyebrow only for default variation
-  if (subtitleCol) {
-    const subtitleDiv = document.createElement('div');
-    subtitleDiv.className = 'subtitle';
-    if (block.classList.contains('default-variation')) {
-      const originalP = subtitleCol.querySelector('p') || subtitleCol;
+  // 1. Column 1 (Subtitle/Eyebrow OR First Description)
+  if (subtitleCol || (isTwoCol && descriptionCol)) {
+    const col1Div = document.createElement('div');
+    col1Div.className = 'subtitle'; // Using 'subtitle' class to match existing CSS column 1 styling
+    
+    const source = subtitleCol || descriptionCol;
+    if (isDefault) {
+      const originalP = source.querySelector('p') || source;
       const decorated = eyebrowDecorator(originalP, 'accent-color');
       if (decorated) {
         moveInstrumentation(originalP, decorated);
-        subtitleDiv.appendChild(decorated);
+        col1Div.appendChild(decorated);
       } else {
-        subtitleDiv.innerHTML = subtitleCol.innerHTML;
+        col1Div.innerHTML = source.innerHTML;
       }
     } else {
-      subtitleDiv.innerHTML = subtitleCol.innerHTML;
+      col1Div.innerHTML = source.innerHTML;
+      moveInstrumentation(source, col1Div);
     }
-    contentWrapper.appendChild(subtitleDiv);
+    contentWrapper.appendChild(col1Div);
   }
 
-  // 2. CTA
-  if (ctaCol) {
+  // 2. CTA (Button)
+  if (isDefaultWithCta && (ctaCol || (ctaLabel && ctaUrl))) {
     const ctaDiv = document.createElement('div');
     ctaDiv.className = 'cta';
-    ctaDiv.innerHTML = ctaCol.innerHTML;
+    if (ctaLabel && ctaUrl) {
+      const labelText = ctaLabel.textContent.trim();
+      const urlText = ctaUrl.textContent.trim();
+      if (labelText && urlText) {
+        const p = document.createElement('p');
+        const a = document.createElement('a');
+        a.href = urlText;
+        a.title = labelText;
+        a.textContent = labelText;
+        a.className = 'button primary';
+        moveInstrumentation(ctaLabel, a);
+        p.appendChild(a);
+        ctaDiv.appendChild(p);
+      }
+    } else if (ctaCol) {
+      ctaDiv.innerHTML = ctaCol.innerHTML;
+    }
     contentWrapper.appendChild(ctaDiv);
   }
 
-  // 3. Description
-  if (descriptionCol) {
+  // 3. Column 2 (Primary Description OR Second Column Content)
+  const col2Source = isTwoCol ? description2Col : descriptionCol;
+  if (col2Source) {
     const descriptionDiv = document.createElement('div');
     descriptionDiv.className = 'description';
-    descriptionDiv.innerHTML = descriptionCol.innerHTML;
+    descriptionDiv.innerHTML = col2Source.innerHTML;
+    moveInstrumentation(col2Source, descriptionDiv);
     
-    // Animation logic: only for default and full-width-headline
-    const isAnimVariation = block.classList.contains('default-variation') || block.classList.contains('full-width-headline');
+    // Animation logic (standard reveal)
     const animTarget = descriptionDiv.querySelector('h4') || descriptionDiv.querySelector('p');
-    if (isAnimVariation && animTarget) {
+    if ((isDefault || isFullWidthHeadline) && animTarget) {
       wrapWords(animTarget);
       observeScrollReveal(block, () => animateWords(animTarget));
     }
