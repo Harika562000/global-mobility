@@ -30,7 +30,7 @@
             { "name": "Image on the right (two-colored)", "value": "hero-two-colored-right" },
             { "name": "Image on the right (black-colored)", "value": "hero-black-colored-right" }
           ],
-          "description": "Image as background: 2 CTAs. Two-colored: 2 CTAs. Black-colored: Tag, Eyebrow, 1 CTA."
+          "description": "Image as background: image, heading, description, 2 buttons. Two-colored: image, heading, description. Black-colored: image, tag, eyebrow, heading, description, 1 button."
         },
         {
           "component": "reference",
@@ -53,7 +53,8 @@
           "name": "eyebrow",
           "label": "Eyebrow",
           "value": "",
-          "description": "Optional. Black-colored variation only."
+          "description": "Black-colored variation only.",
+          "condition": { "===": [{ "var": ["classes", ""] }, "hero-black-colored-right"] }
         },
         {
           "component": "richtext",
@@ -81,7 +82,8 @@
           "name": "tag",
           "label": "Tag",
           "value": "",
-          "description": "Optional. Black-colored variation only."
+          "description": "Black-colored variation only.",
+          "condition": { "===": [{ "var": ["classes", ""] }, "hero-black-colored-right"] }
         }
       ]
     }
