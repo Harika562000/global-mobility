@@ -214,7 +214,7 @@
         "name": "eyebrow",
         "label": "Eyebrow",
         "valueType": "string",
-        "visible": "classes == 'default-variation'"
+        "condition": "classes == 'default-variation'"
       },
       {
         "component": "text",
@@ -227,21 +227,21 @@
         "name": "description2",
         "label": "Second Column Content",
         "valueType": "string",
-        "visible": "classes == 'two-col-text'"
+        "condition": "classes == 'two-col-text'"
       },
       {
         "component": "text",
         "name": "ctaLabel",
         "label": "CTA Label",
         "valueType": "string",
-        "visible": "classes == 'default-with-cta'"
+        "condition": "classes == 'default-with-cta'"
       },
       {
         "component": "text",
         "name": "ctaUrl",
         "label": "CTA Link",
         "valueType": "string",
-        "visible": "classes == 'default-with-cta'"
+        "condition": "classes == 'default-with-cta'"
       }
     ]
   },
