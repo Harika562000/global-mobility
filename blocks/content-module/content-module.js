@@ -81,15 +81,19 @@ export default function decorate(block) {
   const contentWrapper = document.createElement('div');
   contentWrapper.className = 'content-wrapper';
 
-  // 1. Subtitle / Eyebrow
+  // 1. Subtitle / Eyebrow - Style as eyebrow only for default variation
   if (subtitleCol) {
     const subtitleDiv = document.createElement('div');
     subtitleDiv.className = 'subtitle';
-    const originalP = subtitleCol.querySelector('p') || subtitleCol;
-    const decorated = eyebrowDecorator(originalP, 'accent-color');
-    if (decorated) {
-      moveInstrumentation(originalP, decorated);
-      subtitleDiv.appendChild(decorated);
+    if (block.classList.contains('default-variation')) {
+      const originalP = subtitleCol.querySelector('p') || subtitleCol;
+      const decorated = eyebrowDecorator(originalP, 'accent-color');
+      if (decorated) {
+        moveInstrumentation(originalP, decorated);
+        subtitleDiv.appendChild(decorated);
+      } else {
+        subtitleDiv.innerHTML = subtitleCol.innerHTML;
+      }
     } else {
       subtitleDiv.innerHTML = subtitleCol.innerHTML;
     }
