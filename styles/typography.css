@@ -199,11 +199,10 @@ h6.varince {
   letter-spacing: var(--letter-spacing-tight);
 }
 
-h4 em,
-.display-text {
-  font-size: var(--responsive-font-display);
-  font-weight: var(--responsive-font-display-weight);
-  line-height: var(--responsive-font-display-line-height);
+.display {
+  font-size: var(--responsive-display-size);
+  font-weight: var(--responsive-display-weight);
+  line-height: var(--responsive-display-line-height);
   letter-spacing: var(--letter-spacing-tight);
   font-style: normal;
 }
