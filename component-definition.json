@@ -130,7 +130,6 @@
         {
           "title": "Content Module",
           "id": "content-module",
-          "model": "content-module",
           "plugins": {
             "xwalk": {
               "page": {
