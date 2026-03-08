@@ -112,14 +112,6 @@ export default function decorate(block) {
 
   // 3. CTA Variation (Description + Button)
   if (isDefaultWithCta) {
-    if (rowDesc1) {
-      const descriptionDiv = document.createElement('div');
-      descriptionDiv.className = 'description';
-      descriptionDiv.innerHTML = rowDesc1.innerHTML;
-      moveInstrumentation(rowDesc1, descriptionDiv);
-      contentWrapper.appendChild(descriptionDiv);
-    }
-
     if (rowCtaLabel && rowCtaUrl) {
       const ctaDiv = document.createElement('div');
       ctaDiv.className = 'cta';
@@ -138,6 +130,14 @@ export default function decorate(block) {
         ctaDiv.appendChild(p);
       }
       contentWrapper.appendChild(ctaDiv);
+    }
+
+    if (rowDesc1) {
+      const descriptionDiv = document.createElement('div');
+      descriptionDiv.className = 'description';
+      descriptionDiv.innerHTML = rowDesc1.innerHTML;
+      moveInstrumentation(rowDesc1, descriptionDiv);
+      contentWrapper.appendChild(descriptionDiv);
     }
   }
 
