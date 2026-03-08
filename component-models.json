@@ -215,7 +215,7 @@
         "label": "Eyebrow",
         "valueType": "string",
         "condition": {
-          "==": [
+          "===": [
             {
               "var": "classes"
             },
@@ -235,7 +235,7 @@
         "label": "Second Column Content",
         "valueType": "string",
         "condition": {
-          "==": [
+          "===": [
             {
               "var": "classes"
             },
@@ -249,7 +249,7 @@
         "label": "CTA Label",
         "valueType": "string",
         "condition": {
-          "==": [
+          "===": [
             {
               "var": "classes"
             },
@@ -263,7 +263,7 @@
         "label": "CTA Link",
         "valueType": "string",
         "condition": {
-          "==": [
+          "===": [
             {
               "var": "classes"
             },
