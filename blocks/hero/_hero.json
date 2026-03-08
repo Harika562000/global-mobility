@@ -27,8 +27,8 @@
           "valueType": "string",
           "options": [
             { "name": "Image as background", "value": "" },
-            { "name": "Image on the right (two-colored)", "value": "two-colored-right" },
-            { "name": "Image on the right (black-colored)", "value": "black-colored-right" }
+            { "name": "Image on the right (two-colored)", "value": "hero-two-colored-right" },
+            { "name": "Image on the right (black-colored)", "value": "hero-black-colored-right" }
           ],
           "description": "Image as background: 2 CTAs. Two-colored: 2 CTAs. Black-colored: Tag, Eyebrow, 1 CTA."
         },
@@ -68,6 +68,9 @@
           "label": "Sub-heading",
           "valueType": "string",
           "description": "Optional."
+        },
+        {
+          "...": "../../models/elements/_button-fields.json#/fields"
         },
         {
           "...": "../../models/elements/_button-fields.json#/fields"
