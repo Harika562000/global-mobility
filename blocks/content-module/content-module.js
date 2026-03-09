@@ -101,9 +101,9 @@ export default function decorate(block) {
     descriptionDiv.innerHTML = col2Source.innerHTML;
     moveInstrumentation(col2Source, descriptionDiv);
 
-    // Animation logic (only for specific variations)
-    const animTarget = descriptionDiv.querySelector('h4') || descriptionDiv.querySelector('p');
-    if (animTarget && (isDefault || isFullWidthHeadline)) {
+    // Animation logic: only animate if h4 is present
+    const animTarget = descriptionDiv.querySelector('h4');
+    if (animTarget) {
       wrapWords(animTarget);
       observeScrollReveal(block, () => animateWords(animTarget));
     }
@@ -137,6 +137,13 @@ export default function decorate(block) {
       descriptionDiv.className = 'description';
       descriptionDiv.innerHTML = rowDesc1.innerHTML;
       moveInstrumentation(rowDesc1, descriptionDiv);
+
+      // Animation logic: only animate if h4 is present
+      const animTarget = descriptionDiv.querySelector('h4');
+      if (animTarget) {
+        wrapWords(animTarget);
+        observeScrollReveal(block, () => animateWords(animTarget));
+      }
       contentWrapper.appendChild(descriptionDiv);
     }
   }
