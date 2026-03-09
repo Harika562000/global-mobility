@@ -680,7 +680,9 @@
        --responsive-display-size: var(--font-size-700); /* 24px */
        --responsive-display-weight: var(--font-weight-semibold); /* 600 */
        --responsive-display-line-height: var(--line-height-32); /* 32px */
-       --responsive-font-number: var(--font-size-1250); /* 112px */
+       --responsive-number-size: var(--font-size-1250); /* 112px */
+       --responsive-number-weight: var(--font-weight-semibold); /* 600 */
+       --responsive-number-line-height: var(--line-height-100p); /* 32px */
 
     /* ========================================
        MAIN LAYOUT (Responsive)
@@ -810,7 +812,7 @@
       --responsive-font-label: var(--font-size-100);   /* 12px */
       --responsive-display-size: var(--font-size-800); /* 32px */
       --responsive-display-line-height: var(--line-height-44); /* 44px */
-      --responsive-font-number: var(--font-size-1300); /* 132px */
+      --responsive-number-size: var(--font-size-1300); /* 132px */
 
       /* Header 1100 font size */
       --type-header-1100-size: var(--font-size-1100); /* 56px */
