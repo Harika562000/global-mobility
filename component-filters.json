@@ -17,7 +17,8 @@
       "cards",
       "columns",
       "fragment",
-      "content-module"
+      "content-module",
+      "numeralia"
     ]
   },
   {
@@ -39,6 +40,12 @@
       "image",
       "button",
       "title"
+    ]
+  },
+  {
+    "id": "numeralia",
+    "components": [
+      "numeralia-item"
     ]
   }
 ]

@@ -544,5 +544,24 @@
         "valueType": "string"
       }
     ]
+  },
+  {
+    "id": "numeralia-item",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "number",
+        "label": "Number",
+        "description": "Number with optional suffix (e.g. 150+, 80%, 35M)",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "label": "Description"
+      }
+    ]
   }
 ]

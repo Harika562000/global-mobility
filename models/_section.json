@@ -52,7 +52,8 @@
         "cards",
         "columns",
         "fragment",
-        "content-module"
+        "content-module",
+        "numeralia"
       ]
     }
   ]

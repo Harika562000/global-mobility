@@ -188,6 +188,40 @@
               }
             }
           }
+        },
+        {
+          "title": "Numeralia",
+          "id": "numeralia",
+          "model": "numeralia",
+          "filter": "numeralia",
+          "plugins": {
+            "da": {
+              "name": "numeralia",
+              "rows": 1,
+              "columns": 2
+            }
+          }
+        },
+        {
+          "title": "Numeralia Item",
+          "id": "numeralia-item",
+          "model": "numeralia-item",
+          "plugins": {
+            "da": {
+              "rows": 1,
+              "columns": 2,
+              "fields": [
+                {
+                  "name": "number",
+                  "selector": "div:nth-child(1)"
+                },
+                {
+                  "name": "description",
+                  "selector": "div:nth-child(2)"
+                }
+              ]
+            }
+          }
         }
       ]
     }
