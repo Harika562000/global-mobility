@@ -104,7 +104,7 @@ export default async function decorate(block) {
   // Clone CTA button into social section for layout
   const socialContentWrapper = footer.querySelector('.footer-social > .default-content-wrapper');
   const utilityButton = footer.querySelector('.footer-utility .button');
-  utilityButton?.classList.add('original-button', 'inverted', 'size-40');
+  utilityButton?.classList.add('original-button', 'size-40');
   if (socialContentWrapper && utilityButton) {
     const clonedButton = utilityButton.cloneNode(true);
     clonedButton.classList.add('button-clone');

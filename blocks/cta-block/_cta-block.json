@@ -1,0 +1,114 @@
+{
+    "definitions": [
+      {
+        "title": "CTA Block",
+        "id": "cta-block",
+        "plugins": {
+          "xwalk": {
+            "page": {
+              "resourceType": "core/franklin/components/block/v1/block",
+              "template": {
+                "name": "CTA Block",
+                "model": "cta-block"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "models": [
+      {
+        "id": "cta-block",
+        "fields": [
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "eyebrow",
+            "label": "Eyebrow Text",
+            "required": true
+          },
+          {
+            "component": "richtext",
+            "valueType": "string",
+            "name": "headline",
+            "label": "Headline Title",
+            "description": "For Default variation, use H4 tag. Any heading tag will be used.",
+            "required": true
+          },
+          {
+            "component": "richtext",
+            "valueType": "string",
+            "name": "description",
+            "label": "Description",
+            "description": "Supporting paragraph text below the headline"
+          },
+          {
+            "component": "aem-content",
+            "valueType": "string",
+            "name": "button1",
+            "label": "Button 1 Link",
+            "required": true
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "button1Text",
+            "label": "Button1 Text",
+            "required": true
+          },
+          {
+            "component": "select",
+            "name": "button1Type",
+            "label": "Button1 Variation",
+            "valueType": "string",
+            "value": "",
+            "options": [
+              { "name": "Primary", "value": "primary" },
+              { "name": "Secondary", "value": "secondary" },
+              { "name": "Inverted", "value": "inverted" }
+            ]
+          },
+          {
+            "component": "aem-content",
+            "valueType": "string",
+            "name": "button2",
+            "label": "Button2 Link",
+            "required": true
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "button2Text",
+            "label": "Button2 Text",
+            "required": true
+          },
+          {
+            "component": "select",
+            "name": "button2Type",
+            "label": "Button2 Variation",
+            "valueType": "string",
+            "value": "",
+            "options": [
+              { "name": "Primary", "value": "primary" },
+              { "name": "Secondary", "value": "secondary" },
+              { "name": "Inverted", "value": "inverted" }
+            ]
+          },
+          {
+            "component": "reference",
+            "valueType": "string",
+            "name": "media",
+            "label": "Media",
+            "multi": false
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "mediaAlt",
+            "label": "Media Alt Text"
+          }
+        ]
+      }
+    ],
+    "filters": []
+  }

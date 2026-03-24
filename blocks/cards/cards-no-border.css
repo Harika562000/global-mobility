@@ -1,0 +1,29 @@
+/* No-border card variant */
+
+/* stylelint-disable no-descending-specificity */
+.card-no-border.two-col .card-item,
+.card-no-border.three-col .card-item {
+  gap: var(--spacing-800);
+  padding: var(--spacing-800) 0;
+  height: 300px;
+
+  @media (width >=1025px) {
+    padding: var(--spacing-700) var(--spacing-600);
+    gap: var(--spacing-340,34px);
+    height: 100%;
+  }
+}
+
+.card-no-border.two-col .card-item .card-head,
+.card-no-border.three-col .card-item .card-head {
+  gap: var(--size-8);
+}
+
+/* Support both section-level and block-level card-no-border */
+.cards.two-col.card-no-border .card-item,
+.cards.three-col.card-no-border .card-item,
+.section.cards-container.card-no-border .cards.two-col .card-item,
+.section.cards-container.card-no-border .cards.three-col .card-item {
+  border: none;
+}
+/* stylelint-enable no-descending-specificity */

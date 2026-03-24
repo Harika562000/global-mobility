@@ -3,23 +3,2267 @@
     "id": "page-metadata",
     "fields": [
       {
-        "component": "text",
+        "component": "select",
+        "name": "pageTemplate",
+        "label": "Page Template",
         "valueType": "string",
-        "name": "jcr:title",
-        "label": "Title"
+        "value": "",
+        "options": [
+          {
+            "name": "Experts Page",
+            "value": "Experts Page"
+          },
+          {
+            "name": "Product Page",
+            "value": "Product Page"
+          },
+          {
+            "name": "Insights Details Page",
+            "value": "Insights Details Page"
+          },
+          {
+            "name": "Industry",
+            "value": "Industry"
+          },
+          {
+            "name": "Event details",
+            "value": "Event details"
+          },
+          {
+            "name": "Theme",
+            "value": "Theme"
+          },
+          {
+            "name": "Campaign",
+            "value": "Campaign"
+          },
+          {
+            "name": "Data Sample",
+            "value": "Data Sample"
+          },
+          {
+            "name": "Contact Us",
+            "value": "Contact Us"
+          },
+          {
+            "name": "Need State",
+            "value": "Need State"
+          },
+          {
+            "name": "About us",
+            "value": "About us"
+          },
+          {
+            "name": "Insights Landing Page",
+            "value": "Insights Landing Page"
+          },
+          {
+            "name": "Events Landing page",
+            "value": "Events Landing page"
+          },
+          {
+            "name": "Expert Landing Page",
+            "value": "Expert Landing Page"
+          },
+          {
+            "name": "Homepage",
+            "value": "Homepage"
+          },
+          {
+            "name": "Search",
+            "value": "Search"
+          },
+          {
+            "name": "Legal",
+            "value": "Legal"
+          },
+          {
+            "name": "Overview",
+            "value": "Overview"
+          },
+          {
+            "name": "Product Catalog",
+            "value": "Product Catalog"
+          },
+          {
+            "name": "Generic",
+            "value": "Generic"
+          }
+        ]
       },
       {
-        "component": "text",
-        "valueType": "string",
-        "name": "jcr:description",
-        "label": "Description"
+        "component": "container",
+        "name": "core",
+        "label": "Core",
+        "valueType": "object",
+        "collapsible": true,
+        "fields": [
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "jcr:title",
+            "label": "Title"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "jcr:description",
+            "label": "Meta description"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "contentType",
+            "label": "Content Type"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "viewport",
+            "label": "Viewport"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "jsonLd",
+            "label": "JSON-LD"
+          }
+        ]
       },
       {
-        "component": "text",
-        "valueType": "string",
-        "name": "keywords",
-        "multi": true,
-        "label": "Keywords"
+        "component": "container",
+        "name": "seoSocial",
+        "label": "SEO & Social",
+        "valueType": "object",
+        "collapsible": true,
+        "fields": [
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "ogTitle",
+            "label": "og:title"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "ogDescription",
+            "label": "og:description"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "ogUrl",
+            "label": "og:url"
+          },
+          {
+            "component": "reference",
+            "valueType": "string",
+            "name": "ogImage",
+            "label": "og:image"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "ogType",
+            "label": "og:type"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "ogLocale",
+            "label": "og:locale"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "ogSiteName",
+            "label": "og:site_name"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "twitterCard",
+            "label": "twitter:card"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "twitterTitle",
+            "label": "twitter:title"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "twitterDescription",
+            "label": "twitter:description"
+          },
+          {
+            "component": "reference",
+            "valueType": "string",
+            "name": "twitterImage",
+            "label": "twitter:image"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "twitterSite",
+            "label": "twitter:site"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "twitterCreator",
+            "label": "twitter:creator"
+          }
+        ]
+      },
+      {
+        "component": "container",
+        "name": "taxonomy",
+        "label": "Taxonomy",
+        "valueType": "object",
+        "collapsible": true,
+        "fields": [
+          {
+            "component": "aem-tag",
+            "name": "assetAttributes",
+            "label": "Asset Attributes",
+            "value": "",
+            "valueType": "string",
+            "rootPath": "/content/cq:tags/mobility-global/system-and-structural-tags/asset-attributes-structural-attributes-or-delivery-mechanisms",
+            "condition": {
+              "or": [
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Campaign"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Data Sample"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Search"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Catalog"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Generic"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "component": "aem-tag",
+            "name": "audienceRole",
+            "label": "Audience Role",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/contextual-variables/segmentation-and-user-context/audience-role",
+            "condition": {
+              "or": [
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Insights Details Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Event details"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Campaign"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Data Sample"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Insights Landing Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Events Landing page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Search"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Catalog"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Generic"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "component": "aem-tag",
+            "name": "brandDataSource",
+            "label": "Brand / Data Source",
+            "value": "",
+            "valueType": "string",
+            "rootPath": "/content/cq:tags/mobility-global/system-and-structural-tags/brand-or-data-source",
+            "condition": {
+              "or": [
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Campaign"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Data Sample"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Search"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Catalog"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Generic"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "component": "aem-tag",
+            "name": "campaignType",
+            "label": "Campaign Type",
+            "value": "",
+            "valueType": "string",
+            "rootPath": "/content/cq:tags/mobility-global/system-and-structural-tags/campaign-type",
+            "condition": {
+              "or": [
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Campaign"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Generic"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "component": "aem-tag",
+            "name": "contentFormat",
+            "label": "Content Format",
+            "value": "",
+            "valueType": "string",
+            "rootPath": "/content/cq:tags/mobility-global/system-and-structural-tags/content-formats",
+            "condition": {
+              "or": [
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Insights Details Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Event details"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Campaign"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Data Sample"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Insights Landing Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Events Landing page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Search"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Generic"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "component": "aem-tag",
+            "name": "eventFormat",
+            "label": "Event Format",
+            "value": "",
+            "valueType": "string",
+            "rootPath": "/content/cq:tags/mobility-global/system-and-structural-tags/content-formats/event-formats",
+            "condition": {
+              "or": [
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Insights Details Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Event details"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Campaign"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Insights Landing Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Events Landing page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Search"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Generic"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "component": "aem-tag",
+            "name": "industrySector",
+            "label": "Industry / Sector",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/contextual-variables/segmentation-and-user-context/industry-or-sector",
+            "condition": {
+              "or": [
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Experts Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Insights Details Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Industry"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Event details"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Campaign"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Data Sample"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Insights Landing Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Events Landing page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Expert Landing Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Search"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Catalog"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Generic"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "component": "aem-tag",
+            "name": "insightsThoughtLeaderContentType",
+            "label": "Insights and Thought Leader Content Type",
+            "value": "",
+            "valueType": "string",
+            "rootPath": "/content/cq:tags/mobility-global/insights-and-intelligence/insight-and-thought-leader-content-type",
+            "condition": {
+              "or": [
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Insights Details Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Event details"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Campaign"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Insights Landing Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Events Landing page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Search"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Generic"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "component": "aem-tag",
+            "name": "marketConditions",
+            "label": "Market Conditions",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/contextual-variables/market-context/market-conditions",
+            "condition": {
+              "or": [
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Campaign"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Data Sample"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Search"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Catalog"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Generic"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "component": "aem-tag",
+            "name": "needStates",
+            "label": "Need States",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/pillars-and-need-states",
+            "condition": {
+              "or": [
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Campaign"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Data Sample"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Need State"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Expert Landing Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Search"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Catalog"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Generic"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "component": "aem-tag",
+            "name": "pillars",
+            "label": "Pillars",
+            "value": "",
+            "valueType": "string",
+            "multi": false,
+            "rootPath": "/content/cq:tags/mobility-global/pillars-and-need-states",
+            "condition": {
+              "or": [
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Experts Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Insights Details Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Industry"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Event details"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Campaign"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Data Sample"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Need State"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Insights Landing Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Events Landing page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Expert Landing Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Overview"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Catalog"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Generic"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "component": "aem-tag",
+            "name": "platforms",
+            "label": "Platforms",
+            "value": "",
+            "valueType": "string",
+            "rootPath": "/content/cq:tags/mobility-global/products-and-platforms/platforms",
+            "condition": {
+              "or": [
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Campaign"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Data Sample"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Search"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Catalog"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Generic"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "component": "aem-tag",
+            "name": "productCapability",
+            "label": "Product Capability",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/products-and-platforms/product-capabilities",
+            "condition": {
+              "or": [
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Experts Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Campaign"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Data Sample"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Expert Landing Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Search"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Catalog"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Generic"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "component": "aem-tag",
+            "name": "productFamily",
+            "label": "Product Family",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/products-and-platforms/product-families",
+            "condition": {
+              "or": [
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Campaign"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Data Sample"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Search"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Catalog"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Generic"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "component": "aem-tag",
+            "name": "regionMarket",
+            "label": "Region / Market",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/contextual-variables/market-context/region---market",
+            "condition": {
+              "or": [
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Experts Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Insights Details Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Event details"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Campaign"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Data Sample"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Insights Landing Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Events Landing page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Expert Landing Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Search"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Catalog"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Generic"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "component": "aem-tag",
+            "name": "regulatoryContext",
+            "label": "Regulatory Context",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/contextual-variables/regulatory-and-operating-context/regulatory-context",
+            "condition": {
+              "or": [
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Insights Details Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Event details"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Campaign"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Data Sample"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Insights Landing Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Events Landing page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Search"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Generic"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "component": "aem-tag",
+            "name": "segmentationUserContext",
+            "label": "Segmentation and User Context",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/contextual-variables/segmentation-and-user-context",
+            "condition": {
+              "or": [
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Generic"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "component": "aem-tag",
+            "name": "series",
+            "label": "Series",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/insights-and-intelligence/series",
+            "condition": {
+              "or": [
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Insights Details Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Campaign"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Insights Landing Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Search"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Generic"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "component": "aem-tag",
+            "name": "servicesAdvisory",
+            "label": "Services and Advisory",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/products-and-platforms/services-and-advisory",
+            "condition": {
+              "or": [
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Experts Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Campaign"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Data Sample"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Expert Landing Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Search"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Catalog"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Generic"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "component": "aem-tag",
+            "name": "theme",
+            "label": "Theme",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/insights-and-intelligence/theme",
+            "condition": {
+              "or": [
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Insights Details Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Event details"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Theme"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Campaign"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Insights Landing Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Events Landing page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Search"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Generic"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "component": "aem-tag",
+            "name": "timeHorizon",
+            "label": "Time Horizon",
+            "value": "",
+            "valueType": "string",
+            "rootPath": "/content/cq:tags/time-horizon",
+            "condition": {
+              "or": [
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Campaign"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Data Sample"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Search"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Catalog"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Generic"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "component": "aem-tag",
+            "name": "topic",
+            "label": "Topic",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/insights-and-intelligence/topic",
+            "condition": {
+              "or": [
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Experts Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Insights Details Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Event details"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Campaign"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Insights Landing Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Events Landing page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Expert Landing Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Search"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Generic"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "component": "aem-tag",
+            "name": "vehicleTypeSegment",
+            "label": "Vehicle Type / Segment",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/contextual-variables/segmentation-and-user-context/vehicle-type-or-segment",
+            "condition": {
+              "or": [
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Campaign"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Data Sample"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Search"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Catalog"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Generic"
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "component": "aem-tag",
+            "name": "workflowStage",
+            "label": "Workflow Stage",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/system-and-structural-tags/workflow-stage-how-i-do-it",
+            "condition": {
+              "or": [
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Page"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Campaign"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Data Sample"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Product Catalog"
+                  ]
+                },
+                {
+                  "===": [
+                    {
+                      "var": [
+                        "pageTemplate"
+                      ]
+                    },
+                    "Generic"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
       }
     ]
   },
@@ -119,44 +2363,18 @@
             "value": "secondary"
           },
           {
-            "name": "Tertiary",
-            "value": "tertiary"
+            "name": "Inverted",
+            "value": "inverted"
           }
         ]
-      },
-      {
-        "component": "boolean",
-        "name": "hasIcon",
-        "label": "Do you need icon?",
-        "description": "Enable to add an icon to the button",
-        "valueType": "boolean",
-        "value": false
-      },
-      {
-        "component": "select",
-        "name": "iconName",
-        "label": "Icon name",
-        "description": "Select an icon",
-        "valueType": "string",
-        "required": true,
-        "condition": {
-          "===": [
-            {
-              "var": [
-                "hasIcon",
-                false
-              ]
-            },
-            true
-          ]
-        },
-        "options": [
-          {
-            "name": "Search",
-            "value": "search"
-          }
-        ]
-      },
+      }
+    ]
+  },
+  {
+    "component": "container",
+    "name": "targetSettings",
+    "label": "Target settings",
+    "fields": [
       {
         "component": "boolean",
         "name": "targetLink",
@@ -177,13 +2395,201 @@
         "description": "The label shown for this section in the Content Tree"
       },
       {
+        "component": "text",
+        "name": "id",
+        "label": "Section ID",
+        "description": "Adds an HTML id attribute to the section"
+      },
+      {
         "component": "multiselect",
         "name": "style",
         "label": "Style",
+        "valueType": "string",
+        "required": false,
         "options": [
           {
-            "name": "Highlight",
-            "value": "highlight"
+            "name": "Background Color",
+            "children": [
+              {
+                "name": "Dark Background",
+                "value": "bg-dark, inverted"
+              },
+              {
+                "name": "Light Background",
+                "value": "bg-light"
+              },
+              {
+                "name": "Grey Background",
+                "value": "bg-grey"
+              },
+              {
+                "name": "Light Grey Background",
+                "value": "bg-light-grey"
+              },
+              {
+                "name": "Accent Background",
+                "value": "bg-accent"
+              }
+            ]
+          },
+          {
+            "name": "Small View Port Columns",
+            "children": [
+              {
+                "name": "1 Column",
+                "value": "col-sm-1"
+              },
+              {
+                "name": "2 Column",
+                "value": "col-sm-2"
+              },
+              {
+                "name": "3 Column",
+                "value": "col-sm-3"
+              },
+              {
+                "name": "4 Column",
+                "value": "col-sm-4"
+              },
+              {
+                "name": "5 Column",
+                "value": "col-sm-5"
+              },
+              {
+                "name": "6 Column",
+                "value": "col-sm-6"
+              },
+              {
+                "name": "7 Column",
+                "value": "col-sm-7"
+              },
+              {
+                "name": "8 Column",
+                "value": "col-sm-8"
+              },
+              {
+                "name": "9 Column",
+                "value": "col-sm-9"
+              },
+              {
+                "name": "10 Column",
+                "value": "col-sm-10"
+              },
+              {
+                "name": "11 Column",
+                "value": "col-sm-11"
+              },
+              {
+                "name": "12 Column",
+                "value": "col-sm-12"
+              }
+            ]
+          },
+          {
+            "name": "Medium View Port Columns",
+            "children": [
+              {
+                "name": "1 Column",
+                "value": "col-md-1"
+              },
+              {
+                "name": "2 Column",
+                "value": "col-md-2"
+              },
+              {
+                "name": "3 Column",
+                "value": "col-md-3"
+              },
+              {
+                "name": "4 Column",
+                "value": "col-md-4"
+              },
+              {
+                "name": "5 Column",
+                "value": "col-md-5"
+              },
+              {
+                "name": "6 Column",
+                "value": "col-md-6"
+              },
+              {
+                "name": "7 Column",
+                "value": "col-md-7"
+              },
+              {
+                "name": "8 Column",
+                "value": "col-md-8"
+              },
+              {
+                "name": "9 Column",
+                "value": "col-md-9"
+              },
+              {
+                "name": "10 Column",
+                "value": "col-md-10"
+              },
+              {
+                "name": "11 Column",
+                "value": "col-md-11"
+              },
+              {
+                "name": "12 Column",
+                "value": "col-md-12"
+              }
+            ]
+          },
+          {
+            "name": "Large View Port Columns",
+            "children": [
+              {
+                "name": "1 Column",
+                "value": "col-lg-1"
+              },
+              {
+                "name": "2 Column",
+                "value": "col-lg-2"
+              },
+              {
+                "name": "3 Column",
+                "value": "col-lg-3"
+              },
+              {
+                "name": "4 Column",
+                "value": "col-lg-4"
+              },
+              {
+                "name": "5 Column",
+                "value": "col-lg-5"
+              },
+              {
+                "name": "6 Column",
+                "value": "col-lg-6"
+              },
+              {
+                "name": "7 Column",
+                "value": "col-lg-7"
+              },
+              {
+                "name": "8 Column",
+                "value": "col-lg-8"
+              },
+              {
+                "name": "9 Column",
+                "value": "col-lg-9"
+              },
+              {
+                "name": "10 Column",
+                "value": "col-lg-10"
+              },
+              {
+                "name": "11 Column",
+                "value": "col-lg-11"
+              },
+              {
+                "name": "12 Column",
+                "value": "col-lg-12"
+              }
+            ]
           }
         ]
       }
@@ -316,6 +2722,13 @@
         "value": ""
       },
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "newtext",
+        "label": "New text for testing",
+        "value": ""
+      },
+      {
         "component": "richtext",
         "name": "heading",
         "label": "Heading",
@@ -329,28 +2742,29 @@
       },
       {
         "component": "aem-content",
-        "name": "link",
-        "label": "Link",
-        "description": "Destination URL for the button"
-      },
-      {
-        "component": "text",
-        "name": "linkText",
-        "label": "Text",
-        "description": "Button label text",
+        "valueType": "string",
+        "name": "button1",
+        "label": "Button 1 Link",
         "required": true
       },
       {
         "component": "text",
-        "name": "linkTitle",
-        "label": "Title",
+        "valueType": "string",
+        "name": "button1Title",
+        "label": "Button 1 Title",
         "description": "Accessibility title attribute (optional)"
       },
       {
+        "component": "text",
+        "valueType": "string",
+        "name": "button1Text",
+        "label": "Button 1 Text",
+        "required": true
+      },
+      {
         "component": "select",
-        "name": "linkType",
-        "label": "Type",
-        "description": "Button style variant",
+        "name": "button1Type",
+        "label": "Button 1 Variation",
         "valueType": "string",
         "value": "",
         "options": [
@@ -363,67 +2777,38 @@
             "value": "secondary"
           },
           {
-            "name": "Tertiary",
-            "value": "tertiary"
+            "name": "Inverted",
+            "value": "inverted"
           }
         ]
-      },
+      }
+    ]
+  },
+  {
+    "id": "cards",
+    "fields": [
       {
-        "component": "container",
-        "name": "isIconRequired",
-        "label": "Is icon Required",
+        "component": "select",
+        "name": "classes",
+        "value": "two-col, carousel-mobile",
+        "label": "Variation",
         "valueType": "string",
-        "collapsible": true,
-        "fields": [
+        "options": [
           {
-            "component": "boolean",
-            "name": "hasIcon",
-            "label": "Do you need icon?",
-            "description": "Enable to add an icon to the button",
-            "valueType": "boolean",
-            "value": false
+            "name": "Cards in Two Column layout",
+            "value": "two-col, carousel-mobile"
           },
           {
-            "component": "select",
-            "name": "iconName",
-            "label": "Icon name",
-            "description": "Select an icon",
-            "valueType": "string",
-            "required": true,
-            "condition": {
-              "===": [
-                {
-                  "var": [
-                    "hasIcon",
-                    false
-                  ]
-                },
-                true
-              ]
-            },
-            "options": [
-              {
-                "name": "Search",
-                "value": "search"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "component": "container",
-        "name": "targetSettings",
-        "label": "Target settings",
-        "valueType": "string",
-        "collapsible": true,
-        "fields": [
+            "name": "Cards in Three Column layout",
+            "value": "three-col, carousel-mobile"
+          },
           {
-            "component": "boolean",
-            "name": "targetLink",
-            "label": "Open link in new tab",
-            "description": "Enable to open the button link in a new browser tab",
-            "valueType": "boolean",
-            "value": false
+            "name": "Cards in Two Column layout (No Border)",
+            "value": "two-col, card-no-border, carousel-mobile"
+          },
+          {
+            "name": "Cards in Three Column layout (No Border)",
+            "value": "three-col, card-no-border, carousel-mobile"
           }
         ]
       }
@@ -433,15 +2818,84 @@
     "id": "card",
     "fields": [
       {
-        "component": "reference",
+        "component": "select",
         "valueType": "string",
-        "name": "image",
-        "label": "Image",
-        "multi": false
+        "name": "logoSvg",
+        "value": "",
+        "label": "Logo",
+        "options": [
+          {
+            "name": "atomic-icon",
+            "value": ":atomic-icon:"
+          },
+          {
+            "name": "binoculars-icon",
+            "value": ":binoculars-icon:"
+          },
+          {
+            "name": "cone-icon",
+            "value": ":cone-icon:"
+          },
+          {
+            "name": "lightning-icon",
+            "value": ":lightning-icon:"
+          },
+          {
+            "name": "linked-in",
+            "value": ":linked-in:"
+          },
+          {
+            "name": "pentagon-icon",
+            "value": ":pentagon-icon:"
+          },
+          {
+            "name": "stack-icon",
+            "value": ":stack-icon:"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "name": "title",
+        "value": "",
+        "label": "Title",
+        "valueType": "string"
       },
       {
         "component": "richtext",
-        "name": "text",
+        "name": "description",
+        "value": "",
+        "label": "Description with icons",
+        "valueType": "string"
+      },
+      {
+        "component": "aem-content",
+        "name": "link",
+        "label": "Link",
+        "description": "Optional. Makes the entire card clickable."
+      }
+    ]
+  },
+  {
+    "id": "carousel-item",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "media_image",
+        "label": "Background Image",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "media_imageAlt",
+        "value": "",
+        "label": "Bacgkround Alt"
+      },
+      {
+        "component": "richtext",
+        "name": "content_text",
         "value": "",
         "label": "Text",
         "valueType": "string"
@@ -468,6 +2922,361 @@
     ]
   },
   {
+    "id": "content-module",
+    "fields": [
+      {
+        "component": "select",
+        "name": "classes",
+        "label": "Variation",
+        "required": true,
+        "options": [
+          {
+            "name": "Default (Standard)",
+            "value": "default-variation"
+          },
+          {
+            "name": "Full Width Headline",
+            "value": "full-width-headline"
+          },
+          {
+            "name": "Full Width Text",
+            "value": "full-width-text"
+          },
+          {
+            "name": "Two Col Text",
+            "value": "two-col-text"
+          },
+          {
+            "name": "Default with CTA",
+            "value": "default-with-cta"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "name": "eyebrow",
+        "label": "Eyebrow",
+        "valueType": "string",
+        "required": true,
+        "condition": {
+          "===": [
+            {
+              "var": "classes"
+            },
+            "default-variation"
+          ]
+        }
+      },
+      {
+        "component": "richtext",
+        "name": "description",
+        "label": "Description / First Column",
+        "valueType": "string",
+        "description": "Default H4 tag. Any heading tag will be animated. p tag for text.",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "name": "description2",
+        "label": "Second Column Content",
+        "valueType": "string",
+        "description": "Default H4 tag. Any heading tag will be animated. p tag for text.",
+        "required": true,
+        "condition": {
+          "===": [
+            {
+              "var": "classes"
+            },
+            "two-col-text"
+          ]
+        }
+      },
+      {
+        "component": "text",
+        "name": "ctaLabel",
+        "label": "CTA Label",
+        "valueType": "string",
+        "required": true,
+        "condition": {
+          "===": [
+            {
+              "var": "classes"
+            },
+            "default-with-cta"
+          ]
+        }
+      },
+      {
+        "component": "text",
+        "name": "ctaUrl",
+        "label": "CTA Link",
+        "valueType": "string",
+        "required": true,
+        "condition": {
+          "===": [
+            {
+              "var": "classes"
+            },
+            "default-with-cta"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "cta-block",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "eyebrow",
+        "label": "Eyebrow Text",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "headline",
+        "label": "Headline Title",
+        "description": "For Default variation, use H4 tag. Any heading tag will be used.",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "description",
+        "label": "Description",
+        "description": "Supporting paragraph text below the headline"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "button1",
+        "label": "Button 1 Link",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "button1Text",
+        "label": "Button1 Text",
+        "required": true
+      },
+      {
+        "component": "select",
+        "name": "button1Type",
+        "label": "Button1 Variation",
+        "valueType": "string",
+        "value": "",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          },
+          {
+            "name": "Inverted",
+            "value": "inverted"
+          }
+        ]
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "button2",
+        "label": "Button2 Link",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "button2Text",
+        "label": "Button2 Text",
+        "required": true
+      },
+      {
+        "component": "select",
+        "name": "button2Type",
+        "label": "Button2 Variation",
+        "valueType": "string",
+        "value": "",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          },
+          {
+            "name": "Inverted",
+            "value": "inverted"
+          }
+        ]
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "media",
+        "label": "Media",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "mediaAlt",
+        "label": "Media Alt Text"
+      }
+    ]
+  },
+  {
+    "id": "customer-stories",
+    "fields": [
+      {
+        "component": "select",
+        "name": "productCardsVariant",
+        "label": "Product Cards Variant",
+        "valueType": "string",
+        "value": "product-cards-compact",
+        "options": [
+          {
+            "name": "Compact",
+            "value": "product-cards-compact"
+          },
+          {
+            "name": "Vertically Stacked",
+            "value": "product-cards-vertically-stacked"
+          }
+        ]
+      },
+      {
+        "component": "select",
+        "name": "classes",
+        "label": "Variation",
+        "valueType": "string",
+        "value": "",
+        "options": [
+          {
+            "name": "Default",
+            "value": ""
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "customer-story",
+    "fields": [
+      {
+        "component": "richtext",
+        "name": "quote",
+        "label": "Quote",
+        "valueType": "string",
+        "required": true
+      },
+      {
+        "component": "reference",
+        "name": "authorImage",
+        "label": "Author Image",
+        "valueType": "string",
+        "multi": false
+      },
+      {
+        "component": "richtext",
+        "name": "authorInfo",
+        "label": "Author Name and Role",
+        "valueType": "string",
+        "description": "Use two lines: name on the first line, role on the second."
+      }
+    ]
+  },
+  {
+    "id": "embed-form",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "logo",
+        "label": "Logo",
+        "description": "Brand logo image displayed at the top",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "eyebrow",
+        "label": "Eyebrow Text",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "headline",
+        "label": "Headline Title",
+        "description": "For Default variation, use H4 tag. Any heading tag will be used.",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "description",
+        "label": "Description"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "form",
+        "label": "Form",
+        "description": "Embedded form content or form placeholder"
+      }
+    ]
+  },
+  {
+    "id": "embed",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "embed_placeholder",
+        "label": "Placeholder Image",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "embed_placeholderAlt",
+        "value": "",
+        "label": "Placeholder Image Alt Text"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "embed_uri",
+        "label": "URI"
+      }
+    ]
+  },
+  {
+    "id": "form",
+    "fields": [
+      {
+        "component": "aem-content",
+        "name": "reference",
+        "label": "Form"
+      },
+      {
+        "component": "text",
+        "name": "action",
+        "label": "Action URL",
+        "valueType": "string"
+      }
+    ]
+  },
+  {
     "id": "fragment",
     "fields": [
       {
@@ -483,20 +3292,20 @@
       {
         "component": "select",
         "name": "classes",
-        "label": "Variation",
+        "label": "Hero Block Variation",
         "valueType": "string",
         "options": [
           {
-            "name": "Default (Em Accent)",
+            "name": "Image as background",
             "value": ""
           },
           {
-            "name": "Two Colored Right",
-            "value": "two-colored-right"
+            "name": "Image on the right (two-colored)",
+            "value": "hero-two-colored-right"
           },
           {
-            "name": "Black Colored Right",
-            "value": "black-colored-right"
+            "name": "Image on the right (black-colored)",
+            "value": "hero-black-colored-right"
           }
         ]
       },
@@ -505,7 +3314,8 @@
         "valueType": "string",
         "name": "image",
         "label": "Image",
-        "multi": false
+        "multi": false,
+        "required": true
       },
       {
         "component": "text",
@@ -517,46 +3327,1264 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "eyebrow",
+        "name": "eyebrow text",
         "label": "Eyebrow Text",
-        "value": ""
+        "value": "",
+        "condition": {
+          "===": [
+            {
+              "var": [
+                "classes",
+                ""
+              ]
+            },
+            "hero-black-colored-right"
+          ]
+        }
       },
       {
         "component": "richtext",
         "name": "heading",
         "label": "Heading",
         "valueType": "string",
-        "description": "Use italic for accent/gradient text"
+        "description": "Required. Use italic for accent/gradient.",
+        "required": true
       },
       {
         "component": "richtext",
         "name": "description",
-        "label": "Description",
-        "valueType": "string"
+        "label": "Sub-heading",
+        "valueType": "string",
+        "description": "Optional."
+      },
+      {
+        "component": "container",
+        "name": "cta1",
+        "label": "CTA 1",
+        "valueType": "object",
+        "collapsible": true,
+        "condition": {
+          "!==": [
+            {
+              "var": [
+                "classes",
+                ""
+              ]
+            },
+            "hero-two-colored-right"
+          ]
+        },
+        "fields": [
+          {
+            "component": "aem-content",
+            "valueType": "string",
+            "name": "button1",
+            "label": "Button 1 Link",
+            "required": true
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "button1Title",
+            "label": "Button 1 Title",
+            "description": "Accessibility title attribute (optional)"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "button1Text",
+            "label": "Button 1 Text",
+            "required": true
+          },
+          {
+            "component": "select",
+            "name": "button1Type",
+            "label": "Button 1 Variation",
+            "valueType": "string",
+            "value": "",
+            "options": [
+              {
+                "name": "Primary",
+                "value": "primary"
+              },
+              {
+                "name": "Secondary",
+                "value": "secondary"
+              },
+              {
+                "name": "Inverted",
+                "value": "inverted"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "component": "container",
+        "name": "cta2",
+        "label": "CTA 2",
+        "valueType": "object",
+        "collapsible": true,
+        "condition": {
+          "===": [
+            {
+              "var": [
+                "classes",
+                ""
+              ]
+            },
+            ""
+          ]
+        },
+        "fields": [
+          {
+            "component": "aem-content",
+            "valueType": "string",
+            "name": "button2",
+            "label": "Button 2 Link",
+            "required": true
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "button2Title",
+            "label": "Button 2 Title",
+            "description": "Accessibility title attribute (optional)"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "button2Text",
+            "label": "Button 2 Text",
+            "required": true
+          },
+          {
+            "component": "select",
+            "name": "button2Type",
+            "label": "Button 2 Variation",
+            "valueType": "string",
+            "value": "",
+            "options": [
+              {
+                "name": "Primary",
+                "value": "primary"
+              },
+              {
+                "name": "Secondary",
+                "value": "secondary"
+              },
+              {
+                "name": "Inverted",
+                "value": "inverted"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "component": "container",
+        "name": "tag",
+        "label": "Tag",
+        "valueType": "object",
+        "collapsible": true,
+        "condition": {
+          "===": [
+            {
+              "var": [
+                "classes",
+                ""
+              ]
+            },
+            "hero-black-colored-right"
+          ]
+        },
+        "fields": [
+          {
+            "component": "select",
+            "valueType": "string",
+            "name": "tagVariation",
+            "label": "Tag variation",
+            "value": "",
+            "options": [
+              {
+                "name": "Outline",
+                "value": "outline"
+              },
+              {
+                "name": "Fill",
+                "value": "fill"
+              },
+              {
+                "name": "Glass",
+                "value": "glass"
+              },
+              {
+                "name": "Dark",
+                "value": "dark"
+              }
+            ]
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "tag-title",
+            "label": "Tag title",
+            "value": "",
+            "required": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "logo-set",
+    "fields": [
+      {
+        "component": "text",
+        "name": "eyebrow",
+        "label": "Eyebrow Text",
+        "valueType": "string",
+        "value": "",
+        "description": "Required."
       },
       {
         "component": "text",
-        "name": "ctaLabel",
-        "label": "Primary CTA Label",
-        "valueType": "string"
+        "name": "title",
+        "label": "Title",
+        "valueType": "string",
+        "value": "",
+        "description": "Required."
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "desktopImage",
+        "label": "Desktop Image with 16:9 Aspect Ratio",
+        "multi": false,
+        "description": "Required."
       },
       {
         "component": "text",
-        "name": "ctaUrl",
-        "label": "Primary CTA URL",
-        "valueType": "string"
+        "valueType": "string",
+        "name": "desktopImageAlt",
+        "label": "Desktop Image Alt Text",
+        "value": "",
+        "description": "Required for accessibility."
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "mobileImage",
+        "label": "Mobile Image with 9:16 Aspect Ratio",
+        "multi": false,
+        "description": "Optional."
       },
       {
         "component": "text",
-        "name": "secondaryCtaLabel",
-        "label": "Secondary CTA Label",
-        "valueType": "string"
+        "valueType": "string",
+        "name": "mobileImageAlt",
+        "label": "Mobile Image Alt Text",
+        "value": "",
+        "description": "Optional."
+      }
+    ]
+  },
+  {
+    "id": "logo-strip",
+    "fields": [
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Layout",
+        "valueType": "string",
+        "value": "",
+        "options": [
+          {
+            "name": "Grid",
+            "children": [
+              {
+                "name": "Flex Grid",
+                "value": "flex-grid"
+              }
+            ]
+          },
+          {
+            "name": "Desktop Columns",
+            "children": [
+              {
+                "name": "2 Columns",
+                "value": "col-md-2"
+              },
+              {
+                "name": "3 Columns",
+                "value": "col-md-3"
+              },
+              {
+                "name": "4 Columns",
+                "value": "col-md-4"
+              },
+              {
+                "name": "5 Columns",
+                "value": "col-md-5"
+              },
+              {
+                "name": "6 Columns",
+                "value": "col-md-6"
+              },
+              {
+                "name": "7 Columns",
+                "value": "col-md-7"
+              },
+              {
+                "name": "8 Columns",
+                "value": "col-md-8"
+              }
+            ]
+          },
+          {
+            "name": "Mobile Columns",
+            "children": [
+              {
+                "name": "1 Column",
+                "value": "col-sm-1"
+              },
+              {
+                "name": "2 Columns",
+                "value": "col-sm-2"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "logo-strip-item",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Logo Image",
+        "multi": false
       },
       {
         "component": "text",
-        "name": "secondaryCtaUrl",
-        "label": "Secondary CTA URL",
+        "valueType": "string",
+        "name": "imageAlt",
+        "label": "Alt Text"
+      }
+    ]
+  },
+  {
+    "id": "media-module",
+    "fields": [
+      {
+        "component": "container",
+        "name": "tag",
+        "label": "Tag",
+        "valueType": "object",
+        "collapsible": true,
+        "fields": [
+          {
+            "component": "select",
+            "valueType": "string",
+            "name": "tagVariation",
+            "label": "Tag variation",
+            "value": "",
+            "options": [
+              {
+                "name": "Outline",
+                "value": "outline"
+              },
+              {
+                "name": "Fill",
+                "value": "fill"
+              },
+              {
+                "name": "Glass",
+                "value": "glass"
+              },
+              {
+                "name": "Dark",
+                "value": "dark"
+              }
+            ]
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "tag-title",
+            "label": "Tag title",
+            "value": "",
+            "required": true
+          }
+        ]
+      },
+      {
+        "component": "container",
+        "name": "sectionTitle",
+        "label": "Section Title",
+        "valueType": "object",
+        "collapsible": true,
+        "fields": [
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "eyebrow",
+            "label": "Eyebrow Text",
+            "value": "",
+            "required": true
+          },
+          {
+            "component": "richtext",
+            "name": "section-title",
+            "label": "Section title",
+            "valueType": "string",
+            "required": true
+          },
+          {
+            "component": "richtext",
+            "name": "body",
+            "label": "Body Text",
+            "valueType": "string",
+            "description": "Optional. For Default variation, use p tag for text."
+          },
+          {
+            "component": "container",
+            "name": "cta",
+            "label": "CTA",
+            "valueType": "object",
+            "collapsible": true,
+            "fields": [
+              {
+                "component": "aem-content",
+                "valueType": "string",
+                "name": "button1",
+                "label": "Button 1 Link",
+                "required": true
+              },
+              {
+                "component": "text",
+                "valueType": "string",
+                "name": "button1Title",
+                "label": "Button 1 Title",
+                "description": "Accessibility title attribute (optional)"
+              },
+              {
+                "component": "text",
+                "valueType": "string",
+                "name": "button1Text",
+                "label": "Button 1 Text",
+                "required": true
+              },
+              {
+                "component": "select",
+                "name": "button1Type",
+                "label": "Button 1 Variation",
+                "valueType": "string",
+                "value": "",
+                "options": [
+                  {
+                    "name": "Primary",
+                    "value": "primary"
+                  },
+                  {
+                    "name": "Secondary",
+                    "value": "secondary"
+                  },
+                  {
+                    "name": "Inverted",
+                    "value": "inverted"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "button1",
+        "label": "Button 1 Link",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "button1Title",
+        "label": "Button 1 Title",
+        "description": "Accessibility title attribute (optional)"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "button1Text",
+        "label": "Button 1 Text",
+        "required": true
+      },
+      {
+        "component": "select",
+        "name": "button1Type",
+        "label": "Button 1 Variation",
+        "valueType": "string",
+        "value": "",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          },
+          {
+            "name": "Inverted",
+            "value": "inverted"
+          }
+        ]
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "button2",
+        "label": "Button 2 Link",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "button2Title",
+        "label": "Button 2 Title",
+        "description": "Accessibility title attribute (optional)"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "button2Text",
+        "label": "Button 2 Text",
+        "required": true
+      },
+      {
+        "component": "select",
+        "name": "button2Type",
+        "label": "Button 2 Variation",
+        "valueType": "string",
+        "value": "",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          },
+          {
+            "name": "Inverted",
+            "value": "inverted"
+          }
+        ]
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "mediaAsset",
+        "label": "Media Asset",
+        "multi": false,
+        "description": "Select a video MP4 or image/GIF from DAM."
+      }
+    ]
+  },
+  {
+    "id": "modal",
+    "fields": [
+      {
+        "component": "aem-content",
+        "name": "link",
+        "label": "Link"
+      },
+      {
+        "component": "text",
+        "name": "linkText",
+        "label": "Text"
+      }
+    ]
+  },
+  {
+    "id": "numeralia",
+    "description": "Use exactly 3 numeralia-item entries.",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "number1",
+        "label": "Number 1",
+        "description": "Number with optional suffix (e.g. 150+, 80%, 35M)",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "description1",
+        "label": "Description 1",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "number2",
+        "label": "Number 2",
+        "description": "Number with optional suffix (e.g. 150+, 80%, 35M)",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "description2",
+        "label": "Description 2",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "number3",
+        "label": "Number 3",
+        "description": "Number with optional suffix (e.g. 150+, 80%, 35M)",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "description3",
+        "label": "Description 3",
+        "required": true
+      }
+    ]
+  },
+  {
+    "id": "product-cards",
+    "fields": [
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Variant",
+        "valueType": "string",
+        "value": "",
+        "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Vertically Stacked",
+            "value": "product-cards-vertically-stacked"
+          },
+          {
+            "name": "Compact",
+            "value": "product-cards-compact"
+          },
+          {
+            "name": "Compact Large",
+            "value": "product-cards-compact-large"
+          },
+          {
+            "name": "Carousel",
+            "value": "carousel"
+          },
+          {
+            "name": "Carousel (Mobile Only)",
+            "value": "carousel-mobile"
+          },
+          {
+            "name": "Carousel Infinite",
+            "value": "carousel-infinite"
+          }
+        ]
+      },
+      {
+        "component": "container",
+        "name": "cta",
+        "label": "CTA",
+        "valueType": "object",
+        "collapsible": true,
+        "fields": [
+          {
+            "component": "aem-content",
+            "name": "link",
+            "label": "Link",
+            "description": "Destination URL for the button"
+          },
+          {
+            "component": "text",
+            "name": "linkText",
+            "label": "Text",
+            "valueType": "string",
+            "value": "",
+            "description": "Button label (e.g. Browse All)",
+            "required": true
+          },
+          {
+            "component": "select",
+            "name": "linkType",
+            "label": "Type",
+            "valueType": "string",
+            "value": "secondary",
+            "description": "Button style variant",
+            "options": [
+              {
+                "name": "Primary",
+                "value": "primary"
+              },
+              {
+                "name": "Secondary",
+                "value": "secondary"
+              },
+              {
+                "name": "Inverted",
+                "value": "inverted"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "product-card",
+    "fields": [
+      {
+        "component": "select",
+        "name": "chart",
+        "label": "Chart Type",
+        "valueType": "string",
+        "value": "pie",
+        "options": [
+          {
+            "name": "None",
+            "value": "none"
+          },
+          {
+            "name": "Pie",
+            "value": "pie"
+          },
+          {
+            "name": "Pie with Bars",
+            "value": "pieChart"
+          },
+          {
+            "name": "Bars",
+            "value": "bars"
+          },
+          {
+            "name": "Grid",
+            "value": "grid"
+          },
+          {
+            "name": "Waves",
+            "value": "waves"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "name": "chartJson",
+        "label": "Chart JSON (Lottie)",
+        "valueType": "string",
+        "value": "",
+        "description": "Optional. Paste Lottie JSON to render instead of a preset chart."
+      },
+      {
+        "component": "richtext",
+        "name": "title",
+        "label": "Product Card Title",
+        "valueType": "string",
+        "value": "",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "name": "description",
+        "label": "Product Card Description",
+        "valueType": "string",
+        "value": ""
+      },
+      {
+        "component": "aem-content",
+        "name": "link",
+        "label": "Product Card Link",
+        "description": "Makes the entire card clickable. Optional."
+      }
+    ]
+  },
+  {
+    "id": "quote",
+    "fields": [
+      {
+        "component": "richtext",
+        "name": "body",
+        "label": "Body text",
+        "valueType": "string",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "authorName",
+        "label": "Author Name",
+        "value": "",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "role",
+        "label": "Role",
+        "value": "",
+        "required": true
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Image",
+        "multi": false,
+        "required": true
+      }
+    ]
+  },
+  {
+    "id": "search-results",
+    "fields": [
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "value": "",
+        "label": "Options",
+        "valueType": "string",
+        "options": []
+      }
+    ]
+  },
+  {
+    "id": "search",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "index",
+        "label": "Index"
+      },
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "value": "",
+        "label": "Options",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Search Type",
+            "children": [
+              {
+                "name": "Minimal",
+                "value": "minimal"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "section-title",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "eyebrow",
+        "label": "Eyebrow Text",
+        "value": "",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "name": "section-title",
+        "label": "Section title",
+        "valueType": "string",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "name": "body",
+        "label": "Body Text",
+        "valueType": "string",
+        "description": "Optional. For Default variation, use p tag for text."
+      },
+      {
+        "component": "container",
+        "name": "cta",
+        "label": "CTA",
+        "valueType": "object",
+        "collapsible": true,
+        "fields": [
+          {
+            "component": "aem-content",
+            "valueType": "string",
+            "name": "button1",
+            "label": "Button 1 Link",
+            "required": true
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "button1Title",
+            "label": "Button 1 Title",
+            "description": "Accessibility title attribute (optional)"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "button1Text",
+            "label": "Button 1 Text",
+            "required": true
+          },
+          {
+            "component": "select",
+            "name": "button1Type",
+            "label": "Button 1 Variation",
+            "valueType": "string",
+            "value": "",
+            "options": [
+              {
+                "name": "Primary",
+                "value": "primary"
+              },
+              {
+                "name": "Secondary",
+                "value": "secondary"
+              },
+              {
+                "name": "Inverted",
+                "value": "inverted"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sp-table",
+    "fields": []
+  },
+  {
+    "id": "sp-table-column",
+    "fields": [
+      {
+        "component": "richtext",
+        "name": "content",
+        "label": "Column Content",
+        "valueType": "string",
+        "required": true,
+        "description": "Max 2 columns. Use the + button to add a second column."
+      }
+    ]
+  },
+  {
+    "id": "table",
+    "fields": [
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "value": "",
+        "label": "Options",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Border",
+            "children": [
+              {
+                "name": "Striped",
+                "value": "striped"
+              },
+              {
+                "name": "Bordered",
+                "value": "bordered"
+              }
+            ]
+          },
+          {
+            "name": "Header",
+            "children": [
+              {
+                "name": "No Header",
+                "value": "no-header"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "component": "select",
+        "name": "filter",
+        "label": "Columns",
+        "valueType": "string",
+        "value": "table",
+        "options": [
+          {
+            "name": "1 Column",
+            "value": "table"
+          },
+          {
+            "name": "2 Columns",
+            "value": "table-2-columns"
+          },
+          {
+            "name": "3 Columns",
+            "value": "table-3-columns"
+          },
+          {
+            "name": "4 Columns",
+            "value": "table-4-columns"
+          },
+          {
+            "name": "5 Columns",
+            "value": "table-5-columns"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table-row",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "column1text",
+        "label": "Column1"
+      }
+    ]
+  },
+  {
+    "id": "table-col-2",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "column1text",
+        "label": "Column1"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "column2text",
+        "label": "Column2"
+      }
+    ]
+  },
+  {
+    "id": "table-col-3",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "column1text",
+        "label": "Column1"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "column2text",
+        "label": "Column2"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "column3text",
+        "label": "Column3"
+      }
+    ]
+  },
+  {
+    "id": "table-col-4",
+    "fields": [
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "column1text",
+        "label": "Column1"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "column2text",
+        "label": "Column2"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "column3text",
+        "label": "Column3"
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "column4text",
+        "label": "Column4"
+      }
+    ]
+  },
+  {
+    "id": "tabs-item",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "tag-title",
+        "value": "",
+        "label": "Tab Title"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "content_heading",
+        "value": "",
+        "label": "Heading"
+      },
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "content_headingType",
+        "value": "",
+        "label": "Heading Type",
+        "options": [
+          {
+            "name": "H3",
+            "value": "h3"
+          },
+          {
+            "name": "H4",
+            "value": "h4"
+          },
+          {
+            "name": "H5",
+            "value": "h5"
+          },
+          {
+            "name": "H6",
+            "value": "h6"
+          }
+        ]
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "content_image",
+        "label": "Image",
+        "multi": false
+      },
+      {
+        "component": "richtext",
+        "name": "content_richtext",
+        "value": "",
+        "label": "Content",
         "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "tag",
+    "fields": [
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "tagVariation",
+        "label": "Tag variation",
+        "value": "",
+        "options": [
+          {
+            "name": "Outline",
+            "value": "outline"
+          },
+          {
+            "name": "Fill",
+            "value": "fill"
+          },
+          {
+            "name": "Glass",
+            "value": "glass"
+          },
+          {
+            "name": "Dark",
+            "value": "dark"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "tag-title",
+        "label": "Tag title",
+        "value": "",
+        "required": true
+      }
+    ]
+  },
+  {
+    "id": "video",
+    "fields": [
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "uri",
+        "label": "Video"
+      },
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "value": "",
+        "label": "Options",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Variation",
+            "children": [
+              {
+                "name": "Embed Video",
+                "value": "embed-video"
+              }
+            ]
+          },
+          {
+            "name": "Playback",
+            "children": [
+              {
+                "name": "AutoPlay",
+                "value": "autoplay"
+              },
+              {
+                "name": "Show Controls",
+                "value": "show-controls"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "placeholder_image",
+        "label": "Placeholder Image",
+        "multi": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "placeholder_imageAlt",
+        "value": "",
+        "label": "Placeholder Image Alt Text"
       }
     ]
   }
