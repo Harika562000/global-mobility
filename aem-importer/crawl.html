@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Crawler Tool</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="stylesheet" href="./css/crawl/crawl.css" />
+
+    <script src="./js/shared/log.js"></script>
+    <script src="./js/dist/spectrum-web-components.js" async></script>
+    <script src="./js/libs/vendors/exceljs/exceljs.min.js" async></script>
+    <script src="./js/crawl/crawl.ui.js" type="module"></script>
+</head>
+
+<body class="tool loading">
+    <sp-theme color="dark" scale="medium">
+        <!-- MAIN CONTENT -->
+        <main>
+            <!-- CRAWL SECTION -->
+            <section class="crawl">
+                <div class="section-title">
+                    <div>
+                        <h2>Crawl</h2>
+                        <sp-contextual-help>
+                            <h3>Crawl</h3>
+                            <p>Find URLs on a remote website using either the robots.txt or the sitemap.</p>
+                        </sp-contextual-help>
+                    </div>
+                </div>
+                <sp-divider size="l"></sp-divider>
+                <div class="section-cols">
+                    <div class="section-col">
+                        <form class="crawl-form">
+                            <sp-field-label for="crawl-url" required>Host / Page URL</sp-field-label>
+                            <sp-textfield class="option-field" id="crawl-url" type="url">
+                                <sp-help-text slot="help-text">https://www.example.com</sp-help-text>
+                                <sp-help-text slot="negative-help-text">Please enter a valid URL.</sp-help-text>
+                            </sp-textfield>
+                            <sp-accordion>
+                                <sp-accordion-item label="Crawl Options">
+                                    <div>
+                                        <sp-field-label for="crawl-pageload-timeout">Page load timeout</sp-field-label>
+                                        <sp-number-field class="option-field" id="crawl-pageload-timeout" value="100" min="0" step="100" format-options='{ "style": "unit", "unit": "millisecond", "unitDisplay": "short" }'></sp-number-field>
+
+                                        <sp-checkbox class="option-field" id="crawl-enable-js">
+                                            Enable JavaScript
+                                        </sp-checkbox>
+                                        <sp-help-text variant="negative" icon>
+                                            Security risk: only enable Javascript execution when crawling trusted websites.
+                                        </sp-help-text>
+
+                                        <sp-checkbox class="option-field" id="crawl-show-preview" checked>
+                                            Show preview
+                                        </sp-checkbox>
+
+                                        <sp-checkbox class="option-field" id="import-scroll-to-bottom" checked>
+                                            Scroll to bottom
+                                        </sp-checkbox>
+
+                                        <sp-field-label for="crawl-sitemap-file" required>Sitemap</sp-field-label>
+                                        <sp-textfield class="option-field" id="crawl-sitemap-file" value="/sitemap.xml"></sp-textfield>
+
+                                        <sp-field-label for="crawl-filter-pathname" required>Filter pathname</sp-field-label>
+                                        <sp-textfield class="option-field" id="crawl-filter-pathname" value="/"></sp-textfield>
+                                    </div>
+                                </sp-accordion-item>
+                            </sp-accordion>
+                            <sp-button-group>
+                                <sp-button id="crawl-getfromrobot-button">Get from robots.txt or sitemap</sp-button>
+                                <sp-button id="crawl-docrawl-button">Crawl</sp-button>
+                            </sp-button-group>
+                        </form>
+                        <div class="page-preview hidden">
+                            <sp-divider size="s"></sp-divider>
+                            <h3>Page preview</h3>
+                            <div><iframe id="crawl-content-frame"></iframe></div>
+                        </div>
+                    </div>
+                    <div class="section-col">
+                        <div id="crawl-result">
+                            <h2></h2>
+                            <ul></ul>
+                        </div>
+                        <sp-button-group>
+                            <sp-button id="crawl-downloadCrawlReport" class="hidden">Download crawl report</sp-button>
+                        </sp-button-group>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <div id="alert-container"></div>
+    </sp-theme>
+    <script src="./js/swc_loader.js" type="module"></script>
+</body>
+
+</html>
