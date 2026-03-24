@@ -51,6 +51,7 @@
         "banner",
         "cards",
         "columns",
+        "accordion",
         "fragment"
       ]
     }
