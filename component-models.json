@@ -3327,7 +3327,7 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "eyebrow text",
+        "name": "eyebrowText",
         "label": "Eyebrow Text",
         "value": "",
         "condition": {
