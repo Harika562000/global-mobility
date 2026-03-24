@@ -1,5 +1,10 @@
 {
-  "project": "AEM XWalk Boilerplate",
-  "editUrlLabel": "AEM Editor",
-  "editUrlPattern": "{{contentSourceUrl}}{{pathname}}?cmd=open"
+  "plugins": [
+    {
+      "id": "aemedit",
+      "title": "Edit",
+      "environments": [ "dev", "preview", "live" ],
+      "event": "aemedit"
+    }
+  ]
 }

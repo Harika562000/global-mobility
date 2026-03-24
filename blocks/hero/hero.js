@@ -1,18 +1,12 @@
-import { eyebrowDecorator } from '../../scripts/scripts.js';
-import { decorateButtons } from '../../scripts/aem.js';
+import { eyebrowDecorator, decorateTags } from '../../scripts/scripts.js';
 
 /**
  * Hero block: three variations (UE authoring reference).
  *
  * Variation summary (from UE authoring UI):
- * - Image as background: image, heading, description, 2 buttons.
+ * - Image as background: image, heading, description.
  * - Two-colored:        image, heading, description.
- * - Black-colored:      image, tag, eyebrow, heading, description, 1 button.
- *
- * Row indices (idx = 1 when rows[0] is Variation; idx = 0 when no variation row):
- * - Image as background / Two-colored: heading=idx+2, description=idx+3 (no eyebrow row in DOM). Buttons from idx+4.
- * - Black-colored: rows[0]=image, rows[1]=eyebrow, rows[2]=heading, rows[3]=description. Buttons from 4. Tag=last.
- * Button link rows are detected dynamically (scanning for <a>).
+ * - Black-colored: image, tag, eyebrow, heading, description.
  */
 
 /** Get the value cell (content) from a row; UE often uses row = [label, value]. */
@@ -48,67 +42,7 @@ function appendContent(row, target, fallbackHeading = false) {
   }
 }
 
-function findLinkRow(rows, startIdx, endIdx) {
-  for (let i = startIdx; i < endIdx; i += 1) {
-    if (rows[i]?.querySelector('a')) return i;
-  }
-  return -1;
-}
-
-function buildCta(rows, linkIdx, typeRowIdx = -1) {
-  if (linkIdx < 0) return null;
-
-  const linkRow = rows[linkIdx];
-  if (!linkRow) return null;
-
-  const anchor = linkRow.querySelector('a');
-  const linkText = getValueCell(rows[linkIdx + 1])?.textContent?.trim();
-  const linkTitle = getValueCell(rows[linkIdx + 2])?.textContent?.trim();
-
-  let linkType = '';
-  if (anchor) {
-    const parent = anchor.parentElement;
-    if (parent?.tagName === 'EM') linkType = 'secondary';
-    else if (parent?.tagName === 'STRONG') linkType = 'primary';
-  }
-  if (!linkType && typeRowIdx >= 0 && rows[typeRowIdx]) {
-    linkType = (getValueCell(rows[typeRowIdx])?.textContent?.trim() || '').toLowerCase();
-  }
-  if (!linkType) {
-    linkType = (getValueCell(rows[linkIdx + 3])?.textContent?.trim() || '').toLowerCase();
-  }
-  if (!linkType && linkIdx >= 1) {
-    const prevCell = getValueCell(rows[linkIdx - 1]);
-    if (prevCell?.querySelector('em') && !prevCell?.querySelector('a')) linkType = 'secondary';
-    else if (prevCell?.querySelector('strong') && !prevCell?.querySelector('a')) linkType = 'primary';
-  }
-
-  if (!anchor && !linkText) return null;
-
-  const a = anchor || document.createElement('a');
-  if (!anchor) a.href = '#';
-  a.className = '';
-  if (linkText) a.textContent = linkText;
-  if (linkTitle) a.title = linkTitle;
-
-  const p = document.createElement('p');
-
-  if (linkType === 'primary') {
-    const strong = document.createElement('strong');
-    strong.appendChild(a);
-    p.appendChild(strong);
-  } else if (linkType === 'secondary') {
-    const em = document.createElement('em');
-    em.appendChild(a);
-    p.appendChild(em);
-  } else {
-    p.appendChild(a);
-  }
-
-  return p;
-}
-
-function decorateEmAccent(block, rows, picture, primaryIdx, secondaryIdx, rowIndices) {
+function decorateEmAccent(block, rows, picture, rowIndices) {
   const bgDiv = document.createElement('div');
   bgDiv.className = 'hero-em-accent-background';
   if (picture) {
@@ -122,13 +56,9 @@ function decorateEmAccent(block, rows, picture, primaryIdx, secondaryIdx, rowInd
   appendContent(rows[rowIndices.heading], contentDiv, true);
   appendContent(rows[rowIndices.description], contentDiv);
 
-  const primaryCta = buildCta(rows, primaryIdx, rowIndices.firstButtonRow >= 0 ? rowIndices.firstButtonRow + 3 : -1);
-  if (primaryCta) contentDiv.appendChild(primaryCta);
-
-  const secondaryCta = buildCta(rows, secondaryIdx, rowIndices.firstButtonRow >= 0 ? rowIndices.firstButtonRow + 7 : -1);
-  if (secondaryCta) contentDiv.appendChild(secondaryCta);
-
-  decorateButtons(contentDiv);
+  for (let r = rowIndices.firstButtonRow; r < rows.length; r += 1) {
+    if (rows[r]) appendContent(rows[r], contentDiv);
+  }
 
   block.appendChild(bgDiv);
   block.appendChild(contentDiv);
@@ -149,7 +79,7 @@ function decorateTwoColoredRight(block, rows, picture, rowIndices) {
   block.appendChild(imageDiv);
 }
 
-function decorateBlackColoredRight(block, rows, picture, primaryIdx, rowIndices) {
+function decorateBlackColoredRight(block, rows, picture, rowIndices) {
   const contentDiv = document.createElement('div');
   contentDiv.className = 'hero-black-colored-right-content';
 
@@ -157,17 +87,14 @@ function decorateBlackColoredRight(block, rows, picture, primaryIdx, rowIndices)
   const tagText = getValueCell(tagRow)?.textContent?.trim();
   if (tagText) {
     const variationRow = rowIndices.tagVariation >= 0 ? rows[rowIndices.tagVariation] : null;
-    const tagVariation = variationRow ? getValueCell(variationRow)?.textContent?.trim()?.toLowerCase() : '';
-    let tagClasses = 'tag';
-    if (tagVariation) {
-      tagClasses += ` tag-${tagVariation}`;
-    } else {
-      tagClasses += ' tag-dark';
-    }
-    const tagSpan = document.createElement('span');
-    tagSpan.className = tagClasses;
-    tagSpan.textContent = tagText;
-    contentDiv.appendChild(tagSpan);
+    const tagVariation = (variationRow ? getValueCell(variationRow)?.textContent?.trim() : '') || 'dark';
+    const table = document.createElement('table');
+    const tr1 = document.createElement('tr');
+    tr1.appendChild(document.createElement('td')).textContent = `tag (${tagVariation})`;
+    const tr2 = document.createElement('tr');
+    tr2.appendChild(document.createElement('td')).textContent = tagText;
+    table.append(tr1, tr2);
+    contentDiv.appendChild(table);
   }
 
   if (rowIndices.eyebrow >= 0) {
@@ -184,10 +111,13 @@ function decorateBlackColoredRight(block, rows, picture, primaryIdx, rowIndices)
   appendContent(rows[rowIndices.heading], contentDiv, true);
   appendContent(rows[rowIndices.description], contentDiv);
 
-  const typeRowIdx = rowIndices.firstButtonRow >= 0 ? rowIndices.firstButtonRow + 3 : -1;
-  const cta = buildCta(rows, primaryIdx, typeRowIdx);
-  if (cta) contentDiv.appendChild(cta);
-  decorateButtons(contentDiv);
+  for (let r = rowIndices.firstButtonRow; r < rowIndices.tag; r += 1) {
+    // Tag variation is used only for tag styling; don't render it as body text.
+    if (r !== rowIndices.tagVariation && rows[r]) {
+      appendContent(rows[r], contentDiv);
+    }
+  }
+  decorateTags(contentDiv);
 
   const imageDiv = document.createElement('div');
   imageDiv.className = 'hero-black-colored-right-image';
@@ -236,13 +166,50 @@ export default function decorate(block) {
   }
 
   const firstButtonRow = isBlackColoredRight ? 4 : idx + 4;
+  const findRowByLabel = (dataRows, fromIdx, toIdx, labelPart) => {
+    const lower = (labelPart || '').toLowerCase();
+    for (let i = fromIdx; i <= toIdx; i += 1) {
+      const label = (dataRows[i]?.children[0]?.textContent || '').toLowerCase();
+      if (label.includes(lower)) return i;
+    }
+    return -1;
+  };
+  let tagTitleIdx = isBlackColoredRight
+    ? findRowByLabel(rows, firstButtonRow, lastDataRow, 'tag title')
+    : -1;
+  let tagVariationIdx = isBlackColoredRight
+    ? ['tag variation', 'tag var', 'tagvariation'].reduce(
+      (found, label) => (
+        found >= 0 ? found : findRowByLabel(rows, firstButtonRow, lastDataRow, label)
+      ),
+      -1,
+    )
+    : -1;
+
+  // UE nested "tag" container rows are sometimes unlabeled; fall back to tail rows.
+  if (isBlackColoredRight) {
+    const knownVariations = ['outline', 'fill', 'glass', 'dark'];
+    const isKnownTagVariation = (val) => knownVariations
+      .includes((val || '').trim().toLowerCase());
+
+    // If we couldn't find the labeled rows, assume the last row is tag title
+    // and the row before it is variation.
+    if (tagTitleIdx < 0) tagTitleIdx = lastDataRow;
+    if (tagVariationIdx < 0) {
+      const candidateIdx = tagTitleIdx - 1;
+      const candidateText = getValueCell(rows[candidateIdx])?.textContent?.trim();
+      if (candidateIdx >= firstButtonRow && isKnownTagVariation(candidateText)) {
+        tagVariationIdx = candidateIdx;
+      }
+    }
+  }
   const rowIndices = isBlackColoredRight
     ? {
       eyebrow: 1,
       heading: 2,
       description: 3,
-      tagVariation: lastDataRow - 1,
-      tag: lastDataRow,
+      tagVariation: tagVariationIdx,
+      tag: tagTitleIdx >= 0 ? tagTitleIdx : lastDataRow,
       firstButtonRow: 4,
     }
     : {
@@ -254,17 +221,12 @@ export default function decorate(block) {
       firstButtonRow,
     };
 
-  const primaryIdx = findLinkRow(rows, firstButtonRow, lastDataRow);
-  const secondaryIdx = primaryIdx >= 0
-    ? findLinkRow(rows, primaryIdx + 4, lastDataRow)
-    : -1;
-
   if (isBlackColoredRight) {
-    decorateBlackColoredRight(block, rows, picture, primaryIdx, rowIndices);
+    decorateBlackColoredRight(block, rows, picture, rowIndices);
   } else if (isTwoColoredRight) {
     decorateTwoColoredRight(block, rows, picture, rowIndices);
   } else {
-    decorateEmAccent(block, rows, picture, primaryIdx, secondaryIdx, rowIndices);
+    decorateEmAccent(block, rows, picture, rowIndices);
   }
 
   rows.forEach((r) => r.remove());

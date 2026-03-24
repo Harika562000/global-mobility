@@ -8,6 +8,7 @@
   {
     "id": "section",
     "components": [
+      "accordion",
       "text",
       "image",
       "button",
@@ -15,9 +16,31 @@
       "hero",
       "banner",
       "cards",
+      "carousel",
       "columns",
-      "accordion",
-      "fragment"
+      "embed",
+      "fragment",
+      "form",
+      "hero",
+      "image",
+      "logo-set",
+      "quote",
+      "search",
+      "section-title",
+      "tabs",
+      "table",
+      "text",
+      "title",
+      "video",
+      "numeralia",
+      "product-cards",
+      "sp-table",
+      "content-module",
+      "cta-block",
+      "tag",
+      "logo-strip",
+      "embed-form",
+      "media-module"
     ]
   },
   {
@@ -30,6 +53,12 @@
     "id": "cards",
     "components": [
       "card"
+    ]
+  },
+  {
+    "id": "carousel",
+    "components": [
+      "carousel-item"
     ]
   },
   {
@@ -46,5 +75,87 @@
       "button",
       "title"
     ]
+  },
+  {
+    "id": "customer-stories",
+    "components": [
+      "customer-story",
+      "section-title",
+      "product-cards"
+    ]
+  },
+  {
+    "id": "hero",
+    "components": [
+      "hero"
+    ]
+  },
+  {
+    "id": "logo-set",
+    "components": [
+      "logo-set"
+    ]
+  },
+  {
+    "id": "logo-strip",
+    "components": [
+      "logo-strip-item"
+    ]
+  },
+  {
+    "id": "media-module",
+    "components": [
+      "media-module"
+    ]
+  },
+  {
+    "id": "product-cards",
+    "components": [
+      "product-card"
+    ]
+  },
+  {
+    "id": "sp-table",
+    "components": [
+      "sp-table-column"
+    ]
+  },
+  {
+    "id": "table",
+    "components": [
+      "table-row"
+    ]
+  },
+  {
+    "id": "table-2-columns",
+    "components": [
+      "table-col-2"
+    ]
+  },
+  {
+    "id": "table-3-columns",
+    "components": [
+      "table-col-3"
+    ]
+  },
+  {
+    "id": "table-4-columns",
+    "components": [
+      "table-col-4"
+    ]
+  },
+  {
+    "id": "tabs",
+    "components": [
+      "tabs-item"
+    ]
+  },
+  {
+    "id": "tag",
+    "components": []
+  },
+  {
+    "id": "video",
+    "components": []
   }
 ]

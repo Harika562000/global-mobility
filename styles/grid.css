@@ -88,8 +88,7 @@
 /* Handle long text in section title */
 .flex-grid-container>.section-title-wrapper {
   min-width: 0;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
+  overflow-wrap: anywhere;
   hyphens: auto;
 }
 
@@ -99,8 +98,7 @@
 .flex-grid-container h4,
 .flex-grid-container h5,
 .flex-grid-container h6 {
-  overflow-wrap: break-word;
-  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
  .flex-grid-container {

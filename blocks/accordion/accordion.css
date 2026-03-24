@@ -56,7 +56,6 @@
 
 .accordion .accordion-header {
   margin-bottom: var(--spacing-900);
-
 }
 
 .accordion .accordion-header-eyebrow {
@@ -177,11 +176,10 @@
 }
 
 .accordion.small .accordion-header {
-    margin-bottom: var(--size-40);
+  margin-bottom: var(--size-40);
 }
 
 @media (width >= 720px) {
-
   .accordion .accordion-header-eyebrow {
     margin-bottom: var(--spacing-600);
   }

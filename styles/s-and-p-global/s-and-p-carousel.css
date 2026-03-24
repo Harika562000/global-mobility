@@ -1,0 +1,278 @@
+/*
+ * Carousel utility — reusable slider for cards and other blocks
+ * Mobile-first: base styles = mobile, min-width queries = desktop
+ */
+
+/* ---- Base / Mobile ---- */
+
+/* Override the block's grid / flex layout when carousel is active */
+.carousel-initialized {
+    display: block !important;
+    position: relative;
+}
+
+/* Track = viewport that clips overflow */
+.carousel-track {
+    overflow: hidden;
+    position: relative;
+    cursor: grab;
+}
+
+.carousel-track:active {
+    cursor: grabbing;
+}
+
+/* Inner strip that moves via transform */
+.carousel-track-inner {
+    display: flex;
+    gap: var(--spacing-400);
+    position: relative;
+    transition: transform 0.5s ease;
+    will-change: transform;
+    user-select: none;
+}
+
+/* Single card visible on mobile */
+.carousel-track-inner>* {
+    flex: 0 0 100%;
+}
+
+/* Cards-with-image carousel: show partial cards for peek effect */
+.cards-with-image.carousel-initialized .carousel-track-inner>* {
+    flex: 0 0 100%;
+}
+
+@media (width >=510px) {
+    .cards-with-image.carousel-initialized .carousel-track-inner>* {
+        flex: 0 0 76.92%;
+    }
+}
+
+@media (width >=720px) {
+    .cards-with-image.carousel-initialized .carousel-track-inner>* {
+        flex: 0 0 47.62%;
+    }
+}
+
+@media (width >=1025px) {
+    .cards-with-image.carousel-initialized .carousel-track-inner>* {
+        flex: 0 0 47.62%;
+    }
+}
+
+@media (width >=1440px) {
+    .cards-with-image.carousel-initialized .carousel-track-inner>* {
+        flex: 0 0 40%;
+    }
+}
+
+@media (width >=1920px) {
+    .cards-with-image.carousel-initialized .carousel-track-inner>* {
+        flex: 0 0 32.26%;
+    }
+}
+
+/* Arrows hidden on mobile */
+.carousel-nav {
+    display: none;
+    gap: var(--spacing-200);
+}
+
+.carousel-btn:disabled,
+.carousel-btn.disabled {
+    opacity: 0.35;
+    cursor: default;
+    pointer-events: none;
+}
+
+/* Arrow icon inside buttons */
+
+/* stylelint-disable no-descending-specificity */
+.carousel-btn .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.carousel-btn .icon img {
+    width: var(--size-16);
+    height: var(--size-16);
+    display: block;
+}
+
+/* Invert icon on hover / focus so it stays visible on dark bg */
+.carousel-btn:hover .icon img,
+.carousel-btn:focus-visible .icon img {
+    filter: invert(1);
+}
+
+/* stylelint-enable no-descending-specificity */
+
+/* Dots visible on mobile */
+.carousel-dots {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--spacing-200);
+    padding: var(--spacing-400) 0;
+    width: 100%;
+}
+
+.carousel-dot {
+    width: var(--size-6, 6px);
+    height: var(--size-6, 6px);
+    aspect-ratio: 1 / 1;
+    border-radius: 100px;
+    border: none;
+    background-color: var(--surface-scroll-indicator, #797979);
+    cursor: pointer;
+    padding: 0;
+    transition:
+        width 0.3s ease,
+        background-color 0.3s ease;
+}
+
+.carousel-dot.active {
+    width: var(--size30,30px);
+    height: var(--size-6, 6px);
+    aspect-ratio: 5 / 1;
+    background-color: var(--color-black);
+}
+
+.carousel-dot:hover {
+    background-color: var(--color-black);
+}
+
+.carousel-dot:focus-visible {
+    background-color: var(--color-black);
+    outline: var(--radius-2) solid var(--color-black);
+    outline-offset: var(--border-width-200);
+}
+
+/* Header integration: top nav hidden on mobile */
+.carousel-header {
+    position: relative;
+}
+
+.carousel-header .carousel-nav {
+    display: none;
+}
+
+/* Bottom nav: hidden on mobile (dots shown instead) */
+.carousel-bottom-nav {
+    display: none;
+    gap: var(--spacing-200);
+}
+
+/* Footer area: holds bottom nav + optional "Browse All" CTA */
+.carousel-footer {
+    display: none;
+}
+
+/* Browse All CTA responsive placement */
+.carousel-cta {
+    width: 100%;
+    margin-top: var(--spacing-300);
+}
+
+.carousel-cta em,
+.carousel-cta .button {
+    width: 100%;
+}
+
+.carousel-cta .button {
+    justify-content: center;
+}
+
+.carousel-nav .carousel-cta {
+    display: none;
+    margin-top: 0;
+    width: auto;
+}
+
+/* ---- Desktop (>= 1025px) ---- */
+@media (width >=1025px) {
+    /* Multi-card view: two cards visible (not for cards-with-image) */
+    .carousel-track-inner>*:not(.card-item) {
+        flex: 0 0 calc(50% - 8px);
+    }
+
+    /* Show arrows, hide dots */
+    .carousel-nav {
+        display: flex;
+        position: absolute;
+        top: -105px;
+        right: 0;
+    }
+
+    .carousel-dots {
+        display: none;
+    }
+
+    /* Header nav positioned top-right beside the title */
+    .carousel-header .carousel-nav {
+        display: flex;
+        gap: var(--spacing-200);
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+
+    .carousel-cta {
+        width: auto;
+        margin-top: 0;
+    }
+
+    .carousel-cta em,
+    .carousel-cta .button {
+        width: auto;
+    }
+
+    .carousel-cta .button {
+        justify-content: flex-start;
+    }
+
+    /* Show Browse All button inside carousel-nav on desktop */
+    .carousel-nav .carousel-cta {
+        display: block;
+    }
+
+    /* Bottom nav + footer: shown on desktop, bottom-left */
+    .carousel-bottom-nav {
+        display: flex;
+    }
+
+    .carousel-footer {
+        display: none;
+        align-items: center;
+        gap: var(--spacing-200);
+        margin-top: var(--spacing-400);
+    }
+
+    /* carousel-mobile: JS only renders on mobile, no overrides needed */
+}
+
+/* ---- Large desktop (>= 1025px) ---- */
+@media (width >=1025px) {
+    /* Three cards visible for three-col and image variants */
+    .three-col.carousel-initialized .carousel-track-inner>*,
+    .cards-with-image.carousel-initialized .carousel-track-inner>* {
+        flex: 0 0 calc(33.333% - 11px);
+    }
+}
+
+/* ---- Accessibility: reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+    .carousel-track-inner {
+        transition: none;
+    }
+
+    .carousel-btn {
+        transition: none;
+    }
+
+    .carousel-dot {
+        transition: none;
+    }
+}

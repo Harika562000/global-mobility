@@ -26,13 +26,201 @@
           "description": "The label shown for this section in the Content Tree"
         },
         {
+          "component": "text",
+          "name": "id",
+          "label": "Section ID",
+          "description": "Adds an HTML id attribute to the section"
+        },
+        {
           "component": "multiselect",
           "name": "style",
           "label": "Style",
+          "valueType": "string",
+          "required": false,
           "options": [
             {
-              "name": "Highlight",
-              "value": "highlight"
+              "name": "Background Color",
+              "children": [
+                {
+                  "name": "Dark Background",
+                  "value": "bg-dark, inverted"
+                },
+                {
+                  "name": "Light Background",
+                  "value": "bg-light"
+                },
+                {
+                  "name": "Grey Background",
+                  "value": "bg-grey"
+                },
+                {
+                  "name": "Light Grey Background",
+                  "value": "bg-light-grey"
+                },
+                {
+                  "name": "Accent Background",
+                  "value": "bg-accent"
+                }
+              ]
+            },
+            {
+              "name": "Small View Port Columns",
+              "children": [
+                {
+                  "name": "1 Column",
+                  "value": "col-sm-1"
+                },
+                {
+                  "name": "2 Column",
+                  "value": "col-sm-2"
+                },
+                {
+                  "name": "3 Column",
+                  "value": "col-sm-3"
+                },
+                {
+                  "name": "4 Column",
+                  "value": "col-sm-4"
+                },
+                {
+                  "name": "5 Column",
+                  "value": "col-sm-5"
+                },
+                {
+                  "name": "6 Column",
+                  "value": "col-sm-6"
+                },
+                {
+                  "name": "7 Column",
+                  "value": "col-sm-7"
+                },
+                {
+                  "name": "8 Column",
+                  "value": "col-sm-8"
+                },
+                {
+                  "name": "9 Column",
+                  "value": "col-sm-9"
+                },
+                {
+                  "name": "10 Column",
+                  "value": "col-sm-10"
+                },
+                {
+                  "name": "11 Column",
+                  "value": "col-sm-11"
+                },
+                {
+                  "name": "12 Column",
+                  "value": "col-sm-12"
+                }
+              ]
+            },
+            {
+              "name": "Medium View Port Columns",
+              "children": [
+                {
+                  "name": "1 Column",
+                  "value": "col-md-1"
+                },
+                {
+                  "name": "2 Column",
+                  "value": "col-md-2"
+                },
+                {
+                  "name": "3 Column",
+                  "value": "col-md-3"
+                },
+                {
+                  "name": "4 Column",
+                  "value": "col-md-4"
+                },
+                {
+                  "name": "5 Column",
+                  "value": "col-md-5"
+                },
+                {
+                  "name": "6 Column",
+                  "value": "col-md-6"
+                },
+                {
+                  "name": "7 Column",
+                  "value": "col-md-7"
+                },
+                {
+                  "name": "8 Column",
+                  "value": "col-md-8"
+                },
+                {
+                  "name": "9 Column",
+                  "value": "col-md-9"
+                },
+                {
+                  "name": "10 Column",
+                  "value": "col-md-10"
+                },
+                {
+                  "name": "11 Column",
+                  "value": "col-md-11"
+                },
+                {
+                  "name": "12 Column",
+                  "value": "col-md-12"
+                }
+              ]
+            },
+            {
+              "name": "Large View Port Columns",
+              "children": [
+                {
+                  "name": "1 Column",
+                  "value": "col-lg-1"
+                },
+                {
+                  "name": "2 Column",
+                  "value": "col-lg-2"
+                },
+                {
+                  "name": "3 Column",
+                  "value": "col-lg-3"
+                },
+                {
+                  "name": "4 Column",
+                  "value": "col-lg-4"
+                },
+                {
+                  "name": "5 Column",
+                  "value": "col-lg-5"
+                },
+                {
+                  "name": "6 Column",
+                  "value": "col-lg-6"
+                },
+                {
+                  "name": "7 Column",
+                  "value": "col-lg-7"
+                },
+                {
+                  "name": "8 Column",
+                  "value": "col-lg-8"
+                },
+                {
+                  "name": "9 Column",
+                  "value": "col-lg-9"
+                },
+                {
+                  "name": "10 Column",
+                  "value": "col-lg-10"
+                },
+                {
+                  "name": "11 Column",
+                  "value": "col-lg-11"
+                },
+                {
+                  "name": "12 Column",
+                  "value": "col-lg-12"
+                }
+              ]
             }
           ]
         }
@@ -43,6 +231,7 @@
     {
       "id": "section",
       "components": [
+        "accordion",
         "text",
         "image",
         "button",
@@ -50,9 +239,31 @@
         "hero",
         "banner",
         "cards",
+        "carousel",
         "columns",
-        "accordion",
-        "fragment"
+        "embed",
+        "fragment",
+        "form",
+        "hero",
+        "image",
+        "logo-set",
+        "quote",
+        "search",
+        "section-title",
+        "tabs",
+        "table",
+        "text",
+        "title",
+        "video",
+        "numeralia",
+        "product-cards",
+        "sp-table",
+        "content-module",
+        "cta-block",
+        "tag",
+        "logo-strip",
+        "embed-form",
+        "media-module"
       ]
     }
   ]

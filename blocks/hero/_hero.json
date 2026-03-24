@@ -23,14 +23,13 @@
         {
           "component": "select",
           "name": "classes",
-          "label": "Variation",
+          "label": "Hero Block Variation",
           "valueType": "string",
           "options": [
             { "name": "Image as background", "value": "" },
             { "name": "Image on the right (two-colored)", "value": "hero-two-colored-right" },
             { "name": "Image on the right (black-colored)", "value": "hero-black-colored-right" }
-          ],
-          "description": "Image as background: image, heading, description, 2 buttons. Two-colored: image, heading, description. Black-colored: image, tag, eyebrow, heading, description, 1 button."
+          ]
         },
         {
           "component": "reference",
@@ -38,7 +37,7 @@
           "name": "image",
           "label": "Image",
           "multi": false,
-          "description": "Required for all variations."
+          "required": true
         },
         {
           "component": "text",
@@ -50,10 +49,9 @@
         {
           "component": "text",
           "valueType": "string",
-          "name": "eyebrow",
-          "label": "Eyebrow",
+          "name": "eyebrow text",
+          "label": "Eyebrow Text",
           "value": "",
-          "description": "Black-colored variation only.",
           "condition": { "===": [{ "var": ["classes", ""] }, "hero-black-colored-right"] }
         },
         {
@@ -61,7 +59,8 @@
           "name": "heading",
           "label": "Heading",
           "valueType": "string",
-          "description": "Required. Use italic for accent/gradient (background variation)."
+          "description": "Required. Use italic for accent/gradient.",
+          "required": true
         },
         {
           "component": "richtext",
@@ -72,52 +71,44 @@
         },
         {
           "component": "container",
-          "name": "button1",
-          "label": "Button 1",
+          "name": "cta1",
+          "label": "CTA 1",
           "valueType": "object",
           "collapsible": true,
           "condition": { "!==": [{ "var": ["classes", ""] }, "hero-two-colored-right"] },
           "fields": [
-            { "...": "../../models/elements/_button-fields.json#/fields" }
+            { "...": "../../models/elements/_button-fields-set1.json#/fields" }
           ]
         },
         {
           "component": "container",
-          "name": "button2",
-          "label": "Button 2",
+          "name": "cta2",
+          "label": "CTA 2",
           "valueType": "object",
           "collapsible": true,
           "condition": { "===": [{ "var": ["classes", ""] }, ""] },
           "fields": [
-            { "...": "../../models/elements/_button-fields.json#/fields" }
+            { "...": "../../models/elements/_button-fields-set2.json#/fields" }
           ]
         },
         {
-          "component": "select",
-          "valueType": "string",
-          "name": "tagVariation",
-          "label": "Tag variation",
-          "value": "",
-          "description": "Black-colored variation only.",
-          "condition": { "===": [{ "var": ["classes", ""] }, "hero-black-colored-right"] },
-          "options": [
-            { "name": "Outline", "value": "outline" },
-            { "name": "Fill", "value": "fill" },
-            { "name": "Glass", "value": "glass" },
-            { "name": "Dark", "value": "dark" }
-          ]
-        },
-        {
-          "component": "text",
-          "valueType": "string",
+          "component": "container",
           "name": "tag",
           "label": "Tag",
-          "value": "",
-          "description": "Black-colored variation only.",
-          "condition": { "===": [{ "var": ["classes", ""] }, "hero-black-colored-right"] }
+          "valueType": "object",
+          "collapsible": true,
+          "condition": { "===": [{ "var": ["classes", ""] }, "hero-black-colored-right"] },
+          "fields": [
+            { "...": "../tag/_tag.json#/models/tag/fields" }
+          ]
         }
       ]
     }
   ],
-  "filters": []
+  "filters": [
+    {
+      "id": "hero",
+      "components": ["hero"]
+    }
+  ]
 }

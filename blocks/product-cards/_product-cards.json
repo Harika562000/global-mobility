@@ -1,0 +1,152 @@
+{
+  "definitions": [
+    {
+      "title": "Product Cards",
+      "id": "product-cards",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block",
+            "template": {
+              "name": "Product Cards",
+              "model": "product-cards",
+              "filter": "product-cards"
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "Product Card",
+      "id": "product-card",
+      "model": "product-card",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block/item",
+            "template": {
+              "name": "Product Card",
+              "model": "product-card",
+              "title": "Product Card"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "product-cards",
+      "fields": [
+        {
+          "component": "multiselect",
+          "name": "classes",
+          "label": "Variant",
+          "valueType": "string",
+          "value": "",
+          "options": [
+            { "name": "Default", "value": "" },
+            { "name": "Vertically Stacked", "value": "product-cards-vertically-stacked" },
+            { "name": "Compact", "value": "product-cards-compact" },
+            { "name": "Compact Large", "value": "product-cards-compact-large" },
+            { "name": "Carousel", "value": "carousel" },
+            { "name": "Carousel (Mobile Only)", "value": "carousel-mobile" },
+            { "name": "Carousel Infinite", "value": "carousel-infinite" }
+          ]
+        },
+        {
+          "component": "container",
+          "name": "cta",
+          "label": "CTA",
+          "valueType": "object",
+          "collapsible": true,
+          "fields": [
+            {
+              "component": "aem-content",
+              "name": "link",
+              "label": "Link",
+              "description": "Destination URL for the button"
+            },
+            {
+              "component": "text",
+              "name": "linkText",
+              "label": "Text",
+              "valueType": "string",
+              "value": "",
+              "description": "Button label (e.g. Browse All)",
+              "required": true
+            },
+            {
+              "component": "select",
+              "name": "linkType",
+              "label": "Type",
+              "valueType": "string",
+              "value": "secondary",
+              "description": "Button style variant",
+              "options": [
+                { "name": "Primary", "value": "primary" },
+                { "name": "Secondary", "value": "secondary" },
+                { "name": "Inverted", "value": "inverted" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "product-card",
+      "fields": [
+        {
+          "component": "select",
+          "name": "chart",
+          "label": "Chart Type",
+          "valueType": "string",
+          "value": "pie",
+          "options": [
+            { "name": "None", "value": "none" },
+            { "name": "Pie", "value": "pie" },
+            { "name": "Pie with Bars", "value": "pieChart" },
+            { "name": "Bars", "value": "bars" },
+            { "name": "Grid", "value": "grid" },
+            { "name": "Waves", "value": "waves" }
+          ]
+        },
+        {
+          "component": "text",
+          "name": "chartJson",
+          "label": "Chart JSON (Lottie)",
+          "valueType": "string",
+          "value": "",
+          "description": "Optional. Paste Lottie JSON to render instead of a preset chart."
+        },
+        {
+          "component": "richtext",
+          "name": "title",
+          "label": "Product Card Title",
+          "valueType": "string",
+          "value": "",
+          "required": true
+        },
+        {
+          "component": "richtext",
+          "name": "description",
+          "label": "Product Card Description",
+          "valueType": "string",
+          "value": ""
+        },
+        {
+          "component": "aem-content",
+          "name": "link",
+          "label": "Product Card Link",
+          "description": "Makes the entire card clickable. Optional."
+        }
+      ]
+    }
+  ],
+  "filters": [
+    {
+      "id": "product-cards",
+      "components": ["product-card"]
+    }
+  ]
+}

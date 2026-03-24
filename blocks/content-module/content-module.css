@@ -1,0 +1,85 @@
+.content-module p {
+    margin: 0;
+}
+
+main > .content-module-container {
+    @media (width < 720px) {
+        padding-left: 0;
+        padding-right: 0;
+    }
+}
+
+.content-module .content-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-400);
+
+    @media (width >= 720px) {
+        gap: var(--spacing-600);
+    }
+
+    @media (width >= 1025px) {
+        flex-direction: row;
+        gap: var(--spacing-700);
+    }
+
+    @media (width >= 1440px) {
+        gap: var(--spacing-1100);
+    }
+
+}
+
+.content-module .content-wrapper p {
+    font-size: var(--responsive-body-400-size);
+    font-weight: var(--responsive-body-400-weight);
+    line-height: var(--responsive-body-400-line-height);
+    letter-spacing: var(--letter-spacing-tight);
+}
+
+.content-module .content-wrapper h4 {
+    font-size: var(--responsive-display-size);
+    font-weight: var(--responsive-display-weight);
+    line-height: var(--responsive-display-line-height);
+}
+
+.two-col-text .content-wrapper {
+    @media (width >= 720px) {
+        flex-direction: row;
+    }
+}
+
+.default-with-cta .content-wrapper {
+    flex-direction: column-reverse;
+
+    @media (width >= 720px) {
+        flex-direction: row;
+    }
+}
+
+.default-with-cta .content-wrapper .cta {
+    width: fit-content;
+
+    @media (width >= 720px) {
+        width: auto;
+    }
+}
+
+.default-with-cta .cta a.button {
+    margin: 0;
+    white-space: nowrap;
+}
+
+.content-module .subtitle {
+    @media (width >= 1025px) {
+        min-width: 348px;
+    }
+}
+
+.content-module .word {
+    color: var(--typography-tertiary);
+    transition: color 0.3s ease;
+}
+
+.content-module .word.active {
+    color: var(--typography-black);
+}

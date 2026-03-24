@@ -1,0 +1,185 @@
+/*
+ * Media Module — S&P Mobility UI Library (Figma node 24191-12117)
+ * Structure mirrors video-container: content wrapper + video wrapper.
+ * (tag / section-title / buttons + video) — same layout as video.css.
+ */
+
+ @media (width >= 1440px) {
+  main .section.media-module-container {
+    padding-right: var(--spacing-700);
+  }
+ }
+
+ .media-module {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-700);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Content wrapper — same as .video-content-wrapper */
+.media-module .media-module-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-800);
+  order: 1;
+}
+
+/* One div: eyebrow + title + description */
+.media-module .media-module-copy {
+  display: flex;
+  flex-direction: column;
+}
+
+.media-module .media-module-video {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  text-align: left;
+  order: 2;
+}
+
+/* Mobile: hide video — same as .video-container:has(.video-content-wrapper) > .video-wrapper */
+@media (width < 1025px) {
+  .media-module .media-module-video {
+    display: none;
+  }
+}
+
+.media-module .media-module-tag {
+  margin-bottom: var(--spacing-200);
+}
+
+.media-module .media-module-eyebrow {
+  margin: 0;
+}
+
+.media-module .media-module-eyebrow .eye-brow-text {
+  display: block;
+  font-family: var(--font-family-accent);
+  font-size: var(--type-eyebrow-size);
+  line-height: var(--type-eyebrow-line-height);
+  letter-spacing: var(--letter-spacing-tight);
+  text-transform: var(--text-transform-uppercase);
+}
+
+.media-module .media-module-title {
+  padding: var(--spacing-600) 0 var(--spacing-400) 0;
+}
+
+
+.media-module .media-module-buttons {
+  display: flex;
+  flex-flow: column wrap;
+  gap: var(--spacing-400);
+
+  --button-margin: 0;
+}
+
+.media-module .media-module-buttons > p {
+  margin: 0;
+  padding: 0;
+}
+
+.media-module .media-module-body {
+  margin: 0;
+}
+
+.media-module .media-module-body p:last-child {
+  margin-bottom: 0;
+}
+
+.media-module .media-module-buttons a.button:any-link,
+.media-module .media-module-buttons button.button {
+  transition: background-size 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+@media (width >= 510px) {
+  .media-module .media-module-buttons {
+    flex-flow: row wrap;
+    gap: var(--spacing-500);
+  }
+
+  .media-module .media-module-buttons > p {
+    flex: 0 1 auto;
+  }
+
+  .media-module .media-module-buttons a.button:any-link,
+  .media-module .media-module-buttons button.button {
+    white-space: nowrap;
+  }
+}
+
+/* Video overrides — same as .video-container:has(.video-content-wrapper) .video video/img */
+.media-module .media-module-video video {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  border-radius: var(--radius-8);
+}
+
+.media-module .media-module-video img {
+  aspect-ratio: 16 / 9;
+  object-position: center;
+}
+
+.media-module .media-module-video video,
+.media-module .media-module-video img,
+.media-module .media-module-video picture img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--radius-8);
+  object-fit: cover;
+}
+
+/* Desktop Small — same as .video-container:has(.video-content-wrapper) */
+@media (width >= 1025px) {
+  .media-module:has(.media-module-video) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--spacing-950);
+    align-items: stretch;
+  }
+
+  .media-module:has(.media-module-video) .media-module-content {
+    order: 1;
+    align-self: center;
+    max-width: 100%;
+  }
+
+  .media-module:has(.media-module-video) .media-module-video {
+    order: 2;
+    display: block;
+    height: 100%;
+    min-height: 476px;
+  }
+
+  .media-module:has(.media-module-video) .media-module-video video,
+  .media-module:has(.media-module-video) .media-module-video img,
+  .media-module:has(.media-module-video) .media-module-video picture img {
+    width: 100%;
+    height: 100%;
+    border-radius: var(--radius-12);
+    object-fit: cover;
+  }
+}
+
+/* Desktop Large — same as .video-container at 1440px */
+@media (width >= 1440px) {
+  .media-module:has(.media-module-video) {
+    column-gap: var(--spacing-1100);
+  }
+
+  .media-module:has(.media-module-video) .media-module-video {
+    min-height: 400px;
+  }
+
+  .media-module:has(.media-module-video) .media-module-video video,
+  .media-module:has(.media-module-video) .media-module-video img,
+  .media-module:has(.media-module-video) .media-module-video picture img {
+    min-height: 400px;
+  }
+}
+

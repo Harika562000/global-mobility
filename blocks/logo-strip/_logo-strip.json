@@ -1,0 +1,100 @@
+{
+  "definitions": [
+    {
+      "title": "Logo Strip",
+      "id": "logo-strip",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block",
+            "template": {
+              "name": "Logo Strip",
+              "model": "logo-strip",
+              "filter": "logo-strip"
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "Logo Strip Item",
+      "id": "logo-strip-item",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block/item",
+            "template": {
+              "name": "Logo Strip Item",
+              "model": "logo-strip-item"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "logo-strip",
+      "fields": [
+        {
+          "component": "multiselect",
+          "name": "classes",
+          "label": "Layout",
+          "valueType": "string",
+          "value": "",
+          "options": [
+            {
+              "name": "Grid",
+              "children": [
+                { "name": "Flex Grid", "value": "flex-grid" }
+              ]
+            },
+            {
+              "name": "Desktop Columns",
+              "children": [
+                { "name": "2 Columns", "value": "col-md-2" },
+                { "name": "3 Columns", "value": "col-md-3" },
+                { "name": "4 Columns", "value": "col-md-4" },
+                { "name": "5 Columns", "value": "col-md-5" },
+                { "name": "6 Columns", "value": "col-md-6" },
+                { "name": "7 Columns", "value": "col-md-7" },
+                { "name": "8 Columns", "value": "col-md-8" }
+              ]
+            },
+            {
+              "name": "Mobile Columns",
+              "children": [
+                { "name": "1 Column", "value": "col-sm-1" },
+                { "name": "2 Columns", "value": "col-sm-2" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "logo-strip-item",
+      "fields": [
+        {
+          "component": "reference",
+          "valueType": "string",
+          "name": "image",
+          "label": "Logo Image",
+          "multi": false
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "imageAlt",
+          "label": "Alt Text"
+        }
+      ]
+    }
+  ],
+  "filters": [
+    {
+      "id": "logo-strip",
+      "components": ["logo-strip-item"]
+    }
+  ]
+}
