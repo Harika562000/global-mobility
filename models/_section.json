@@ -48,10 +48,11 @@
         "button",
         "title",
         "hero",
+        "banner",
         "cards",
         "columns",
-        "fragment",
-        "logo-set"
+        "accordion",
+        "fragment"
       ]
     }
   ]

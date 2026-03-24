@@ -1,0 +1,95 @@
+{
+    "fields": [
+      {
+        "component": "aem-content",
+        "name": "link",
+        "label": "Link",
+        "description": "Destination URL for the button"
+      },
+      {
+        "component": "text",
+        "name": "linkText",
+        "label": "Text",
+        "description": "Button label text",
+        "required": true
+      },
+      {
+        "component": "text",
+        "name": "linkTitle",
+        "label": "Title",
+        "description": "Accessibility title attribute (optional)"
+      },
+      {
+        "component": "select",
+        "name": "linkType",
+        "label": "Type",
+        "description": "Button style variant",
+        "valueType": "string",
+        "value": "",
+        "options": [
+          {
+            "name": "Primary",
+            "value": "primary"
+          },
+          {
+            "name": "Secondary",
+            "value": "secondary"
+          },
+          {
+            "name": "Tertiary",
+            "value": "tertiary"
+          }
+        ]
+      },
+      {
+        "component": "container",
+        "name": "isIconRequired",
+        "label": "Is icon Required",
+        "valueType": "string",
+        "collapsible": true,
+        "fields": [
+          {
+            "component": "boolean",
+            "name": "hasIcon",
+            "label": "Do you need icon?",
+            "description": "Enable to add an icon to the button",
+            "valueType": "boolean",
+            "value": false
+          },
+          {
+            "component": "select",
+            "name": "iconName",
+            "label": "Icon name",
+            "description": "Select an icon",
+            "valueType": "string",
+            "required": true,
+            "condition": { "===": [{ "var": ["hasIcon", false] }, true] },
+            "options": [
+              {
+                "name": "Search",
+                "value": "search"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "component": "container",
+        "name": "targetSettings",
+        "label": "Target settings",
+        "valueType": "string",
+        "collapsible": true,
+        "fields": [
+          {
+            "component": "boolean",
+            "name": "targetLink",
+            "label": "Open link in new tab",
+            "description": "Enable to open the button link in a new browser tab",
+            "valueType": "boolean",
+            "value": false
+          }
+        ]
+      }
+    ]
+  }
+  
