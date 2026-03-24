@@ -438,49 +438,38 @@ function decorateButtons(element) {
       // If the next two siblings (rows) are DIVs and the second contains "true",
       // treat it as "open in new tab" and remove that row so it doesn't render.
 
-
       if (!a.querySelector('img')) {
-        if (up.childNodes.length === 1 && (up.tagName === 'P' || up.tagName === 'DIV')) {
-          a.className = 'button'; // default
-        }
-        if (
+        const buttonVariants = ['primary', 'secondary', 'inverted'];
+        let variant = null;
+        // Explicit type from block (e.g. data-link-type) wins over strong/em structure
+        const explicitType = a.dataset.linkType?.toLowerCase();
+        if (explicitType === 'inverted' || explicitType === 'primary' || explicitType === 'secondary') {
+          variant = explicitType;
+          delete a.dataset.linkType;
+        } else if (
           up.childNodes.length === 1
           && up.tagName === 'STRONG'
           && twoup.childNodes.length === 1
           && twoup.tagName === 'P'
         ) {
-          a.className = 'button primary';
-        }
-        if (
+          variant = 'primary';
+        } else if (
           up.childNodes.length === 1
           && up.tagName === 'EM'
           && twoup.childNodes.length === 1
           && twoup.tagName === 'P'
         ) {
-          a.className = 'button secondary';
+          variant = 'secondary';
+        } else if (up.childNodes.length === 1 && (up.tagName === 'P' || up.tagName === 'DIV')) {
+          variant = 'inverted';
         }
-      }
-
-      const iconSiblingRow = twoup?.parentElement;
-      const iconRow = iconSiblingRow?.nextElementSibling;
-      const iconName = iconRow?.nextElementSibling;
-      if (
-        iconRow?.tagName === 'DIV'
-        && iconName?.tagName === 'DIV'
-        && iconRow?.textContent?.trim() === 'true'
-      ) {
-        a.dataset.hasIcon = 'true';
-        a.dataset.iconName = iconName.textContent?.trim() || '';
-        iconRow.remove();
-        iconName.remove();
+        if (variant) {
+          buttonVariants.forEach((v) => a.classList.remove(v));
+          a.classList.add('button', variant);
+        }
       }
     }
   });
-
-  //<span class="icon icon-download" aria-hidden="true" role="presentation"><img data-icon-name="download" src="/icons/download.svg" alt="" loading="lazy"></span>
-
-  //icon icon-download
-  //<img data-icon-name="download" src="/icons/download.svg" alt="" loading="lazy">
 
   /* Group 2+ adjacent button <p> elements into a <div class="button-container"> wrapper.
      Single buttons remain unwrapped (no button-container class).
@@ -648,9 +637,11 @@ async function loadBlock(block) {
             if (mod.default) {
               await mod.default(block);
             }
+            // Re-run button decoration so block-built buttons get correct classes
+            decorateButtons(block);
           } catch (error) {
             // eslint-disable-next-line no-console
-            console.error(`failed to load module for ${blockName}`, error);
+            console.log(`failed to load module for ${blockName}`, error);
           }
           resolve();
         })();
@@ -658,7 +649,7 @@ async function loadBlock(block) {
       await Promise.all([cssLoaded, decorationComplete]);
     } catch (error) {
       // eslint-disable-next-line no-console
-      console.error(`failed to load block ${blockName}`, error);
+      console.log(`failed to load block ${blockName}`, error);
     }
     block.dataset.blockStatus = 'loaded';
   }
