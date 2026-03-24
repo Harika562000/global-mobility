@@ -1,10 +1,11 @@
 {
   "mappings": [
-    "/content/global-mobility/:/",
-    "/content/global-mobility/configuration:/.helix/config.json",
-    "/content/global-mobility/metadata:/metadata.json"
+    "/content/mobility-global/:/",
+    "/content/mobility-global/metadata:/metadata.json",
+    "/content/mobility-global/configuration:/.helix/config.json"
   ],
   "includes": [
-    "/content/global-mobility/"
+    "/content/mobility-global/metropolis/main",
+    "/content/dam/mobilityglobal"
   ]
 }
