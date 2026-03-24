@@ -1,0 +1,37 @@
+{
+  "fields": [
+    {
+      "component": "aem-content",
+      "valueType": "string",
+      "name": "button3",
+      "label": "Button 3 Link",
+      "required": true
+    },      
+    {
+      "component": "text",
+      "valueType": "string",
+      "name": "button3Title",
+      "label": "Button 3 Title",
+      "description": "Accessibility title attribute (optional)"
+    },
+    {
+      "component": "text",
+      "valueType": "string",
+      "name": "button3Text",
+      "label": "Button 3 Text",
+      "required": true
+    },
+    {
+      "component": "select",
+      "name": "button3Type",
+      "label": "Button 3 Variation",
+      "valueType": "string",
+      "value": "",
+      "options": [
+        { "name": "Primary", "value": "primary" },
+        { "name": "Secondary", "value": "secondary" },
+        { "name": "Inverted", "value": "inverted" }
+      ]
+    }
+  ]
+}

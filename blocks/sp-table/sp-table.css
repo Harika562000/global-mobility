@@ -1,0 +1,93 @@
+.sp-table  {
+  margin-top: var(--spacing-600);
+  background-color: var(--surface-page-accent-1);
+  padding: var(--spacing-600);
+  border-radius: var(--radius-sm);
+}
+
+.sp-table .sp-table-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-600);
+
+  @media (width >= 720px) {
+    flex-direction: row;
+  }
+}
+
+.sp-table .sp-table-row h1,
+.sp-table .sp-table-row h2,
+.sp-table .sp-table-row h3,
+.sp-table .sp-table-row h4,
+.sp-table .sp-table-row h5,
+.sp-table .sp-table-row h6 {
+  padding: var(--spacing-200) 0;
+  margin-bottom: var(--spacing-600);
+}
+
+.sp-table .sp-table-row ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sp-table .sp-table-row li {
+  position: relative;
+  padding-left: var(--spacing-700);
+  margin-bottom: var(--spacing-400);
+  font-size: var(--responsive-font-body-400);
+  line-height: var(--responsive-line-height-26);
+  color: var(--typography-secondary);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.sp-table .sp-table-row li:last-child {
+  padding-bottom: var(--spacing-0);
+}
+
+.sp-table .sp-table-base {
+  @media (width >= 720px) {
+    flex: 2;
+    min-width: 0;
+  }
+}
+
+.sp-table .sp-table-base li::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.3em;
+  width: 14px;
+  height: 14px;
+  background-image: url('/icons/check-mark.svg');
+  background-size: 14px 14px;
+  background-repeat: no-repeat;
+}
+
+/* Add-on Modules column (right) – white card */
+.sp-table .sp-table-addon {
+  padding: var(--spacing-600) var(--spacing-500);
+  background-color: var(--surface-white);
+  border-radius: var(--radius-md);
+
+  @media (width >= 720px) {
+    min-width: 279px;
+    padding: var(--spacing-600);
+  }
+
+  @media (width >= 1025px) {
+    min-width: 429px;
+  }
+}
+
+.sp-table .sp-table-addon li::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.3em;
+  width: 14px;
+  height: 14px;
+  background-image: url('/icons/asterisk.svg');
+  background-size: 14px 14px;
+  background-repeat: no-repeat;
+}

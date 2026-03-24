@@ -1,0 +1,81 @@
+{
+    "definitions": [
+      {
+        "title": "Content Module",
+        "id": "content-module",
+        "plugins": {
+          "xwalk": {
+            "page": {
+              "resourceType": "core/franklin/components/block/v1/block",
+              "template": {
+                "name": "Content Module",
+                "model": "content-module"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "models": [
+      {
+        "id": "content-module",
+        "fields": [
+          {
+            "component": "select",
+            "name": "classes",
+            "label": "Variation",
+            "required": true,
+            "options": [
+              { "name": "Default (Standard)", "value": "default-variation" },
+              { "name": "Full Width Headline", "value": "full-width-headline" },
+              { "name": "Full Width Text", "value": "full-width-text" },
+              { "name": "Two Col Text", "value": "two-col-text" },
+              { "name": "Default with CTA", "value": "default-with-cta" }
+            ]
+          },
+          {
+            "component": "text",
+            "name": "eyebrow",
+            "label": "Eyebrow",
+            "valueType": "string",
+            "required": true,
+            "condition": { "===": [{ "var": "classes" }, "default-variation"] }
+          },
+          {
+            "component": "richtext",
+            "name": "description",
+            "label": "Description / First Column",
+            "valueType": "string",
+            "description": "Default H4 tag. Any heading tag will be animated. p tag for text.",
+            "required": true
+          },
+          {
+            "component": "richtext",
+            "name": "description2",
+            "label": "Second Column Content",
+            "valueType": "string",
+            "description": "Default H4 tag. Any heading tag will be animated. p tag for text.",
+            "required": true,
+            "condition": { "===": [{ "var": "classes" }, "two-col-text"] }
+          },
+          {
+            "component": "text",
+            "name": "ctaLabel",
+            "label": "CTA Label",
+            "valueType": "string",
+            "required": true,
+            "condition": { "===": [{ "var": "classes" }, "default-with-cta"] }
+          },
+          {
+            "component": "text",
+            "name": "ctaUrl",
+            "label": "CTA Link",
+            "valueType": "string",
+            "required": true,
+            "condition": { "===": [{ "var": "classes" }, "default-with-cta"] }
+          }
+        ]
+      }
+    ],
+    "filters": []
+  }

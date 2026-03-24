@@ -4,28 +4,21 @@
 .logo-set .logo-set-item img {
     display: block;
     width: 100%;
-    height: 100%;
-    max-height: var(--size-476, 476px);
 }
 
-@media (width >= 510px) {
-    .logo-set .logo-set-item picture,
-    .logo-set .logo-set-item img {
-        max-height: var(--size728, 728px);
-    }
+/* Default to 9:16 for smaller breakpoints */
+.logo-set .logo-set-item picture {
+    aspect-ratio: 9 / 16;
+}
+
+.logo-set .logo-set-item img {
+    height: 100%;
+    object-fit: cover;
 }
 
 @media (width >= 720px) {
-    .logo-set .logo-set-item picture,
-    .logo-set .logo-set-item img {
-        max-height: var(--size372, 372px);
-    }
-}
-
-@media (width >= 1025px) {
-    .logo-set .logo-set-item picture,
-    .logo-set .logo-set-item img {
-        max-height: var(--size409, 409px);
+    .logo-set .logo-set-item picture {
+        aspect-ratio: 16 / 9;
     }
 }
 

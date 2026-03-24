@@ -172,16 +172,10 @@ main .section.inverted {
   font-family: var(--font-family-accent);
   font-size: var(--type-eyebrow-size);
   font-weight: var(--font-weight-regular);
-  line-height: var(--line-height-22);
+  line-height: var(--type-eyebrow-line-height);
   color: var(--typography-main);
   text-transform: var(--text-transform-capitalize);
   letter-spacing: var(--letter-spacing-tight);
-}
-
-@media (width >= 1025px) {
-  .eye-brow-text {
-    line-height: var(--line-height-26);
-  }
 }
 
 .eye-brow-text.accent-color {

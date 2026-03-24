@@ -1,0 +1,84 @@
+/* Compact large product-cards variant */
+
+/* stylelint-disable no-descending-specificity */
+@media (width >= 1025px) {
+    .product-cards.product-cards-compact-large .product-card-item {
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: var(--spacing-400);
+      margin-top: 0;
+      max-width: var(--size-452, 452px);
+      max-height: var(--size-192, 192px);
+      padding: var(--spacing-600);
+      background-color: var(--surface-white);
+      border-radius: var(--radius-sm);
+      border: var(--size-1) solid var(--border-subtle);
+    }
+  
+    .product-cards.product-cards-compact-large .product-card-item.active {
+      margin-top: 0;
+      max-height: none;
+    }
+  
+    .product-cards.product-cards-compact-large .product-card-chart {
+      width: var(--size-160, 160px);
+      height: var(--size-144, 144px);
+      aspect-ratio: 1 / 1;
+      margin-bottom: 0;
+    }
+  
+    .product-cards.product-cards-compact-large .product-card-body {
+      order: 1;
+      flex: 1 1 auto;
+      min-width: 0;
+      justify-content: flex-end;
+      gap: var(--spacing-100);
+    }
+  
+    .product-cards.product-cards-compact-large .product-card-title {
+      align-items: flex-end;
+      letter-spacing: -0.8px;
+      word-break: normal;
+    }
+  
+    .product-cards.product-cards-compact-large .product-card-body .product-card-description {
+      display: none;
+    }
+  
+    .product-cards.product-cards-compact-large .product-card-body .product-card-description-text {
+      color: var(--typography-secondary);
+      font-family: var(--font-family-primary);
+      font-size: var(--font-size-100);
+      font-weight: var(--font-weight-regular);
+      line-height: var(--line-height-134p,134%);
+      letter-spacing: var(--letter-spacing-048, -0.48px);
+    }
+  
+    .product-cards.product-cards-compact-large .product-card-item:hover .product-card-description {
+      display: flex;
+      animation: compact-large-description-reveal 0.28s ease;
+    }
+    
+    .product-cards.product-cards-compact-large .product-card-item:hover,
+    .product-cards.product-cards-compact-large .product-card-item:focus-visible {
+      border: 1px solid var(--border-strong, #808080);
+      background: var(--surface-light-grey);
+    }
+  }
+  
+  @keyframes compact-large-description-reveal {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  
+  /* stylelint-enable no-descending-specificity */

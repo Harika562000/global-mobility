@@ -3,7 +3,6 @@
     {
       "title": "Hero",
       "id": "hero",
-      "model": "hero",
       "plugins": {
         "xwalk": {
           "page": {
@@ -24,12 +23,12 @@
         {
           "component": "select",
           "name": "classes",
-          "label": "Variation",
+          "label": "Hero Block Variation",
           "valueType": "string",
           "options": [
-            { "name": "Default (Em Accent)", "value": "" },
-            { "name": "Two Colored Right", "value": "two-colored-right" },
-            { "name": "Black Colored Right", "value": "black-colored-right" }
+            { "name": "Image as background", "value": "" },
+            { "name": "Image on the right (two-colored)", "value": "hero-two-colored-right" },
+            { "name": "Image on the right (black-colored)", "value": "hero-black-colored-right" }
           ]
         },
         {
@@ -37,7 +36,8 @@
           "valueType": "string",
           "name": "image",
           "label": "Image",
-          "multi": false
+          "multi": false,
+          "required": true
         },
         {
           "component": "text",
@@ -49,49 +49,66 @@
         {
           "component": "text",
           "valueType": "string",
-          "name": "eyebrow",
+          "name": "eyebrow text",
           "label": "Eyebrow Text",
-          "value": ""
+          "value": "",
+          "condition": { "===": [{ "var": ["classes", ""] }, "hero-black-colored-right"] }
         },
         {
           "component": "richtext",
           "name": "heading",
           "label": "Heading",
           "valueType": "string",
-          "description": "Use italic for accent/gradient text"
+          "description": "Required. Use italic for accent/gradient.",
+          "required": true
         },
         {
           "component": "richtext",
           "name": "description",
-          "label": "Description",
-          "valueType": "string"
+          "label": "Sub-heading",
+          "valueType": "string",
+          "description": "Optional."
         },
         {
-          "component": "text",
-          "name": "ctaLabel",
-          "label": "Primary CTA Label",
-          "valueType": "string"
+          "component": "container",
+          "name": "cta1",
+          "label": "CTA 1",
+          "valueType": "object",
+          "collapsible": true,
+          "condition": { "!==": [{ "var": ["classes", ""] }, "hero-two-colored-right"] },
+          "fields": [
+            { "...": "../../models/elements/_button-fields-set1.json#/fields" }
+          ]
         },
         {
-          "component": "text",
-          "name": "ctaUrl",
-          "label": "Primary CTA URL",
-          "valueType": "string"
+          "component": "container",
+          "name": "cta2",
+          "label": "CTA 2",
+          "valueType": "object",
+          "collapsible": true,
+          "condition": { "===": [{ "var": ["classes", ""] }, ""] },
+          "fields": [
+            { "...": "../../models/elements/_button-fields-set2.json#/fields" }
+          ]
         },
         {
-          "component": "text",
-          "name": "secondaryCtaLabel",
-          "label": "Secondary CTA Label",
-          "valueType": "string"
-        },
-        {
-          "component": "text",
-          "name": "secondaryCtaUrl",
-          "label": "Secondary CTA URL",
-          "valueType": "string"
+          "component": "container",
+          "name": "tag",
+          "label": "Tag",
+          "valueType": "object",
+          "collapsible": true,
+          "condition": { "===": [{ "var": ["classes", ""] }, "hero-black-colored-right"] },
+          "fields": [
+            { "...": "../tag/_tag.json#/models/tag/fields" }
+          ]
         }
       ]
     }
   ],
-  "filters": []
+  "filters": [
+    {
+      "id": "hero",
+      "components": ["hero"]
+    }
+  ]
 }

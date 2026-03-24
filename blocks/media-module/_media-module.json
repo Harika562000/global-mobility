@@ -1,0 +1,67 @@
+{
+    "definitions": [
+      {
+        "title": "Media Module",
+        "id": "media-module",
+        "model": "media-module",
+        "plugins": {
+          "xwalk": {
+            "page": {
+              "resourceType": "core/franklin/components/block/v1/block",
+              "template": {
+                "name": "Media Module",
+                "model": "media-module"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "models": [
+      {
+        "id": "media-module",
+        "fields": [
+          {
+            "component": "container",
+            "name": "tag",
+            "label": "Tag",
+            "valueType": "object",
+            "collapsible": true,
+            "fields": [
+              { "...": "../tag/_tag.json#/models/tag/fields" }
+            ]
+          },
+          {
+            "component": "container",
+            "name": "sectionTitle",
+            "label": "Section Title",
+            "valueType": "object",
+            "collapsible": true,
+            "fields": [
+              { "...": "../section-title/_section-title.json#/models/section-title/fields" }
+            ]
+          },
+          {
+            "...": "../../models/elements/_button-fields-set1.json#/fields"
+          },
+          {
+            "...": "../../models/elements/_button-fields-set2.json#/fields"
+          },
+          {
+            "component": "reference",
+            "valueType": "string",
+            "name": "mediaAsset",
+            "label": "Media Asset",
+            "multi": false,
+            "description": "Select a video MP4 or image/GIF from DAM."
+          }
+        ]
+      }
+    ],
+    "filters": [
+      {
+        "id": "media-module",
+        "components": ["media-module"]
+      }
+    ]
+  }

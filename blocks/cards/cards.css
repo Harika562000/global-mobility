@@ -1,0 +1,89 @@
+
+/* Variant-specific styles */
+@import url('cards-col.css');
+@import url('cards-no-border.css');
+
+/* Card items shared base (two-col, three-col) */
+/* stylelint-disable no-descending-specificity */
+.cards.two-col .card-item,
+.cards.three-col .card-item {
+  cursor: pointer;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-sm);
+  border: var(--size-1) solid var(--border-strong, #808080);
+  text-decoration: none;
+  justify-content: space-between;
+  transition:
+    background-color 0.6s ease,
+    color 0.6s ease;
+  padding: var(--spacing-500);
+  max-width: var(--size-280,280px);
+  height: var(--size-300,300px);
+
+  @media (width >=1025px) {
+    gap: var(--spacing-200);
+    padding: var(--spacing-700) var(--spacing-600);
+    min-width: var(--size-325,325px);
+    max-width: var(--size-800,800px);
+  }
+}
+/* stylelint-enable no-descending-specificity */
+
+/* Layout: mobile-first (stacked); 2 or 3 columns from tablet up */
+@media (width >=1025px) {
+  .cards.two-col,
+  .cards.three-col {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-400);
+  }
+}
+
+@media (width >=1025px) {
+  .cards.three-col {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.cards-wrapper {
+  margin: var(--size-24) 0 0;
+}
+
+/* Reset margins for text inside cards sections */
+/* stylelint-disable no-descending-specificity */
+.cards-container p,
+.cards-container h1,
+.cards-container h2,
+.cards-container h3,
+.cards-container h4,
+.cards-container h5,
+.cards-container h6 {
+  margin: 0;
+}
+
+/* Heading styles for text inside cards sections – revisit after heading typography is done */
+
+/* stylelint-enable no-descending-specificity */
+
+/* Dark background variant: inverse typography for the whole section.
+   Uses :has(.cards-dark) so we don't depend on the global bg-dark class. */
+/* stylelint-disable no-descending-specificity */
+.cards-container:has(.cards-dark),
+.cards-container:has(.cards-dark) p,
+.cards-container:has(.cards-dark) h1,
+.cards-container:has(.cards-dark) h2,
+.cards-container:has(.cards-dark) h3,
+.cards-container:has(.cards-dark) h4,
+.cards-container:has(.cards-dark) h5,
+.cards-container:has(.cards-dark) h6,
+.cards-container:has(.cards-dark) svg {
+  color: var(--typography-inverse);
+}
+
+.cards-container:has(.cards-dark) .cards.two-col .card-item,
+.cards-container:has(.cards-dark) .cards.three-col .card-item {
+  border: var(--size-1) solid var(--divider-border-light);
+}
+/* stylelint-enable no-descending-specificity */

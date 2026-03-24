@@ -4,9 +4,9 @@
  * https://www.aem.live/developer/block-collection/fragment
  */
 
-// eslint-disable-next-line import/no-cycle
 import {
   decorateMain,
+  moveInstrumentation,
 } from '../../scripts/scripts.js';
 
 import {
@@ -16,12 +16,10 @@ import {
 /**
  * Loads a fragment.
  * @param {string} path The path to the fragment
- * @returns {HTMLElement} The root element of the fragment
+ * @returns {Promise<HTMLElement>} The root element of the fragment
  */
 export async function loadFragment(path) {
   if (path && path.startsWith('/')) {
-    // eslint-disable-next-line no-param-reassign
-    path = path.replace(/(\.plain)?\.html/, '');
     const resp = await fetch(`${path}.plain.html`);
     if (resp.ok) {
       const main = document.createElement('main');
@@ -44,6 +42,9 @@ export async function loadFragment(path) {
   return null;
 }
 
+/**
+ * @param {Element} block
+ */
 export default async function decorate(block) {
   const link = block.querySelector('a');
   const path = link ? link.getAttribute('href') : block.textContent.trim();
@@ -51,9 +52,9 @@ export default async function decorate(block) {
   if (fragment) {
     const fragmentSection = fragment.querySelector(':scope .section');
     if (fragmentSection) {
-      block.classList.add(...fragmentSection.classList);
-      block.classList.remove('section');
-      block.replaceChildren(...fragmentSection.childNodes);
+      block.closest('.section').classList.add(...fragmentSection.classList);
+      moveInstrumentation(block, block.parentElement);
+      block.closest('.fragment').replaceWith(...fragment.childNodes);
     }
   }
 }

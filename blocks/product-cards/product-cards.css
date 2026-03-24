@@ -1,0 +1,356 @@
+/* Product Cards Component */
+
+/* Variant-specific styles */
+@import url('product-cards-compact.css');
+@import url('product-cards-compact-large.css');
+
+/* stylelint-disable no-descending-specificity */
+
+.product-cards .product-card-item {
+  cursor: pointer;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-sm);
+  border: var(--size-1) solid var(--border-color);
+  text-decoration: none;
+  justify-content: space-between;
+  transition:
+    background-color 0.6s ease,
+    color 0.6s ease;
+  background-color: var(--surface-white);
+  padding: var(--spacing-500);
+  min-width: var(--size-240, 240px);
+  max-width: var(--size-824, 824px);
+  align-self: stretch;
+
+  @media (width <1025px) {
+    flex: 1 0 0;
+  }
+
+  @media (width >=1025px) {
+    margin-top: 28px;
+    padding: var(--spacing-700);
+    gap: var(--spacing-200);
+    max-width: var(--size-448, 448px);
+    max-height: var(--size-512, 512px);
+  }
+}
+
+.product-cards .product-card-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-300);
+
+  @media (width >=1025px) {
+    gap: var(--spacing-800);
+  }
+}
+
+.product-cards .product-card-chart {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin-bottom: var(--size-20);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+
+  @media (width >=1025px) {
+    margin-bottom: 0;
+  }
+}
+
+.product-cards .product-card-chart svg {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+}
+
+/* For waves chart with layered SVGs */
+.product-cards .product-card-chart .svg-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-cards .product-card-chart .svg-default {
+  z-index: 2;
+}
+
+.product-cards .product-card-chart .svg-hover {
+  z-index: 1;
+}
+
+.product-cards .product-card-title {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-600);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-160p);
+  letter-spacing: -0.8px;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: flex-end;
+  word-break: break-all;
+  color: var(--typography-main);
+  margin-top: unset;
+
+  @media (width >=1025px) {
+    gap: var(--spacing-400);
+    align-items: flex-end;
+  }
+
+  @media (width >=1025px) {
+    transition: color 0.3s ease;
+  }
+}
+
+.product-cards .product-card-title > .product-card-title-text {
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.product-cards .product-card-title-text > div {
+  width: 100%;
+}
+
+.product-cards .product-card-title-text > div > p {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: flex-end;
+}
+
+/* Title arrow: hidden on mobile, visible and rotated on desktop; hidden on hover */
+.product-cards .product-card-title .icon-arrow-right {
+  display: none;
+}
+
+@media (width >= 1025px) {
+  .product-cards .product-card-title .icon-arrow-right {
+    width: var(--icon-size-xsm);
+    height: var(--icon-size-xsm);
+    flex: 0 0 var(--size-20,20px);
+    transform: rotate(324deg);
+    display: flex;
+  }
+
+  .product-cards .product-card-item:hover .product-card-title .icon-arrow-right,
+  .product-cards .product-card-item:focus-visible .product-card-title .icon-arrow-right {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+/* Body paragraph arrow: hidden by default, shown on hover */
+.product-cards .product-card-body p .icon-arrow-right {
+  width: var(--icon-size-xsm);
+  height: var(--icon-size-xsm);
+  flex: 0 0 var(--size-20,20px);
+  transition: transform 0.3s ease;
+}
+
+
+.product-cards .product-card-title .icon-arrow-right svg,
+.product-cards .product-card-title .icon-arrow-right img,
+.product-cards .product-card-body p .icon-arrow-right svg,
+.product-cards .product-card-body p .icon-arrow-right img {
+  width: var(--icon-size-xsm);
+  height: var(--icon-size-xsm);
+}
+
+/* Card body: title is always visible, description hidden until hover */
+.product-cards .product-card-body {
+  height: var(--size-82,82px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: var(--spacing-200);
+  width: 100%;
+
+  @media (width >=1025px) {
+    height: var(--size-72,72px);
+  }
+
+  @media (width >=1025px) {
+    transition: height 0.3s ease;
+  }
+}
+
+/* Description paragraph: visible on mobile, hidden by default on desktop until hover */
+.product-cards .product-card-body .product-card-description {
+  color: var(--typography-secondary);
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-200);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-22);
+  letter-spacing: -0.56px;
+  display: flex;
+  width: 100%;
+  gap: var(--spacing-200);
+  align-items: flex-end;
+  justify-content: space-between;
+
+  @media (width >= 1025px) {
+    opacity: 0;
+    max-height: 0;
+    transition: opacity 0.3s ease, max-height 0.3s ease;
+  }
+}
+
+.product-cards .product-card-body .product-card-description-text {
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex: 1 1 auto;
+  display: -webkit-box;
+}
+
+/* Desktop-only: Show description on hover */
+@media (width >= 1025px) {
+  .product-cards .product-card-item:hover .product-card-description,
+  .product-cards .product-card-item:focus-within .product-card-description {
+    opacity: 1;
+    max-height: 100px;
+  }
+}
+
+.product-cards .product-card-body .product-card-description .icon-arrow-right {
+  flex-shrink: 0;
+  transform: rotate(0deg);
+}
+
+/* Desktop-only: Hide icons and maintain colors on hover */
+@media (width >= 1025px) {
+  /* Hide the leading icon inside card title row on hover/focus */
+  .product-cards .product-card-item:hover .product-card-head .icon,
+  .product-cards .product-card-item:focus-visible .product-card-head .icon {
+    display: none;
+  }
+
+  /* Keep background and text colors unchanged on hover/focus */
+  .product-cards .product-card-item:hover,
+  .product-cards .product-card-item:focus-visible {
+    background-color: var(--surface-white);
+    color: var(--text-color);
+  }
+
+  .product-cards .product-card-item:hover .icon img,
+  .product-cards .product-card-item:hover .icon-arrow-right img,
+  .product-cards .product-card-item:focus-visible .icon img,
+  .product-cards .product-card-item:focus-visible .icon-arrow-right img {
+    filter: none;
+  }
+}
+
+/* ---- Active state for product-cards inside a carousel ---- */
+
+.product-cards .product-card-item.active {
+  @media (width >=1025px) {
+    margin-top: 0;
+    max-height: var(--size-540, 540px);
+  }
+}
+
+/* Layout: mobile-first (stacked); 3 columns from tablet up */
+@media (width >=1025px) {
+  .product-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-400);
+  }
+}
+
+@media (width >=1025px) {
+  .product-cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.product-cards-wrapper {
+  margin: var(--spacing-600) 0 0;
+
+  @media (width >=1025px) {
+    margin-top: var(--spacing-900);
+  }
+}
+
+/* Heading color for sections containing product-cards */
+.product-cards-container h1,
+.product-cards-container h2,
+.product-cards-container h3,
+.product-cards-container h4,
+.product-cards-container h5 {
+  color: var(--typography-black);
+
+  @media (width >=1025px) {
+    width: 69%;
+  }
+}
+
+/* Reset margins for text inside product-cards sections */
+.product-cards-container p,
+.product-cards-container h1,
+.product-cards-container h2,
+.product-cards-container h3,
+.product-cards-container h4,
+.product-cards-container h5,
+.product-cards-container h6 {
+  margin: 0;
+}
+
+/* Dark background variant: inverse typography for the whole section.
+   Uses :has(.product-cards-dark) so we don't depend on the global bg-dark class. */
+.section:has(.product-cards-dark) {
+  background-color: var(--surface-dark);
+  color: var(--surface-white);
+}
+
+.section:has(.product-cards-dark) .product-cards .product-card-item {
+  background-color: var(--surface-dark);
+  color: var(--surface-white);
+  border-color: var(--surface-white);
+}
+
+.section:has(.product-cards-dark) .product-cards .product-card-item:hover,
+.section:has(.product-cards-dark) .product-cards .product-card-item:focus-visible {
+  background-color: var(--surface-white);
+  color: var(--surface-dark);
+}
+
+/* Grey background variant */
+.section:has(.product-cards-grey) {
+  background-color: var(--surface-grey);
+}
+
+.section:has(.product-cards-grey) .product-cards .product-card-item {
+  background-color: var(--surface-white);
+}
+
+/* Light background variant */
+.section:has(.product-cards-light) {
+  background-color: var(--surface-light);
+}
+
+/* Accent background variant */
+.section:has(.product-cards-accent) {
+  background-color: var(--surface-accent);
+}
+
+/* stylelint-enable no-descending-specificity */

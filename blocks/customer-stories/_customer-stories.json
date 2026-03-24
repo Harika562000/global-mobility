@@ -1,0 +1,108 @@
+{
+  "definitions": [
+    {
+      "title": "Customer Stories",
+      "id": "customer-stories",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block",
+            "template": {
+              "name": "Customer Stories",
+              "model": "customer-stories",
+              "filter": "customer-stories"
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "Customer Story",
+      "id": "customer-story",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block/item",
+            "template": {
+              "name": "Customer Story",
+              "model": "customer-story"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "customer-stories",
+      "fields": [
+        {
+          "component": "select",
+          "name": "productCardsVariant",
+          "label": "Product Cards Variant",
+          "valueType": "string",
+          "value": "product-cards-compact",
+          "options": [
+            {
+              "name": "Compact",
+              "value": "product-cards-compact"
+            },
+            {
+              "name": "Vertically Stacked",
+              "value": "product-cards-vertically-stacked"
+            }
+          ]
+        },
+        {
+          "component": "select",
+          "name": "classes",
+          "label": "Variation",
+          "valueType": "string",
+          "value": "",
+          "options": [
+            {
+              "name": "Default",
+              "value": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "customer-story",
+      "fields": [
+        {
+          "component": "richtext",
+          "name": "quote",
+          "label": "Quote",
+          "valueType": "string",
+          "required": true
+        },
+        {
+          "component": "reference",
+          "name": "authorImage",
+          "label": "Author Image",
+          "valueType": "string",
+          "multi": false
+        },
+        {
+          "component": "richtext",
+          "name": "authorInfo",
+          "label": "Author Name and Role",
+          "valueType": "string",
+          "description": "Use two lines: name on the first line, role on the second."
+        }
+      ]
+    }
+  ],
+  "filters": [
+    {
+      "id": "customer-stories",
+      "components": [
+        "customer-story",
+        "section-title",
+        "product-cards"
+      ]
+    }
+  ]
+}

@@ -23,6 +23,7 @@ button.button {
   letter-spacing: var(--letter-spacing-tight);
   text-align: center;
   text-decoration: none;
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   cursor: pointer;
   user-select: none;
   background-repeat: no-repeat;
@@ -180,9 +181,21 @@ button.button.secondary:focus {
   --button-icon-filter: brightness(0) invert(1); /* white */
 }
 
-/* Inverted (for dark sections) */
-.inverted a.button:any-link,
-.inverted button.button,
+/* Disabled (before inverted for no-descending-specificity) */
+button.button:disabled,
+button.button:disabled:hover {
+  background-color: var(--color-grey-disabled);
+  background-image: none;
+  background-size: 100% 0;
+  border-color: transparent;
+  color: var(--color-grey-600);
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
+  cursor: not-allowed;
+}
+
+/* Inverted (explicit style, or default on dark sections when no variant set) */
+.inverted a.button:any-link:not(.primary, .secondary),
+.inverted button.button:not(.primary, .secondary),
 a.button.inverted:any-link,
 button.button.inverted {
   background-color: transparent;
@@ -193,21 +206,10 @@ button.button.inverted {
   --button-icon-filter: brightness(0) invert(1); /* white */
 }
 
-/* Disabled (before inverted hover for specificity order) */
-button.button:disabled,
-button.button:disabled:hover {
-  background-color: var(--color-grey-disabled);
-  background-image: none;
-  background-size: 100% 0;
-  border-color: transparent;
-  color: var(--color-grey-600);
-  cursor: not-allowed;
-}
-
-.inverted a.button:hover,
-.inverted a.button:focus,
-.inverted button.button:hover,
-.inverted button.button:focus,
+.inverted a.button:not(.primary, .secondary):hover,
+.inverted a.button:not(.primary, .secondary):focus,
+.inverted button.button:not(.primary, .secondary):hover,
+.inverted button.button:not(.primary, .secondary):focus,
 a.button.inverted:hover,
 a.button.inverted:focus {
   /* Slightly overshoot height to avoid 1px gap from sub-pixel rounding */

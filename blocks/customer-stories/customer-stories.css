@@ -1,0 +1,295 @@
+/* Customer Stories block – testimonial with quote + author */
+
+/* ---- Base / Mobile ---- */
+.customer-stories {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-700);
+  width: 100%;
+}
+
+.customer-stories-container .section-title-wrapper {
+    height: var(--height, 56px);
+    border-bottom: 1px solid var(--color-grey-400);
+    padding-bottom: var(--size-16);
+    display: flex;
+    justify-content: space-between;
+}
+
+.bg-dark .customer-stories-container .section-title-wrapper {
+    border-bottom-color: var(--color-grey-200);
+}
+
+.customer-stories p {
+  margin: 0;
+}
+
+/* ---- Single slide (3-column row: quote | image | name+role) ---- */
+.customer-stories .customer-stories-slide {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-600);
+}
+
+/* ---- Quote text ---- */
+.customer-stories .customer-stories-quote{
+    @media (width >=1025px) {
+        padding-top: var(--spacing-700);
+    }
+}
+
+.customer-stories .customer-stories-quote p{
+  font-size: var(--font-size-600);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-150p, 150%);
+  letter-spacing: var(--letter-spacing-tight, -0.96px);
+  color: var(--typography-black);
+
+  @media (width >= 720px) {
+    font-size: var(--font-size-700);
+    line-height: var(--line-height-36, 36px);
+  }
+}
+
+/* ---- Author row (image + info side by side) ---- */
+.customer-stories .customer-stories-author {
+  display: flex;
+  align-items: center;
+  gap: var(--size-24);
+  align-self: stretch;
+}
+
+/* ---- Author image ---- */
+.customer-stories .customer-stories-author-image {
+  flex-shrink: 0;
+}
+
+.customer-stories .customer-stories-author-image img {
+  width: var(--size-93, 93px);
+  height: var(--size-93, 93px);
+  border-radius: var(--radius-circle);
+  mix-blend-mode: luminosity;
+  object-fit: cover;
+}
+
+/* ---- Author info ---- */
+.customer-stories .customer-stories-author-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-200);
+}
+
+/* Author image + info inline within a slide (higher specificity after base) */
+.customer-stories .customer-stories-slide .customer-stories-author-image,
+.customer-stories .customer-stories-slide .customer-stories-author-info {
+  display: inline;
+}
+
+.customer-stories .customer-stories-author-name {
+  font-size: var(--font-size-200);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-140p);
+  letter-spacing: var(--letter-spacing-tight, -0.96px);
+  color: var(--typography-black);
+
+  @media (width >= 720px) {
+    font-size: var(--font-size-400);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-26);
+  }
+
+}
+
+/* Base role color before scoped overrides */
+.customer-stories-author-role {
+  color: var(--typography-tertiary);
+}
+
+.customer-stories .customer-stories-author-role {
+  font-size: var(--font-size-100);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-26);
+  letter-spacing: var(--letter-spacing-tight, -0.64px);
+  color: var(--typography-secondary);
+
+  @media (width >=1025px) {
+    font-size: var(--responsive-fonts-body-body-400);
+  }
+}
+
+/* Optional standalone role row */
+.customer-stories .customer-stories-role {
+  font-size: var(--font-size-200);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-26);
+  letter-spacing: var(--letter-spacing-tight, -0.64px);
+  color: var(--typography-secondary);
+}
+
+/* ---- Custom carousel: track + arrows (always visible) ---- */
+.cs-carousel-track {
+  overflow: hidden;
+  width: 100%;
+}
+
+.cs-carousel-inner {
+  display: flex;
+  will-change: transform;
+}
+
+.cs-carousel-nav {
+  display: flex;
+  gap: var(--spacing-200);
+}
+
+.cs-carousel-nav .carousel-btn.disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* ---- Carousel slide (fragment-based) ---- */
+.customer-stories .customer-stories-carousel-slide {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-700);
+  min-width: 100%;
+}
+
+/* Inside each carousel slide, lay out customer-stories + product-cards */
+.customer-stories .customer-stories-carousel-slide .customer-stories-wrapper {
+  display: block;
+}
+
+.customer-stories .customer-stories-carousel-slide .product-cards-wrapper {
+  display: block;
+  width: 100%;
+
+  @media (width <= 1204px) {
+    margin-top: unset;
+  }
+}
+
+/* Product-cards title (e.g. "Products we use") */
+.customer-stories .product-cards-title-wrapper p {
+  font-size: var(--font-size-200);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-26);
+  letter-spacing: var(--letter-spacing-tight, -0.64px);
+  color: var(--typography-black);
+  margin-bottom: var(--size-16);
+
+    @media (width >= 720px) {
+        font-size: var(--font-size-300);
+        line-height: var(--line-height-26);
+        margin-bottom: unset;
+    }
+}
+
+/* Product cards inside customer stories: single-column on mobile */
+.customer-stories .product-cards {
+  flex-direction: column;
+}
+
+.customer-stories .product-cards .product-card-item {
+  width: 100%;
+  flex: none;
+}
+
+/* Tablet (>= 720px and < 1025px): 2-column grid */
+@media (width >= 720px) and (width < 1025px) {
+  .customer-stories .product-cards.product-cards-compact {
+    flex-flow: row wrap;
+  }
+
+  .customer-stories .product-cards.product-cards-compact .product-card-item {
+    width: calc(50% - var(--gap, 16px) / 2);
+    flex: 0 0 calc(50% - var(--gap, 16px) / 2);
+  }
+}
+
+/* ---- Desktop (>= 1025px) ---- */
+@media (width >= 1025px) {
+  .customer-stories .customer-stories-quote {
+    font-size: var(--font-size-700);
+    line-height: var(--line-height-36,36px);
+    padding-top: var(--spacing-950);
+  }
+
+  .customer-stories .customer-stories-author-image img {
+    width: var(--size-93, 93px);
+    height: var(--size-93, 93px);
+  }
+
+  .customer-stories .customer-stories-author-name {
+    font-size: var(--font-size-700);
+    line-height: var(--line-height-140p);
+  }
+
+  .customer-stories .customer-stories-author-role {
+    font-size: var(--font-size-400);
+    line-height: var(--line-height-26);
+    letter-spacing: -0.64px;
+  }
+
+  /* Carousel slide: testimonial left + product-cards right */
+  .customer-stories .customer-stories-carousel-slide {
+    display: grid;
+    grid-template-columns: 1fr var(--size-384, 384px);
+    gap: var(--spacing-1200, 80px);
+    align-items: start;
+  }
+
+  /* Testimonial content stacks vertically inside its grid cell */
+  .customer-stories .customer-stories-carousel-slide .customer-stories-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Product cards column (title + cards together) */
+  .customer-stories .customer-stories-carousel-slide .product-cards-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-600);
+  }
+}
+
+.customer-stories-container .product-cards {
+  display: flex;
+}
+
+/* ---- Section-level layout: customer-stories + product-cards side by side ---- */
+.customer-stories-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-700);
+}
+
+@media (width >= 1025px) {
+  .customer-stories-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-600);
+  }
+
+  /* Content area: testimonial left + product-cards right */
+  .customer-stories-container .customer-stories-wrapper,
+  .customer-stories-container .product-cards-wrapper {
+    display: block;
+  }
+
+  /* When both wrappers are present, lay them side by side */
+}
+
+@media (width >= 1440px) {
+  .customer-stories-container:has(.customer-stories-wrapper):has(.product-cards-wrapper) {
+    gap: var(--spacing-1200, 80px);
+  }
+}
+
+/* ---- Dark background overrides ---- */
+.bg-dark .customer-stories .customer-stories-quote p,
+.bg-dark .customer-stories .customer-stories-author-name,
+.bg-dark .customer-stories .product-cards-title-wrapper p {
+  color: var(--typography-inverse);
+}

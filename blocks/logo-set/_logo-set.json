@@ -9,22 +9,7 @@
             "resourceType": "core/franklin/components/block/v1/block",
             "template": {
               "name": "Logo Set",
-              "filter": "logo-set"
-            }
-          }
-        }
-      }
-    },
-    {
-      "title": "Logo",
-      "id": "logo",
-      "plugins": {
-        "xwalk": {
-          "page": {
-            "resourceType": "core/franklin/components/block/v1/block/item",
-            "template": {
-              "name": "Logo",
-              "model": "logo"
+              "model": "logo-set"
             }
           }
         }
@@ -36,49 +21,52 @@
       "id": "logo-set",
       "fields": [
         {
+          "component": "text",
+          "name": "eyebrow",
+          "label": "Eyebrow Text",
+          "valueType": "string",
+          "value": "",
+          "description": "Required."
+        },
+        {
+          "component": "text",
+          "name": "title",
+          "label": "Title",
+          "valueType": "string",
+          "value": "",
+          "description": "Required."
+        },
+        {
           "component": "reference",
           "valueType": "string",
           "name": "desktopImage",
-          "label": "Desktop Image",
-          "multi": false
+          "label": "Desktop Image with 16:9 Aspect Ratio",
+          "multi": false,
+          "description": "Required."
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "desktopImageAlt",
+          "label": "Desktop Image Alt Text",
+          "value": "",
+          "description": "Required for accessibility."
         },
         {
           "component": "reference",
           "valueType": "string",
           "name": "mobileImage",
-          "label": "Mobile Image",
-          "multi": false
+          "label": "Mobile Image with 9:16 Aspect Ratio",
+          "multi": false,
+          "description": "Optional."
         },
         {
           "component": "text",
-          "name": "eyebrow",
-          "label": "Eyebrow Text",
-          "valueType": "string"
-        },
-        {
-          "component": "richtext",
-          "name": "description",
-          "label": "Description",
-          "valueType": "string"
-        }
-      ]
-    },
-    {
-      "id": "logo",
-      "fields": [
-        {
-          "component": "reference",
           "valueType": "string",
-          "name": "image",
-          "label": "Image",
-          "multi": false
-        },
-        {
-          "component": "richtext",
-          "name": "text",
+          "name": "mobileImageAlt",
+          "label": "Mobile Image Alt Text",
           "value": "",
-          "label": "Text",
-          "valueType": "string"
+          "description": "Optional."
         }
       ]
     }
@@ -87,7 +75,7 @@
     {
       "id": "logo-set",
       "components": [
-        "logo"
+        "logo-set"
       ]
     }
   ]
