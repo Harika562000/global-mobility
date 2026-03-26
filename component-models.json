@@ -197,6 +197,115 @@
     ]
   },
   {
+    "id": "accordion",
+    "fields": [
+      {
+        "component": "select",
+        "name": "classes",
+        "label": "Variant",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Default (Large)",
+            "value": ""
+          },
+          {
+            "name": "Small",
+            "value": "small"
+          },
+          {
+            "name": "Cards",
+            "value": "cards"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "name": "eyebrow",
+        "label": "Eyebrow",
+        "valueType": "string",
+        "value": "",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "name": "heading",
+        "label": "Heading",
+        "valueType": "string",
+        "value": "",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "name": "description",
+        "label": "Description",
+        "valueType": "string",
+        "value": "",
+        "description": "Optional"
+      }
+    ]
+  },
+  {
+    "id": "accordion-header",
+    "fields": [
+      {
+        "component": "text",
+        "name": "eyebrow",
+        "label": "Eyebrow",
+        "valueType": "string",
+        "value": ""
+      },
+      {
+        "component": "richtext",
+        "name": "heading",
+        "label": "Heading",
+        "valueType": "string",
+        "value": ""
+      },
+      {
+        "component": "richtext",
+        "name": "description",
+        "label": "Description",
+        "valueType": "string",
+        "value": ""
+      }
+    ]
+  },
+  {
+    "id": "accordion-item",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "summary",
+        "value": "",
+        "label": "Accordion Headline",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "name": "text",
+        "value": "",
+        "label": "Accordion Text",
+        "valueType": "string",
+        "required": true
+      },
+      {
+        "component": "boolean",
+        "name": "accordionOpen",
+        "label": "Set as Open Panel"
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "image",
+        "label": "Image (Small variant)",
+        "description": "Required for Small Accordion variant only",
+        "multi": false
+      }
+    ]
+  },
+  {
     "id": "banner",
     "fields": [
       {
