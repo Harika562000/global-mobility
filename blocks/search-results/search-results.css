@@ -1,3 +1,10 @@
+.section.search-results-container {
+  margin-bottom: 0px;
+  margin-top:0px;
+  padding-bottom: 0px;
+  padding-top:0px;
+}
+
 .search-results {
   --sr-title-color: var(--color-brand-200);
   --sr-text-color: var(--color-grey-700);

@@ -19,6 +19,9 @@ const SEARCH_RESULTS_EVENTS = {
   FILTER_CLEAR: 'search-results:filter-clear',
   TAB_CHANGE: 'search-results:tab-change',
   PAGE_CHANGE: 'search-results:page-change',
+  HAS_RESULTS: 'search-results:has-results',
+  NO_RESULTS: 'search-results:no-results',
+  ERROR: 'search-results:error',
 };
 
 const lucidworksClient = new LucidworksClient();
@@ -89,6 +92,7 @@ export default function createSearchResultsApp({ config = {} } = {}) {
   const state = {
     hasInitSearch: false,
     loading: false,
+    hasResults: true,
     query: '',
     sortBy: 'relevance',
     filters: {},
@@ -149,6 +153,27 @@ export default function createSearchResultsApp({ config = {} } = {}) {
       });
       state.response = response?.response ?? { docs: [], numFound: 0, start: 0 };
       state.facets = parseFacetFields(response?.facet_counts?.facet_fields || {});
+
+      const total = Number(state.response?.numFound) || 0;
+      state.hasResults = total > 0;
+      if (total > 0) {
+        emitControlEvent(SEARCH_RESULTS_EVENTS.HAS_RESULTS, { query: state.query, total, page });
+      } else {
+        emitControlEvent(SEARCH_RESULTS_EVENTS.NO_RESULTS, { query: state.query, total: 0, page, reason: 'empty' });
+      }
+    } catch (e) {
+      state.response = { docs: [], numFound: 0, start };
+      state.facets = {};
+      state.hasResults = false;
+      const message = e?.message || String(e);
+      emitControlEvent(SEARCH_RESULTS_EVENTS.ERROR, { query: state.query, page, message });
+      emitControlEvent(SEARCH_RESULTS_EVENTS.NO_RESULTS, {
+        query: state.query,
+        total: 0,
+        page,
+        reason: 'error',
+        message,
+      });
     } finally {
       state.loading = false;
       render();
@@ -314,6 +339,11 @@ export default function createSearchResultsApp({ config = {} } = {}) {
 
     if (state.loading) {
       root.append(createSearchLoading());
+      return;
+    }
+
+    if (!state.hasResults) {
+      root.hidden = true;
       return;
     }
 

@@ -1,0 +1,45 @@
+.no-search-results .no-search-results-container > .header {
+  margin: 0 0 var(--spacing-600);
+  font-family: var(--font-family-primary);
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 32px;
+}
+
+.no-search-results .no-search-results-container > .header a,
+.no-search-results .no-search-results-container > .header em,
+.no-search-results .no-search-results-container > .header strong {
+  color: var(--link-color);
+}
+
+.no-search-results .no-search-results-container > .body {
+  color: var(--typography-secondary);
+}
+
+.no-search-results .no-search-results-container > .body > *:first-child {
+  margin-top: 0;
+}
+
+.no-search-results .no-search-results-container > .body > *:last-child {
+  margin-bottom: 0;
+}
+
+.no-search-results .no-search-results-container > .body p {
+  margin: 0 0 var(--spacing-500);
+}
+
+.no-search-results .no-search-results-container > .body ul {
+  margin: 0 0 var(--spacing-600);
+  padding-left: 1.2em;
+}
+
+.no-search-results .no-search-results-container > .body li {
+  margin: 0 0 var(--spacing-200);
+}
+
+.no-search-results .no-search-results-container > .body a {
+  color: var(--link-color);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
