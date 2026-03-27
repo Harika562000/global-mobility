@@ -559,5 +559,42 @@
         "valueType": "string"
       }
     ]
+  },
+  {
+    "id": "tabs",
+    "fields": [
+      {
+        "component": "select",
+        "name": "classes",
+        "label": "Variation",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Table of Content",
+            "value": "table-of-content"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "tab-item",
+    "fields": [
+      {
+        "component": "text",
+        "name": "title",
+        "label": "Tab Title",
+        "valueType": "string",
+        "required": true
+      },
+      {
+        "component": "text",
+        "name": "target",
+        "label": "Section Target",
+        "description": "Use a section class like hero-container, add -2 for duplicates, or use section1 for a plain section.",
+        "valueType": "string",
+        "required": true
+      }
+    ]
   }
 ]

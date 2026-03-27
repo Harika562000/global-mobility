@@ -1,0 +1,57 @@
+.tabs {
+  width: 100%;
+}
+
+.tabs .tabs-nav {
+  width: 100%;
+}
+
+.tabs .tabs-list {
+  list-style: none;
+  display: flex;
+  gap: var(--spacing-700);
+  align-items: center;
+  margin: 0;
+  padding: 0 0 var(--spacing-200);
+  border-bottom: var(--border-width-100) solid var(--color-grey-300);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabs .tabs-list::-webkit-scrollbar {
+  display: none;
+}
+
+.tabs .tabs-item {
+  flex: 0 0 auto;
+}
+
+.tabs .tabs-link {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--spacing-300) 0;
+  border-bottom: var(--border-width-200) solid transparent;
+  color: var(--typography-secondary);
+  font-size: var(--responsive-font-body-600);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--responsive-line-height-body-800);
+  text-decoration: none;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.tabs .tabs-link:hover,
+.tabs .tabs-link:focus-visible {
+  color: var(--typography-black);
+  text-decoration: none;
+}
+
+.tabs .tabs-link.is-active {
+  color: var(--typography-black);
+  border-bottom-color: var(--typography-black);
+}
+
+.tabs .tabs-link:focus-visible {
+  outline: var(--border-width-100) solid var(--color-blue-primary);
+  outline-offset: var(--spacing-100);
+  border-radius: var(--radius-4);
+}
