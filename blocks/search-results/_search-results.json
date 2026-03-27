@@ -36,6 +36,14 @@
           "description": "Enable Most Relevant / Most Recent sorting in search results",
           "valueType": "boolean",
           "value": true
+        },
+        {
+          "component": "textarea",
+          "name": "facetLabels",
+          "label": "Facet labels",
+          "description": "Optional overrides for filter titles. One per line: fieldKey=Label (e.g. attribute_services_advisory_ss=Services).",
+          "valueType": "string",
+          "value": ""
         }
       ]
     }
