@@ -54,7 +54,10 @@
         "fragment",
         "search",
         "search-results",
-        "no-search-results"
+        "no-search-results",
+        "embed-form",
+        "form",
+        "embed-adaptive-form"
       ]
     }
   ]
