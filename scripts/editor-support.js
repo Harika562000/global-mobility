@@ -1,4 +1,3 @@
-import { showSlide } from '../blocks/carousel/carousel.js';
 import {
   decorateBlock,
   decorateBlocks,
@@ -11,42 +10,6 @@ import {
 } from './aem.js';
 import { decorateRichtext } from './editor-support-rte.js';
 import { decorateMain } from './scripts.js';
-
-function getState(block) {
-  if (block.matches('.accordion')) {
-    return [...block.querySelectorAll('details[open]')].map(
-      (details) => details.dataset.aueResource,
-    );
-  }
-  if (block.matches('.carousel')) {
-    return block.dataset.activeSlide;
-  }
-  if (block.matches('.tabs')) {
-    const [currentPanel] = block.querySelectorAll('.tabs-panel[aria-hidden="false"]');
-    return currentPanel?.dataset.aueResource;
-  }
-
-  return null;
-}
-
-function setState(block, state) {
-  if (block.matches('.accordion')) {
-    block.querySelectorAll('details').forEach((details) => {
-      details.open = state.includes(details.dataset.aueResource);
-    });
-  }
-  if (block.matches('.carousel')) {
-    block.style.display = null;
-    showSlide(block, state, 'instant');
-  }
-  if (block.matches('.tabs')) {
-    const tabs = [...block.querySelectorAll('.tabs-panel')];
-    const index = tabs.findIndex((tab) => tab.dataset.aueResource === state);
-    if (index !== -1) {
-      block.querySelectorAll('.tabs-list button')[index]?.click();
-    }
-  }
-}
 
 async function applyChanges(event) {
   // redecorate default content and blocks on patches (in the properties rail)
@@ -85,7 +48,6 @@ async function applyChanges(event) {
 
     const block = element.parentElement?.closest('.block[data-aue-resource]') || element?.closest('.block[data-aue-resource]');
     if (block) {
-      const state = getState(block);
       const blockResource = block.getAttribute('data-aue-resource');
       const newBlock = parsedUpdate.querySelector(`[data-aue-resource="${blockResource}"]`);
       if (block.dataset.aueModel === 'form') {
@@ -99,7 +61,6 @@ async function applyChanges(event) {
         decorateRichtext(newBlock);
         await loadBlock(newBlock);
         block.remove();
-        setState(newBlock, state);
         newBlock.style.display = null;
         return true;
       }
