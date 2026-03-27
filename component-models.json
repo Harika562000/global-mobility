@@ -568,6 +568,25 @@
     ]
   },
   {
+    "id": "no-search-results",
+    "fields": [
+      {
+        "component": "text",
+        "name": "header",
+        "label": "Header",
+        "valueType": "string",
+        "value": ""
+      },
+      {
+        "component": "richtext",
+        "name": "body",
+        "label": "Body",
+        "valueType": "string",
+        "value": ""
+      }
+    ]
+  },
+  {
     "id": "search-results",
     "fields": [
       {

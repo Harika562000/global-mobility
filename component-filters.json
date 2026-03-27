@@ -18,7 +18,8 @@
       "columns",
       "fragment",
       "search",
-      "search-results"
+      "search-results",
+      "no-search-results"
     ]
   },
   {
