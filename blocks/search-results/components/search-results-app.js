@@ -80,6 +80,56 @@ function buildSortParam(sortBy) {
   return '';
 }
 
+function parseKeyValueLines(value) {
+  const map = {};
+  if (!value) return map;
+  const text = Array.isArray(value) ? value.join('\n') : String(value);
+  // Authoring may serialize textarea as:
+  // - multiple lines, OR
+  // - a single <p> with line breaks collapsed to spaces.
+  // Support multiple pairs in one line: key=Label key2=Another Label
+  // Preferred separators are newline or ';' but we try to be forgiving.
+  const parts = text
+    .split(/[\r\n;]+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  const pairRe = /([A-Za-z0-9_]+)\s*(=|:)\s*(.+?)(?=(\s+[A-Za-z0-9_]+\s*(=|:))|$)/g;
+  parts.forEach((chunk) => {
+    let match;
+    // eslint-disable-next-line no-cond-assign
+    while ((match = pairRe.exec(chunk)) !== null) {
+      const rawKey = match[1];
+      const rawLabel = match[3];
+      const key = String(rawKey).trim().replace(/\s+/g, '');
+      const label = String(rawLabel).trim();
+      if (!key || !label) continue;
+      map[key] = label;
+    }
+  });
+  return map;
+}
+
+function parseFusionFacetLabels(fusionFacetLabels) {
+  const map = {};
+  if (!Array.isArray(fusionFacetLabels) || !fusionFacetLabels.length) return map;
+  fusionFacetLabels
+    .flatMap((entry) => String(entry || '').split(','))
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .forEach((pair) => {
+      const idx = pair.indexOf(':');
+      if (idx < 0) return;
+      const field = pair.slice(0, idx).trim().replace(/\s+/g, '');
+      const label = pair.slice(idx + 1).trim();
+      if (!field) return;
+      // Some integrations return `field:field` which isn't a human label.
+      // Treat those as "no label" so UI can fall back to a friendly formatter.
+      if (label && label !== field) map[field] = label;
+    });
+  return map;
+}
+
 export default function createSearchResultsApp({ config = {} } = {}) {
   const root = document.createElement('div');
   root.className = 'search-results-app';
@@ -90,6 +140,11 @@ export default function createSearchResultsApp({ config = {} } = {}) {
   const facetsConfig = config.facets ?? config['facet-order'] ?? config.facetOrder;
   const sortOptionsConfig = config['sort-options'] ?? config.sortOptions;
   const defaultFiltersConfig = config['default-filters'] ?? config.defaultFilters;
+  const authoredFacetLabelsConfig = config['facet-labels']
+    ?? config.facetLabels
+    ?? config.facetlabels
+    ?? config['filter-titles']
+    ?? config.filterTitles;
   const showSortConfig = config['show-sort']
     ?? config.showSort
     ?? config.showsort
@@ -97,6 +152,7 @@ export default function createSearchResultsApp({ config = {} } = {}) {
     ?? config.showSortOptions
     ?? config.showsortoptions;
   const showSort = parseBoolean(showSortConfig, true);
+  const authoredFacetLabels = parseKeyValueLines(authoredFacetLabelsConfig);
 
   const facetOrder = parseList(facetsConfig);
   const sortOptionValues = parseList(sortOptionsConfig);
@@ -116,6 +172,7 @@ export default function createSearchResultsApp({ config = {} } = {}) {
     activeTab: 'All',
     response: { docs: [], numFound: 0, start: 0 },
     facets: {},
+    facetLabels: authoredFacetLabels,
     isFilterPanelOpen: false,
     isFilterSidebarOpen: false,
   };
@@ -169,6 +226,10 @@ export default function createSearchResultsApp({ config = {} } = {}) {
       });
       state.response = response?.response ?? { docs: [], numFound: 0, start: 0 };
       state.facets = parseFacetFields(response?.facet_counts?.facet_fields || {});
+      state.facetLabels = {
+        ...parseFusionFacetLabels(response?.fusion?.facet_labels),
+        ...authoredFacetLabels,
+      };
 
       const total = Number(state.response?.numFound) || 0;
       state.hasResults = total > 0;
@@ -180,6 +241,7 @@ export default function createSearchResultsApp({ config = {} } = {}) {
     } catch (e) {
       state.response = { docs: [], numFound: 0, start };
       state.facets = {};
+      state.facetLabels = authoredFacetLabels;
       state.hasResults = false;
       const message = e?.message || String(e);
       emitControlEvent(SEARCH_RESULTS_EVENTS.ERROR, { query: state.query, page, message });
@@ -292,6 +354,7 @@ export default function createSearchResultsApp({ config = {} } = {}) {
       sortBy: state.sortBy,
       sortOptions,
       showSort,
+      facetLabels: state.facetLabels,
       facetOrder,
       isOpen: state.isFilterPanelOpen,
       onOpenChange: (open) => { state.isFilterPanelOpen = open; },
@@ -331,6 +394,7 @@ export default function createSearchResultsApp({ config = {} } = {}) {
       createSearchFilters({
         facetFields: state.facets,
         selectedFilters: state.filters,
+        facetLabels: state.facetLabels,
         facetOrder,
         isOpen: state.isFilterSidebarOpen,
         onOpenChange: (open) => { state.isFilterSidebarOpen = open; },

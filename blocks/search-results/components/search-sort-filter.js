@@ -12,6 +12,7 @@ export default function createSearchSortFilter({
   sortBy,
   sortOptions,
   showSort = true,
+  facetLabels,
   facetOrder,
   onFilterChange,
   onFilterClear,
@@ -105,6 +106,7 @@ export default function createSearchSortFilter({
   const filtersInstance = createSearchFilters({
     facetFields,
     selectedFilters,
+    facetLabels,
     facetOrder,
     onChange: (field, value, checked) => {
       onFilterChange(field, value, checked);

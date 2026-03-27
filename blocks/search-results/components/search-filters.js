@@ -5,6 +5,19 @@ function toTitleCase(value) {
     .join(' ');
 }
 
+function prettyFacetLabel(field) {
+  return String(field || '')
+    .replace(/^attribute_/, '')
+    .replace(/_(ss|s|t|dt)$/i, '')
+    .replace(/_/g, ' ')
+    .trim()
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function prettyFacetLabelUpper(field) {
+  return prettyFacetLabel(field).toUpperCase();
+}
+
 function createFilterItem(field, selected, option, onChange) {
   const label = document.createElement('label');
   label.className = 'search-results-filter-item';
@@ -27,7 +40,7 @@ function createFilterItem(field, selected, option, onChange) {
   return label;
 }
 
-function createFilterGroup(field, selected, options, onChange) {
+function createFilterGroup(field, selected, options, onChange, facetLabels = {}) {
   const details = document.createElement('details');
   details.className = 'search-results-filter-group';
   details.open = true;
@@ -39,7 +52,7 @@ function createFilterGroup(field, selected, options, onChange) {
   dot.setAttribute('aria-hidden', 'true');
   const text = document.createElement('span');
   text.className = 'search-results-filter-group-label';
-  text.textContent = toTitleCase(field);
+  text.textContent = facetLabels[field] || prettyFacetLabelUpper(field) || toTitleCase(field).toUpperCase();
   summary.append(text, dot);
   if ((Array.isArray(selected) && selected.length) || (!Array.isArray(selected) && selected)) {
     details.classList.add('has-filter');
@@ -59,6 +72,7 @@ function createFilterGroup(field, selected, options, onChange) {
 export default function createSearchFilters({
   facetFields,
   selectedFilters,
+  facetLabels = {},
   onChange,
   onClear,
   onApply,
@@ -123,14 +137,12 @@ export default function createSearchFilters({
   if (Array.isArray(facetOrder) && facetOrder.length) {
     ordered = facetOrder.filter((f) => available.includes(f));
   } else {
-    ordered = available
-      .filter((field) => !field.toLowerCase().includes('title'))
-      .slice(0, 6);
+    ordered = available.slice(0, 6);
   }
   const fields = ordered;
   fields.forEach((field) => {
     if (!facetFields[field]?.length) return;
-    wrapper.append(createFilterGroup(field, selectedFilters[field], facetFields[field], onChange));
+    wrapper.append(createFilterGroup(field, selectedFilters[field], facetFields[field], onChange, facetLabels));
   });
 
   const actions = document.createElement('div');
