@@ -28,6 +28,14 @@
           "label": "Options",
           "valueType": "string",
           "options": []
+        },
+        {
+          "component": "boolean",
+          "name": "showSort",
+          "label": "Show sort options",
+          "description": "Enable Most Relevant / Most Recent sorting in search results",
+          "valueType": "boolean",
+          "value": true
         }
       ]
     }
