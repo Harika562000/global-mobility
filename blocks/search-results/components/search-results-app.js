@@ -42,6 +42,15 @@ function parseList(value) {
     .filter(Boolean);
 }
 
+function parseBoolean(value, fallback = false) {
+  if (value === null || value === undefined || value === '') return fallback;
+  if (typeof value === 'boolean') return value;
+  const normalized = String(value).trim().toLowerCase();
+  if (['true', '1', 'yes', 'on'].includes(normalized)) return true;
+  if (['false', '0', 'no', 'off'].includes(normalized)) return false;
+  return fallback;
+}
+
 function parseDefaultFilters(value) {
   // Format: field=value1|value2; field2=value
   // Example:
@@ -81,6 +90,13 @@ export default function createSearchResultsApp({ config = {} } = {}) {
   const facetsConfig = config.facets ?? config['facet-order'] ?? config.facetOrder;
   const sortOptionsConfig = config['sort-options'] ?? config.sortOptions;
   const defaultFiltersConfig = config['default-filters'] ?? config.defaultFilters;
+  const showSortConfig = config['show-sort']
+    ?? config.showSort
+    ?? config.showsort
+    ?? config['show-sort-options']
+    ?? config.showSortOptions
+    ?? config.showsortoptions;
+  const showSort = parseBoolean(showSortConfig, true);
 
   const facetOrder = parseList(facetsConfig);
   const sortOptionValues = parseList(sortOptionsConfig);
@@ -270,20 +286,12 @@ export default function createSearchResultsApp({ config = {} } = {}) {
     count.textContent = `Showing ${visibleCount.toLocaleString()} of ${total.toLocaleString()} results for "${state.query}"`;
     toolbar.append(count);
 
-    const sortEl = createSearchSort({
-      sortBy: state.sortBy,
-      options: sortOptions,
-      onChange: (value) => {
-        emitControlEvent(SEARCH_RESULTS_EVENTS.SORT_CHANGE, { sortBy: value });
-      },
-    });
-    sortEl.classList.add('search-results-sort-desktop');
-
     const sortFilterEl = createSearchSortFilter({
       facetFields: state.facets,
       selectedFilters: state.filters,
       sortBy: state.sortBy,
       sortOptions,
+      showSort,
       facetOrder,
       isOpen: state.isFilterPanelOpen,
       onOpenChange: (open) => { state.isFilterPanelOpen = open; },
@@ -299,7 +307,18 @@ export default function createSearchResultsApp({ config = {} } = {}) {
     });
     sortFilterEl.classList.add('search-results-sort-filter-mobile');
 
-    toolbar.append(sortEl, sortFilterEl);
+    if (showSort) {
+      const sortEl = createSearchSort({
+        sortBy: state.sortBy,
+        options: sortOptions,
+        onChange: (value) => {
+          emitControlEvent(SEARCH_RESULTS_EVENTS.SORT_CHANGE, { sortBy: value });
+        },
+      });
+      sortEl.classList.add('search-results-sort-desktop');
+      toolbar.append(sortEl);
+    }
+    toolbar.append(sortFilterEl);
 
     return toolbar;
   }

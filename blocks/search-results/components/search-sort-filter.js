@@ -11,6 +11,7 @@ export default function createSearchSortFilter({
   selectedFilters,
   sortBy,
   sortOptions,
+  showSort = true,
   facetOrder,
   onFilterChange,
   onFilterClear,
@@ -47,7 +48,7 @@ export default function createSearchSortFilter({
 
   const text = document.createElement('span');
   text.className = 'search-results-sort-filter-toggle-text';
-  text.textContent = 'Filter & Sort';
+  text.textContent = showSort ? 'Filter & Sort' : 'Filter';
 
   iconWrap.append(icon, dot);
   toggle.append(iconWrap, text);
@@ -123,7 +124,7 @@ export default function createSearchSortFilter({
   header.className = 'search-results-sort-filter-header';
   const title = document.createElement('h3');
   title.className = 'search-results-sort-filter-title';
-  title.textContent = 'Filter & Sort';
+  title.textContent = showSort ? 'Filter & Sort' : 'Filter';
   const closeBtn = document.createElement('button');
   closeBtn.type = 'button';
   closeBtn.className = 'search-results-sort-filter-close';
@@ -132,7 +133,11 @@ export default function createSearchSortFilter({
   closeBtn.addEventListener('click', closePanel);
   header.append(title, closeBtn);
 
-  panel.append(header, sortWrapper, filtersContainer);
+  if (showSort) {
+    panel.append(header, sortWrapper, filtersContainer);
+  } else {
+    panel.append(header, filtersContainer);
+  }
   wrapper.append(toggle, overlay, panel);
 
   return wrapper;
