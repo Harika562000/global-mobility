@@ -1,7 +1,6 @@
 import ApiClient from './api-client.js';
-import { MOCK_SEARCH_RESPONSE } from './lucidworks-mock-data.js';
 
-const baseUrl = 'https://publish-p184787-e1941710.adobeaemcloud.com';
+const baseUrl = 'https://publish-p184787-e1941575.adobeaemcloud.com';
 
 /**
  * Client for Lucidworks search integration.
@@ -12,6 +11,28 @@ export default class LucidworksClient {
     this.apiClient = new ApiClient();
     this.baseUrl = options.baseUrl || baseUrl;
     this.headers = options.headers || {};
+  }
+
+  static escapeLuceneTerm(value) {
+    // Keep this conservative: we always wrap values in double quotes.
+    // Only escape embedded quotes and backslashes.
+    return String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  }
+
+  static buildFq(filters) {
+    if (!filters || typeof filters !== 'object') return [];
+    const fqs = [];
+    Object.entries(filters).forEach(([field, values]) => {
+      const arr = Array.isArray(values) ? values.filter(Boolean) : [values].filter(Boolean);
+      if (!field || !arr.length) return;
+      const terms = arr.map((v) => `"${LucidworksClient.escapeLuceneTerm(v)}"`);
+      // Canonical Solr/Lucidworks syntax:
+      // - Single: field:("Value")
+      // - Multi:  field:("A" OR "B")
+      // (AND across facets is achieved by sending multiple fq parameters.)
+      fqs.push(`${field}:(${terms.join(' OR ')})`);
+    });
+    return fqs;
   }
 
   /**
@@ -58,23 +79,37 @@ export default class LucidworksClient {
       q = 'search_term',
       start = 0,
       rows = 10,
+      filters,
+      sort,
+      facetFields,
     } = options;
 
-    // TODO: Replace with actual API call when integration is ready
-    // const params = new URLSearchParams({
-    //   q, start: String(start), rows: String(rows), wt: 'json',
-    // });
-    // const url = `${this.baseUrl}/api/search?${params}`;
-    // const result = await this.apiClient.get(url, requestHeaders);
-    // return result.ok ? result.data : null;
+    // The API is already configured server-side to return facets and docs in a
+    // Solr-like format. We only pass the paging + query parameters.
+    const params = new URLSearchParams({
+      q,
+      start: String(start),
+      rows: String(rows),
+    });
 
-    // Mock response with query param injected
-    const mock = JSON.parse(JSON.stringify(MOCK_SEARCH_RESPONSE));
-    mock.responseHeader.params.q = q;
-    mock.responseHeader.params.start = String(start);
-    mock.responseHeader.params.rows = String(rows);
-    mock.debug.rawquerystring = q;
-    mock.debug.querystring = q;
-    return Promise.resolve(mock);
+    // Optional: facet configuration per page/template
+    if (Array.isArray(facetFields) && facetFields.length) {
+      facetFields
+        .filter(Boolean)
+        .forEach((field) => params.append('facet.field', String(field)));
+    }
+
+    // Optional: filtering (AND across facets, OR within facet)
+    const fqs = LucidworksClient.buildFq(filters);
+    fqs.forEach((fq) => params.append('fq', fq));
+
+    // Optional: sorting (Lucidworks/Solr syntax)
+    if (sort) {
+      params.set('sort', String(sort));
+    }
+
+    const url = `${this.baseUrl}/search-results?${params}`;
+    const result = await this.apiClient.get(url, this.headers);
+    return result.ok ? result.data : null;
   }
 }

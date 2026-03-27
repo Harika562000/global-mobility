@@ -10,6 +10,8 @@ export default function createSearchSortFilter({
   facetFields,
   selectedFilters,
   sortBy,
+  sortOptions,
+  facetOrder,
   onFilterChange,
   onFilterClear,
   onSortChange,
@@ -23,7 +25,8 @@ export default function createSearchSortFilter({
     document.body.style.overflow = 'hidden';
   }
 
-  const hasFilters = Object.values(selectedFilters).some(Boolean);
+  const hasFilters = Object.values(selectedFilters)
+    .some((v) => (Array.isArray(v) ? v.length : Boolean(v)));
   const toggle = document.createElement('button');
   toggle.type = 'button';
   toggle.className = 'search-results-sort-filter-toggle';
@@ -90,6 +93,7 @@ export default function createSearchSortFilter({
     createSearchSort({
       sortBy,
       variant: 'mobile',
+      options: sortOptions,
       onChange: (value) => {
         onSortChange(value);
         closePanel();
@@ -100,8 +104,9 @@ export default function createSearchSortFilter({
   const filtersInstance = createSearchFilters({
     facetFields,
     selectedFilters,
-    onChange: (field, value) => {
-      onFilterChange(field, value);
+    facetOrder,
+    onChange: (field, value, checked) => {
+      onFilterChange(field, value, checked);
     },
     onClear: () => {
       onFilterClear();

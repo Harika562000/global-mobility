@@ -8,7 +8,7 @@ import createSearchSortFilter from './search-sort-filter.js';
 import createSearchPagination from './search-pagination.js';
 import createSearchResultsList from './search-results-list.js';
 import createSearchLoading from './search-loading.js';
-import { parseFacetFields, applyFilters, sortDocs } from './search-results-utils.js';
+import { parseFacetFields } from './search-results-utils.js';
 
 const SEARCH_EVENT_SCOPE = 'search';
 const ROWS_PER_PAGE = 10;
@@ -30,10 +30,61 @@ function emptyState(text) {
   return div;
 }
 
-export default function createSearchResultsApp() {
+function parseList(value) {
+  if (!value) return [];
+  if (Array.isArray(value)) return value.map((v) => String(v).trim()).filter(Boolean);
+  return String(value)
+    .split(',')
+    .map((v) => v.trim())
+    .filter(Boolean);
+}
+
+function parseDefaultFilters(value) {
+  // Format: field=value1|value2; field2=value
+  // Example:
+  // attribute_services_advisory_ss=Marketing Services;
+  // attribute_region_s=ASEAN/South Asia|Europe
+  const result = {};
+  if (!value) return result;
+  const str = String(value);
+  str.split(';')
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .forEach((pair) => {
+      const idx = pair.indexOf('=');
+      if (idx < 0) return;
+      const field = pair.slice(0, idx).trim();
+      const raw = pair.slice(idx + 1).trim();
+      if (!field || !raw) return;
+      const values = raw.split('|').map((v) => v.trim()).filter(Boolean);
+      if (values.length) result[field] = values;
+    });
+  return result;
+}
+
+function buildSortParam(sortBy) {
+  if (!sortBy || sortBy === 'relevance') return '';
+  if (sortBy === 'date-desc') return 'date_added_dt desc';
+  return '';
+}
+
+export default function createSearchResultsApp({ config = {} } = {}) {
   const root = document.createElement('div');
   root.className = 'search-results-app';
   root.hidden = true;
+
+  // `readBlockConfig()` returns normalized (kebab-case) keys, but allow both
+  // kebab and camel to be resilient.
+  const facetsConfig = config.facets ?? config['facet-order'] ?? config.facetOrder;
+  const sortOptionsConfig = config['sort-options'] ?? config.sortOptions;
+  const defaultFiltersConfig = config['default-filters'] ?? config.defaultFilters;
+
+  const facetOrder = parseList(facetsConfig);
+  const sortOptionValues = parseList(sortOptionsConfig);
+  const sortOptions = [
+    { value: 'relevance', label: 'Most Relevant' },
+    { value: 'date-desc', label: 'Most Recent' },
+  ].filter((opt) => (sortOptionValues.length ? sortOptionValues.includes(opt.value) : true));
 
   const state = {
     hasInitSearch: false,
@@ -41,6 +92,7 @@ export default function createSearchResultsApp() {
     query: '',
     sortBy: 'relevance',
     filters: {},
+    filterOrder: [],
     activeTab: 'All',
     response: { docs: [], numFound: 0, start: 0 },
     facets: {},
@@ -54,9 +106,31 @@ export default function createSearchResultsApp() {
     events.emit(event, payload, { scope: SEARCH_EVENT_SCOPE });
   }
 
-  function updateFilter(field, value) {
-    if (!value) delete state.filters[field];
-    else state.filters[field] = value;
+  function addToOrder(field, value) {
+    const key = `${field}::${value}`;
+    if (state.filterOrder.some((x) => `${x.field}::${x.value}` === key)) return;
+    state.filterOrder.push({ field, value });
+  }
+
+  function removeFromOrder(field, value) {
+    const key = `${field}::${value}`;
+    state.filterOrder = state.filterOrder.filter((x) => `${x.field}::${x.value}` !== key);
+  }
+
+  function updateFilter(field, value, checked) {
+    if (!field || !value) return;
+    const current = Array.isArray(state.filters[field]) ? state.filters[field] : [];
+    const set = new Set(current);
+    if (checked) {
+      set.add(value);
+      addToOrder(field, value);
+    } else {
+      set.delete(value);
+      removeFromOrder(field, value);
+    }
+    const next = [...set];
+    if (!next.length) delete state.filters[field];
+    else state.filters[field] = next;
   }
 
   async function loadSearchData(page = 1) {
@@ -64,10 +138,14 @@ export default function createSearchResultsApp() {
     state.loading = true;
     render();
     try {
+      const sort = buildSortParam(state.sortBy);
       const response = await lucidworksClient.fetchSearchResults({
         q: state.query,
         start,
         rows: ROWS_PER_PAGE,
+        filters: state.filters,
+        sort,
+        facetFields: facetOrder.length ? facetOrder : undefined,
       });
       state.response = response?.response ?? { docs: [], numFound: 0, start: 0 };
       state.facets = parseFacetFields(response?.facet_counts?.facet_fields || {});
@@ -86,7 +164,11 @@ export default function createSearchResultsApp() {
           const q = eventData?.query?.trim() ?? '';
           state.query = q;
           state.hasInitSearch = true;
-          state.filters = {};
+          state.filters = parseDefaultFilters(defaultFiltersConfig);
+          state.filterOrder = Object.entries(state.filters).flatMap(([field, values]) => {
+            const arr = Array.isArray(values) ? values : [];
+            return arr.map((value) => ({ field, value }));
+          });
           state.activeTab = 'All';
           state.sortBy = 'relevance';
           state.loading = true;
@@ -108,7 +190,7 @@ export default function createSearchResultsApp() {
         handler: async (eventData) => {
           const field = eventData?.field;
           if (!field) return;
-          updateFilter(field, eventData?.value || '');
+          updateFilter(field, eventData?.value, Boolean(eventData?.checked));
           await loadSearchData(1);
         },
       },
@@ -116,7 +198,11 @@ export default function createSearchResultsApp() {
         event: SEARCH_RESULTS_EVENTS.FILTER_CLEAR,
         options: { scope: SEARCH_EVENT_SCOPE },
         handler: async () => {
-          state.filters = {};
+          state.filters = parseDefaultFilters(defaultFiltersConfig);
+          state.filterOrder = Object.entries(state.filters).flatMap(([field, values]) => {
+            const arr = Array.isArray(values) ? values : [];
+            return arr.map((value) => ({ field, value }));
+          });
           state.activeTab = 'All';
           await loadSearchData(1);
         },
@@ -161,6 +247,7 @@ export default function createSearchResultsApp() {
 
     const sortEl = createSearchSort({
       sortBy: state.sortBy,
+      options: sortOptions,
       onChange: (value) => {
         emitControlEvent(SEARCH_RESULTS_EVENTS.SORT_CHANGE, { sortBy: value });
       },
@@ -171,10 +258,12 @@ export default function createSearchResultsApp() {
       facetFields: state.facets,
       selectedFilters: state.filters,
       sortBy: state.sortBy,
+      sortOptions,
+      facetOrder,
       isOpen: state.isFilterPanelOpen,
       onOpenChange: (open) => { state.isFilterPanelOpen = open; },
-      onFilterChange: (field, value) => {
-        emitControlEvent(SEARCH_RESULTS_EVENTS.FILTER_CHANGE, { field, value });
+      onFilterChange: (field, value, checked) => {
+        emitControlEvent(SEARCH_RESULTS_EVENTS.FILTER_CHANGE, { field, value, checked });
       },
       onFilterClear: () => {
         emitControlEvent(SEARCH_RESULTS_EVENTS.FILTER_CLEAR, {});
@@ -198,10 +287,11 @@ export default function createSearchResultsApp() {
       createSearchFilters({
         facetFields: state.facets,
         selectedFilters: state.filters,
+        facetOrder,
         isOpen: state.isFilterSidebarOpen,
         onOpenChange: (open) => { state.isFilterSidebarOpen = open; },
-        onChange: (field, value) => {
-          emitControlEvent(SEARCH_RESULTS_EVENTS.FILTER_CHANGE, { field, value });
+        onChange: (field, value, checked) => {
+          emitControlEvent(SEARCH_RESULTS_EVENTS.FILTER_CHANGE, { field, value, checked });
         },
         onClear: () => {
           emitControlEvent(SEARCH_RESULTS_EVENTS.FILTER_CLEAR, {});
@@ -228,8 +318,6 @@ export default function createSearchResultsApp() {
     }
 
     const docs = state.response.docs || [];
-    const filtered = applyFilters(docs, state.filters, state.activeTab);
-    const sorted = sortDocs(filtered, state.sortBy);
     const total = state.response.numFound || 0;
     const currentPage = Math.floor((state.response.start || 0) / ROWS_PER_PAGE) + 1;
     const totalPages = Math.max(1, Math.ceil(total / ROWS_PER_PAGE));
@@ -241,23 +329,27 @@ export default function createSearchResultsApp() {
 
     const main = document.createElement('div');
     main.className = 'search-results-main';
-    main.append(renderToolbar(total, sorted.length));
-    main.append(
-      createSearchTabs({
-        tabs: getTabs(),
-        activeTab: state.activeTab,
-        onChange: (tab) => {
-          emitControlEvent(SEARCH_RESULTS_EVENTS.TAB_CHANGE, { tab });
-        },
-      }),
-    );
-    main.append(createSearchResultsList({ docs: sorted }));
+    main.append(renderToolbar(total, docs.length));
+    // Tabs are optional; keep hidden unless category facets exist.
+    if (state.facets.category?.length) {
+      main.append(
+        createSearchTabs({
+          tabs: getTabs(),
+          activeTab: state.activeTab,
+          onChange: (tab) => {
+            emitControlEvent(SEARCH_RESULTS_EVENTS.TAB_CHANGE, { tab });
+          },
+        }),
+      );
+    }
+    main.append(createSearchResultsList({ docs }));
 
     content.append(main);
     const activeFiltersEl = createSearchActiveFilters({
       selectedFilters: state.filters,
+      order: state.filterOrder,
       onRemove: (field, value) => {
-        emitControlEvent(SEARCH_RESULTS_EVENTS.FILTER_CHANGE, { field, value: '' });
+        emitControlEvent(SEARCH_RESULTS_EVENTS.FILTER_CHANGE, { field, value, checked: false });
       },
       onRemoveAll: () => {
         emitControlEvent(SEARCH_RESULTS_EVENTS.FILTER_CLEAR, {});
@@ -266,7 +358,7 @@ export default function createSearchResultsApp() {
     if (activeFiltersEl) {
       root.append(activeFiltersEl);
     }
-    
+
     root.append(content);
     root.append(
       createSearchPagination({

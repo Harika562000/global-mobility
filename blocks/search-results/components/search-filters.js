@@ -11,9 +11,12 @@ function createFilterItem(field, selected, option, onChange) {
 
   const input = document.createElement('input');
   input.type = 'checkbox';
-  input.checked = selected === option.value;
+  let selectedArr = [];
+  if (Array.isArray(selected)) selectedArr = selected;
+  else if (selected) selectedArr = [selected];
+  input.checked = selectedArr.includes(option.value);
   input.addEventListener('change', () => {
-    onChange(field, input.checked ? option.value : '');
+    onChange(field, option.value, input.checked);
   });
 
   const text = document.createElement('span');
@@ -38,7 +41,7 @@ function createFilterGroup(field, selected, options, onChange) {
   text.className = 'search-results-filter-group-label';
   text.textContent = toTitleCase(field);
   summary.append(text, dot);
-  if (selected) {
+  if ((Array.isArray(selected) && selected.length) || (!Array.isArray(selected) && selected)) {
     details.classList.add('has-filter');
   }
   details.append(summary);
@@ -62,13 +65,16 @@ export default function createSearchFilters({
   embedded = false,
   isOpen = false,
   onOpenChange,
+  facetOrder,
 }) {
   const container = document.createElement('aside');
   container.className = `search-results-sidebar${embedded ? ' search-results-sidebar-embedded' : ''}`;
   if (!embedded && isOpen) container.classList.add('is-open');
 
   if (!embedded) {
-    const hasFilters = Object.values(selectedFilters).some(Boolean);
+    const hasFilters = Object.values(selectedFilters).some((v) => (
+      Array.isArray(v) ? v.length : Boolean(v)
+    ));
     const toggle = document.createElement('button');
     toggle.type = 'button';
     toggle.className = 'search-results-filter-toggle';
@@ -108,7 +114,20 @@ export default function createSearchFilters({
   wrapper.className = 'search-results-filters';
   wrapper.id = embedded ? undefined : 'search-results-filters-panel';
 
-  const fields = ['category', 'brand', 'type', 'status'];
+  // Facet keys are integration-specific (e.g. the API might return
+  // `attribute_services_advisory_ss` rather than `category`).
+  // Prefer a configured order if provided; otherwise render a reasonable subset.
+  const available = Object.keys(facetFields || {})
+    .filter((field) => facetFields?.[field]?.length);
+  let ordered = [];
+  if (Array.isArray(facetOrder) && facetOrder.length) {
+    ordered = facetOrder.filter((f) => available.includes(f));
+  } else {
+    ordered = available
+      .filter((field) => !field.toLowerCase().includes('title'))
+      .slice(0, 6);
+  }
+  const fields = ordered;
   fields.forEach((field) => {
     if (!facetFields[field]?.length) return;
     wrapper.append(createFilterGroup(field, selectedFilters[field], facetFields[field], onChange));

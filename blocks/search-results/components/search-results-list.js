@@ -3,7 +3,8 @@ function createCard(doc) {
   li.className = 'search-result-card';
 
   const link = document.createElement('a');
-  link.href = doc.url || '#';
+  // Lucidworks-like payloads may expose either `url` or `uri`.
+  link.href = doc.url || doc.uri || '#';
   link.className = 'search-result-link';
 
   const content = document.createElement('div');

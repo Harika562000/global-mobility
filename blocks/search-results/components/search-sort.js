@@ -1,9 +1,14 @@
-const SORT_OPTIONS = [
+const DEFAULT_SORT_OPTIONS = [
   { value: 'relevance', label: 'Most Relevant' },
   { value: 'date-desc', label: 'Most Recent' },
 ];
 
-export default function createSearchSort({ sortBy, onChange, variant = 'desktop' }) {
+export default function createSearchSort({
+  sortBy,
+  onChange,
+  variant = 'desktop',
+  options = DEFAULT_SORT_OPTIONS,
+}) {
   const wrapper = document.createElement('div');
   wrapper.className = 'search-results-sort';
 
@@ -17,7 +22,7 @@ export default function createSearchSort({ sortBy, onChange, variant = 'desktop'
     list.className = 'search-results-sort-radio-list';
     list.setAttribute('role', 'radiogroup');
     list.setAttribute('aria-label', 'Sort results');
-    SORT_OPTIONS.forEach((option) => {
+    options.forEach((option) => {
       const label = document.createElement('label');
       label.className = 'search-results-sort-radio-item';
       const input = document.createElement('input');
@@ -37,7 +42,7 @@ export default function createSearchSort({ sortBy, onChange, variant = 'desktop'
     const select = document.createElement('select');
     select.className = 'search-results-sort-select';
     select.setAttribute('aria-label', 'Sort results');
-    SORT_OPTIONS.forEach((option) => {
+    options.forEach((option) => {
       const opt = document.createElement('option');
       opt.value = option.value;
       opt.textContent = option.label;
