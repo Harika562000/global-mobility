@@ -1,6 +1,7 @@
 import { events } from '../../scripts/s-and-p-global/events.js';
 
 export default function decorate(block) {
+  const section = block.closest('.section');
   const rows = [...block.querySelectorAll(':scope > div')];
   const getCell = (row) => row?.querySelector(':scope > div');
 
@@ -71,8 +72,12 @@ export default function decorate(block) {
     events.on(NO_RESULTS_EVENT, (payload) => {
       applyQuery(payload?.query);
       container.hidden = false;
+      section?.classList.add('is-visible');
     }, { scope: SEARCH_EVENT_SCOPE, eager: true }),
-    events.on(HAS_RESULTS_EVENT, () => { container.hidden = true; }, { scope: SEARCH_EVENT_SCOPE, eager: true }),
+    events.on(HAS_RESULTS_EVENT, () => {
+      container.hidden = true;
+      section?.classList.remove('is-visible');
+    }, { scope: SEARCH_EVENT_SCOPE, eager: true }),
   ];
 
   block.addEventListener('DOMNodeRemovedFromDocument', () => {
