@@ -1,3 +1,11 @@
+.section.no-search-results-container {
+  display: none;
+}
+
+.section.no-search-results-container.is-visible {
+  display: block;
+}
+
 .no-search-results .no-search-results-container > .header {
   margin: 0 0 var(--spacing-600);
   font-family: var(--font-family-primary);
