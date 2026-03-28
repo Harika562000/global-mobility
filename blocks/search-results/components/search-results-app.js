@@ -8,7 +8,7 @@ import createSearchSortFilter from './search-sort-filter.js';
 import createSearchPagination from './search-pagination.js';
 import createSearchResultsList from './search-results-list.js';
 import createSearchLoading from './search-loading.js';
-import { parseFacetFields } from './search-results-utils.js';
+import { mergeFacetOptions, parseFacetFields } from './search-results-utils.js';
 
 const SEARCH_EVENT_SCOPE = 'search';
 const ROWS_PER_PAGE = 10;
@@ -173,6 +173,8 @@ export default function createSearchResultsApp({ config = {} } = {}) {
     response: { docs: [], numFound: 0, start: 0 },
     facets: {},
     facetLabels: authoredFacetLabels,
+    /** New search: replace facets entirely; filter/page/sort: merge so fq doesn’t collapse UI */
+    resetFacetOptionsOnNextLoad: false,
     isFilterPanelOpen: false,
     isFilterSidebarOpen: false,
   };
@@ -225,7 +227,13 @@ export default function createSearchResultsApp({ config = {} } = {}) {
         facetFields: facetOrder.length ? facetOrder : undefined,
       });
       state.response = response?.response ?? { docs: [], numFound: 0, start: 0 };
-      state.facets = parseFacetFields(response?.facet_counts?.facet_fields || {});
+      const parsedFacets = parseFacetFields(response?.facet_counts?.facet_fields || {});
+      if (state.resetFacetOptionsOnNextLoad) {
+        state.facets = parsedFacets;
+        state.resetFacetOptionsOnNextLoad = false;
+      } else {
+        state.facets = mergeFacetOptions(state.facets, parsedFacets, state.filters);
+      }
       state.facetLabels = {
         ...parseFusionFacetLabels(response?.fusion?.facet_labels),
         ...authoredFacetLabels,
@@ -267,6 +275,7 @@ export default function createSearchResultsApp({ config = {} } = {}) {
           const q = eventData?.query?.trim() ?? '';
           state.query = q;
           state.hasInitSearch = true;
+          state.resetFacetOptionsOnNextLoad = true;
           state.filters = parseDefaultFilters(defaultFiltersConfig);
           state.filterOrder = Object.entries(state.filters).flatMap(([field, values]) => {
             const arr = Array.isArray(values) ? values : [];

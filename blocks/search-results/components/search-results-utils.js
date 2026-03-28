@@ -14,6 +14,45 @@ export function parseFacetFields(facetFields) {
   return result;
 }
 
+/**
+ * Merge facet buckets across requests. After applying Solr `fq`, the API often
+ * returns only the selected bucket(s) for that field — other checkboxes would
+ * disappear. Union with the previous snapshot and keep selected values visible.
+ * @param {Record<string, { value: string, count: number }[]>} prev
+ * @param {Record<string, { value: string, count: number }[]>} next
+ * @param {Record<string, string[]|string|undefined>} selectedFilters
+ */
+export function mergeFacetOptions(prev, next, selectedFilters = {}) {
+  const prevMap = prev && typeof prev === 'object' ? prev : {};
+  const nextMap = next && typeof next === 'object' ? next : {};
+  const fields = new Set([...Object.keys(prevMap), ...Object.keys(nextMap)]);
+  const out = {};
+
+  fields.forEach((field) => {
+    const byValue = new Map();
+    (prevMap[field] || []).forEach((o) => {
+      if (o && o.value != null) byValue.set(o.value, { value: o.value, count: o.count ?? 0 });
+    });
+    (nextMap[field] || []).forEach((o) => {
+      if (!o || o.value == null) return;
+      const existing = byValue.get(o.value);
+      byValue.set(o.value, {
+        value: o.value,
+        count: o.count ?? existing?.count ?? 0,
+      });
+    });
+    const sel = selectedFilters[field];
+    const selArr = Array.isArray(sel) ? sel : (sel ? [sel] : []);
+    selArr.forEach((val) => {
+      if (val != null && val !== '' && !byValue.has(val)) {
+        byValue.set(val, { value: val, count: 0 });
+      }
+    });
+    out[field] = [...byValue.values()].sort((a, b) => (b.count || 0) - (a.count || 0));
+  });
+  return out;
+}
+
 export function sortDocs(docs, sortBy) {
   const result = [...docs];
   if (sortBy === 'relevance') return result;

@@ -219,6 +219,7 @@
 
 .search-results .search-results-filter-item input[type="checkbox"] {
   width: var(--size-20);
+  min-width: var(--size-20);
   height: var(--size-20);
   margin: 0;
   border: 1.5px solid var(--color-grey-500);
