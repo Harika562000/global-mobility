@@ -4,8 +4,88 @@ import createPaginationControls from './components/pagination-controls.js';
 
 const SEARCH_SCOPE = 'search';
 
+/** Chevron stroke weight is set in CSS (thinner ≥510px per UI Library). */
+function prevNextChevronSvg(isPrev) {
+  const d = isPrev ? 'M15 6l-6 6 6 6' : 'M9 6l6 6-6 6';
+  return `<svg class="dm-prev-next-chevron-svg" width="12" height="12" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-linecap="butt" stroke-linejoin="miter" d="${d}"/></svg>`;
+}
+
+function resolvePossiblyRelativeUrl(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+  if (/^https?:\/\//i.test(raw)) return raw;
+  if (raw.startsWith('/')) {
+    try {
+      return new URL(raw, window.location.origin).href;
+    } catch {
+      return raw;
+    }
+  }
+  return raw;
+}
+
+function getHrefLikeFromScope(scope) {
+  if (!scope) return '';
+
+  const anchor = scope.querySelector('a[href], a[data-href], [href], [data-href]');
+  if (anchor) {
+    const href = anchor.getAttribute?.('href') || anchor.getAttribute?.('data-href');
+    if (href) return resolvePossiblyRelativeUrl(href);
+    if (anchor.href) return resolvePossiblyRelativeUrl(anchor.href);
+  }
+
+  // Some authoring widgets render destination as plain text (internal path), not an <a>.
+  const text = scope.querySelector('p')?.textContent?.trim()
+    || scope.textContent?.trim();
+  return text ? resolvePossiblyRelativeUrl(text) : '';
+}
+
+function readPrevNextLinksFromBlockDom(block) {
+  // Pattern: direct child rows that each contain a link, no "Previous link / Next link" label column
+  // (authoring often outputs two stacked cells like <div><div><p><a href>…</a></p></div></div>).
+  const topRows = [...block.children].filter((n) => n instanceof HTMLElement && n.tagName === 'DIV');
+  const linkRows = topRows.filter((row) => row.querySelector('a[href], a[data-href]'));
+  if (linkRows.length >= 2) {
+    const pickHref = (row) => {
+      const a = row.querySelector('a[href], a[data-href]');
+      if (!a) return '';
+      const h = a.getAttribute('href') || a.getAttribute('data-href') || a.href;
+      return resolvePossiblyRelativeUrl(h);
+    };
+    return {
+      prevUrl: pickHref(linkRows[0]),
+      nextUrl: pickHref(linkRows[1]),
+    };
+  }
+
+  // Label text comes from `blocks/dynamic-module/_dynamic-module.json`.
+  const allNodes = [...block.querySelectorAll('*')];
+  const findLabelNode = (needle) => allNodes.find((n) => (
+    String(n.textContent || '').trim().toLowerCase().includes(needle)
+  ));
+
+  const prevLabelNode = findLabelNode('previous link');
+  const nextLabelNode = findLabelNode('next link');
+
+  const readValueScopeFromLabel = (labelNode) => {
+    const row = labelNode?.closest('div');
+    if (!row) return null;
+    const cols = [...row.children].filter((c) => c instanceof HTMLElement);
+    // Expected: [label-col, value-col]
+    if (cols.length >= 2) return cols[1];
+    return labelNode.nextElementSibling || row.querySelector(':scope > div:nth-child(2)');
+  };
+
+  const prevScope = readValueScopeFromLabel(prevLabelNode);
+  const nextScope = readValueScopeFromLabel(nextLabelNode);
+
+  return {
+    prevUrl: getHrefLikeFromScope(prevScope),
+    nextUrl: getHrefLikeFromScope(nextScope),
+  };
+}
+
 function decoratePrevNext(block, config) {
-  block.innerHTML = '';
   block.classList.add('dynamic-module', 'dynamic-module-prev-next');
   block.dataset.variation = 'previous-next';
 
@@ -20,6 +100,21 @@ function decoratePrevNext(block, config) {
     if (p) prevLabel = p;
     if (n) nextLabel = n;
   }
+
+  // readBlockConfig can miss link destinations depending on how the authoring widget
+  // renders `aem-content`. Fallback to a DOM scan so Previous/Next stay clickable.
+  let prevFinalUrl = resolvePossiblyRelativeUrl(prevUrl);
+  let nextFinalUrl = resolvePossiblyRelativeUrl(nextUrl);
+  if (!prevFinalUrl || !nextFinalUrl) {
+    const domLinks = readPrevNextLinksFromBlockDom(block);
+    prevFinalUrl = prevFinalUrl || domLinks.prevUrl;
+    nextFinalUrl = nextFinalUrl || domLinks.nextUrl;
+  }
+
+  block.dataset.dmDebugHasPrevNextLinks = (prevFinalUrl || nextFinalUrl) ? '1' : '0';
+
+  // Clear authored markup only after we've extracted the link destinations.
+  block.innerHTML = '';
 
   const nav = document.createElement('nav');
   nav.className = 'dm-prev-next';
@@ -37,7 +132,7 @@ function decoratePrevNext(block, config) {
     const arrow = document.createElement('span');
     arrow.className = 'dm-prev-next-arrow';
     arrow.setAttribute('aria-hidden', 'true');
-    arrow.textContent = isPrev ? '\u2039' : '\u203A';
+    arrow.innerHTML = prevNextChevronSvg(isPrev);
     const text = document.createElement('span');
     text.className = 'dm-prev-next-text';
     text.textContent = label;
@@ -49,7 +144,15 @@ function decoratePrevNext(block, config) {
     return el;
   }
 
-  nav.append(linkOrSpan(prevUrl, prevLabel, true), linkOrSpan(nextUrl, nextLabel, false));
+  const divider = document.createElement('span');
+  divider.className = 'dm-prev-next-divider';
+  divider.setAttribute('aria-hidden', 'true');
+
+  nav.append(
+    linkOrSpan(prevFinalUrl, prevLabel, true),
+    divider,
+    linkOrSpan(nextFinalUrl, nextLabel, false),
+  );
   block.append(nav);
 }
 

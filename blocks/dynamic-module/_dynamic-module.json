@@ -58,17 +58,6 @@
           "condition": {
             "===": [{ "var": "classes" }, "previous-next"]
           }
-        },
-        {
-          "component": "text",
-          "name": "linkLabels",
-          "label": "Link labels",
-          "description": "Previous / Next only. Format: Previous | Next (default if empty).",
-          "valueType": "string",
-          "value": "",
-          "condition": {
-            "===": [{ "var": "classes" }, "previous-next"]
-          }
         }
       ]
     }
