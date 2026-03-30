@@ -6,6 +6,209 @@
 const ROWS_OPTIONS = [10, 20, 50];
 
 /**
+ * "Viewing " (regular) + range/total (bold) for desktop and mobile viewing lines.
+ * @param {HTMLElement} el
+ * @param {number} start
+ * @param {number} end
+ * @param {number} total
+ */
+function setViewingLineContent(el, start, end, total) {
+  el.replaceChildren();
+  const intro = document.createElement('span');
+  intro.className = 'dm-pagination-viewing-intro';
+  intro.textContent = 'Viewing ';
+
+  const detail = document.createElement('span');
+  detail.className = 'dm-pagination-viewing-detail';
+  detail.textContent = `${start.toLocaleString()}-${end.toLocaleString()} of ${total.toLocaleString()} items`;
+
+  el.append(intro, detail);
+}
+
+/**
+ * Shared numeric listbox (items-per-page + mobile current-page). Same markup/CSS as design system select.
+ * @param {object} opts
+ * @param {string | null} opts.labelId - `<label id>`; when null, use `ariaLabel` on trigger + list.
+ * @param {string} opts.ariaLabel - required when `labelId` is null.
+ * @param {string} opts.triggerId
+ * @param {number} opts.value
+ * @param {number[]} opts.options
+ * @param {(n: number) => void} opts.onChange
+ */
+function createNumericListboxCombobox({
+  labelId,
+  ariaLabel,
+  triggerId,
+  value,
+  options: optionValues,
+  onChange,
+}) {
+  const wrap = document.createElement('div');
+  wrap.className = 'dm-pagination-per-select-wrap';
+
+  const trigger = document.createElement('button');
+  trigger.type = 'button';
+  trigger.className = 'dm-pagination-per-trigger';
+  trigger.id = triggerId;
+  trigger.setAttribute('aria-haspopup', 'listbox');
+  trigger.setAttribute('aria-expanded', 'false');
+  if (labelId) {
+    trigger.setAttribute('aria-labelledby', `${labelId} ${triggerId}-value`);
+  } else {
+    trigger.setAttribute('aria-label', ariaLabel);
+  }
+
+  const valueSpan = document.createElement('span');
+  valueSpan.className = 'dm-pagination-per-value';
+  valueSpan.id = `${triggerId}-value`;
+  valueSpan.textContent = String(value);
+
+  const chevron = document.createElement('span');
+  chevron.className = 'dm-pagination-per-chevron';
+  chevron.setAttribute('aria-hidden', 'true');
+
+  trigger.append(valueSpan, chevron);
+
+  const list = document.createElement('ul');
+  list.className = 'dm-pagination-per-menu';
+  list.setAttribute('role', 'listbox');
+  if (labelId) {
+    list.setAttribute('aria-labelledby', labelId);
+  } else {
+    list.setAttribute('aria-label', ariaLabel);
+  }
+  list.hidden = true;
+
+  optionValues.forEach((n) => {
+    const li = document.createElement('li');
+    li.setAttribute('role', 'presentation');
+    const optBtn = document.createElement('button');
+    optBtn.type = 'button';
+    optBtn.className = 'dm-pagination-per-option';
+    optBtn.setAttribute('role', 'option');
+    optBtn.dataset.value = String(n);
+    optBtn.textContent = String(n);
+    optBtn.setAttribute('aria-selected', n === value ? 'true' : 'false');
+    li.append(optBtn);
+    list.append(li);
+  });
+
+  wrap.append(trigger, list);
+
+  let menuOpen = false;
+
+  const optionEls = () => [...list.querySelectorAll('.dm-pagination-per-option')];
+
+  function updateValueDisplay(n) {
+    valueSpan.textContent = String(n);
+    optionEls().forEach((btn) => {
+      btn.setAttribute('aria-selected', btn.dataset.value === String(n) ? 'true' : 'false');
+    });
+  }
+
+  const menuCtl = {
+    onDocClick(e) {
+      if (!wrap.contains(e.target)) menuCtl.setOpen(false);
+    },
+    onDocKey(e) {
+      if (e.key === 'Escape' && menuOpen) {
+        e.preventDefault();
+        e.stopPropagation();
+        menuCtl.setOpen(false);
+        trigger.focus();
+      }
+    },
+    setOpen(open) {
+      menuOpen = open;
+      wrap.classList.toggle('is-open', open);
+      trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      list.hidden = !open;
+      document.removeEventListener('click', menuCtl.onDocClick);
+      document.removeEventListener('keydown', menuCtl.onDocKey, true);
+      if (open) {
+        setTimeout(() => {
+          document.addEventListener('click', menuCtl.onDocClick);
+        }, 0);
+        document.addEventListener('keydown', menuCtl.onDocKey, true);
+        window.requestAnimationFrame(() => {
+          const opts = optionEls();
+          const selected = opts.find((b) => b.getAttribute('aria-selected') === 'true');
+          (selected ?? opts[0])?.focus();
+        });
+      }
+    },
+  };
+
+  function selectValue(n) {
+    updateValueDisplay(n);
+    onChange(n);
+    menuCtl.setOpen(false);
+    trigger.focus();
+  }
+
+  trigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    menuCtl.setOpen(!menuOpen);
+  });
+
+  trigger.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (!menuOpen) menuCtl.setOpen(true);
+    }
+  });
+
+  optionEls().forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      selectValue(Number(btn.dataset.value));
+    });
+  });
+
+  list.addEventListener('keydown', (e) => {
+    const opts = optionEls();
+    const active = document.activeElement;
+    const idx = opts.indexOf(active);
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      const next = idx < 0 ? 0 : Math.min(idx + 1, opts.length - 1);
+      opts[next]?.focus();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      const prev = idx < 0 ? opts.length - 1 : Math.max(idx - 1, 0);
+      opts[prev]?.focus();
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      opts[0]?.focus();
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      opts[opts.length - 1]?.focus();
+    }
+  });
+
+  return wrap;
+}
+
+/**
+ * Items-per-page control (label + combobox).
+ */
+function createRowsPerPageCombobox({
+  labelId,
+  triggerId,
+  rowsPerPage,
+  onRowsChange,
+}) {
+  return createNumericListboxCombobox({
+    labelId,
+    ariaLabel: '',
+    triggerId,
+    value: rowsPerPage,
+    options: ROWS_OPTIONS,
+    onChange: onRowsChange,
+  });
+}
+
+/**
  * @param {number} totalPages
  * @param {number} currentPage
  * @returns {{ type: 'page' | 'ellipsis'; value?: number }[]}
@@ -84,33 +287,26 @@ export default function createPaginationControls({
   const safeTotal = Math.max(0, Number(totalItems) || 0);
   const start = safeTotal === 0 ? 0 : (currentPage - 1) * rowsPerPage + 1;
   const end = safeTotal === 0 ? 0 : Math.min(currentPage * rowsPerPage, safeTotal);
-  viewing.textContent = `Viewing ${start.toLocaleString()}-${end.toLocaleString()} of ${safeTotal.toLocaleString()} items`;
+  setViewingLineContent(viewing, start, end, safeTotal);
 
   const perWrap = document.createElement('div');
   perWrap.className = 'dm-pagination-per-wrap';
-  const selectId = `dm-pagination-per-${Math.random().toString(36).slice(2, 9)}`;
+  const labelId = `dm-pagination-pl-${Math.random().toString(36).slice(2, 9)}`;
+  const triggerId = `dm-pagination-pt-${Math.random().toString(36).slice(2, 9)}`;
   const perLabel = document.createElement('label');
   perLabel.className = 'dm-pagination-per-label';
-  perLabel.setAttribute('for', selectId);
-  perLabel.textContent = 'Items per page';
+  perLabel.id = labelId;
+  perLabel.htmlFor = triggerId;
+  perLabel.textContent = 'Items per page:';
 
-  const select = document.createElement('select');
-  select.id = selectId;
-  select.className = 'dm-pagination-per-select';
-  select.setAttribute('aria-label', 'Items per page');
-  ROWS_OPTIONS.forEach((n) => {
-    const opt = document.createElement('option');
-    opt.value = String(n);
-    opt.textContent = String(n);
-    if (n === rowsPerPage) opt.selected = true;
-    select.append(opt);
-  });
-  select.addEventListener('change', () => {
-    const next = Number(select.value) || rowsPerPage;
-    onRowsChange(next);
+  const perCombo = createRowsPerPageCombobox({
+    labelId,
+    triggerId,
+    rowsPerPage,
+    onRowsChange,
   });
 
-  perWrap.append(perLabel, select);
+  perWrap.append(perLabel, perCombo);
   meta.append(viewing, perWrap);
 
   const nav = document.createElement('nav');
@@ -182,26 +378,21 @@ export default function createPaginationControls({
 
   const mobilePicker = document.createElement('div');
   mobilePicker.className = 'dm-pagination-mobile-picker';
-  const pageSelectId = `dm-pagination-page-${Math.random().toString(36).slice(2, 9)}`;
-  const pageSelect = document.createElement('select');
-  pageSelect.id = pageSelectId;
-  pageSelect.className = 'dm-pagination-page-select';
-  pageSelect.setAttribute('aria-label', 'Current page');
-  for (let p = 1; p <= totalPages; p += 1) {
-    const opt = document.createElement('option');
-    opt.value = String(p);
-    opt.textContent = String(p);
-    if (p === currentPage) opt.selected = true;
-    pageSelect.append(opt);
-  }
-  pageSelect.addEventListener('change', () => {
-    const page = Number(pageSelect.value) || currentPage;
-    onPageChange(page);
+  const pageCount = Math.max(totalPages, 1);
+  const safeMobilePage = Math.min(Math.max(currentPage, 1), pageCount);
+  const pageTriggerId = `dm-pagination-pgm-${Math.random().toString(36).slice(2, 9)}`;
+  const pageCombo = createNumericListboxCombobox({
+    labelId: null,
+    ariaLabel: 'Current page',
+    triggerId: pageTriggerId,
+    value: safeMobilePage,
+    options: Array.from({ length: pageCount }, (_, i) => i + 1),
+    onChange: onPageChange,
   });
   const ofText = document.createElement('span');
   ofText.className = 'dm-pagination-mobile-of';
-  ofText.textContent = `of ${Math.max(totalPages, 1)}`;
-  mobilePicker.append(pageSelect, ofText);
+  ofText.textContent = `of ${pageCount}`;
+  mobilePicker.append(pageCombo, ofText);
 
   const mobileNext = document.createElement('button');
   mobileNext.type = 'button';
@@ -214,7 +405,7 @@ export default function createPaginationControls({
 
   const mobileViewing = document.createElement('p');
   mobileViewing.className = 'dm-pagination-mobile-viewing';
-  mobileViewing.textContent = viewing.textContent;
+  setViewingLineContent(mobileViewing, start, end, safeTotal);
 
   root.append(mobileNav, mobileViewing, bar);
 

@@ -20,7 +20,7 @@
   align-items: center;
   gap: var(--spacing-200);
   text-decoration: none;
-  color: var(--sr-blue, var(--color-blue-primary));
+  color: var(--color-brand-300);
   font-size: var(--font-size-200);
   font-weight: var(--font-weight-medium);
   letter-spacing: -0.04em;
