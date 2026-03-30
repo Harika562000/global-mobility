@@ -5,13 +5,13 @@ import createSearchFilters from './search-filters.js';
 import createSearchSort from './search-sort.js';
 import createSearchActiveFilters from './search-active-filters.js';
 import createSearchSortFilter from './search-sort-filter.js';
-import createSearchPagination from './search-pagination.js';
+import createPaginationControls, { ROWS_OPTIONS } from '../../dynamic-module/components/pagination-controls.js';
 import createSearchResultsList from './search-results-list.js';
 import createSearchLoading from './search-loading.js';
 import { mergeFacetOptions, parseFacetFields } from './search-results-utils.js';
 
 const SEARCH_EVENT_SCOPE = 'search';
-const ROWS_PER_PAGE = 10;
+const DEFAULT_ROWS_PER_PAGE = ROWS_OPTIONS[0] || 10;
 const SEARCH_RESULTS_EVENTS = {
   INIT: 'init-search',
   SORT_CHANGE: 'search-results:sort-change',
@@ -19,6 +19,9 @@ const SEARCH_RESULTS_EVENTS = {
   FILTER_CLEAR: 'search-results:filter-clear',
   TAB_CHANGE: 'search-results:tab-change',
   PAGE_CHANGE: 'search-results:page-change',
+  ROWS_CHANGE: 'search-results:rows-change',
+  STATE: 'search-results:state',
+  PEER_PAGINATION_MOUNTED: 'search-results:peer-pagination-mounted',
   HAS_RESULTS: 'search-results:has-results',
   NO_RESULTS: 'search-results:no-results',
   ERROR: 'search-results:error',
@@ -94,7 +97,12 @@ function parseKeyValueLines(value) {
     .map((s) => s.trim())
     .filter(Boolean);
 
-  const pairRe = /([A-Za-z0-9_]+)\s*(=|:)\s*(.+?)(?=(\s+[A-Za-z0-9_]+\s*(=|:))|$)/g;
+  // Capture sequences like:
+  // - key=Label
+  // - key: Label
+  // - key=Label key2=Another Label
+  // - key=Label,key2=Another Label (comma-separated authoring)
+  const pairRe = /([A-Za-z0-9_]+)\s*(=|:)\s*(.+?)(?=((?:\s|,)+[A-Za-z0-9_]+\s*(=|:))|$)/g;
   parts.forEach((chunk) => {
     let match;
     // eslint-disable-next-line no-cond-assign
@@ -103,8 +111,9 @@ function parseKeyValueLines(value) {
       const rawLabel = match[3];
       const key = String(rawKey).trim().replace(/\s+/g, '');
       const label = String(rawLabel).trim();
-      if (!key || !label) continue;
-      map[key] = label;
+      if (key && label) {
+        map[key] = label;
+      }
     }
   });
   return map;
@@ -152,6 +161,8 @@ export default function createSearchResultsApp({ config = {} } = {}) {
     ?? config.showSortOptions
     ?? config.showsortoptions;
   const showSort = parseBoolean(showSortConfig, true);
+  const paginationPlacement = config['pagination-placement'] ?? config.paginationPlacement ?? 'embedded';
+  const showEmbeddedPagination = String(paginationPlacement).toLowerCase() !== 'external';
   const authoredFacetLabels = parseKeyValueLines(authoredFacetLabelsConfig);
 
   const facetOrder = parseList(facetsConfig);
@@ -177,6 +188,7 @@ export default function createSearchResultsApp({ config = {} } = {}) {
     resetFacetOptionsOnNextLoad: false,
     isFilterPanelOpen: false,
     isFilterSidebarOpen: false,
+    rowsPerPage: DEFAULT_ROWS_PER_PAGE,
   };
 
   let render = () => {};
@@ -213,7 +225,9 @@ export default function createSearchResultsApp({ config = {} } = {}) {
   }
 
   async function loadSearchData(page = 1) {
-    const start = (page - 1) * ROWS_PER_PAGE;
+    const nextPage = Math.max(1, Number(page) || 1);
+    const rows = state.rowsPerPage;
+    const start = (nextPage - 1) * rows;
     state.loading = true;
     render();
     try {
@@ -221,12 +235,28 @@ export default function createSearchResultsApp({ config = {} } = {}) {
       const response = await lucidworksClient.fetchSearchResults({
         q: state.query,
         start,
-        rows: ROWS_PER_PAGE,
+        rows,
         filters: state.filters,
         sort,
         facetFields: facetOrder.length ? facetOrder : undefined,
       });
-      state.response = response?.response ?? { docs: [], numFound: 0, start: 0 };
+
+      // Prefer the server's effective paging size if the API echoes it back.
+      // Lucidworks response header typically contains: responseHeader.params.rows.
+      const apiRowsRaw = response?.responseHeader?.params?.rows;
+      const apiRows = Number(apiRowsRaw);
+      const allowedRows = ROWS_OPTIONS;
+      if (allowedRows.includes(apiRows)) {
+        state.rowsPerPage = apiRows;
+      }
+
+      const rawResponse = response?.response ?? { docs: [], numFound: 0, start: 0 };
+      // Keep paging anchored to requested params (`start`/`rows`) so UI and
+      // list window remain consistent even if backend returns broad doc sets.
+      state.response = {
+        ...rawResponse,
+        start,
+      };
       const parsedFacets = parseFacetFields(response?.facet_counts?.facet_fields || {});
       if (state.resetFacetOptionsOnNextLoad) {
         state.facets = parsedFacets;
@@ -242,9 +272,15 @@ export default function createSearchResultsApp({ config = {} } = {}) {
       const total = Number(state.response?.numFound) || 0;
       state.hasResults = total > 0;
       if (total > 0) {
-        emitControlEvent(SEARCH_RESULTS_EVENTS.HAS_RESULTS, { query: state.query, total, page });
+        emitControlEvent(SEARCH_RESULTS_EVENTS.HAS_RESULTS, {
+          query: state.query,
+          total,
+          page: nextPage,
+        });
       } else {
-        emitControlEvent(SEARCH_RESULTS_EVENTS.NO_RESULTS, { query: state.query, total: 0, page, reason: 'empty' });
+        emitControlEvent(SEARCH_RESULTS_EVENTS.NO_RESULTS, {
+          query: state.query, total: 0, page: nextPage, reason: 'empty',
+        });
       }
     } catch (e) {
       state.response = { docs: [], numFound: 0, start };
@@ -252,11 +288,15 @@ export default function createSearchResultsApp({ config = {} } = {}) {
       state.facetLabels = authoredFacetLabels;
       state.hasResults = false;
       const message = e?.message || String(e);
-      emitControlEvent(SEARCH_RESULTS_EVENTS.ERROR, { query: state.query, page, message });
+      emitControlEvent(SEARCH_RESULTS_EVENTS.ERROR, {
+        query: state.query,
+        page: nextPage,
+        message,
+      });
       emitControlEvent(SEARCH_RESULTS_EVENTS.NO_RESULTS, {
         query: state.query,
         total: 0,
-        page,
+        page: nextPage,
         reason: 'error',
         message,
       });
@@ -333,6 +373,23 @@ export default function createSearchResultsApp({ config = {} } = {}) {
         handler: async (eventData) => {
           const page = Number(eventData?.page) || 1;
           await loadSearchData(Math.max(1, page));
+        },
+      },
+      {
+        event: SEARCH_RESULTS_EVENTS.ROWS_CHANGE,
+        options: { scope: SEARCH_EVENT_SCOPE },
+        handler: async (eventData) => {
+          const raw = Number(eventData?.rows);
+          const allowed = ROWS_OPTIONS;
+          state.rowsPerPage = allowed.includes(raw) ? raw : DEFAULT_ROWS_PER_PAGE;
+          await loadSearchData(1);
+        },
+      },
+      {
+        event: SEARCH_RESULTS_EVENTS.PEER_PAGINATION_MOUNTED,
+        options: { scope: SEARCH_EVENT_SCOPE },
+        handler: () => {
+          render();
         },
       },
     ];
@@ -420,6 +477,33 @@ export default function createSearchResultsApp({ config = {} } = {}) {
     return controls;
   }
 
+  /** Visible Dynamic Module (Pagination) — hidden module does not suppress embedded controls. */
+  function hasPeerPaginationBlock() {
+    if (typeof document === 'undefined') return false;
+    return Boolean(
+      document.querySelector('.block.dynamic-module[data-variation="pagination"]:not([hidden])'),
+    );
+  }
+
+  function shouldEmbedPaginationHere() {
+    if (!showEmbeddedPagination) return false;
+    return !hasPeerPaginationBlock();
+  }
+
+  function emitSearchState() {
+    const total = Number(state.response?.numFound) || 0;
+    const rows = state.rowsPerPage;
+    const totalPages = total === 0 ? 0 : Math.max(1, Math.ceil(total / rows));
+    const start = Number(state.response?.start) || 0;
+    const currentPage = Math.floor(start / rows) + 1;
+    emitControlEvent(SEARCH_RESULTS_EVENTS.STATE, {
+      total,
+      page: currentPage,
+      rowsPerPage: rows,
+      totalPages,
+    });
+  }
+
   render = () => {
     root.innerHTML = '';
     if (!state.hasInitSearch) {
@@ -436,13 +520,22 @@ export default function createSearchResultsApp({ config = {} } = {}) {
 
     if (!state.hasResults) {
       root.hidden = true;
+      emitSearchState();
       return;
     }
 
-    const docs = state.response.docs || [];
+    const allDocs = state.response.docs || [];
     const total = state.response.numFound || 0;
-    const currentPage = Math.floor((state.response.start || 0) / ROWS_PER_PAGE) + 1;
-    const totalPages = Math.max(1, Math.ceil(total / ROWS_PER_PAGE));
+    const pageSize = state.rowsPerPage;
+    const start = Number(state.response?.start) || 0;
+    const currentPage = Math.floor(start / pageSize) + 1;
+    const totalPages = total === 0 ? 0 : Math.max(1, Math.ceil(total / pageSize));
+
+    // If backend returns full/unpaged docs, align visible window to `start` + `rows`.
+    const shouldSliceByWindow = allDocs.length > pageSize;
+    const docs = shouldSliceByWindow
+      ? allDocs.slice(start, start + pageSize)
+      : allDocs;
 
     const content = document.createElement('div');
     content.className = 'search-results-content';
@@ -482,13 +575,25 @@ export default function createSearchResultsApp({ config = {} } = {}) {
     }
 
     root.append(content);
-    root.append(
-      createSearchPagination({
-        currentPage,
-        totalPages,
-        onPageChange: (page) => emitControlEvent(SEARCH_RESULTS_EVENTS.PAGE_CHANGE, { page }),
-      }),
-    );
+    // Only render pagination UI when there is more than one page.
+    // (Avoids showing a redundant bar like "Viewing 1-9 of 9" with only Page 1.)
+    if (shouldEmbedPaginationHere() && total > 0 && totalPages > 1) {
+      root.append(
+        createPaginationControls({
+          currentPage,
+          totalPages,
+          totalItems: total,
+          rowsPerPage: state.rowsPerPage,
+          onPageChange: (page) => {
+            emitControlEvent(SEARCH_RESULTS_EVENTS.PAGE_CHANGE, { page });
+          },
+          onRowsChange: (nextRows) => {
+            emitControlEvent(SEARCH_RESULTS_EVENTS.ROWS_CHANGE, { rows: nextRows });
+          },
+        }),
+      );
+    }
+    emitSearchState();
   };
 
   const subscriptions = registerEventSubscriptions();

@@ -1,8 +1,10 @@
+@import url('../dynamic-module/pagination-controls.css');
+
 .section.search-results-container {
-  margin-bottom: 0px;
-  margin-top:0px;
-  padding-bottom: 0px;
-  padding-top:0px;
+  margin-bottom: 0;
+  margin-top:0;
+  padding-bottom: 0;
+  padding-top:0;
 }
 
 .search-results {
@@ -445,37 +447,6 @@
   padding-top: 0;
 }
 
-.search-results .search-results-pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: var(--spacing-200);
-  margin-top: var(--spacing-600);
-}
-
-.search-results .search-results-page-btn,
-.search-results .search-results-page-nav {
-  min-width: var(--size-32);
-  height: var(--size-32);
-  padding: 0 var(--spacing-200);
-  border: 1px solid var(--sr-line);
-  border-radius: var(--radius-pill);
-  background: var(--color-white);
-  color: var(--sr-text-color);
-  cursor: pointer;
-}
-
-.search-results .search-results-page-btn.is-active {
-  border-color: var(--sr-blue);
-  color: var(--sr-blue);
-}
-
-.search-results .search-results-page-btn:disabled,
-.search-results .search-results-page-nav:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
 /* Filter & Sort: mobile sheet */
 .search-results .search-results-sort-filter-toggle {
   display: inline-flex;
@@ -530,7 +501,7 @@
 .search-results .search-results-sort-filter-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0 0 0 / 40%);
+  background: rgb(0 0 0 / 40%);
   z-index: 999;
   transition: opacity 0.2s ease;
 }

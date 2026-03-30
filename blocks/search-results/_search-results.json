@@ -38,11 +38,12 @@
           "value": true
         },
         {
-          "component": "textarea",
+          "component": "text",
           "name": "facetLabels",
           "label": "Facet labels",
-          "description": "Optional overrides for filter titles. One per line: fieldKey=Label (e.g. attribute_services_advisory_ss=Services).",
+          "description": "Optional overrides for filter titles. Add one mapping per entry: fieldKey=Label (e.g. attribute_services_advisory_ss=Services). If values get comma-separated, that is supported too.",
           "valueType": "string",
+          "multi": true,
           "value": ""
         }
       ]

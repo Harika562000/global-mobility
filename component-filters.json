@@ -19,7 +19,8 @@
       "fragment",
       "search",
       "search-results",
-      "no-search-results"
+      "no-search-results",
+      "dynamic-module"
     ]
   },
   {

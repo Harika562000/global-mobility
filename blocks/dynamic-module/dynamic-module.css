@@ -1,0 +1,48 @@
+@import url('./pagination-controls.css');
+
+/* Block: Dynamic Module — Previous / Next */
+
+.dynamic-module-prev-next {
+  width: 100%;
+}
+
+.dm-prev-next {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-400);
+  width: 100%;
+}
+
+.dm-prev-next-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-200);
+  text-decoration: none;
+  color: var(--sr-blue, var(--color-blue-primary));
+  font-size: var(--font-size-200);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: -0.04em;
+  line-height: 22px;
+  cursor: pointer;
+}
+
+.dm-prev-next-link:hover:not(.is-disabled) {
+  text-decoration: underline;
+}
+
+.dm-prev-next-link.is-disabled {
+  color: var(--color-grey-400);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.dm-prev-next-link-next {
+  margin-left: auto;
+}
+
+.dm-prev-next-arrow {
+  font-size: var(--font-size-600);
+  line-height: 1;
+}
