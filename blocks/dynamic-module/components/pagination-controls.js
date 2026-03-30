@@ -318,7 +318,6 @@ export default function createPaginationControls({
   prev.className = 'dm-page-nav dm-page-nav-prev';
   prev.setAttribute('aria-label', 'Previous page');
   prev.innerHTML = '<span class="dm-page-nav-icon" aria-hidden="true">\u2039</span>';
-  prev.disabled = currentPage <= 1 || totalPages < 1;
   prev.addEventListener('click', () => onPageChange(currentPage - 1));
 
   const pages = document.createElement('div');
@@ -354,7 +353,6 @@ export default function createPaginationControls({
   next.className = 'dm-page-nav dm-page-nav-next';
   next.setAttribute('aria-label', 'Next page');
   next.innerHTML = '<span class="dm-page-nav-icon" aria-hidden="true">\u203A</span>';
-  next.disabled = currentPage >= totalPages || totalPages < 1;
   next.addEventListener('click', () => onPageChange(currentPage + 1));
 
   nav.append(prev, pages, next);
@@ -373,7 +371,6 @@ export default function createPaginationControls({
   mobilePrev.className = 'dm-page-nav dm-page-nav-prev';
   mobilePrev.setAttribute('aria-label', 'Previous page');
   mobilePrev.innerHTML = '<span class="dm-page-nav-icon" aria-hidden="true">\u2039</span>';
-  mobilePrev.disabled = currentPage <= 1 || totalPages < 1;
   mobilePrev.addEventListener('click', () => onPageChange(currentPage - 1));
 
   const mobilePicker = document.createElement('div');
@@ -399,7 +396,6 @@ export default function createPaginationControls({
   mobileNext.className = 'dm-page-nav dm-page-nav-next';
   mobileNext.setAttribute('aria-label', 'Next page');
   mobileNext.innerHTML = '<span class="dm-page-nav-icon" aria-hidden="true">\u203A</span>';
-  mobileNext.disabled = currentPage >= totalPages || totalPages < 1;
   mobileNext.addEventListener('click', () => onPageChange(currentPage + 1));
   mobileNav.append(mobilePrev, mobilePicker, mobileNext);
 

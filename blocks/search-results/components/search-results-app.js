@@ -225,8 +225,10 @@ export default function createSearchResultsApp({ config = {} } = {}) {
   }
 
   async function loadSearchData(page = 1) {
-    const nextPage = Math.max(1, Number(page) || 1);
     const rows = state.rowsPerPage;
+    const totalKnown = Number(state.response?.numFound) || 0;
+    const totalPages = totalKnown <= 0 ? 1 : Math.max(1, Math.ceil(totalKnown / rows));
+    const nextPage = Math.min(Math.max(1, Number(page) || 1), totalPages);
     const start = (nextPage - 1) * rows;
     state.loading = true;
     render();
