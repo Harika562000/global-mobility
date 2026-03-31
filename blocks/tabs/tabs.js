@@ -29,11 +29,29 @@ function setCurrentTocLink(tocItems, activeLink) {
   });
 }
 
+function getSectionReference(row) {
+  return row.children[1]?.textContent.trim() || '';
+}
+
+function findSectionTarget(block, sectionReference) {
+  if (!sectionReference) {
+    return null;
+  }
+
+  const pageRoot = block.closest('main') || document;
+  const escapedReference = window.CSS?.escape
+    ? window.CSS.escape(sectionReference)
+    : sectionReference;
+
+  return pageRoot.querySelector(`.section.${escapedReference}`);
+}
+
 export default async function decorate(block) {
   const isTableOfContents = block.classList.contains('table-of-contents');
   const panelRows = [...block.children]
     .filter((child) => child.firstElementChild && child.firstElementChild.children.length > 0);
   const tocItems = [];
+  let hasExternalTargets = false;
 
   // build tablist
   const tablist = document.createElement(isTableOfContents ? 'nav' : 'div');
@@ -53,6 +71,8 @@ export default async function decorate(block) {
 
     // decorate tabpanel
     const tabpanel = panelRows[i];
+    const sectionReference = isTableOfContents ? getSectionReference(tabpanel) : '';
+    const sectionTarget = isTableOfContents ? findSectionTarget(block, sectionReference) : null;
     tabpanel.className = 'tabs-panel';
     tabpanel.id = id;
 
@@ -73,8 +93,17 @@ export default async function decorate(block) {
     control.innerHTML = tab.innerHTML;
 
     if (isTableOfContents) {
-      control.href = `#${id}`;
-      tocItems.push({ link: control, panel: tabpanel });
+      const targetId = sectionReference || id;
+
+      if (sectionTarget) {
+        sectionTarget.id = targetId;
+        hasExternalTargets = true;
+      } else {
+        tabpanel.id = targetId;
+      }
+
+      control.href = `#${targetId}`;
+      tocItems.push({ link: control, panel: sectionTarget || tabpanel });
     } else {
       control.setAttribute('aria-controls', id);
       control.setAttribute('aria-selected', !i);
@@ -93,11 +122,24 @@ export default async function decorate(block) {
     // remove the tab heading from the dom, which also removes it from the UE tree
     tab.remove();
 
+    if (isTableOfContents && tabpanel.children[0]) {
+      tabpanel.children[0].remove();
+    }
+
     // remove the instrumentation from the button's h1, h2 etc (this removes it from the tree)
     if (control.firstElementChild) {
       moveInstrumentation(control.firstElementChild, null);
     }
   });
+
+  if (isTableOfContents && hasExternalTargets) {
+    block.classList.add('links-only');
+    panelRows.forEach((panel) => {
+      if (panel.parentElement === block) {
+        panel.remove();
+      }
+    });
+  }
 
   block.prepend(tablist);
 
