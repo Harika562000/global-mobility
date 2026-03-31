@@ -79,7 +79,7 @@ function parseDefaultFilters(value) {
 
 function buildSortParam(sortBy) {
   if (!sortBy || sortBy === 'relevance') return '';
-  if (sortBy === 'date-desc') return 'date_added_dt desc';
+  if (sortBy === 'date-desc') return 'published_date_dt desc';
   return '';
 }
 
