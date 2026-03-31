@@ -225,6 +225,7 @@
         {
           "title": "Tabs",
           "id": "tabs",
+          "model": "tabs",
           "plugins": {
             "xwalk": {
               "page": {

@@ -561,6 +561,27 @@
     ]
   },
   {
+    "id": "tabs",
+    "fields": [
+      {
+        "component": "select",
+        "name": "classes",
+        "label": "Variation",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Table of Contents",
+            "value": "table-of-contents"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "tabs-item",
     "fields": [
       {

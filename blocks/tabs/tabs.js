@@ -4,63 +4,141 @@ import { moveInstrumentation } from '../../scripts/scripts.js';
 // keep track globally of the number of tab blocks on the page
 let tabBlockCnt = 0;
 
+function setActiveTab(tablist, tabpanel, button) {
+  tabpanel.parentElement.querySelectorAll('.tabs-panel').forEach((panel) => {
+    panel.setAttribute('aria-hidden', true);
+  });
+
+  tablist.querySelectorAll('button').forEach((btn) => {
+    btn.setAttribute('aria-selected', false);
+    btn.setAttribute('tabindex', '-1');
+  });
+
+  tabpanel.setAttribute('aria-hidden', false);
+  button.setAttribute('aria-selected', true);
+  button.setAttribute('tabindex', '0');
+}
+
+function setCurrentTocLink(tocItems, activeLink) {
+  tocItems.forEach(({ link }) => {
+    if (link === activeLink) {
+      link.setAttribute('aria-current', 'true');
+    } else {
+      link.removeAttribute('aria-current');
+    }
+  });
+}
+
 export default async function decorate(block) {
+  const isTableOfContents = block.classList.contains('table-of-contents');
+  const panelRows = [...block.children]
+    .filter((child) => child.firstElementChild && child.firstElementChild.children.length > 0);
+  const tocItems = [];
+
   // build tablist
-  const tablist = document.createElement('div');
+  const tablist = document.createElement(isTableOfContents ? 'nav' : 'div');
   tablist.className = 'tabs-list';
-  tablist.setAttribute('role', 'tablist');
   tablist.id = `tablist-${tabBlockCnt += 1}`;
+  if (isTableOfContents) {
+    tablist.setAttribute('aria-label', 'Table of contents');
+  } else {
+    tablist.setAttribute('role', 'tablist');
+  }
 
   // the first cell of each row is the title of the tab
-  const tabHeadings = [...block.children]
-    .filter((child) => child.firstElementChild && child.firstElementChild.children.length > 0)
-    .map((child) => child.firstElementChild);
+  const tabHeadings = panelRows.map((child) => child.firstElementChild);
 
   tabHeadings.forEach((tab, i) => {
     const id = `tabpanel-${tabBlockCnt}-tab-${i + 1}`;
 
     // decorate tabpanel
-    const tabpanel = block.children[i];
+    const tabpanel = panelRows[i];
     tabpanel.className = 'tabs-panel';
     tabpanel.id = id;
-    tabpanel.setAttribute('aria-hidden', !!i);
-    tabpanel.setAttribute('aria-labelledby', `tab-${id}`);
-    tabpanel.setAttribute('role', 'tabpanel');
 
-    // build tab button
-    const button = document.createElement('button');
-    button.className = 'tabs-tab';
-    button.id = `tab-${id}`;
+    if (isTableOfContents) {
+      tabpanel.removeAttribute('aria-hidden');
+      tabpanel.removeAttribute('aria-labelledby');
+      tabpanel.removeAttribute('role');
+    } else {
+      tabpanel.setAttribute('aria-hidden', !!i);
+      tabpanel.setAttribute('aria-labelledby', `tab-${id}`);
+      tabpanel.setAttribute('role', 'tabpanel');
+    }
 
-    button.innerHTML = tab.innerHTML;
+    // build tab control
+    const control = document.createElement(isTableOfContents ? 'a' : 'button');
+    control.className = 'tabs-tab';
+    control.id = `tab-${id}`;
+    control.innerHTML = tab.innerHTML;
 
-    button.setAttribute('aria-controls', id);
-    button.setAttribute('aria-selected', !i);
-    button.setAttribute('role', 'tab');
-    button.setAttribute('type', 'button');
+    if (isTableOfContents) {
+      control.href = `#${id}`;
+      tocItems.push({ link: control, panel: tabpanel });
+    } else {
+      control.setAttribute('aria-controls', id);
+      control.setAttribute('aria-selected', !i);
+      control.setAttribute('role', 'tab');
+      control.setAttribute('type', 'button');
+      control.setAttribute('tabindex', i ? '-1' : '0');
 
-    button.addEventListener('click', () => {
-      block.querySelectorAll('[role=tabpanel]').forEach((panel) => {
-        panel.setAttribute('aria-hidden', true);
+      control.addEventListener('click', () => {
+        setActiveTab(tablist, tabpanel, control);
       });
-      tablist.querySelectorAll('button').forEach((btn) => {
-        btn.setAttribute('aria-selected', false);
-      });
-      tabpanel.setAttribute('aria-hidden', false);
-      button.setAttribute('aria-selected', true);
-    });
+    }
 
     // add the new tab list button, to the tablist
-    tablist.append(button);
+    tablist.append(control);
 
     // remove the tab heading from the dom, which also removes it from the UE tree
     tab.remove();
 
     // remove the instrumentation from the button's h1, h2 etc (this removes it from the tree)
-    if (button.firstElementChild) {
-      moveInstrumentation(button.firstElementChild, null);
+    if (control.firstElementChild) {
+      moveInstrumentation(control.firstElementChild, null);
     }
   });
 
   block.prepend(tablist);
+
+  if (isTableOfContents && tocItems.length) {
+    const hash = window.location.hash.replace('#', '');
+    const initialItem = tocItems.find(({ panel }) => panel.id === hash) ?? tocItems[0];
+    const visiblePanels = new Map();
+
+    setCurrentTocLink(tocItems, initialItem.link);
+
+    tocItems.forEach(({ link }) => {
+      link.addEventListener('click', () => {
+        setCurrentTocLink(tocItems, link);
+      });
+    });
+
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            visiblePanels.set(entry.target.id, entry.intersectionRatio);
+          } else {
+            visiblePanels.delete(entry.target.id);
+          }
+        });
+
+        const [activePanelId] = [...visiblePanels.entries()]
+          .sort(([, firstRatio], [, secondRatio]) => secondRatio - firstRatio)[0] || [];
+        const activeItem = tocItems.find(({ panel }) => panel.id === activePanelId);
+
+        if (activeItem) {
+          setCurrentTocLink(tocItems, activeItem.link);
+        }
+      }, {
+        rootMargin: '-20% 0px -65% 0px',
+        threshold: [0.15, 0.35, 0.6],
+      });
+
+      tocItems.forEach(({ panel }) => {
+        observer.observe(panel);
+      });
+    }
+  }
 }
