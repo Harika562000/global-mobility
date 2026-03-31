@@ -43,7 +43,7 @@ function findSectionTarget(block, sectionReference) {
     ? window.CSS.escape(sectionReference)
     : sectionReference;
 
-  return pageRoot.querySelector(`.section.${escapedReference}`);
+  return pageRoot.querySelector(`.${escapedReference}`);
 }
 
 export default async function decorate(block) {
@@ -93,16 +93,16 @@ export default async function decorate(block) {
     control.innerHTML = tab.innerHTML;
 
     if (isTableOfContents) {
-      const targetId = sectionReference || id;
+      const targetId = sectionReference;
 
-      if (sectionTarget) {
+      if (sectionTarget && targetId) {
         sectionTarget.id = targetId;
         hasExternalTargets = true;
-      } else {
+      } else if (targetId) {
         tabpanel.id = targetId;
       }
 
-      control.href = `#${targetId}`;
+      control.href = targetId ? `#${targetId}` : '#';
       tocItems.push({ link: control, panel: sectionTarget || tabpanel });
     } else {
       control.setAttribute('aria-controls', id);
