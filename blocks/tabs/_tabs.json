@@ -3,14 +3,12 @@
     {
       "title": "Tabs",
       "id": "tabs",
-      "model": "tabs",
       "plugins": {
         "xwalk": {
           "page": {
             "resourceType": "core/franklin/components/block/v1/block",
             "template": {
               "name": "Tabs",
-              "model": "tabs",
               "filter": "tabs"
             }
           }
@@ -26,22 +24,9 @@
             "resourceType": "core/franklin/components/block/v1/block/item",
             "template": {
               "name": "Tab",
-              "model": "tabs-item"
-            }
-          }
-        }
-      }
-    },
-    {
-      "title": "Tabs TOC Item",
-      "id": "tabs-toc-item",
-      "plugins": {
-        "xwalk": {
-          "page": {
-            "resourceType": "core/franklin/components/block/v1/block/item",
-            "template": {
-              "name": "TOC Tab",
-              "model": "tabs-toc-item"
+              "model": "tabs-item",
+              "title": "Tab Name",
+              "content_headingType": "h3"
             }
           }
         }
@@ -50,37 +35,14 @@
   ],
   "models": [
     {
-      "id": "tabs",
-      "fields": [
-        {
-          "component": "select",
-          "name": "classes",
-          "label": "Variation",
-          "valueType": "string",
-          "value": "",
-          "options": [
-            {
-              "name": "Default",
-              "value": ""
-            },
-            {
-              "name": "TOC",
-              "value": "toc"
-            }
-          ]
-        }
-      ]
-    },
-    {
       "id": "tabs-item",
       "fields": [
         {
           "component": "text",
           "valueType": "string",
-          "name": "title",
+          "name": "tag-title",
           "value": "",
-          "label": "Tab Title",
-          "required": true
+          "label": "Tab Title"
         },
         {
           "component": "text",
@@ -129,36 +91,13 @@
           "valueType": "string"
         }
       ]
-    },
-    {
-      "id": "tabs-toc-item",
-      "fields": [
-        {
-          "component": "text",
-          "valueType": "string",
-          "name": "title",
-          "value": "",
-          "label": "Tab Title",
-          "required": true
-        },
-        {
-          "component": "text",
-          "valueType": "string",
-          "name": "content_target",
-          "value": "",
-          "label": "Section Target",
-          "description": "Example: hero-container, hero-container-2, section1.",
-          "required": true
-        }
-      ]
     }
   ],
   "filters": [
     {
       "id": "tabs",
       "components": [
-        "tabs-item",
-        "tabs-toc-item"
+        "tabs-item"
       ]
     }
   ]

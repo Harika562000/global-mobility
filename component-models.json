@@ -561,37 +561,14 @@
     ]
   },
   {
-    "id": "tabs",
-    "fields": [
-      {
-        "component": "select",
-        "name": "classes",
-        "label": "Variation",
-        "valueType": "string",
-        "value": "",
-        "options": [
-          {
-            "name": "Default",
-            "value": ""
-          },
-          {
-            "name": "TOC",
-            "value": "toc"
-          }
-        ]
-      }
-    ]
-  },
-  {
     "id": "tabs-item",
     "fields": [
       {
         "component": "text",
         "valueType": "string",
-        "name": "title",
+        "name": "tag-title",
         "value": "",
-        "label": "Tab Title",
-        "required": true
+        "label": "Tab Title"
       },
       {
         "component": "text",
@@ -638,28 +615,6 @@
         "value": "",
         "label": "Content",
         "valueType": "string"
-      }
-    ]
-  },
-  {
-    "id": "tabs-toc-item",
-    "fields": [
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "title",
-        "value": "",
-        "label": "Tab Title",
-        "required": true
-      },
-      {
-        "component": "text",
-        "valueType": "string",
-        "name": "content_target",
-        "value": "",
-        "label": "Section Target",
-        "description": "Example: hero-container, hero-container-2, section1.",
-        "required": true
       }
     ]
   }

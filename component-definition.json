@@ -225,14 +225,12 @@
         {
           "title": "Tabs",
           "id": "tabs",
-          "model": "tabs",
           "plugins": {
             "xwalk": {
               "page": {
                 "resourceType": "core/franklin/components/block/v1/block",
                 "template": {
                   "name": "Tabs",
-                  "model": "tabs",
                   "filter": "tabs"
                 }
               }
@@ -248,22 +246,9 @@
                 "resourceType": "core/franklin/components/block/v1/block/item",
                 "template": {
                   "name": "Tab",
-                  "model": "tabs-item"
-                }
-              }
-            }
-          }
-        },
-        {
-          "title": "Tabs TOC Item",
-          "id": "tabs-toc-item",
-          "plugins": {
-            "xwalk": {
-              "page": {
-                "resourceType": "core/franklin/components/block/v1/block/item",
-                "template": {
-                  "name": "TOC Tab",
-                  "model": "tabs-toc-item"
+                  "model": "tabs-item",
+                  "title": "Tab Name",
+                  "content_headingType": "h3"
                 }
               }
             }

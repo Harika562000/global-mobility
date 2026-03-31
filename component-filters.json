@@ -51,8 +51,7 @@
   {
     "id": "tabs",
     "components": [
-      "tabs-item",
-      "tabs-toc-item"
+      "tabs-item"
     ]
   }
 ]
