@@ -48,7 +48,7 @@
 
 
 .tabs .tabs-list .tabs-tab[aria-selected='true'] {
-  border-bottom: 1px solid var(--background-color);
+  border-bottom: 4px solid var(--link-color);
   background-color: var(--background-color);
   cursor: initial;
 }
@@ -77,13 +77,10 @@
   flex-direction: column;
   gap: var(--spacing-100);
   overflow: visible;
-  padding-left: var(--spacing-500);
-  border-left: 1px solid var(--color-grey-200);
   font-size: var(--body-font-size-s);
 }
 
 .tabs.table-of-contents .tabs-list .tabs-tab {
-  position: relative;
   flex: none;
   border: 0;
   padding: var(--spacing-300) 0;
@@ -91,18 +88,6 @@
   color: var(--text-color-secondary);
   font-family: var(--font-family-accent);
   font-weight: var(--font-weight-regular);
-}
-
-.tabs.table-of-contents .tabs-list .tabs-tab::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: calc(var(--spacing-500) * -1);
-  width: var(--spacing-300);
-  height: 1px;
-  background-color: var(--color-grey-300);
-  transform: translateY(-50%);
-  transition: width 0.2s ease, height 0.2s ease, background-color 0.2s ease;
 }
 
 .tabs.table-of-contents .tabs-list .tabs-tab:hover {
@@ -114,12 +99,9 @@
 .tabs.table-of-contents .tabs-list .tabs-tab[aria-current='true'] {
   color: var(--text-color);
   font-weight: var(--font-weight-medium);
-}
-
-.tabs.table-of-contents .tabs-list .tabs-tab[aria-current='true']::before {
-  width: var(--spacing-500);
-  height: 2px;
-  background-color: var(--link-color);
+  text-decoration: underline;
+  text-decoration-thickness: 4px;
+  text-underline-offset: 8px;
 }
 
 .tabs.table-of-contents .tabs-panel {
