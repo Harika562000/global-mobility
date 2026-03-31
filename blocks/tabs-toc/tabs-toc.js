@@ -1,94 +1,13 @@
 import { toClassName } from '../../scripts/aem.js';
-// eslint-disable-next-line import/no-unresolved
 import { moveInstrumentation } from '../../scripts/scripts.js';
-
-// keep track globally of the number of tab blocks on the page
-let tabBlockCnt = 0;
-
-function isClassesConfigRow(cells) {
-  if (cells.length < 2) return false;
-  return cells[0].textContent.trim().toLowerCase() === 'classes';
-}
-
-function getRowCells(row) {
-  return [...row.children].filter((cell) => cell.tagName === 'DIV');
-}
-
-function getRows(block) {
-  return [...block.children]
-    .filter((row) => {
-      const cells = getRowCells(row);
-      return cells.length >= 2 && !isClassesConfigRow(cells);
-    });
-}
-
-function decorateDefaultTabs(block) {
-  const tabRows = getRows(block)
-    .filter((row) => row.firstElementChild && row.firstElementChild.children.length > 0);
-
-  if (!tabRows.length) {
-    block.textContent = '';
-    return;
-  }
-
-  const tablist = document.createElement('div');
-  tablist.className = 'tabs-list';
-  tablist.setAttribute('role', 'tablist');
-  tablist.id = `tablist-${tabBlockCnt += 1}`;
-
-  tabRows.forEach((tabpanel, i) => {
-    const tab = tabpanel.firstElementChild;
-    const id = `tabpanel-${tabBlockCnt}-tab-${i + 1}`;
-
-    tabpanel.className = 'tabs-panel';
-    tabpanel.id = id;
-    tabpanel.setAttribute('aria-hidden', i ? 'true' : 'false');
-    tabpanel.setAttribute('aria-labelledby', `tab-${id}`);
-    tabpanel.setAttribute('role', 'tabpanel');
-
-    const button = document.createElement('button');
-    button.className = 'tabs-tab';
-    button.id = `tab-${id}`;
-    button.innerHTML = tab.innerHTML;
-    button.setAttribute('aria-controls', id);
-    button.setAttribute('aria-selected', i ? 'false' : 'true');
-    button.setAttribute('role', 'tab');
-    button.setAttribute('type', 'button');
-
-    button.addEventListener('click', () => {
-      block.querySelectorAll('[role=tabpanel]').forEach((panel) => {
-        panel.setAttribute('aria-hidden', 'true');
-      });
-
-      tablist.querySelectorAll('button').forEach((btn) => {
-        btn.setAttribute('aria-selected', 'false');
-      });
-
-      tabpanel.setAttribute('aria-hidden', 'false');
-      button.setAttribute('aria-selected', 'true');
-    });
-
-    tablist.append(button);
-    tab.remove();
-
-    if (button.firstElementChild) {
-      moveInstrumentation(button.firstElementChild, null);
-    }
-  });
-
-  block.prepend(tablist);
-}
 
 function normalizeTargetValue(value = '') {
   const cleanedValue = value
     .trim()
-    .split('\n')
-    .map((line) => line.trim())
-    .find(Boolean)
-    ?.replace(/^#/, '')
+    .replace(/^#/, '')
     .replace(/^section\./i, '');
 
-  return toClassName(cleanedValue || '');
+  return toClassName(cleanedValue);
 }
 
 function parseTarget(targetToken) {
@@ -205,10 +124,18 @@ function scrollToTarget(targetId) {
   return true;
 }
 
-function readTocRows(block) {
-  return getRows(block)
+function isClassesConfigRow(cells) {
+  if (cells.length < 2) return false;
+  return cells[0].textContent.trim().toLowerCase() === 'classes';
+}
+
+function readTabRows(block) {
+  return [...block.children]
     .map((row) => {
-      const [titleCell, targetCell] = getRowCells(row);
+      const cells = [...row.children].filter((cell) => cell.tagName === 'DIV');
+      if (cells.length < 2 || isClassesConfigRow(cells)) return null;
+
+      const [titleCell, targetCell] = cells;
       const title = titleCell.textContent.trim();
       const target = normalizeTargetValue(targetCell.textContent);
       if (!title || !target) return null;
@@ -222,8 +149,8 @@ function readTocRows(block) {
     .filter(Boolean);
 }
 
-function decorateTocTabs(block) {
-  const rowData = readTocRows(block);
+export default function decorate(block) {
+  const rowData = readTabRows(block);
   if (!rowData.length) {
     block.textContent = '';
     return;
@@ -244,7 +171,7 @@ function decorateTocTabs(block) {
 
     if (!resolvedTarget) {
       // eslint-disable-next-line no-console
-      console.warn(`[tabs] No section found for target "${target}".`);
+      console.warn(`[tabs-toc] No section found for target "${target}".`);
       return;
     }
 
@@ -289,13 +216,4 @@ function decorateTocTabs(block) {
       window.history.replaceState(null, '', `#${targetId}`);
     }
   });
-}
-
-export default function decorate(block) {
-  if (block.classList.contains('toc') || block.classList.contains('table-of-content')) {
-    decorateTocTabs(block);
-    return;
-  }
-
-  decorateDefaultTabs(block);
 }

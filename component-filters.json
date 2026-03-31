@@ -48,9 +48,15 @@
     ]
   },
   {
-    "id": "tabs",
+    "id": "tabs-toc",
     "components": [
       "tab-item"
+    ]
+  },
+  {
+    "id": "tabs",
+    "components": [
+      "tabs-item"
     ]
   }
 ]
