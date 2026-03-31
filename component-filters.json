@@ -18,8 +18,7 @@
       "columns",
       "accordion",
       "fragment",
-      "tabs",
-      "tabs-toc"
+      "tabs"
     ]
   },
   {
@@ -47,12 +46,6 @@
       "image",
       "button",
       "title"
-    ]
-  },
-  {
-    "id": "tabs-toc",
-    "components": [
-      "tab-item"
     ]
   },
   {

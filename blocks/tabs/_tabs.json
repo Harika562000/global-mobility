@@ -63,7 +63,7 @@
         {
           "component": "text",
           "valueType": "string",
-          "name": "tag-title",
+          "name": "title",
           "value": "",
           "label": "Tab Title"
         },
