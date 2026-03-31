@@ -115,7 +115,7 @@
   content: '';
   position: absolute;
   right: 0;
-  bottom: -2px;
+  bottom: 0px;
   left: 0;
   height: 3px;
   border-radius: 3px;
@@ -126,7 +126,7 @@
   margin-top: 0;
   padding: 0 0 40px;
   border: 0;
-  scroll-margin-top: 88px;
+  scroll-margin-top: 96px;
 }
 
 .tabs.table-of-contents .tabs-panel:last-child {
@@ -144,7 +144,7 @@
 
   .tabs.table-of-contents .tabs-list {
     position: sticky;
-    top: 88px;
+    top: 96px;
     align-self: flex-start;
   }
 

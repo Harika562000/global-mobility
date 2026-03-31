@@ -153,7 +153,19 @@ export default async function decorate(block) {
     setCurrentTocLink(tocItems, initialItem.link);
 
     tocItems.forEach(({ link }) => {
-      link.addEventListener('click', () => {
+      link.addEventListener('click', (event) => {
+        const targetId = link.getAttribute('href')?.replace('#', '');
+        const targetElement = targetId ? document.getElementById(targetId) : null;
+
+        if (targetElement) {
+          event.preventDefault();
+          targetElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+          });
+          window.history.replaceState(null, '', `#${targetId}`);
+        }
+
         setCurrentTocLink(tocItems, link);
       });
     });
