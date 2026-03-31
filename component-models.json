@@ -596,40 +596,9 @@
       {
         "component": "text",
         "valueType": "string",
-        "name": "content_target",
-        "value": "",
-        "label": "Section Target",
-        "description": "For TOC variation only. Example: hero-container, hero-container-2, section1.",
-        "required": true,
-        "condition": {
-          "===": [
-            {
-              "var": [
-                "classes",
-                ""
-              ]
-            },
-            "toc"
-          ]
-        }
-      },
-      {
-        "component": "text",
-        "valueType": "string",
         "name": "content_heading",
         "value": "",
-        "label": "Heading",
-        "condition": {
-          "!==": [
-            {
-              "var": [
-                "classes",
-                ""
-              ]
-            },
-            "toc"
-          ]
-        }
+        "label": "Heading"
       },
       {
         "component": "select",
@@ -637,17 +606,6 @@
         "name": "content_headingType",
         "value": "",
         "label": "Heading Type",
-        "condition": {
-          "!==": [
-            {
-              "var": [
-                "classes",
-                ""
-              ]
-            },
-            "toc"
-          ]
-        },
         "options": [
           {
             "name": "H3",
@@ -672,36 +630,36 @@
         "valueType": "string",
         "name": "content_image",
         "label": "Image",
-        "multi": false,
-        "condition": {
-          "!==": [
-            {
-              "var": [
-                "classes",
-                ""
-              ]
-            },
-            "toc"
-          ]
-        }
+        "multi": false
       },
       {
         "component": "richtext",
         "name": "content_richtext",
         "value": "",
         "label": "Content",
+        "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "tabs-toc-item",
+    "fields": [
+      {
+        "component": "text",
         "valueType": "string",
-        "condition": {
-          "!==": [
-            {
-              "var": [
-                "classes",
-                ""
-              ]
-            },
-            "toc"
-          ]
-        }
+        "name": "title",
+        "value": "",
+        "label": "Tab Title",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "content_target",
+        "value": "",
+        "label": "Section Target",
+        "description": "Example: hero-container, hero-container-2, section1.",
+        "required": true
       }
     ]
   }

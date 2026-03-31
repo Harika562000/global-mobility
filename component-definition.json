@@ -253,6 +253,21 @@
               }
             }
           }
+        },
+        {
+          "title": "Tabs TOC Item",
+          "id": "tabs-toc-item",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "TOC Tab",
+                  "model": "tabs-toc-item"
+                }
+              }
+            }
+          }
         }
       ]
     }
