@@ -648,6 +648,13 @@
         "name": "tag-title",
         "value": "",
         "label": "Tab Title"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "section-reference-text",
+        "value": "",
+        "label": "Section Reference Text"
       }
     ]
   }
