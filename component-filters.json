@@ -17,7 +17,9 @@
       "cards",
       "columns",
       "accordion",
-      "fragment"
+      "fragment",
+      "tabs",
+      "tabs-toc"
     ]
   },
   {
