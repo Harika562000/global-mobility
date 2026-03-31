@@ -50,11 +50,5 @@
       "button",
       "title"
     ]
-  },
-  {
-    "id": "customer-stories",
-    "components": [
-      "fragment"
-    ]
   }
 ]
