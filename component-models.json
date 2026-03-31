@@ -596,18 +596,7 @@
         "valueType": "string",
         "name": "content_heading",
         "value": "",
-        "label": "Heading",
-        "condition": {
-          "===": [
-            {
-              "var": [
-                "classes",
-                ""
-              ]
-            },
-            ""
-          ]
-        }
+        "label": "Heading"
       },
       {
         "component": "select",
@@ -615,17 +604,6 @@
         "name": "content_headingType",
         "value": "",
         "label": "Heading Type",
-        "condition": {
-          "===": [
-            {
-              "var": [
-                "classes",
-                "table-of-contents"
-              ]
-            },
-            ""
-          ]
-        },
         "options": [
           {
             "name": "H3",
@@ -650,36 +628,26 @@
         "valueType": "string",
         "name": "content_image",
         "label": "Image",
-        "multi": false,
-        "condition": {
-          "===": [
-            {
-              "var": [
-                "classes",
-                ""
-              ]
-            },
-            ""
-          ]
-        }
+        "multi": false
       },
       {
         "component": "richtext",
         "name": "content_richtext",
         "value": "",
         "label": "Content",
+        "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "tabs-toc-item",
+    "fields": [
+      {
+        "component": "text",
         "valueType": "string",
-        "condition": {
-          "===": [
-            {
-              "var": [
-                "classes",
-                ""
-              ]
-            },
-            ""
-          ]
-        }
+        "name": "tag-title",
+        "value": "",
+        "label": "Tab Title"
       }
     ]
   }
