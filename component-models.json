@@ -598,7 +598,7 @@
         "value": "",
         "label": "Heading",
         "condition": {
-          "!==": [
+          "===": [
             {
               "var": [
                 "classes",
@@ -620,7 +620,7 @@
             {
               "var": [
                 "classes",
-                ""
+                "table-of-contents"
               ]
             },
             ""
