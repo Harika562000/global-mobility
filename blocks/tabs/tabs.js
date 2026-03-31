@@ -68,16 +68,18 @@ function findSectionTarget(block, sectionReference) {
 
 export default async function decorate(block) {
   const isTableOfContents = block.classList.contains('table-of-contents');
+  const isAuthorMode = !!document.querySelector('[data-aue-resource]')
+    || !!document.querySelector('script[src$="/scripts/editor-support.js"]');
   const panelRows = [...block.children]
     .filter((child) => child.firstElementChild && child.firstElementChild.children.length > 0);
   const tocItems = [];
   let hasExternalTargets = false;
 
   // build tablist
-  const tablist = document.createElement(isTableOfContents ? 'nav' : 'div');
+  const tablist = document.createElement(isTableOfContents && !isAuthorMode ? 'nav' : 'div');
   tablist.className = 'tabs-list';
   tablist.id = `tablist-${tabBlockCnt += 1}`;
-  if (isTableOfContents) {
+  if (isTableOfContents && !isAuthorMode) {
     tablist.setAttribute('aria-label', 'Table of contents');
   } else {
     tablist.setAttribute('role', 'tablist');
@@ -96,7 +98,7 @@ export default async function decorate(block) {
     tabpanel.className = 'tabs-panel';
     tabpanel.id = id;
 
-    if (isTableOfContents) {
+    if (isTableOfContents && !isAuthorMode) {
       tabpanel.removeAttribute('aria-hidden');
       tabpanel.removeAttribute('aria-labelledby');
       tabpanel.removeAttribute('role');
@@ -107,12 +109,12 @@ export default async function decorate(block) {
     }
 
     // build tab control
-    const control = document.createElement(isTableOfContents ? 'a' : 'button');
+    const control = document.createElement(isTableOfContents && !isAuthorMode ? 'a' : 'button');
     control.className = 'tabs-tab';
     control.id = `tab-${id}`;
     control.innerHTML = tab.innerHTML;
 
-    if (isTableOfContents) {
+    if (isTableOfContents && !isAuthorMode) {
       const targetId = sectionReference;
 
       if (sectionTarget && targetId) {
@@ -142,7 +144,7 @@ export default async function decorate(block) {
     // remove the tab heading from the dom, which also removes it from the UE tree
     tab.remove();
 
-    if (isTableOfContents && tabpanel.children[0]) {
+    if (isTableOfContents && !isAuthorMode && tabpanel.children[0]) {
       tabpanel.children[0].remove();
     }
 
@@ -152,7 +154,7 @@ export default async function decorate(block) {
     }
   });
 
-  if (isTableOfContents && hasExternalTargets) {
+  if (isTableOfContents && !isAuthorMode && hasExternalTargets) {
     block.classList.add('links-only');
     panelRows.forEach((panel) => {
       if (panel.parentElement === block) {
