@@ -72,7 +72,18 @@
           "valueType": "string",
           "name": "content_heading",
           "value": "",
-          "label": "Heading"
+          "label": "Heading",
+          "condition": {
+            "===": [
+              {
+                "var": [
+                  "classes",
+                  ""
+                ]
+              },
+              ""
+            ]
+          }
         },
         {
           "component": "select",
@@ -80,6 +91,17 @@
           "name": "content_headingType",
           "value": "",
           "label": "Heading Type",
+          "condition": {
+            "===": [
+              {
+                "var": [
+                  "classes",
+                  ""
+                ]
+              },
+              ""
+            ]
+          },
           "options": [
             {
               "name": "H3",
@@ -104,14 +126,36 @@
           "valueType": "string",
           "name": "content_image",
           "label": "Image",
-          "multi": false
+          "multi": false,
+          "condition": {
+            "===": [
+              {
+                "var": [
+                  "classes",
+                  ""
+                ]
+              },
+              ""
+            ]
+          }
         },
         {
           "component": "richtext",
           "name": "content_richtext",
           "value": "",
           "label": "Content",
-          "valueType": "string"
+          "valueType": "string",
+          "condition": {
+            "===": [
+              {
+                "var": [
+                  "classes",
+                  ""
+                ]
+              },
+              ""
+            ]
+          }
         }
       ]
     }
