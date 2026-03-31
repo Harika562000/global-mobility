@@ -8,6 +8,8 @@
 .dynamic-module-prev-next {
   box-sizing: border-box;
   width: 100%;
+  padding-top: var(--spacing-600);
+  padding-bottom: var(--spacing-600);
   max-width: var(--responsive-content-box);
 }
 
@@ -30,7 +32,7 @@
   background-color: var(--typography-black);
 }
 
-a:any-link.dm-prev-next-link {
+.dm-prev-next-link {
   box-sizing: border-box;
   display: inline-flex;
   align-items: center;
@@ -43,6 +45,10 @@ a:any-link.dm-prev-next-link {
   font-weight: var(--body-400-bold-weight);
   line-height: var(--body-400-bold-line-height);
   letter-spacing: var(--letter-spacing-tight);
+}
+
+a:any-link.dm-prev-next-link {
+  color: var(--typography-black);
   cursor: pointer;
 }
 

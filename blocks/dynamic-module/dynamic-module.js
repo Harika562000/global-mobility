@@ -41,20 +41,15 @@ function getHrefLikeFromScope(scope) {
 }
 
 function readPrevNextLinksFromBlockDom(block) {
-  // Pattern: direct child rows that each contain a link, no "Previous link / Next link" label column
-  // (authoring often outputs two stacked cells like <div><div><p><a href>…</a></p></div></div>).
+  // Pattern: direct child rows for [Previous, Next] values.
+  // Authoring can output empty row content for one side, so preserve row order instead of
+  // filtering to only rows that currently contain links.
   const topRows = [...block.children].filter((n) => n instanceof HTMLElement && n.tagName === 'DIV');
-  const linkRows = topRows.filter((row) => row.querySelector('a[href], a[data-href]'));
-  if (linkRows.length >= 2) {
-    const pickHref = (row) => {
-      const a = row.querySelector('a[href], a[data-href]');
-      if (!a) return '';
-      const h = a.getAttribute('href') || a.getAttribute('data-href') || a.href;
-      return resolvePossiblyRelativeUrl(h);
-    };
+  if (topRows.length >= 2) {
+    const pickHref = (row) => getHrefLikeFromScope(row);
     return {
-      prevUrl: pickHref(linkRows[0]),
-      nextUrl: pickHref(linkRows[1]),
+      prevUrl: pickHref(topRows[0]),
+      nextUrl: pickHref(topRows[1]),
     };
   }
 
