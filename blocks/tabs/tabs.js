@@ -33,17 +33,37 @@ function getSectionReference(row) {
   return row.children[1]?.textContent.trim() || '';
 }
 
+function parseSectionReference(sectionReference) {
+  const match = sectionReference.match(/^(.*)_(\d+)$/);
+
+  if (!match) {
+    return {
+      selectorName: sectionReference,
+      targetId: sectionReference,
+      pointerIndex: 0,
+    };
+  }
+
+  return {
+    selectorName: match[1],
+    targetId: sectionReference,
+    pointerIndex: Math.max(Number.parseInt(match[2], 10) - 1, 0),
+  };
+}
+
 function findSectionTarget(block, sectionReference) {
   if (!sectionReference) {
     return null;
   }
 
   const pageRoot = block.closest('main') || document;
+  const { selectorName, pointerIndex } = parseSectionReference(sectionReference);
   const escapedReference = window.CSS?.escape
-    ? window.CSS.escape(sectionReference)
-    : sectionReference;
+    ? window.CSS.escape(selectorName)
+    : selectorName;
+  const matchingTargets = [...pageRoot.querySelectorAll(`.${escapedReference}`)];
 
-  return pageRoot.querySelector(`.${escapedReference}`);
+  return matchingTargets[pointerIndex] || null;
 }
 
 export default async function decorate(block) {
