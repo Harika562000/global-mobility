@@ -44,6 +44,32 @@ export function getTagClasses(variation) {
 }
 
 /**
+ * Authoring/tag pickers can output a full tag path or ID (e.g. "/content/cq:tags/.../foo-bar"
+ * or "mobility-global:foo-bar"). For display, keep only the final token.
+ * @param {string} input
+ * @returns {string}
+ */
+export function getDisplayTagValue(input) {
+  const raw = (input || '').toString().trim();
+  if (!raw) return '';
+
+  // Common case: full repository path.
+  if (raw.includes('/')) {
+    const parts = raw.split('/').filter(Boolean);
+    const last = parts[parts.length - 1] || '';
+    return last || raw;
+  }
+
+  // Alternate case: namespaced tag id.
+  if (raw.includes(':')) {
+    const last = raw.split(':').filter(Boolean).pop();
+    return last || raw;
+  }
+
+  return raw;
+}
+
+/**
  * Decorates nested tag tables inside a container (e.g. Hero, sections).
  * Finds tables with row1 = "tag (tag-dark)", row2 = label text, replaces each with a tag span.
  *
@@ -63,13 +89,48 @@ export function decorateTags(container) {
 
     const variation = tagMatch[1] ? tagMatch[1].trim() : '';
     const contentCell = trs[1].querySelector('td, th');
-    const content = contentCell ? contentCell.textContent.trim() : '';
+    const content = contentCell ? getDisplayTagValue(contentCell.textContent) : '';
     if (!content) return;
 
     const span = document.createElement('span');
     span.className = getTagClasses(variation);
     span.textContent = content;
     table.replaceWith(span);
+  });
+}
+
+/**
+ * Normalize AEM taxonomy metas (aem-tag picker output) from full tag IDs/paths to
+ * just the final token, e.g.:
+ * - "mobility-global:.../dashboard-module" -> "dashboard-module"
+ * - "/content/cq:tags/.../dashboard-module" -> "dashboard-module"
+ *
+ * This rewrites the `<meta content="...">` so DevTools/SEO tools see the short value.
+ */
+function normalizeAemTagMetadata(doc = document) {
+  const metas = [...doc.head.querySelectorAll('meta[name]')];
+  metas.forEach((m) => {
+    const raw = (m.getAttribute('content') || '').trim();
+    if (!raw) return;
+
+    // Avoid touching URLs (og:image etc).
+    if (/^https?:\/\//i.test(raw)) return;
+
+    // Only normalize values that look like AEM tag ids/paths.
+    const looksLikeAemTag = raw.includes('/content/cq:tags/')
+      || ((/^[a-z0-9-]+:/i.test(raw)) && raw.includes('/'));
+    if (!looksLikeAemTag) return;
+
+    // Support multi-valued metas ("a, b, c").
+    const normalized = raw
+      .split(',')
+      .map((v) => getDisplayTagValue(v))
+      .filter(Boolean)
+      .join(', ');
+
+    if (normalized && normalized !== raw) {
+      m.setAttribute('content', normalized);
+    }
   });
 }
 
@@ -177,6 +238,7 @@ export function decorateMain(main) {
  */
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
+  normalizeAemTagMetadata(doc);
   decorateTemplateAndTheme();
   if (getMetadata('breadcrumbs').toLowerCase() === 'true') {
     doc.body.dataset.breadcrumbs = true;
