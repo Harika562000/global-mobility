@@ -1543,6 +1543,25 @@
     ]
   },
   {
+    "id": "overview",
+    "fields": [
+      {
+        "component": "text",
+        "name": "overview-tab",
+        "label": "Overview Tab Label",
+        "valueType": "string",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "name": "fullview-tab",
+        "label": "Fullview Tab Label",
+        "valueType": "string",
+        "value": ""
+      }
+    ]
+  },
+  {
     "id": "search-results",
     "fields": [
       {

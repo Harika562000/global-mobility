@@ -1,0 +1,370 @@
+import { readBlockConfig, toClassName } from '../../scripts/aem.js';
+import { createOverviewSwitcher } from '../../atomic/switcher/overview-switcher.js';
+
+const DEFAULT_OVERVIEW_LABEL = 'Overview';
+const DEFAULT_FULLVIEW_LABEL = 'Full View';
+
+let overviewBlockIdx = 0;
+
+function getOverviewSection(block) {
+  const section = block.closest('.section');
+  if (!section) return null;
+  section.classList.add('overview-container');
+  return section;
+}
+
+/** `main` in Franklin; fallback to section parent for page-level show/hide. */
+function getOverviewPageRoot(section) {
+  if (!section) return null;
+  return section.closest('main') || section.parentElement;
+}
+
+function isAuthoringChrome() {
+  return document.documentElement.hasAttribute('data-aue-edit');
+}
+
+function labelFromUeRow(row, prop) {
+  const el = row.querySelector(`[data-aue-prop="${prop}" i]`);
+  return (el?.textContent || '').trim();
+}
+
+function partitionBlockRows(block) {
+  const rows = [...block.querySelectorAll(':scope > div')];
+  let overviewLabel = '';
+  let fullviewLabel = '';
+  const contentRows = [];
+
+  rows.forEach((row) => {
+    const o = labelFromUeRow(row, 'overview-tab');
+    const f = labelFromUeRow(row, 'fullview-tab');
+    if (o) {
+      overviewLabel = o;
+      return;
+    }
+    if (f) {
+      fullviewLabel = f;
+      return;
+    }
+
+    const cells = [...row.children];
+    if (cells.length >= 2) {
+      const key = toClassName(cells[0].textContent);
+      if (
+        key === 'overview-tab'
+        || key === 'fullview-tab'
+        || key === 'overview-tab-label'
+        || key === 'fullview-tab-label'
+      ) {
+        const val = (cells[1].textContent || '').trim();
+        if (key.includes('overview')) overviewLabel = val || overviewLabel;
+        if (key.includes('fullview')) fullviewLabel = val || fullviewLabel;
+        return;
+      }
+    }
+
+    contentRows.push(row);
+  });
+
+  const cfg = readBlockConfig(block);
+  if (!overviewLabel) {
+    overviewLabel = cfg['overview-tab']
+      || cfg['overview-tab-label']
+      || DEFAULT_OVERVIEW_LABEL;
+  }
+  if (!fullviewLabel) {
+    fullviewLabel = cfg['fullview-tab']
+      || cfg['fullview-tab-label']
+      || DEFAULT_FULLVIEW_LABEL;
+  }
+
+  return { overviewLabel, fullviewLabel, contentRows };
+}
+
+/** Explicit slot from data attribute (preferred in UE). */
+function slotFromDataset(row) {
+  const raw = row.getAttribute('data-overview-slot')?.trim().toLowerCase();
+  if (!raw) return null;
+  if (raw === 'fullview') return 'fullview';
+  if (raw === 'hero' || raw === 'stat' || raw === 'insights' || raw === 'products' || raw === 'contact') {
+    return raw;
+  }
+  if (raw === 'card' || raw.startsWith('card-')) return 'card';
+  return null;
+}
+
+/** Infer slot from first column label (Franklin-style rows). */
+function slotFromFirstCell(row) {
+  const first = row.querySelector(':scope > div:first-child');
+  const key = (first?.textContent || '').trim().toLowerCase().replace(/\s+/g, ' ');
+  if (!key) return null;
+  if (key === 'full view' || key === 'fullview') return 'fullview';
+  if (key === 'hero' || key === 'hero copy') return 'hero';
+  if (key === 'stat' || key === 'credibility' || key === 'stats') return 'stat';
+  if (key === 'card' || /^card\s*\d*$/.test(key) || key.startsWith('action card')) return 'card';
+  if (key.includes('insight')) return 'insights';
+  if (key.includes('product')) return 'products';
+  if (key.includes('contact') || key.includes('question')) return 'contact';
+  return null;
+}
+
+/**
+ * Pull authored cell content into a wrapper. If labeled row, drop first column.
+ */
+function rowToContentFragment(row, stripLabel) {
+  const cells = [...row.querySelectorAll(':scope > div')];
+  const frag = document.createElement('div');
+  frag.className = 'overview-slot-inner';
+  const start = stripLabel && cells.length >= 2 ? 1 : 0;
+  for (let i = start; i < cells.length; i += 1) {
+    frag.append(...[...cells[i].childNodes]);
+  }
+  return frag;
+}
+
+function parseLayoutRows(contentRows) {
+  const slots = {
+    hero: null,
+    stat: null,
+    cards: [],
+    insights: null,
+    products: null,
+    contact: null,
+  };
+  const fullviewFragments = [];
+  const pending = [];
+
+  contentRows.forEach((row) => {
+    const fromData = slotFromDataset(row);
+    const fromCell = slotFromFirstCell(row);
+    const slot = fromData || fromCell;
+    const stripLabel = !fromData && !!fromCell;
+
+    if (slot === 'fullview') {
+      fullviewFragments.push(rowToContentFragment(row, stripLabel));
+      return;
+    }
+
+    if (slot === 'hero') {
+      slots.hero = rowToContentFragment(row, stripLabel);
+      return;
+    }
+    if (slot === 'stat') {
+      slots.stat = rowToContentFragment(row, stripLabel);
+      return;
+    }
+    if (slot === 'card') {
+      slots.cards.push(rowToContentFragment(row, stripLabel));
+      return;
+    }
+    if (slot === 'insights') {
+      slots.insights = rowToContentFragment(row, stripLabel);
+      return;
+    }
+    if (slot === 'products') {
+      slots.products = rowToContentFragment(row, stripLabel);
+      return;
+    }
+    if (slot === 'contact') {
+      slots.contact = rowToContentFragment(row, stripLabel);
+      return;
+    }
+
+    pending.push(row);
+  });
+
+  let i = 0;
+  if (!slots.hero && i < pending.length) {
+    slots.hero = rowToContentFragment(pending[i], false);
+    i += 1;
+  }
+  if (!slots.stat && i < pending.length) {
+    slots.stat = rowToContentFragment(pending[i], false);
+    i += 1;
+  }
+  while (slots.cards.length < 4 && i < pending.length) {
+    slots.cards.push(rowToContentFragment(pending[i], false));
+    i += 1;
+  }
+  if (!slots.insights && i < pending.length) {
+    slots.insights = rowToContentFragment(pending[i], false);
+    i += 1;
+  }
+  if (!slots.products && i < pending.length) {
+    slots.products = rowToContentFragment(pending[i], false);
+    i += 1;
+  }
+  if (!slots.contact && i < pending.length) {
+    slots.contact = rowToContentFragment(pending[i], false);
+    i += 1;
+  }
+  while (i < pending.length) {
+    fullviewFragments.push(rowToContentFragment(pending[i], false));
+    i += 1;
+  }
+
+  return { slots, fullviewFragments };
+}
+
+function findHeroEmAccentContent(pageRoot) {
+  if (!pageRoot) return null;
+  return pageRoot.querySelector('.section:not(.overview-container) .hero .hero-em-accent-content');
+}
+
+/**
+ * Clone `hero-em-accent-content` from the Full View hero into the overview hero column:
+ * inserted in `.overview-hero-main` before `.overview-hero-copy` (under `.overview-hero-inner`).
+ */
+function scheduleInjectHeroEmAccentContent(pageRoot, panelOverview) {
+  const heroMain = panelOverview.querySelector('.overview-hero-main');
+  if (!heroMain) return;
+
+  let done = false;
+  const tryInject = () => {
+    if (done) return true;
+    if (heroMain.querySelector('.overview-hero-em-accent-clone')) {
+      done = true;
+      return true;
+    }
+    const source = findHeroEmAccentContent(pageRoot);
+    if (!source) return false;
+
+    const clone = source.cloneNode(true);
+    clone.classList.add('overview-hero-em-accent-clone');
+    clone.querySelectorAll('[id]').forEach((el) => el.removeAttribute('id'));
+
+    const header = clone.querySelector('h1');
+    const h2 = document.createElement('h2');
+    h2.innerHTML = header.innerHTML;
+
+    heroMain.append(h2);
+    done = true;
+    return true;
+  };
+
+  let frames = 0;
+  const tick = () => {
+    frames += 1;
+    if (tryInject() || frames > 100) return;
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+  window.addEventListener('load', tryInject, { once: true });
+}
+
+function buildOverviewLayout(slots) {
+  const hero = document.createElement('div');
+  hero.className = 'overview-hero';
+
+  const heroInner = document.createElement('div');
+  heroInner.className = 'overview-hero-inner';
+
+  const heroMain = document.createElement('div');
+  heroMain.className = 'overview-hero-main';
+
+  const copy = document.createElement('div');
+  copy.className = 'overview-hero-copy';
+  if (slots.hero?.childNodes.length) copy.appendChild(slots.hero);
+  heroMain.appendChild(copy);
+
+  const stat = document.createElement('aside');
+  stat.className = 'overview-hero-stat';
+  if (slots.stat?.childNodes.length) stat.appendChild(slots.stat);
+
+  heroInner.append(heroMain, stat);
+  hero.appendChild(heroInner);
+
+  const main = document.createElement('div');
+  main.className = 'overview-main';
+
+  const rowCards = document.createElement('div');
+  rowCards.className = 'overview-main-cards';
+  for (let i = 0; i < 4; i += 1) {
+    const cell = document.createElement('div');
+    cell.className = 'overview-grid-card';
+    cell.dataset.cardIndex = String(i + 1);
+    const frag = slots.cards[i];
+    if (frag?.childNodes.length) cell.appendChild(frag);
+    rowCards.appendChild(cell);
+  }
+
+  const insights = document.createElement('div');
+  insights.className = 'overview-grid-insights';
+  if (slots.insights?.childNodes.length) insights.appendChild(slots.insights);
+
+  const products = document.createElement('div');
+  products.className = 'overview-grid-products';
+  if (slots.products?.childNodes.length) products.appendChild(slots.products);
+
+  const subrow = document.createElement('div');
+  subrow.className = 'overview-main-subrow';
+  subrow.append(insights, products);
+
+  const leftCol = document.createElement('div');
+  leftCol.className = 'overview-main-left';
+  leftCol.append(rowCards, subrow);
+
+  const contact = document.createElement('div');
+  contact.className = 'overview-grid-contact';
+  if (slots.contact?.childNodes.length) contact.appendChild(slots.contact);
+
+  const rightCol = document.createElement('div');
+  rightCol.className = 'overview-main-right';
+  rightCol.appendChild(contact);
+
+  main.append(leftCol, rightCol);
+
+  const root = document.createElement('div');
+  root.className = 'overview-layout';
+  root.append(hero, main);
+  return root;
+}
+
+export default function decorate(block) {
+  if (isAuthoringChrome()) return;
+  block.classList.add('overview');
+
+  const { contentRows } = partitionBlockRows(block);
+  const { slots, fullviewFragments } = parseLayoutRows(contentRows);
+  overviewBlockIdx += 1;
+  const bid = overviewBlockIdx;
+
+  const panelOverview = document.createElement('div');
+  const panelFullview = document.createElement('div');
+  panelOverview.className = 'overview-panel overview-panel-overview';
+  panelFullview.className = 'overview-panel overview-panel-fullview';
+  panelOverview.setAttribute('role', 'tabpanel');
+  panelFullview.setAttribute('role', 'tabpanel');
+  panelOverview.id = `overview-panel-0-${bid}`;
+  panelFullview.id = `overview-panel-1-${bid}`;
+
+  // const topInner = document.createElement('div');
+
+  const layout = buildOverviewLayout(slots);
+  panelOverview.appendChild(layout);
+
+  const fullviewInner = document.createElement('div');
+  fullviewInner.className = 'overview-fullview-stack';
+  fullviewFragments.forEach((frag) => {
+    if (frag.childNodes.length) fullviewInner.appendChild(frag);
+  });
+  panelFullview.appendChild(fullviewInner);
+
+  block.textContent = '';
+  const panels = document.createElement('div');
+  panels.className = 'overview-panels';
+  panels.append(panelOverview, panelFullview);
+
+  const body = document.createElement('div');
+  body.className = 'overview-body';
+  body.appendChild(panels);
+
+  block.append(body);
+
+  panelFullview.hidden = true;
+
+  const section = getOverviewSection(block);
+  const pageRoot = getOverviewPageRoot(section);
+
+  scheduleInjectHeroEmAccentContent(pageRoot, panelOverview);
+  createOverviewSwitcher();
+}

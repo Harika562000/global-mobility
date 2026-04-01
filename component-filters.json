@@ -23,7 +23,9 @@
       "dynamic-module",
       "tag",
       "content-module",
-      "media-module"
+      "media-module",
+      "section-title",
+      "overview"
     ]
   },
   {

@@ -1,0 +1,59 @@
+/*
+ * Atomic Overview / Full View pill switcher (shared by overview block + hero mirror).
+ * Loaded via scripts/s-and-p-global/atomic/overview-switcher.js
+ */
+
+.overview-switcher {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--spacing-100);
+  width: 100%;
+  max-width: calc(2 * var(--size-147));
+  padding: var(--spacing-100);
+  box-sizing: border-box;
+  background-color: var(--color-grey-50);
+  border-radius: var(--radius-8);
+  position: absolute;
+  top: 32px;
+  left: 32px;
+}
+
+.overview-switcher-tab {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--line-height-30);
+  margin: 0;
+  padding: var(--spacing-100) clamp(var(--spacing-300), 4vw, calc(var(--size-40) + var(--size-2)));
+  border: none;
+  border-radius: var(--radius-8);
+  cursor: pointer;
+  font-size: var(--type-body-200-size);
+  line-height: var(--type-body-200-line-height);
+  font-weight: var(--type-body-200-weight);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--color-black);
+  background-color: var(--color-white);
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.overview-switcher-tab.is-active {
+  color: var(--color-white);
+  background-color: var(--color-black);
+}
+
+.overview-switcher-tab:not(.is-active):hover {
+  background-color: var(--surface-light-grey);
+}
+
+.overview-switcher-tab:focus-visible {
+  outline: var(--border-width-200) solid var(--color-brand-300);
+  outline-offset: var(--border-width-200);
+}
+
+/* Hero mirror: float above hero content */
+.hero:has(.atomic-overview-switcher-host--hero) {
+  position: relative;
+}
