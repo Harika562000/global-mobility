@@ -51,8 +51,11 @@
         "banner",
         "cards",
         "columns",
-        "accordion",
-        "fragment"
+        "fragment",
+        "search",
+        "search-results",
+        "no-search-results",
+        "dynamic-module"
       ]
     }
   ]

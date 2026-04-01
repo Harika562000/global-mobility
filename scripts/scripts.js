@@ -6,11 +6,15 @@ import {
   decorateSections,
   decorateBlocks,
   decorateTemplateAndTheme,
+  getMetadata,
   waitForFirstImage,
   loadSection,
   loadSections,
   loadCSS,
 } from './aem.js';
+
+/** Base origin for dynamic imports (e.g. plugins). */
+export const NX_ORIGIN = typeof window !== 'undefined' ? window.location.origin : '';
 
 /**
  * Extracts text from a source element/string and returns it wrapped in:
@@ -30,44 +34,41 @@ export function eyebrowDecorator(source, additionalClass = '') {
 }
 
 /**
- * Finds raw "tag" block tables (authored inside other blocks) and replaces
- * each with a styled <span class="tag tag-{variation}"> element.
- *
- * Authored table format (nested inside a parent block):
- *   Row 1 cell: tag (tag-dark)   — block name + variation
- *   Row 2 cell: DataSet          — visible label text
+ * Returns tag class string for a variation name (e.g. "dark" -> "tag tag-dark").
+ * @param {string} [variation] Variation name, with or without "tag-" prefix
+ * @returns {string} Class string for the tag span
+ */
+export function getTagClasses(variation) {
+  const v = (variation || '').trim().toLowerCase().replace(/^tag-/, '');
+  return v ? `tag tag-${v}` : 'tag tag-dark';
+}
+
+/**
+ * Decorates nested tag tables inside a container (e.g. Hero, sections).
+ * Finds tables with row1 = "tag (tag-dark)", row2 = label text, replaces each with a tag span.
  *
  * @param {Element} container The container to search for tag tables
  */
 export function decorateTags(container) {
   container.querySelectorAll('table').forEach((table) => {
-    const rows = [...table.querySelectorAll('tr')];
-    if (rows.length < 2) return;
+    const trs = [...table.querySelectorAll('tr')];
+    if (trs.length < 2) return;
 
-    const headerCell = rows[0].querySelector('td, th');
+    const headerCell = trs[0].querySelector('td, th');
     if (!headerCell) return;
 
     const headerText = headerCell.textContent.trim().toLowerCase();
     const tagMatch = headerText.match(/^tag(?:\s*\(([^)]+)\))?$/);
     if (!tagMatch) return;
 
-    let classes = 'tag';
-    if (tagMatch[1]) {
-      let variation = tagMatch[1].trim();
-      if (!variation.startsWith('tag-')) {
-        variation = `tag-${variation}`;
-      }
-      classes += ` ${variation}`;
-    }
-
-    const contentCell = rows[1].querySelector('td, th');
-    if (!contentCell) return;
-    const hasContent = contentCell.textContent.trim() || contentCell.querySelector('span.icon');
-    if (!hasContent) return;
+    const variation = tagMatch[1] ? tagMatch[1].trim() : '';
+    const contentCell = trs[1].querySelector('td, th');
+    const content = contentCell ? contentCell.textContent.trim() : '';
+    if (!content) return;
 
     const span = document.createElement('span');
-    span.className = classes;
-    span.append(...contentCell.cloneNode(true).childNodes);
+    span.className = getTagClasses(variation);
+    span.textContent = content;
     table.replaceWith(span);
   });
 }
@@ -118,6 +119,17 @@ async function loadFonts() {
   }
 }
 
+function autolinkModals(doc) {
+  doc.addEventListener('click', async (e) => {
+    const origin = e.target.closest('a');
+    if (origin && origin.href && origin.href.includes('/modals/')) {
+      e.preventDefault();
+      const { openModal } = await import(`${window.hlx.codeBasePath}/blocks/modal/modal.js`);
+      openModal(origin.href);
+    }
+  });
+}
+
 /**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
@@ -131,6 +143,18 @@ function buildAutoBlocks() {
   }
 }
 
+function a11yLinks(main) {
+  const links = main.querySelectorAll('a');
+  links.forEach((link) => {
+    let label = link.textContent;
+    if (!label && link.querySelector('span.icon')) {
+      const icon = link.querySelector('span.icon');
+      label = icon ? icon.classList[1]?.split('-')[1] : label;
+    }
+    link.setAttribute('aria-label', label);
+  });
+}
+
 /**
  * Decorates the main element.
  * @param {Element} main The main element
@@ -140,10 +164,11 @@ export function decorateMain(main) {
   // hopefully forward compatible button decoration
   decorateButtons(main);
   decorateIcons(main);
-  decorateTags(main);
   buildAutoBlocks(main);
   decorateSections(main);
   decorateBlocks(main);
+  // add aria-label to links
+  a11yLinks(main);
 }
 
 /**
@@ -153,6 +178,9 @@ export function decorateMain(main) {
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
+  if (getMetadata('breadcrumbs').toLowerCase() === 'true') {
+    doc.body.dataset.breadcrumbs = true;
+  }
   const main = doc.querySelector('main');
   if (main) {
     decorateMain(main);
@@ -175,7 +203,7 @@ async function loadEager(doc) {
  * @param {Element} doc The container element
  */
 async function loadLazy(doc) {
-  loadHeader(doc.querySelector('header'));
+  autolinkModals(doc);
 
   const main = doc.querySelector('main');
   await loadSections(main);
@@ -184,6 +212,7 @@ async function loadLazy(doc) {
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
   if (hash && element) element.scrollIntoView();
 
+  loadHeader(doc.querySelector('header'));
   loadFooter(doc.querySelector('footer'));
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);

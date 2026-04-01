@@ -1,3 +1,4 @@
+import { showSlide } from '../blocks/carousel/carousel.js';
 import {
   decorateBlock,
   decorateBlocks,
@@ -10,6 +11,42 @@ import {
 } from './aem.js';
 import { decorateRichtext } from './editor-support-rte.js';
 import { decorateMain } from './scripts.js';
+
+function getState(block) {
+  if (block.matches('.accordion')) {
+    return [...block.querySelectorAll('details[open]')].map(
+      (details) => details.dataset.aueResource,
+    );
+  }
+  if (block.matches('.carousel')) {
+    return block.dataset.activeSlide;
+  }
+  if (block.matches('.tabs')) {
+    const [currentPanel] = block.querySelectorAll('.tabs-panel[aria-hidden="false"]');
+    return currentPanel?.dataset.aueResource;
+  }
+
+  return null;
+}
+
+function setState(block, state) {
+  if (block.matches('.accordion')) {
+    block.querySelectorAll('details').forEach((details) => {
+      details.open = state.includes(details.dataset.aueResource);
+    });
+  }
+  if (block.matches('.carousel')) {
+    block.style.display = null;
+    showSlide(block, state, 'instant');
+  }
+  if (block.matches('.tabs')) {
+    const tabs = [...block.querySelectorAll('.tabs-panel')];
+    const index = tabs.findIndex((tab) => tab.dataset.aueResource === state);
+    if (index !== -1) {
+      block.querySelectorAll('.tabs-list button')[index]?.click();
+    }
+  }
+}
 
 async function applyChanges(event) {
   // redecorate default content and blocks on patches (in the properties rail)
@@ -48,6 +85,7 @@ async function applyChanges(event) {
 
     const block = element.parentElement?.closest('.block[data-aue-resource]') || element?.closest('.block[data-aue-resource]');
     if (block) {
+      const state = getState(block);
       const blockResource = block.getAttribute('data-aue-resource');
       const newBlock = parsedUpdate.querySelector(`[data-aue-resource="${blockResource}"]`);
       if (newBlock) {
@@ -59,6 +97,7 @@ async function applyChanges(event) {
         decorateRichtext(newBlock);
         await loadBlock(newBlock);
         block.remove();
+        setState(newBlock, state);
         newBlock.style.display = null;
         return true;
       }
@@ -93,6 +132,32 @@ async function applyChanges(event) {
   return false;
 }
 
+function handleSelection(event) {
+  const { detail } = event;
+  const resource = detail?.resource;
+
+  if (resource) {
+    const element = document.querySelector(`[data-aue-resource="${resource}"]`);
+    const block = element.parentElement?.closest('.block[data-aue-resource]')
+      || element?.closest('.block[data-aue-resource]');
+
+    if (block && block.matches('.accordion')) {
+      // close all details
+      const details = element.matches('details') ? element : element.querySelector('details');
+      setState(block, [details.dataset.aueResource]);
+    }
+
+    if (block && block.matches('.carousel')) {
+      const slideIndex = [...block.querySelectorAll('.carousel-slide')].findIndex((slide) => slide === element);
+      setState(block, slideIndex);
+    }
+
+    if (block && block.matches('.tabs')) {
+      setState(block, element.dataset.aueResource);
+    }
+  }
+}
+
 function attachEventListners(main) {
   [
     'aue:content-patch',
@@ -106,6 +171,8 @@ function attachEventListners(main) {
     const applied = await applyChanges(event);
     if (!applied) window.location.reload();
   }));
+
+  main?.addEventListener('aue:ui-select', handleSelection);
 }
 
 attachEventListners(document.querySelector('main'));

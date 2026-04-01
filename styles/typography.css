@@ -24,18 +24,18 @@ h6 {
 }
 
 h1 {
-  font-size: var(--type-header-1200-size);
-  font-weight: var(--type-header-1200-weight);
-  line-height: var(--type-header-1200-line-height);
+  font-size: var(--responsive-header1-size);
+  font-weight: var(--responsive-header1-weight);
+  line-height: var(--responsive-header1-line-height);
 }
 
 h2 {
-  font-size: var(--type-header-1100-responsive-size);
-  font-weight: var(--type-header-1100-weight);
-  line-height: var(--type-header-1100-line-height);
+  font-size: var(--responsive-header2-size);
+  font-weight: var(--responsive-header2-weight);
+  line-height: var(--responsive-header2-line-height);
 }
 
-h3 {
+/* h3 {
   font-weight: var(--type-header-1000-weight-ultrabold);
   font-size: var(--type-header-1000-size);
   line-height: var(--type-header-1000-line-height);
@@ -43,21 +43,21 @@ h3 {
 
 h3.varince {
   font-weight: var(--font-weight-semibold);
-}
+} */
 
 h4 {
-  font-size: var(--type-header-900-size);
-  font-weight: var(--type-header-900-weight);
-  line-height: var(--type-header-900-line-height);
+  font-size: var(--responsive-header4-size);
+  font-weight: var(--responsive-header4-weight);
+  line-height: var(--responsive-header4-line-height);
 }
 
 h5 {
-  font-size: var(--type-header-800-size);
-  font-weight: var(--type-header-800-weight);
-  line-height: var(--type-header-800-line-height);
+  font-size: var(--responsive-header5-size);
+  font-weight: var(--responsive-header5-weight);
+  line-height: var(--responsive-header5-line-height);
 }
 
-h6 {
+/* h6 {
   font-size: var(--type-header-700-responsive-size);
   font-weight: var(--type-header-700-weight);
   line-height: var(--type-header-700-line-height);
@@ -65,4 +65,144 @@ h6 {
 
 h6.varince {
   font-size: var(--font-size-500);
+} */
+
+/* ================================================
+   BODY TYPOGRAPHY CLASSES
+   Usage: add class directly to any element
+   e.g. <p class="body-700">...</p>
+   ================================================ */
+
+/* ---- Body 700 Medium (responsive) ---- */
+.body-700 {
+  font-size: var(--responsive-body-700-size);
+  font-weight: var(--responsive-body-700-weight);
+  line-height: var(--responsive-body-700-line-height);
+  font-family: var(--font-family-primary);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+/* ---- Body 700 Semibold (fixed all breakpoints) ---- */
+.body-700-semibold {
+  font-size: var(--fixed-body-700-size);
+  font-weight: var(--fixed-body-700-weight);
+  line-height: var(--fixed-body-700-line-height);
+  font-family: var(--font-family-primary);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+/* ---- Body 600 Medium (responsive) ---- */
+.body-600 {
+  font-size: var(--responsive-body-600-size);
+  font-weight: var(--responsive-body-600-weight);
+  line-height: var(--responsive-body-600-line-height);
+  font-family: var(--font-family-primary);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+/* ---- Body 600 Bold (responsive, tokens.css handles breakpoints) ---- */
+.body-600-bold {
+  font-size: var(--fixed-body-600-bold-size);
+  font-weight: var(--fixed-body-600-bold-weight);
+  line-height: var(--fixed-body-600-bold-line-height);
+  font-family: var(--font-family-primary);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+/* ---- Body 500 Medium (responsive) ---- */
+.body-500 {
+  font-size: var(--responsive-body-500-size);
+  font-weight: var(--responsive-body-500-weight);
+  line-height: var(--responsive-body-500-line-height);
+  font-family: var(--font-family-primary);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+/* ---- Body 400 Regular (responsive) ---- */
+.body-400 {
+  font-size: var(--responsive-body-400-size);
+  font-weight: var(--responsive-body-400-weight);
+  line-height: var(--responsive-body-400-line-height);
+  font-family: var(--font-family-primary);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+/* ---- Body 400 Bold (responsive) ---- */
+.body-400-bold {
+  font-size: var(--body-400-bold-size);
+  font-weight: var(--body-400-bold-weight);
+  line-height: var(--body-400-bold-line-height);
+  font-family: var(--font-family-primary);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+/* ---- Body 200 Surt Regular (fixed) ---- */
+.body-200 {
+  font-size: var(--responsive-body-200-size);
+  font-weight: var(--responsive-body-200-weight);
+  line-height: var(--responsive-body-200-line-height);
+  font-family: var(--responsive-body-200-font-family);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+/* ---- Body 200 Bold (fixed) ---- */
+.body-200-bold {
+  font-size: var(--fixed-body-200-bold-size);
+  font-weight: var(--fixed-body-200-bold-weight);
+  line-height: var(--fixed-body-200-bold-line-height);
+  font-family: var(--font-family-primary);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+/* ---- Body 200 Mono (fixed, NB Akademie Mono Std) ---- */
+.body-200-mono {
+  font-size: var(--fixed-body-200-mono-size);
+  font-weight: var(--fixed-body-200-mono-weight);
+  line-height: var(--fixed-body-200-mono-line-height);
+  font-family: var(--fixed-body-200-mono-font-family);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+/* ---- Body 100 Surt Regular (fixed) ---- */
+.body-100 {
+  font-size: var(--responsive-body-100-size);
+  font-weight: var(--responsive-body-100-weight);
+  line-height: var(--responsive-body-100-line-height);
+  font-family: var(--responsive-body-100-font-family);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+/* ---- Body 100 Mono (fixed, NB Akademie Mono Std, 104% LH) ---- */
+.body-100-mono {
+  font-size: var(--fixed-body-100-mono-size);
+  font-weight: var(--fixed-body-100-mono-weight);
+  line-height: var(--fixed-body-100-mono-line-height);
+  font-family: var(--fixed-body-100-mono-font-family);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+/* ---- Body 50 Medium (fixed) ---- */
+.body-50 {
+  font-size: var(--responsive-body-50-size);
+  font-weight: var(--responsive-body-50-weight);
+  line-height: var(--responsive-body-50-line-height);
+  font-family: var(--font-family-primary);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+/* ---- Body 45 Regular (fixed) ---- */
+.body-45 {
+  font-size: var(--responsive-body-45-size);
+  font-weight: var(--responsive-body-45-weight);
+  line-height: var(--responsive-body-45-line-height);
+  font-family: var(--font-family-primary);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.display {
+  font-size: var(--responsive-display-size);
+  font-weight: var(--responsive-display-weight);
+  line-height: var(--responsive-display-line-height);
+  letter-spacing: var(--letter-spacing-tight);
+  font-style: normal;
 }

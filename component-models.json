@@ -20,6 +20,13 @@
         "name": "keywords",
         "multi": true,
         "label": "Keywords"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "assets",
+        "multi": true,
+        "label": "assets"
       }
     ]
   },
@@ -468,6 +475,59 @@
     ]
   },
   {
+    "id": "dynamic-module",
+    "fields": [
+      {
+        "component": "select",
+        "name": "classes",
+        "label": "Variation",
+        "description": "Pagination: works with Search Results on the page. Previous / Next: set previous and next links (e.g. podcasts). Optional labels: use Link labels (Previous | Next).",
+        "valueType": "string",
+        "value": "pagination",
+        "options": [
+          {
+            "name": "Pagination",
+            "value": "pagination"
+          },
+          {
+            "name": "Previous / Next",
+            "value": "previous-next"
+          }
+        ]
+      },
+      {
+        "component": "aem-content",
+        "name": "previousLink",
+        "label": "Previous link",
+        "description": "Previous / Next only. Destination for Previous.",
+        "valueType": "string",
+        "condition": {
+          "===": [
+            {
+              "var": "classes"
+            },
+            "previous-next"
+          ]
+        }
+      },
+      {
+        "component": "aem-content",
+        "name": "nextLink",
+        "label": "Next link",
+        "description": "Previous / Next only. Destination for Next.",
+        "valueType": "string",
+        "condition": {
+          "===": [
+            {
+              "var": "classes"
+            },
+            "previous-next"
+          ]
+        }
+      }
+    ]
+  },
+  {
     "id": "fragment",
     "fields": [
       {
@@ -557,6 +617,84 @@
         "name": "secondaryCtaUrl",
         "label": "Secondary CTA URL",
         "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "no-search-results",
+    "fields": [
+      {
+        "component": "text",
+        "name": "header",
+        "label": "Header",
+        "valueType": "string",
+        "value": ""
+      },
+      {
+        "component": "richtext",
+        "name": "body",
+        "label": "Body",
+        "valueType": "string",
+        "value": ""
+      }
+    ]
+  },
+  {
+    "id": "search-results",
+    "fields": [
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "value": "",
+        "label": "Options",
+        "valueType": "string",
+        "options": []
+      },
+      {
+        "component": "boolean",
+        "name": "showSort",
+        "label": "Show sort options",
+        "description": "Enable Most Relevant / Most Recent sorting in search results",
+        "valueType": "boolean",
+        "value": true
+      },
+      {
+        "component": "text",
+        "name": "facetLabels",
+        "label": "Facet labels",
+        "description": "Optional overrides for filter titles. Add one mapping per entry: fieldKey=Label (e.g. attribute_services_advisory_ss=Services). If values get comma-separated, that is supported too.",
+        "valueType": "string",
+        "multi": true,
+        "value": ""
+      }
+    ]
+  },
+  {
+    "id": "search",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "index",
+        "label": "Index"
+      },
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "value": "",
+        "label": "Options",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Search Type",
+            "children": [
+              {
+                "name": "Minimal",
+                "value": "minimal"
+              }
+            ]
+          }
+        ]
       }
     ]
   }

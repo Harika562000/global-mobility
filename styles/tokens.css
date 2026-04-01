@@ -199,6 +199,7 @@
     --font-size-1000: 48px;
     --font-size-1100: 56px;
     --font-size-1200: 72px;
+    --font-size-1250: 112px;
     --font-size-1300: 132px;
   
     /* Semantic Font Size Aliases */
@@ -229,6 +230,7 @@
     --line-height-26: 26px;
     --line-height-30: 30px;
     --line-height-32: 32px;
+    --line-height-36: 36px;
     --line-height-44: 44px;
     --line-height-53: 53px;
     --line-height-64: 64px;
@@ -244,28 +246,6 @@
     --line-height-160p: 1.6;
 
     /* Named UI Library styles (optional helpers) */
-    --type-header-1200-size: var(--font-size-1200); /* 72 */
-    --type-header-1200-line-height: var(--line-height-104p);
-    --type-header-1200-weight: var(--font-weight-bold);
-    --type-header-1100-size: var(--font-size-900); /* 40 */
-    --type-header-1100-line-height: var(--line-height-120p);
-    --type-header-1100-weight: var(--font-weight-bold);
-    --type-header-1000-size: var(--font-size-1000); /* 48 */
-    --type-header-1000-line-height: var(--line-height-64);
-    --type-header-1000-weight-ultrabold: var(--font-weight-ultrabold);
-    --type-header-1000-weight-semibold: var(--font-weight-semibold);
-    --type-header-900-size: var(--font-size-700); /* 24 */
-    --type-header-900-line-height: var(--line-height-140p);
-    --type-header-900-weight: var(--font-weight-semibold);
-    --type-header-800-size: var(--font-size-800); /* 32 */
-    --type-header-800-line-height: var(--line-height-130p);
-    --type-header-800-weight: var(--font-weight-semibold);
-    --type-header-700-size: var(--font-size-500); /* 18 */
-    --type-header-700-line-height: var(--line-height-140p);
-    --type-header-700-weight: var(--font-weight-semibold);
-    --type-header-500-size: var(--font-size-500); /* 18 */
-    --type-header-500-line-height: var(--line-height-30);
-    --type-header-500-weight: var(--font-weight-bold);
     --type-body-600-size: var(--font-size-600); /* 20 */
     --type-body-600-line-height: var(--line-height-32);
     --type-body-600-weight: var(--font-weight-medium);
@@ -282,8 +262,106 @@
     --type-body-100-line-height: var(--line-height-22);
     --type-body-100-weight: var(--font-weight-regular);
     --type-eyebrow-size: var(--font-size-200); /* 14 */
-    --type-eyebrow-line-height: var(--line-height-26);
+    --type-eyebrow-line-height: var(--line-height-22);
     --type-eyebrow-font-family: var(--font-family-accent);
+
+    /* Header element styles */
+    --responsive-header1-size: var(--font-size-1000);
+    --responsive-header1-line-height: var(--line-height-104p);
+    --responsive-header1-weight: var(--font-weight-bold);
+    --responsive-header2-size: var(--font-size-900);
+    --responsive-header2-line-height: var(--line-height-120p);
+    --responsive-header2-weight: var(--font-weight-bold);
+    --responsive-header4-size: var(--font-size-700);
+    --responsive-header4-line-height: var(--line-height-130p);
+    --responsive-header4-weight: var(--font-weight-semibold);
+    --responsive-header5-size: var(--font-size-500);
+    --responsive-header5-line-height: var(--line-height-140p);
+    --responsive-header5-weight: var(--font-weight-semibold);
+
+    /* ---- Body 700 ---- */
+
+    /* Medium — responsive (most used) */
+    --responsive-body-700-size: var(--font-size-600);          /* 20px mobile */
+    --responsive-body-700-line-height: var(--line-height-32);  /* 32px mobile */
+    --responsive-body-700-weight: var(--font-weight-medium);   /* 500 */
+
+    /* Semibold — fixed across all breakpoints */
+    --fixed-body-700-size: var(--font-size-700);               /* 24px */
+    --fixed-body-700-line-height: var(--line-height-130p);     /* 130% */
+    --fixed-body-700-weight: var(--font-weight-semibold);      /* 600 */
+
+    /* ---- Body 600 ---- */
+
+    /* Medium — responsive */
+    --responsive-body-600-size: var(--font-size-400);          /* 16px mobile */
+    --responsive-body-600-line-height: var(--line-height-26);  /* 26px mobile */
+    --responsive-body-600-weight: var(--font-weight-medium);   /* 500 */
+
+    /* Bold — mobile base (steps up at 720px) */
+    --fixed-body-600-bold-size: var(--font-size-400);          /* 16px mobile */
+    --fixed-body-600-bold-line-height: var(--line-height-26);  /* 26px mobile */
+    --fixed-body-600-bold-weight: var(--font-weight-bold);     /* 700 */
+
+    /* ---- Body 500 ---- */
+
+    /* Medium — responsive */
+    --responsive-body-500-size: var(--font-size-300);          /* 16px mobile */
+    --responsive-body-500-line-height: var(--line-height-22);  /* 22px mobile */
+    --responsive-body-500-weight: var(--font-weight-medium);   /* 500 */
+
+    /* ---- Body 400 ---- */
+
+    /* Regular — responsive */
+    --responsive-body-400-size: var(--font-size-200);          /* 14px mobile */
+    --responsive-body-400-line-height: var(--line-height-22);  /* 22px mobile */
+    --responsive-body-400-weight: var(--font-weight-regular);  /* 400 */
+
+    /* Bold — responsive (mobile base) */
+    --body-400-bold-size: var(--font-size-200);                /* 14px mobile */
+    --body-400-bold-line-height: var(--line-height-22);        /* 22px mobile */
+    --body-400-bold-weight: var(--font-weight-bold);           /* 700 */
+
+    /* ---- Body 200 — 3 variants ---- */
+
+    /* Surt Regular — fixed 360-1920 */
+    --responsive-body-200-size: var(--font-size-200);          /* 14px */
+    --responsive-body-200-line-height: var(--line-height-22);  /* 22px */
+    --responsive-body-200-weight: var(--font-weight-regular);  /* 400 */
+    --responsive-body-200-font-family: var(--font-family-primary); /* Surt Normal */
+
+    /* Bold — fixed 360-1920 */
+    --fixed-body-200-bold-size: var(--font-size-200);          /* 14px */
+    --fixed-body-200-bold-line-height: var(--line-height-22);  /* 22px */
+    --fixed-body-200-bold-weight: var(--font-weight-bold);     /* 700 */
+
+    /* Mono Std — fixed 360-1920 (NB Akademie Mono Std) */
+    --fixed-body-200-mono-size: var(--font-size-200);          /* 14px */
+    --fixed-body-200-mono-line-height: var(--line-height-22);  /* 22px */
+    --fixed-body-200-mono-weight: var(--font-weight-regular);  /* 400 */
+    --fixed-body-200-mono-font-family: var(--font-family-accent); /* NB Akademie Mono Std */
+
+    /* ---- Body 100 — 2 variants ---- */
+
+    /* Surt Regular — fixed 360-1920 */
+    --responsive-body-100-size: var(--font-size-100);          /* 12px */
+    --responsive-body-100-line-height: var(--line-height-150p);/* 150% */
+    --responsive-body-100-weight: var(--font-weight-regular);  /* 400 */
+    --responsive-body-100-font-family: var(--font-family-primary); /* Surt Normal */
+
+    /* Mono Std — fixed 360-1920 (NB Akademie Mono Std, different LH!) */
+    --fixed-body-100-mono-size: var(--font-size-100);          /* 12px */
+    --fixed-body-100-mono-line-height: var(--line-height-104p);/* 104% */
+    --fixed-body-100-mono-weight: var(--font-weight-regular);  /* 400 */
+    --fixed-body-100-mono-font-family: var(--font-family-accent); /* NB Akademie Mono Std */
+
+    /* ---- Body 50 / 45 ---- */
+    --responsive-body-50-size: var(--font-size-50);            /* 10px */
+    --responsive-body-50-line-height: var(--line-height-14);   /* 14px */
+    --responsive-body-50-weight: var(--font-weight-medium);    /* 500 */
+    --responsive-body-45-size: var(--font-size-45);            /* 9px */
+    --responsive-body-45-line-height: var(--line-height-14);   /* 14px */
+    --responsive-body-45-weight: var(--font-weight-regular);   /* 400 */
   
     /* ========================================
        TYPOGRAPHY - TEXT TRANSFORM
@@ -385,6 +463,11 @@
     --surface-footer: var(--color-footer);
     --surface-page-neutral: var(--color-grey-50);
     --surface-page-accent-1: var(--color-brand-400);
+    --surface-page-accent-2: #E8F1FD;
+  
+    /* Scroll Indicator */
+    --color-scroll-active: var(--color-black);
+    --color-scroll-inactive: #797979;
   
     /* ========================================
        GRAPHICS / ACCENT COLORS
@@ -556,8 +639,8 @@
     --type-header-1100-responsive-size: var(--font-size-900);
     --type-header-700-responsive-size: var(--font-size-500);
     --responsive-width: 360px;
-    --responsive-container: 328px; /* TODO: Check this */
-    --responsive-content-box: 328px;
+    --responsive-container: 320px;
+    --responsive-content-box: 280px;
 
     /* Hero section padding */
     --responsive-spacing-hero: var(--spacing-400); /* 16px */
@@ -568,7 +651,7 @@
        ======================================== */
 
     /* Space Between sections */
-    --responsive-spacing-between-section: var(--spacing-400); /* 16px */
+    --responsive-spacing-between-section: var(--spacing-500); /* 20px */
 
     /* Right / Left padding */
     --responsive-spacing-horizontal: var(--spacing-500); /* 20px */
@@ -581,18 +664,37 @@
        Used by any default content
        ======================================== */
 
-       --responsive-font-body-600: var(--font-size-400);
-       --responsive-font-body-500: var(--font-size-300);
-       --responsive-font-body-400: var(--font-size-200);
+       --responsive-font-body-700: var(--font-size-500); /* 20px */
+       --responsive-font-body-600: var(--font-size-400); /* 16px */
+       --responsive-font-body-500: var(--font-size-300); /* 16px */
+       --responsive-font-body-400: var(--font-size-200); /* 14px */
        --responsive-line-height-body-800: var(--line-height-26);
-       --responsive-line-height-26: var(--line-height-22);
+       --responsive-line-height-26: var(--line-height-22); /* 22px */
+       --responsive-line-height-32: var(--line-height-26); /* 26px */
+       --responsive-line-height-36: var(--line-height-32); /* 32px */
+       --responsive-line-height-44: var(--line-height-32); /* 32px */
+
+       /* Responsive font weights */
+       --responsive-font-weight-body: var(--font-weight-regular);   /* 400 — Regular at mobile */
+       --responsive-font-weight-bold: var(--font-weight-ultrabold);  /* 800 — Ultrabold at mobile */
 
     /* ========================================
        Quote font Size (Responsive)
        Used by any default content
        ======================================== */
-       --responsive-font-quote: var(--font-size-600); /* 20px */
+       --responsive-font-quote: var(--font-size-700); /* 24px */
        --responsive-line-height-quote: var(--line-height-32); /* 32px */
+
+    /* ========================================
+       Specialty Font Sizes (Responsive)
+       ======================================== */
+       --responsive-font-label: var(--font-size-200);   /* 14px */
+       --responsive-display-size: var(--font-size-700); /* 24px */
+       --responsive-display-weight: var(--font-weight-semibold); /* 600 */
+       --responsive-display-line-height: var(--line-height-32); /* 32px */
+       --responsive-number-size: var(--font-size-1250); /* 112px */
+       --responsive-number-weight: var(--font-weight-semibold); /* 600 */
+       --responsive-number-line-height: var(--line-height-100p); /* 32px */
 
     /* ========================================
        MAIN LAYOUT (Responsive)
@@ -638,12 +740,12 @@
      RESPONSIVE BREAKPOINTS
      ======================================== */
   
-  /* Mobile Large: sm (480px+) */
+  /* Mobile Large: 510-719px */
   @media (width >= 510px) {
     :root {
-      --responsive-width: 480px;
-      --responsive-container: 448px; /* TODO: Check this */
-      --responsive-content-box: 448px;
+      --responsive-width: 510px;
+      --responsive-container: 470px;
+      --responsive-content-box: 470px;
 
       /* Space Between sections */
       --responsive-spacing-between-section: var(--spacing-500); /* 20px */
@@ -651,7 +753,7 @@
       /* Header 900 font size */
       --type-header-900-size: var(--font-size-800); /* 32px */
 
-      /* Quote font */
+      /* Quote font: 24px (same as base, but line-height steps up to 36px) */
       --responsive-font-quote: var(--font-size-700); /* 24px */
       --responsive-line-height-quote: var(--line-height-36); /* 36px */
     }
@@ -661,7 +763,7 @@
   @media (width >= 720px) {
     :root {
       --responsive-width: 720px;
-      --responsive-container: 672px; /* TODO: Check this */
+      --responsive-container: 672px;
       --responsive-content-box: 672px;
 
       /* Keep main layout in sync with responsive left/right padding */
@@ -670,20 +772,59 @@
       /* Right / Left padding */
       --responsive-spacing-horizontal: var(--spacing-600); /* 24px */
 
+      /* Padding top and bottom inside the section */
+      --responsive-spacing-vertical: var(--spacing-700); /* 32px */
+
       /* Space Between sections */
       --responsive-spacing-between-section: var(--spacing-600); /* 24px */
 
+      /* Hero section padding */
+      --responsive-spacing-hero: var(--spacing-600); /* 24px */
+
       /* Eyebrow Text size: 16px on tablet+ */
       --type-eyebrow-size: var(--font-size-300);
+      --type-eyebrow-line-height: var(--line-height-26);
       --type-header-1100-responsive-size: var(--font-size-1100);
       --type-header-700-responsive-size: var(--font-size-700);
 
-      /* Body 600 Responsive font */
-      --responsive-font-body-600: var(--font-size-600);
-      --responsive-font-body-500: var(--font-size-500);
-      --responsive-font-body-400: var(--font-size-400);
+      /* Body font sizes: step up to desktop scale */
+      --responsive-font-body-700: var(--font-size-700); /* 24px */
+      --responsive-font-body-600: var(--font-size-600); /* 20px */
+      --responsive-font-body-500: var(--font-size-500); /* 18px */
+      --responsive-font-body-400: var(--font-size-400); /* 16px */
+
+      /* Named body element styles: desktop overrides (responsive variants) */
+      --responsive-body-700-size: var(--font-size-700);          /* 24px */
+      --responsive-body-700-line-height: var(--line-height-36);  /* 36px */
+      --responsive-body-600-size: var(--font-size-600);          /* 20px */
+      --responsive-body-600-line-height: var(--line-height-32);  /* 32px */
+      --responsive-body-500-size: var(--font-size-500);          /* 18px */
+      --responsive-body-500-line-height: var(--line-height-26);  /* 26px */
+      --responsive-body-400-size: var(--font-size-400);          /* 16px */
+      --responsive-body-400-line-height: var(--line-height-26);  /* 26px */
+
+      /* Body 600 Bold — desktop override */
+      --fixed-body-600-bold-size: var(--font-size-600);          /* 20px */
+      --fixed-body-600-bold-line-height: var(--line-height-160p);/* 160% */
+
+      /* Body 400 Bold — desktop override (steps up from 14px mobile) */
+      --body-400-bold-size: var(--font-size-400);                /* 16px */
+      --body-400-bold-line-height: var(--line-height-26);        /* 26px */
       --responsive-line-height-body-800: var(--line-height-32);
-      --responsive-line-height-26: var(--line-height-26);
+      --responsive-line-height-26: var(--line-height-26); /* 26px */
+      --responsive-line-height-32: var(--line-height-32); /* 32px */
+      --responsive-line-height-36: var(--line-height-36); /* 36px */
+      --responsive-line-height-44: var(--line-height-36); /* 36px at 720-1024 */
+
+      /* Font weights step down at 720-1024: Medium→Regular, Bold→Ultrabold */
+      --responsive-font-weight-body: var(--font-weight-regular);  /* 400 */
+      --responsive-font-weight-bold: var(--font-weight-ultrabold); /* 800 */
+
+      /* Specialty fonts: desktop scale */
+      --responsive-font-label: var(--font-size-100);   /* 12px */
+      --responsive-display-size: var(--font-size-800); /* 32px */
+      --responsive-display-line-height: var(--line-height-44); /* 44px */
+      --responsive-number-size: var(--font-size-1300); /* 132px */
 
       /* Header 1100 font size */
       --type-header-1100-size: var(--font-size-1100); /* 56px */
@@ -693,15 +834,28 @@
 
       /* Header 700 font size */
       --type-header-700-size: var(--font-size-700); /* 24px */
+
+      /* Header element responsive styles */
+      --responsive-header1-size: var(--font-size-1200);
+      --responsive-header2-size: var(--font-size-1100);
+      --responsive-header4-size: var(--font-size-800);
+      --responsive-header5-size: var(--font-size-700);
     }
   }
   
   /* Desktop Small: 1025-1439px */
   @media (width >= 1025px) {
     :root {
-      --responsive-width: 1024px;
-      --responsive-container: 976px; /* TODO: Check this */
-      --responsive-content-box: 976px;
+      --responsive-width: 1025px;
+      --responsive-container: 977px;
+      --responsive-content-box: 977px;
+
+      /* Font weights step up at 1025+: Regular→Medium, Ultrabold→Bold */
+      --responsive-font-weight-body: var(--font-weight-medium); /* 500 */
+      --responsive-font-weight-bold: var(--font-weight-bold);   /* 700 */
+
+      /* Line height 44 steps up to 44px at 1025+ */
+      --responsive-line-height-44: var(--line-height-44); /* 44px */
 
       /* Quote font */
       --responsive-font-quote: var(--font-size-800); /* 32px */
@@ -712,9 +866,9 @@
   /* Desktop Large: 1440-1919px */
   @media (width >= 1440px) {
     :root {
-      --responsive-width: 1260px;
-      --responsive-container: 1200px; /* TODO: Check this */
-      --responsive-content-box: 1100px;
+      --responsive-width: 1440px;
+      --responsive-container: 1392px;
+      --responsive-content-box: 1158px;
       --main-max-width: 1392px;
       --responsive-spacing-hero: var(--spacing-800);
 
@@ -732,9 +886,9 @@
   /* Desktop XL: 1920px+ */
   @media (width >= 1920px) {
     :root {
-      --responsive-width: 1440px;
-      --responsive-container: 1392px; /* TODO: Check this */
-      --responsive-content-box: 1200px;
+      --responsive-width: 1920px;
+      --responsive-container: 1600px;
+      --responsive-content-box: 1330px;
       --main-max-width: 1600px;
       --responsive-spacing-hero: var(--spacing-800);
 

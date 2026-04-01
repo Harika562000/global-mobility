@@ -1,0 +1,113 @@
+@import url('./pagination-controls.css');
+
+/* Block: Dynamic Module — Previous / Next
+   UI Library: https://www.figma.com/design/n5grPj7ycIQGiT1TOxZS9r — node 29083:21564
+   Typography: Body 400 Bold (responsive tokens), -4% tracking
+   <510px: row centered; ≥510px: row left-aligned within content box */
+
+.dynamic-module-prev-next {
+  box-sizing: border-box;
+  width: 100%;
+  padding-top: var(--spacing-600);
+  padding-bottom: var(--spacing-600);
+  max-width: var(--responsive-content-box);
+}
+
+.dm-prev-next {
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-1000);
+  width: 100%;
+  color: var(--typography-black);
+}
+
+.dm-prev-next-divider {
+  flex-shrink: 0;
+  width: var(--border-width-100);
+  height: var(--size-24);
+  margin: 0;
+  background-color: var(--typography-black);
+}
+
+.dm-prev-next-link {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-200);
+  max-width: 100%;
+  text-decoration: none;
+  color: var(--typography-black);
+  font-family: var(--font-family-primary);
+  font-size: var(--body-400-bold-size);
+  font-weight: var(--body-400-bold-weight);
+  line-height: var(--body-400-bold-line-height);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+a:any-link.dm-prev-next-link {
+  color: var(--typography-black);
+  cursor: pointer;
+}
+
+@media (width >= 510px) {
+  .dm-prev-next {
+    flex-wrap: nowrap;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: var(--spacing-600);
+  }
+
+  .dm-prev-next-link {
+    align-self: center;
+  }
+
+  .dm-prev-next-divider {
+    height: auto;
+    align-self: stretch;
+    min-height: var(--body-400-bold-line-height);
+  }
+}
+
+.dm-prev-next-link:focus-visible {
+  outline: var(--border-width-200) solid var(--color-brand-300);
+  outline-offset: var(--border-width-200);
+}
+
+.dm-prev-next-link.is-disabled {
+  color: var(--typography-disabled);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.dm-prev-next-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  line-height: 0;
+  color: inherit;
+}
+
+/* Chevron scales with Body 400 Bold; thinner stroke on desktop */
+.dm-prev-next-arrow .dm-prev-next-chevron-svg {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+.dm-prev-next-arrow .dm-prev-next-chevron-svg path {
+  stroke-width: 2.125;
+}
+
+@media (width >= 510px) {
+  .dm-prev-next-arrow .dm-prev-next-chevron-svg path {
+    stroke-width: 1.75;
+  }
+}
+
+.dm-prev-next-text {
+  min-width: 0;
+}
