@@ -1,0 +1,176 @@
+/* Two-col & three-col card styles */
+
+/* Base block width */
+.cards.two-col,
+.cards.three-col {
+  width: 100%;
+}
+
+/* Typography inside cards */
+.cards.two-col .card-item p,
+.cards.three-col .card-item p {
+  margin: 0;
+  color: var(--text-color);
+}
+
+/* Icon row (card-head) */
+.cards.two-col .card-item .card-head,
+.cards.three-col .card-item .card-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--size-8);
+}
+
+.cards.two-col .card-item .card-head .icon,
+.cards.three-col .card-item .card-head .icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-48);
+  height: var(--size-48);
+}
+
+/* Title */
+.cards.two-col .card-item .card-title p,
+.cards.three-col .card-item .card-title p{
+  margin: 0;
+  font-family: var(--font-family-primary);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-500);
+  line-height: var(--line-height-140p);
+  letter-spacing: -0.96px;
+
+  @media (width >=768px) {
+    font-size: var(--font-size-700);
+  }
+}
+
+/* Body copy */
+.cards.two-col .card-item .card-body,
+.cards.three-col .card-item .card-body {
+  margin-top: var(--spacing-150);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--spacing-600);
+
+  @media (width >=1025px) {
+    gap: var(--spacing-200);
+  }
+}
+
+.cards.two-col .card-item .card-body p,
+.cards.three-col .card-item .card-body p {
+  margin: 0;
+  width: 100%;
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-200);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-26);
+  letter-spacing: -0.64px;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @media (width >=1025px) {
+      font-size: var(--font-size-400);
+  }
+}
+
+/* Arrow icon in body */
+.cards.two-col .card-item .icon-arrow-right,
+.cards.three-col .card-item .icon-arrow-right {
+  display: inline-flex;
+  width: var(--icon-size-md);
+  height: var(--icon-size-xsm);
+  transform: rotate(324deg);
+  transition: transform 0.3s ease;
+  margin-bottom: var(--margin-bottom-15px,15px);
+}
+
+/* Hover / focus-visible state: dark background, white text & icons */
+/* stylelint-disable no-descending-specificity */
+.cards.two-col .card-item:hover,
+.cards.two-col .card-item:focus-visible,
+.cards.three-col .card-item:hover,
+.cards.three-col .card-item:focus-visible {
+  background-color: var(--surface-dark);
+  color: var(--typography-inverse);
+}
+
+.cards.two-col .card-item:hover p,
+.cards.two-col .card-item:focus-visible p,
+.cards.three-col .card-item:hover p,
+.cards.three-col .card-item:focus-visible p {
+  color: var(--typography-inverse);
+}
+
+.cards.two-col .card-item:hover .icon img,
+.cards.two-col .card-item:hover .icon-arrow-right img,
+.cards.two-col .card-item:focus-visible .icon img,
+.cards.two-col .card-item:focus-visible .icon-arrow-right img,
+.cards.three-col .card-item:hover .icon img,
+.cards.three-col .card-item:hover .icon-arrow-right img,
+.cards.three-col .card-item:focus-visible .icon img,
+.cards.three-col .card-item:focus-visible .icon-arrow-right img {
+  filter: brightness(0) invert(1);
+}
+
+.cards.two-col .card-item:hover .icon-arrow-right,
+.cards.two-col .card-item:focus-visible .icon-arrow-right,
+.cards.three-col .card-item:hover .icon-arrow-right,
+.cards.three-col .card-item:focus-visible .icon-arrow-right {
+  transform: rotate(360deg);
+}
+/* stylelint-enable no-descending-specificity */
+
+/* Dark card-level styles (cards-dark) */
+/* stylelint-disable no-descending-specificity */
+.cards.two-col.cards-dark .card-item .icon img,
+.cards.two-col.cards-dark .card-item .icon-arrow-right img,
+.cards.three-col.cards-dark .card-item .icon img,
+.cards.three-col.cards-dark .card-item .icon-arrow-right img {
+  filter: brightness(0) invert(1);
+}
+
+.cards.two-col.cards-dark .card-item,
+.cards.three-col.cards-dark .card-item {
+  background-color: var(--surface-dark);
+  color: var(--typography-inverse);
+}
+
+.cards.two-col.cards-dark .card-item p,
+.cards.three-col.cards-dark .card-item p {
+  color: var(--typography-inverse);
+}
+
+.cards.two-col.cards-dark .card-item:hover,
+.cards.two-col.cards-dark .card-item:focus-visible,
+.cards.three-col.cards-dark .card-item:hover,
+.cards.three-col.cards-dark .card-item:focus-visible {
+  background-color: var(--surface-page-neutral);
+  color: var(--text-color);
+}
+
+.cards.two-col.cards-dark .card-item:hover p,
+.cards.two-col.cards-dark .card-item:focus-visible p,
+.cards.three-col.cards-dark .card-item:hover p,
+.cards.three-col.cards-dark .card-item:focus-visible p {
+  color: var(--text-color);
+}
+
+.cards.two-col.cards-dark .card-item:hover .icon img,
+.cards.two-col.cards-dark .card-item:hover .icon-arrow-right img,
+.cards.two-col.cards-dark .card-item:focus-visible .icon img,
+.cards.two-col.cards-dark .card-item:focus-visible .icon-arrow-right img,
+.cards.three-col.cards-dark .card-item:hover .icon img,
+.cards.three-col.cards-dark .card-item:hover .icon-arrow-right img,
+.cards.three-col.cards-dark .card-item:focus-visible .icon img,
+.cards.three-col.cards-dark .card-item:focus-visible .icon-arrow-right img {
+  filter: none;
+}
+/* stylelint-enable no-descending-specificity */
