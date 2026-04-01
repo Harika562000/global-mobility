@@ -92,6 +92,12 @@
     ]
   },
   {
+    "id": "customer-stories",
+    "components": [
+      "fragment"
+    ]
+  },
+  {
     "id": "form",
     "components": [
       "captcha",
