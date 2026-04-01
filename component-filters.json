@@ -25,7 +25,8 @@
       "content-module",
       "media-module",
       "section-title",
-      "overview"
+      "overview",
+      "logo-set"
     ]
   },
   {
@@ -59,6 +60,12 @@
     "id": "hero",
     "components": [
       "hero"
+    ]
+  },
+  {
+    "id": "logo-set",
+    "components": [
+      "logo-set"
     ]
   },
   {

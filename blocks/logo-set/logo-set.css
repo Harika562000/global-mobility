@@ -1,0 +1,42 @@
+/* Logo Set Block */
+
+.logo-set .logo-set-item picture,
+.logo-set .logo-set-item img {
+    display: block;
+    width: 100%;
+}
+
+/* Default to 9:16 for smaller breakpoints */
+.logo-set .logo-set-item picture {
+    aspect-ratio: 9 / 16;
+}
+
+.logo-set .logo-set-item img {
+    height: 100%;
+    object-fit: cover;
+}
+
+@media (width >= 720px) {
+    .logo-set .logo-set-item picture {
+        aspect-ratio: 16 / 9;
+    }
+}
+
+/* Responsive image swap: mobile (second) by default, desktop (first) at 720px+ */
+.logo-set.logo-set-responsive .logo-set-item.desktop-image {
+    display: none;
+}
+
+.logo-set.logo-set-responsive .logo-set-item.mobile-image {
+    display: block;
+}
+
+@media (width >= 720px) {
+    .logo-set.logo-set-responsive .logo-set-item.desktop-image {
+        display: block;
+    }
+
+    .logo-set.logo-set-responsive .logo-set-item.mobile-image {
+        display: none;
+    }
+}

@@ -60,7 +60,8 @@
         "content-module",
         "media-module",
         "section-title",
-        "overview"
+        "overview",
+        "logo-set"
       ]
     }
   ]

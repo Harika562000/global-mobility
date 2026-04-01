@@ -992,6 +992,63 @@
     ]
   },
   {
+    "id": "logo-set",
+    "fields": [
+      {
+        "component": "text",
+        "name": "eyebrow",
+        "label": "Eyebrow Text",
+        "valueType": "string",
+        "value": "",
+        "description": "Required.",
+        "required": true
+      },
+      {
+        "component": "text",
+        "name": "title",
+        "label": "Title",
+        "valueType": "string",
+        "value": "",
+        "description": "Required.",
+        "required": true
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "desktopImage",
+        "label": "Desktop Image with 16:9 Aspect Ratio",
+        "multi": false,
+        "description": "Required.",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "desktopImageAlt",
+        "label": "Desktop Image Alt Text",
+        "value": "",
+        "description": "Required for accessibility.",
+        "required": true
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "mobileImage",
+        "label": "Mobile Image with 9:16 Aspect Ratio",
+        "multi": false,
+        "description": "Optional."
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "mobileImageAlt",
+        "label": "Mobile Image Alt Text",
+        "value": "",
+        "description": "Optional."
+      }
+    ]
+  },
+  {
     "id": "media-module",
     "fields": [
       {
