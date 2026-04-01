@@ -13,6 +13,44 @@ import {
   loadCSS,
 } from './aem.js';
 
+// Intercept fetch to inject CSRF token for AEM adaptive form FDM calls
+(function initCsrfProtection() {
+  const originalFetch = window.fetch;
+  window.fetch = function csrfFetch(...args) {
+    const [url, options] = args;
+    let urlStr = '';
+    if (typeof url === 'string') {
+      urlStr = url;
+    } else if (url instanceof Request) {
+      urlStr = url.url;
+    }
+    if (urlStr.includes('.af.dermis') && options && options.method === 'POST') {
+      return originalFetch('/libs/granite/csrf/token.json')
+        .then((resp) => resp.json())
+        .then((data) => {
+          if (data && data.token) {
+            if (!options.headers) options.headers = {};
+            if (options.headers instanceof Headers) {
+              options.headers.set('CSRF-Token', data.token);
+            } else {
+              options.headers['CSRF-Token'] = data.token;
+            }
+            // Also add to body for maximum compatibility
+            if (options.body instanceof FormData || options.body instanceof URLSearchParams) {
+              options.body.append(':cq_csrf_token', data.token);
+            } else if (typeof options.body === 'string') {
+              options.body += `&${encodeURIComponent(':cq_csrf_token')}=${encodeURIComponent(data.token)}`;
+            } else if (options.body && typeof options.body === 'object') {
+              options.body[':cq_csrf_token'] = data.token;
+            }
+          }
+          return originalFetch(url, options);
+        });
+    }
+    return originalFetch.apply(this, args);
+  };
+}());
+
 /** Base origin for dynamic imports (e.g. plugins). */
 export const NX_ORIGIN = typeof window !== 'undefined' ? window.location.origin : '';
 
@@ -169,6 +207,72 @@ export function decorateMain(main) {
   decorateBlocks(main);
   // add aria-label to links
   a11yLinks(main);
+
+  // Ensure UE add-component on <main> always resolves a section filter.
+  // nav-main is applied conditionally below for the nav page.
+  main.dataset.aueFilter = 'main';
+
+  const markHeaderMenuItemContainers = (headerSection) => {
+    const contentRoot = headerSection.querySelector(':scope > .default-content-wrapper')
+      || headerSection;
+
+    contentRoot.querySelectorAll('[data-aue-component="header-menu-item"]').forEach((row) => {
+      row.dataset.aueType = 'container';
+      row.dataset.aueFilter = 'header-menu-item';
+    });
+  };
+
+  const initHeaderSectionAuthoring = (headerSection) => {
+    if (!headerSection || headerSection.dataset.headerSectionAuthoringInit === 'true') {
+      return;
+    }
+
+    const hostSection = headerSection.closest('.section') || headerSection;
+
+    headerSection.dataset.aueType = 'container';
+    headerSection.dataset.aueFilter = 'header-section';
+    hostSection.dataset.aueType = 'container';
+    hostSection.dataset.aueFilter = 'header-section';
+    const contentRoot = headerSection.querySelector(':scope > .default-content-wrapper')
+      || headerSection;
+
+    contentRoot.dataset.aueType = 'container';
+    contentRoot.dataset.aueFilter = 'header-section';
+
+    markHeaderMenuItemContainers(headerSection);
+
+    const observer = new MutationObserver(() => {
+      markHeaderMenuItemContainers(headerSection);
+    });
+
+    observer.observe(contentRoot, {
+      childList: true,
+      subtree: false,
+    });
+
+    headerSection.dataset.headerSectionAuthoringInit = 'true';
+  };
+
+  // Initialize header-section authoring helpers anywhere header-section exists.
+  // This ensures clicking header-section opens its dedicated child filter.
+  main.querySelectorAll('.header-section, [data-aue-component="header-section"], [data-aue-model="header-section"]').forEach((headerSection) => {
+    initHeaderSectionAuthoring(headerSection);
+  });
+
+  if (main.dataset.headerSectionObserverAttached !== 'true') {
+    const sectionObserver = new MutationObserver(() => {
+      main.querySelectorAll('.header-section, [data-aue-component="header-section"], [data-aue-model="header-section"]').forEach((headerSection) => {
+        initHeaderSectionAuthoring(headerSection);
+      });
+    });
+
+    sectionObserver.observe(main, {
+      childList: true,
+      subtree: false,
+    });
+
+    main.dataset.headerSectionObserverAttached = 'true';
+  }
 }
 
 /**

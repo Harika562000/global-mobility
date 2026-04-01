@@ -88,7 +88,9 @@ async function applyChanges(event) {
       const state = getState(block);
       const blockResource = block.getAttribute('data-aue-resource');
       const newBlock = parsedUpdate.querySelector(`[data-aue-resource="${blockResource}"]`);
-      if (newBlock) {
+      if (block.dataset.aueModel === 'form') {
+        return true;
+      } else if (newBlock) {
         newBlock.style.display = 'none';
         block.insertAdjacentElement('afterend', newBlock);
         decorateButtons(newBlock);
@@ -132,33 +134,7 @@ async function applyChanges(event) {
   return false;
 }
 
-function handleSelection(event) {
-  const { detail } = event;
-  const resource = detail?.resource;
-
-  if (resource) {
-    const element = document.querySelector(`[data-aue-resource="${resource}"]`);
-    const block = element.parentElement?.closest('.block[data-aue-resource]')
-      || element?.closest('.block[data-aue-resource]');
-
-    if (block && block.matches('.accordion')) {
-      // close all details
-      const details = element.matches('details') ? element : element.querySelector('details');
-      setState(block, [details.dataset.aueResource]);
-    }
-
-    if (block && block.matches('.carousel')) {
-      const slideIndex = [...block.querySelectorAll('.carousel-slide')].findIndex((slide) => slide === element);
-      setState(block, slideIndex);
-    }
-
-    if (block && block.matches('.tabs')) {
-      setState(block, element.dataset.aueResource);
-    }
-  }
-}
-
-function attachEventListners(main) {
+async function attachEventListners(main) {
   [
     'aue:content-patch',
     'aue:content-update',
@@ -171,8 +147,8 @@ function attachEventListners(main) {
     const applied = await applyChanges(event);
     if (!applied) window.location.reload();
   }));
-
-  main?.addEventListener('aue:ui-select', handleSelection);
+  const module = await import('./form-editor-support.js');
+  module.attachEventListners(main);
 }
 
 attachEventListners(document.querySelector('main'));

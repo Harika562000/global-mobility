@@ -35,10 +35,6 @@ body.appear {
   display: block;
 }
 
-header {
-  height: var(--nav-height);
-}
-
 header .header,
 footer .footer {
   visibility: hidden;
@@ -136,6 +132,20 @@ main > .section.reset-padding-left-right {
   padding-right: var(--spacing-0);
 }
 
+/* Mobile first: sections without background have no left/right padding */
+main > .section:not([class*="bg-"]) {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* From 1024px: sections without background get same horizontal padding as sections with background */
+@media (width >= 1024px) {
+  main > .section:not([class*="bg-"]) {
+    padding-left: var(--responsive-spacing-horizontal);
+    padding-right: var(--responsive-spacing-horizontal);
+  }
+}
+
 /* Sections background colors */
 main .section.bg-grey {
   background-color: var(--surface-page-neutral);
@@ -159,6 +169,11 @@ main .section.bg-accent {
 
 main .section.bg-light {
   background-color: var(--surface-light);
+  border-radius: var(--radius-sm);
+}
+
+main .section.bg-quiet-light {
+  background-color: var(--surface-section-backgrounds-quiet-light, #EFEFE5);
   border-radius: var(--radius-sm);
 }
 
@@ -253,4 +268,13 @@ main .section.inverted {
   align-items: center;
   gap: var(--spacing-200);
   margin: 0;
+}
+
+.default-content-wrapper h1,
+.default-content-wrapper h2,
+.default-content-wrapper h3,
+.default-content-wrapper h4,
+.default-content-wrapper h5,
+.default-content-wrapper h6 {
+  margin-bottom: var(--spacing-600);
 }
