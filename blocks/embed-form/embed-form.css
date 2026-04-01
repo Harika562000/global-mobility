@@ -1,0 +1,664 @@
+/* stylelint-disable no-descending-specificity */
+.embed-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-900);
+  align-items: center;
+
+  @media (width >= 1025px) {
+    flex-direction: row;
+    gap: var(--spacing-1150);
+  }
+}
+
+main .embed-form-container {
+  padding: var(--spacing-600) var(--spacing-500) var(--spacing-400) var(--responsive-spacing-horizontal);
+
+  @media (width >= 720px) {
+    padding-right: var(--spacing-600);
+    padding-bottom: var(--spacing-600);
+  }
+}
+
+.embed-form .content {
+  flex: 1.25;
+}
+
+.embed-form .content .logo {
+  display: flex;
+  justify-content: flex-end;
+  line-height: 0;
+}
+
+.embed-form .content .eye-brow-text {
+  color: var(--color-brand-400);
+}
+
+.embed-form .content .headline {
+  color: var(--color-white);
+  margin-top: var(--spacing-400);
+  letter-spacing: var(--letter-spacing-tight);
+
+  @media (width >= 1025px) {
+    line-height: var(--line-height-120p);
+    font-size: var(--font-size-1100);
+    font-weight: var(--font-weight-bold);
+    margin-top: var(--spacing-600);
+  }
+}
+
+.embed-form .content .description {
+  color: var(--color-grey-300);
+  margin-top: var(--spacing-700);
+  font-size: var(--responsive-body-400-size);
+  line-height: var(--responsive-body-400-line-height);
+  font-weight: var(--responsive-body-400-weight);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.embed-form .form {
+  background-color: var(--color-white);
+  color: var(--color-black);
+  padding: var(--spacing-1150) var(--spacing-400);
+  border-radius: var(--radius-sm);
+  height: 601px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  justify-content: flex-end;
+  max-height: 663px;
+  flex: 1;
+  width: 100%;
+
+  @media (width >= 720px) {
+    padding: var(--size-88) var(--size-104);
+    height: 663px;
+  }
+
+  @media (width >= 1025px) and (width < 1440px) {
+    padding: var(--size-48);
+    padding-top: 200px;
+  }
+}
+
+/* ─── Step indicator dots ─── */
+
+.embed-form .form-steps {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-200);
+  margin-top: var(--spacing-700);
+  grid-column: span 12;
+}
+
+.embed-form .form-steps .step-dot {
+  display: block;
+  width: var(--size-6);
+  height: var(--size-6);
+  border-radius: var(--radius-pill);
+  background-color: var(--color-grey-500);
+  transition: width 0.25s ease, background-color 0.25s ease;
+}
+
+.embed-form .form-steps .step-dot.active {
+  width: 30px;
+  background-color: var(--color-black);
+}
+
+/* ─── Hide auto-generated labels ─── */
+
+.embed-form .form .field-label[data-visible="false"] {
+  display: none;
+}
+
+/* ─── Panel wrapper & legend (step title) ─── */
+
+.embed-form .form .panel-wrapper {
+  gap: var(--spacing-300);
+  margin: 0;
+}
+
+.embed-form .form .panel-wrapper > legend.field-label {
+  font-family: var(--font-family-primary);
+  font-size: var(--responsive-header4-size);
+  font-weight: var(--responsive-header4-weight);
+  line-height: var(--responsive-header4-line-height);
+  color: var(--typography-black);
+  letter-spacing: var(--letter-spacing-tight);
+  margin-bottom: var(--spacing-700);
+  padding: 0;
+}
+
+/* ─── Text & email inputs (with floating label support) ─── */
+
+.embed-form .form .text-wrapper,
+.embed-form .form .email-wrapper {
+  position: relative;
+  margin: 0;
+  height: 58px;
+}
+
+.embed-form .form .text-wrapper.has-value,
+.embed-form .form .text-wrapper:focus-within,
+.embed-form .form .email-wrapper.has-value,
+.embed-form .form .email-wrapper:focus-within {
+  margin-bottom: 19px;
+}
+
+.embed-form .form .text-wrapper.has-value.field-invalid:has(.field-description),
+.embed-form .form .text-wrapper:focus-within.field-invalid:has(.field-description),
+.embed-form .form .email-wrapper.has-value.field-invalid:has(.field-description),
+.embed-form .form .email-wrapper:focus-within.field-invalid:has(.field-description) {
+  margin-bottom: 52px;
+}
+
+.embed-form .form .text-wrapper > label.field-label,
+.embed-form .form .email-wrapper > label.field-label {
+  position: absolute;
+  left: var(--spacing-500);
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-family-primary);
+  font-size: var(--responsive-body-400-size);
+  font-weight: var(--responsive-body-400-weight);
+  color: var(--typography-disabled);
+  pointer-events: none;
+  transition: top 0.2s ease, transform 0.2s ease, font-size 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+  z-index: 1;
+  display: block;
+  margin: 0;
+  padding: 0 var(--size-2);
+  background: transparent;
+  line-height: 1;
+}
+
+.embed-form .form .text-wrapper:focus-within > label.field-label,
+.embed-form .form .text-wrapper.has-value > label.field-label,
+.embed-form .form .email-wrapper:focus-within > label.field-label,
+.embed-form .form .email-wrapper.has-value > label.field-label {
+  top: 0;
+  transform: translateY(0);
+  font-size: 11px;
+  color: var(--typography-secondary);
+  background-color: var(--color-white);
+  left: 0;
+}
+
+.embed-form .form .text-wrapper:focus-within > input,
+.embed-form .form .text-wrapper.has-value > input,
+.embed-form .form .email-wrapper:focus-within > input,
+.embed-form .form .email-wrapper.has-value > input {
+  margin-top: 19px;
+}
+
+.embed-form .form input[type="text"],
+.embed-form .form input[type="email"],
+.embed-form .form input[type="tel"] {
+  width: 100%;
+  box-sizing: border-box;
+  height: auto;
+  padding: var(--spacing-200) var(--spacing-400);
+  border: var(--border-width-100) solid var(--border-strong);
+  border-radius: var(--radius-8);
+  background-color: var(--color-white);
+  font-family: var(--font-family-primary);
+  font-size: var(--responsive-body-400-size);
+  font-weight: var(--responsive-body-400-weight);
+  line-height: var(--responsive-body-400-line-height);
+  color: var(--typography-secondary);
+  outline: none;
+  transition: border-color 0.15s ease;
+  appearance: none;
+  margin: 0;
+}
+
+.embed-form .form input[type="text"]::placeholder,
+.embed-form .form input[type="email"]::placeholder,
+.embed-form .form input[type="tel"]::placeholder {
+  color: transparent;
+}
+
+.embed-form .form input[type="text"]:focus,
+.embed-form .form input[type="email"]:focus,
+.embed-form .form input[type="tel"]:focus {
+  border-color: var(--border-hover);
+}
+
+/* Override form.css height/margin on inputs inside embed-form */
+main .embed-form .form input[type="text"],
+main .embed-form .form input[type="email"],
+main .embed-form .form input[type="tel"] {
+  height: 100%;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* ─── Select / dropdown (custom widget) ─── */
+
+/* Floating label — same behaviour as text/email wrappers */
+.embed-form .form .drop-down-wrapper {
+  position: relative;
+  height: 58px;
+  margin: 0;
+}
+
+.embed-form .form .drop-down-wrapper.has-value,
+.embed-form .form .drop-down-wrapper:focus-within {
+  margin-bottom: 19px;
+}
+
+.embed-form .form .drop-down-wrapper > label.field-label {
+  position: absolute;
+  left: var(--spacing-500);
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-family-primary);
+  font-size: var(--responsive-body-400-size);
+  font-weight: var(--responsive-body-400-weight);
+  color: var(--typography-disabled);
+  pointer-events: none;
+  transition: top 0.2s ease, transform 0.2s ease, font-size 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
+  z-index: 2;
+  display: block;
+  margin: 0;
+  padding: 0 var(--size-2);
+  background: transparent;
+  line-height: 1;
+  height: auto;
+}
+
+.embed-form .form .field-wrapper[data-required="true"] > label::after {
+  content: '';
+}
+
+.embed-form .form .drop-down-wrapper.is-open > label.field-label,
+.embed-form .form .drop-down-wrapper.has-value > label.field-label {
+  top: 0;
+  transform: translateY(0);
+  font-size: 11px;
+  color: var(--typography-secondary);
+  background-color: var(--color-white);
+  left: 0;
+}
+
+/* Custom select widget */
+.embed-form .form .custom-select {
+  position: relative;
+  height: 100%;
+}
+
+.embed-form .form .custom-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  box-sizing: border-box;
+  padding: var(--spacing-200) var(--spacing-400);
+  border: var(--border-width-100) solid var(--border-strong);
+  border-radius: var(--radius-8);
+  background-color: var(--color-white);
+  font-family: var(--font-family-primary);
+  font-size: var(--responsive-body-400-size);
+  font-weight: var(--responsive-body-400-weight);
+  line-height: var(--responsive-body-400-line-height);
+  color: var(--typography-disabled);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s ease;
+  appearance: none;
+  outline: none;
+  margin: 0;
+  height: 100%;
+}
+
+/* Shift value text down when label floats, and colour it properly */
+.embed-form .form .drop-down-wrapper.is-open .custom-select-trigger,
+.embed-form .form .drop-down-wrapper.has-value .custom-select-trigger {
+  margin-top: 19px;
+  padding-bottom: 3px;
+  color: var(--typography-secondary);
+}
+
+/* Blue border when open */
+.embed-form .form .custom-select.open .custom-select-trigger {
+  border-color: var(--border-interactive);
+}
+
+/* Chevron icon */
+.embed-form .form .custom-select-chevron {
+  flex-shrink: 0;
+  color: var(--typography-secondary);
+  transition: transform 0.2s ease;
+  margin-left: var(--spacing-300);
+}
+
+.embed-form .form .custom-select.open .custom-select-chevron {
+  transform: rotate(180deg);
+}
+
+/* Dropdown panel */
+.embed-form .form .custom-select-panel {
+  display: none;
+  position: absolute;
+  top: calc(100% + var(--size-2));
+  left: 0;
+  right: 0;
+  background-color: var(--color-white);
+  border: var(--border-width-100) solid var(--border-strong);
+  border-radius: var(--radius-8);
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 100;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 8%);
+}
+
+.embed-form .form .custom-select.open .custom-select-panel {
+  display: block;
+}
+
+/* Option rows — each row is [checkbox] [label text] */
+.embed-form .form .custom-select-option {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-400);
+  padding: var(--spacing-400) var(--spacing-500);
+  font-family: var(--font-family-primary);
+  font-size: var(--responsive-body-400-size);
+  line-height: var(--responsive-body-400-line-height);
+  color: var(--typography-secondary);
+  cursor: pointer;
+  border-bottom: var(--border-width-100) solid var(--border-strong);
+  transition: background-color 0.1s ease;
+}
+
+.embed-form .form .custom-select-option:last-child {
+  border-bottom: none;
+}
+
+.embed-form .form .custom-select-option:hover {
+  background-color: var(--color-grey-100);
+}
+
+/* Checkbox indicator — empty box by default */
+.embed-form .form .custom-select-option::before {
+  content: '';
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--radius-4);
+  background-color: var(--color-white);
+  box-sizing: border-box;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+/* Checked — blue fill + white checkmark via SVG background */
+.embed-form .form .custom-select-option.selected::before {
+  border-color: var(--color-blue-primary);
+  background-color: var(--color-blue-primary);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='M4 9l3.5 3.5L14 6' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 14px 14px;
+}
+
+/* ─── Connect panel (paired radio circle + input rows) ─── */
+
+.embed-form .form .field-connect-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.embed-form .form .field-connect-panel .connect-pairs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-400);
+  flex: 1;
+}
+
+.embed-form .form .field-connect-panel .connect-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--spacing-400);
+}
+
+/* Native circle radio — overrides the pill-radio defaults */
+.embed-form .form .field-connect-panel .radio-wrapper {
+  flex-shrink: 0;
+  position: static;
+  display: flex;
+  align-items: center;
+}
+
+.embed-form .form .field-connect-panel .radio-wrapper input[type="radio"] {
+  position: static;
+  width: var(--size-20);
+  height: var(--size-20);
+  overflow: visible;
+  clip-path: none;
+  white-space: normal;
+  flex-shrink: 0;
+  border-radius: var(--radius-circle);
+  border: 1.5px solid var(--border-strong);
+  background-color: var(--color-white);
+  cursor: pointer;
+  margin: 0;
+  transition: border-color 0.15s ease, background 0.15s ease;
+  accent-color: var(--color-blue-primary);
+}
+
+.radio-wrapper:has(~ .email-wrapper.has-value), .radio-wrapper:has(~ .email-wrapper:focus-within) {
+  margin-top: 19px;
+}
+
+/* Hide the radio label text (label lives on the field wrapper) */
+.embed-form .form .field-connect-panel .radio-wrapper label.field-label {
+  display: none;
+}
+
+/* Field wrapper fills remaining width */
+.embed-form .form .field-connect-panel .connect-row > .email-wrapper,
+.embed-form .form .field-connect-panel .connect-row > .text-wrapper {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Disabled row — dim the whole field area */
+.embed-form .form .field-connect-panel .connect-row.is-disabled > .email-wrapper,
+.embed-form .form .field-connect-panel .connect-row.is-disabled > .text-wrapper {
+  opacity: 0.4;
+}
+
+.embed-form .form .field-connect-panel .connect-row.is-disabled .radio-wrapper input[type="radio"] {
+  cursor: default;
+}
+
+/* ─── Radio group as pill buttons ─── */
+
+.embed-form .form .radio-group-wrapper {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  gap: var(--spacing-300);
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.embed-form .form .radio-group-wrapper > legend.field-label {
+  display: none;
+}
+
+.embed-form .form .radio-group-wrapper .radio-wrapper {
+  flex: none;
+  position: relative;
+}
+
+.embed-form .form .radio-group-wrapper input[type="radio"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.embed-form .form .radio-group-wrapper input[type="radio"]:checked + label.field-label {
+  border-color: var(--border-interactive);
+  color: var(--color-blue-primary);
+}
+
+.embed-form .form .radio-group-wrapper label.field-label:hover {
+  border-color: var(--border-hover);
+}
+
+/* ─── Checkbox ─── */
+
+.embed-form .form .checkbox-wrapper {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: flex-start;
+  gap: var(--spacing-300);
+}
+
+.embed-form .form .checkbox-wrapper input[type="checkbox"] {
+  flex-shrink: 0;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--radius-4);
+  background-color: var(--color-white);
+  cursor: pointer;
+  margin: 0;
+  margin-top: var(--size-2);
+  position: relative;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  display: inline-block;
+  padding: 0;
+}
+
+.embed-form .form .checkbox-wrapper input[type="checkbox"]:checked {
+  background-color: var(--button-alt-primary);
+  border-color: var(--button-alt-primary);
+}
+
+.embed-form .form .checkbox-wrapper input[type="checkbox"]:checked::after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: var(--size-2);
+  left: 5px;
+  width: 5px;
+  height: 9px;
+  border: var(--border-width-200) solid var(--color-white);
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+
+.embed-form .form .checkbox-wrapper label.field-label {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-200);
+  line-height: var(--responsive-body-400-line-height);
+  color: var(--typography-secondary);
+  cursor: pointer;
+  flex: 1;
+}
+
+/* ─── Buttons ─── */
+
+.embed-form .form .button-wrapper {
+  display: flex;
+  flex-direction: row;
+  margin: 0;
+}
+
+/* Hide original <button> elements replaced by anchors */
+.embed-form .form .button-wrapper button[aria-hidden="true"] {
+  display: none;
+}
+
+/* Shape, size and font overrides for a.button anchors inside the embed-form.
+   Colors and hover fill animation come from the global button.css. */
+.embed-form .form .button-wrapper a.button {
+  margin: 0;
+  width: 100%;
+  min-height: var(--size-56);
+  padding: 0 var(--spacing-650);
+  border-radius: var(--radius-8);
+  font-family: var(--font-family-accent);
+  font-size: var(--font-size-400);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+/* ─── Success & Error panels ─── */
+
+.embed-form .form .panel-wrapper:has(.plain-text-wrapper):not(:has(button, a.button)) {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--spacing-700);
+  padding: var(--size-80) 0;
+}
+
+.embed-form .form .panel-wrapper:has(.plain-text-wrapper):not(:has(button, a.button)) .image-wrapper img {
+  width: var(--size-48);
+  height: var(--size-48);
+}
+
+.embed-form .form [name="error_panel"] .plain-text-wrapper p {
+  color: var(--color-danger);
+}
+
+.embed-form .form .panel-wrapper:has(.plain-text-wrapper):not(:has(button, a.button)) .plain-text-wrapper p {
+  font-family: var(--font-family-primary);
+  font-size: var(--responsive-body-400-size);
+  line-height: var(--responsive-body-400-line-height);
+  color: var(--typography-secondary);
+  margin: 0;
+}
+
+/* Hide the spurious email input rendered inside success/error panels */
+.embed-form .form .panel-wrapper:has(.plain-text-wrapper):not(:has(button, a.button)) .email-wrapper {
+  display: none;
+}
+
+.embed-form .form .field-invalid {
+  margin-bottom: var(--spacing-600);
+}
+
+.embed-form .form .field-invalid .field-description {
+  font-weight: var(--font-weight-regular);
+  font-style: var(--font-style-regular);
+  font-size: var(--font-size-200);
+  line-height: var(--line-height-150);
+  letter-spacing: var(--letter-spacing-minus-4);
+  margin-top: var(--spacing-200);
+}
+
+@media (width < 720px) {
+  .embed-form form .field-wrapper.field-personal-panel .text-wrapper {
+    grid-column: span 12;
+  }
+}
+
+
+/* 1. Target the form container only when the Success Panel is active */
+.embed-form .form:has(fieldset[name="success_panel"][data-visible="true"]),
+/* 2. Target the form container only when the Error Panel is active */
+.embed-form .form:has(fieldset[name="error_panel"][data-visible="true"]) {
+    justify-content: center;
+}

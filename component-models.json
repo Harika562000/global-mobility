@@ -732,6 +732,50 @@
     ]
   },
   {
+    "id": "embed-form",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "logo",
+        "label": "Logo",
+        "description": "Brand logo image displayed at the top",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "eyebrow",
+        "label": "Eyebrow Text",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "valueType": "string",
+        "name": "headline",
+        "label": "Headline Title",
+        "description": "For Default variation, use H4 tag. Any heading tag will be used.",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "description",
+        "label": "Description"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "form",
+        "label": "Adaptive Form",
+        "description": "Select the AEM Adaptive Form to embed",
+        "validation": {
+          "rootPath": "/content/forms/af"
+        }
+      }
+    ]
+  },
+  {
     "id": "fragment",
     "fields": [
       {
