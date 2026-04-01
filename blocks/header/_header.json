@@ -1,0 +1,346 @@
+{
+  "definitions": [
+    {
+      "title": "Header Logo",
+      "id": "header-logo",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block",
+            "template": {
+              "name": "Header Logo",
+              "model": "header-logo"
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "Header Contact",
+      "id": "header-contact",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block",
+            "template": {
+              "name": "Header Contact",
+              "model": "header-contact"
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "Header Login",
+      "id": "header-login",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block",
+            "template": {
+              "name": "Header Login",
+              "model": "header-login"
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "Header Search",
+      "id": "header-search",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block",
+            "template": {
+              "name": "Header Search",
+              "model": "header-search"
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "Header Menu Item",
+      "id": "header-menu-item",
+      "model": "header-menu-item",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block",
+            "template": {
+              "name": "Header Menu Item",
+              "model": "header-menu-item",
+              "filter": "header-menu-item"
+            }
+          }
+        }
+      }
+    }
+],
+  "models": [
+    {
+      "id": "header-logo",
+      "fields": [
+        {
+          "component": "reference",
+          "name": "imageMobile",
+          "label": "Logo Image — Mobile (< 520px)",
+          "multi": false
+        },
+        {
+          "component": "reference",
+          "name": "imageTablet",
+          "label": "Logo Image — Tablet (520px – 1024px)",
+          "multi": false
+        },
+        {
+          "component": "reference",
+          "name": "imageDesktop",
+          "label": "Logo Image — Desktop (1025px+)",
+          "multi": false
+        },
+        {
+          "component": "text",
+          "name": "alt",
+          "label": "Alt Text",
+          "valueType": "string",
+          "value": ""
+        },
+        {
+          "component": "text",
+          "name": "url",
+          "label": "Logo Link URL",
+          "valueType": "string",
+          "value": "/"
+        }
+      ]
+    },
+    {
+      "id": "header-contact",
+      "fields": [
+        {
+          "component": "text",
+          "name": "label",
+          "label": "Contact Label",
+          "valueType": "string",
+          "value": "Contact"
+        },
+        {
+          "component": "text",
+          "name": "url",
+          "label": "Contact URL",
+          "valueType": "string",
+          "value": "/contact"
+        }
+      ]
+    },
+    {
+      "id": "header-login",
+      "fields": [
+        {
+          "component": "text",
+          "name": "label",
+          "label": "Login Label",
+          "valueType": "string",
+          "value": "Login"
+        },
+        {
+          "component": "text",
+          "name": "url",
+          "label": "Login URL",
+          "valueType": "string",
+          "value": "/login"
+        },
+        {
+          "component": "text",
+          "name": "item1Label",
+          "label": "Item 1 Label",
+          "valueType": "string"
+        },
+        {
+          "component": "text",
+          "name": "item1Url",
+          "label": "Item 1 Redirection Link",
+          "valueType": "string"
+        },
+        {
+          "component": "text",
+          "name": "item2Label",
+          "label": "Item 2 Label",
+          "valueType": "string"
+        },
+        {
+          "component": "text",
+          "name": "item2Url",
+          "label": "Item 2 Redirection Link",
+          "valueType": "string"
+        },
+        {
+          "component": "text",
+          "name": "item3Label",
+          "label": "Item 3 Label",
+          "valueType": "string"
+        },
+        {
+          "component": "text",
+          "name": "item3Url",
+          "label": "Item 3 Redirection Link",
+          "valueType": "string"
+        },
+        {
+          "component": "text",
+          "name": "item4Label",
+          "label": "Item 4 Label",
+          "valueType": "string"
+        },
+        {
+          "component": "text",
+          "name": "item4Url",
+          "label": "Item 4 Redirection Link",
+          "valueType": "string"
+        },
+        {
+          "component": "text",
+          "name": "item5Label",
+          "label": "Item 5 Label",
+          "valueType": "string"
+        },
+        {
+          "component": "text",
+          "name": "item5Url",
+          "label": "Item 5 Redirection Link",
+          "valueType": "string"
+        },
+        {
+          "component": "text",
+          "name": "item6Label",
+          "label": "Item 6 Label",
+          "valueType": "string"
+        },
+        {
+          "component": "text",
+          "name": "item6Url",
+          "label": "Item 6 Redirection Link",
+          "valueType": "string"
+        },
+        {
+          "component": "text",
+          "name": "item7Label",
+          "label": "Item 7 Label",
+          "valueType": "string"
+        },
+        {
+          "component": "text",
+          "name": "item7Url",
+          "label": "Item 7 Redirection Link",
+          "valueType": "string"
+        }
+      ]
+    },
+    {
+      "id": "header-search",
+      "fields": [
+        {
+          "component": "checkbox",
+          "name": "showSearch",
+          "label": "Show Search",
+          "valueType": "boolean",
+          "value": true
+        },
+        {
+          "component": "text",
+          "name": "label",
+          "label": "Search Label",
+          "valueType": "string",
+          "value": "Search"
+        },
+        {
+          "component": "text",
+          "name": "url",
+          "label": "Search URL",
+          "valueType": "string",
+          "value": "/search"
+        }
+      ]
+    },
+    {
+      "id": "header-menu-item",
+      "fields": [
+        {
+          "component": "text",
+          "name": "label",
+          "label": "Menu Item Label",
+          "valueType": "string",
+          "required": true
+        },
+        {
+          "component": "checkbox",
+          "name": "isChild",
+          "label": "Has Child Items (enables + button to add Child Menu Items)",
+          "valueType": "boolean",
+          "value": false
+        },
+        {
+          "component": "text",
+          "name": "url",
+          "label": "URL (used when no child items)",
+          "valueType": "string",
+          "condition": { "!": [{ "var": "isChild" }] }
+        }
+      ]
+    },
+    {
+      "id": "header-nav-child",
+      "fields": [
+        {
+          "component": "text",
+          "name": "childLabel",
+          "label": "Child Item Name",
+          "valueType": "string",
+          "required": true
+        },
+        {
+          "component": "text",
+          "name": "childUrl",
+          "label": "Child Item URL (Internal or External)",
+          "valueType": "string"
+        },
+        {
+          "component": "richtext",
+          "name": "description",
+          "label": "Description",
+          "valueType": "string"
+        },
+        {
+          "component": "text",
+          "name": "exploreLabel",
+          "label": "Explore Button Label",
+          "valueType": "string"
+        },
+        {
+          "component": "text",
+          "name": "exploreUrl",
+          "label": "Explore Button URL",
+          "valueType": "string"
+        },
+        {
+          "component": "richtext",
+          "name": "links",
+          "label": "Child Links (ul / li items)",
+          "valueType": "string"
+        }
+      ]
+    }
+  ],
+  "filters": [
+    {
+      "id": "nav-section",
+      "components": ["header-section"]
+    },
+    {
+      "id": "header-menu-item",
+      "components": ["header-nav-child"]
+    }
+  ]
+}

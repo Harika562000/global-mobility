@@ -128,6 +128,18 @@
     ]
   },
   {
+    "id": "nav-section",
+    "components": [
+      "header-section"
+    ]
+  },
+  {
+    "id": "header-menu-item",
+    "components": [
+      "header-nav-child"
+    ]
+  },
+  {
     "id": "hero",
     "components": [
       "hero"
