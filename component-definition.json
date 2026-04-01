@@ -301,6 +301,22 @@
           }
         },
         {
+          "title": "Numeralia",
+          "id": "numeralia",
+          "description": "Numeralia with exactly 3 items",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Numeralia",
+                  "model": "numeralia"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Overview",
           "id": "overview",
           "model": "overview",

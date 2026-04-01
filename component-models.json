@@ -1600,6 +1600,57 @@
     ]
   },
   {
+    "id": "numeralia",
+    "description": "Use exactly 3 numeralia-item entries.",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "number1",
+        "label": "Number 1",
+        "description": "Number with optional suffix (e.g. 150+, 80%, 35M)",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "description1",
+        "label": "Description 1",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "number2",
+        "label": "Number 2",
+        "description": "Number with optional suffix (e.g. 150+, 80%, 35M)",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "description2",
+        "label": "Description 2",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "number3",
+        "label": "Number 3",
+        "description": "Number with optional suffix (e.g. 150+, 80%, 35M)",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "description3",
+        "label": "Description 3",
+        "required": true
+      }
+    ]
+  },
+  {
     "id": "overview",
     "fields": [
       {
