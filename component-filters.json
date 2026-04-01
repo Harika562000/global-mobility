@@ -20,7 +20,8 @@
       "search",
       "search-results",
       "no-search-results",
-      "dynamic-module"
+      "dynamic-module",
+      "tag"
     ]
   },
   {
@@ -49,5 +50,15 @@
       "button",
       "title"
     ]
+  },
+  {
+    "id": "hero",
+    "components": [
+      "hero"
+    ]
+  },
+  {
+    "id": "tag",
+    "components": []
   }
 ]
