@@ -1670,6 +1670,91 @@
     ]
   },
   {
+    "id": "product-cards",
+    "fields": [
+      {
+        "component": "select",
+        "name": "classes",
+        "label": "Product Cards Variant",
+        "valueType": "string",
+        "value": "",
+        "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Compact",
+            "value": "product-cards-compact"
+          },
+          {
+            "name": "Compact Large",
+            "value": "product-cards-compact-large"
+          },
+          {
+            "name": "Default + Carousel",
+            "value": "carousel"
+          },
+          {
+            "name": "Default + Carousel (Mobile Only)",
+            "value": "carousel-mobile"
+          },
+          {
+            "name": "Compact + Carousel",
+            "value": "product-cards-compact, carousel"
+          },
+          {
+            "name": "Compact + Carousel (Mobile Only)",
+            "value": "product-cards-compact, carousel-mobile"
+          },
+          {
+            "name": "Compact Large + Carousel",
+            "value": "product-cards-compact-large, carousel"
+          },
+          {
+            "name": "Compact Large + Carousel (Mobile Only)",
+            "value": "product-cards-compact-large, carousel-mobile"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "product-card",
+    "fields": [
+      {
+        "component": "text",
+        "name": "chartJson",
+        "label": "Chart JSON (Lottie)",
+        "valueType": "string",
+        "value": "",
+        "description": "Optional. Paste valid Lottie JSON to show an animated graphic above the title."
+      },
+      {
+        "component": "richtext",
+        "name": "title",
+        "label": "Product Card Title",
+        "valueType": "string",
+        "value": "",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "name": "description",
+        "label": "Product Card Description",
+        "valueType": "string",
+        "value": "",
+        "required": true
+      },
+      {
+        "component": "aem-content",
+        "name": "link",
+        "label": "Product Card Link",
+        "description": "Makes the entire card clickable. Optional."
+      }
+    ]
+  },
+  {
     "id": "search-results",
     "fields": [
       {

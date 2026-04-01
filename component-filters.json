@@ -28,7 +28,8 @@
       "overview",
       "logo-set",
       "numeralia",
-      "accordion"
+      "accordion",
+      "product-cards"
     ]
   },
   {
@@ -74,6 +75,12 @@
     "id": "media-module",
     "components": [
       "media-module"
+    ]
+  },
+  {
+    "id": "product-cards",
+    "components": [
+      "product-card"
     ]
   },
   {
