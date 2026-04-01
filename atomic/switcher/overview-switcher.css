@@ -39,6 +39,11 @@
   transition: background-color 150ms ease, color 150ms ease;
 }
 
+.overview-switcher-tab:focus-visible {
+  outline: var(--border-width-200) solid var(--color-brand-300);
+  outline-offset: var(--border-width-200);
+}
+
 .overview-switcher-tab.is-active {
   color: var(--color-white);
   background-color: var(--color-black);
@@ -48,12 +53,11 @@
   background-color: var(--surface-light-grey);
 }
 
-.overview-switcher-tab:focus-visible {
-  outline: var(--border-width-200) solid var(--color-brand-300);
-  outline-offset: var(--border-width-200);
+/* Hero mirror: float above hero content and gradient overlay (z-index: 1) */
+.hero:has(.overview-switcher-hero-host) {
+  position: relative;
 }
 
-/* Hero mirror: float above hero content */
-.hero:has(.atomic-overview-switcher-host--hero) {
-  position: relative;
+.overview-switcher-hero-host .overview-switcher {
+  z-index: 2;
 }

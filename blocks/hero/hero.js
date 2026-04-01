@@ -230,4 +230,5 @@ export default function decorate(block) {
   }
 
   rows.forEach((r) => r.remove());
+  block.dispatchEvent(new CustomEvent('hero:decorated', { bubbles: true }));
 }

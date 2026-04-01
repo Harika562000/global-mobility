@@ -17,21 +17,6 @@ export const OVERVIEW_SWITCHER_DEFAULTS = {
   panelFullviewId: 'overview-panel-1-1',
 };
 
-function isElementExist(pageRoot, className) {
-  if (!pageRoot) return null;
-  return pageRoot.querySelector(className);
-}
-
-function findOverviewHeroBlock(pageRoot) {
-  if (!pageRoot) return null;
-  return pageRoot.querySelector('.section.overview-container .overview-hero-inner');
-}
-
-/* function findFullViewHeroBlock(pageRoot) {
-  if (!pageRoot) return null;
-  return pageRoot.querySelector('.section.hero-container .hero');
-} */
-
 /**
  * Loads atomic overview switcher styles once per page.
  * @returns {Promise<void>}
@@ -70,12 +55,12 @@ export function createOverviewSwitcher(options = {}) {
   const btnFullview = document.createElement('button');
   btnOverview.type = 'button';
   btnFullview.type = 'button';
-  btnOverview.className = 'overview-switcher-tab is-active';
-  btnFullview.className = 'overview-switcher-tab';
+  btnOverview.className = 'overview-switcher-tab';
+  btnFullview.className = 'overview-switcher-tab is-active';
   btnOverview.setAttribute('role', 'tab');
   btnFullview.setAttribute('role', 'tab');
-  btnOverview.setAttribute('aria-selected', 'true');
-  btnFullview.setAttribute('aria-selected', 'false');
+  btnOverview.setAttribute('aria-selected', 'false');
+  btnFullview.setAttribute('aria-selected', 'true');
   btnOverview.setAttribute('aria-controls', panelOverviewId);
   btnFullview.setAttribute('aria-controls', panelFullviewId);
   btnOverview.id = `overview-tab-0-${bid}${idPost}`;
@@ -83,12 +68,6 @@ export function createOverviewSwitcher(options = {}) {
   btnOverview.textContent = overviewLabel;
   btnFullview.textContent = fullviewLabel;
   tablist.append(btnOverview, btnFullview);
-  const pageRoot = document.querySelector('main');
-  const overviewHero = findOverviewHeroBlock(pageRoot);
-  // const fullViewHero = findFullViewHeroBlock(pageRoot);
-  if (overviewHero && !isElementExist(pageRoot, '.section.overview-container .overview-switcher')) {
-    overviewHero.appendChild(tablist);
-  }
   return tablist;
 }
 
@@ -148,7 +127,7 @@ export function setupOverviewSwitcher({
   });
 
   if (desktopMq.matches) {
-    setPageDesktopMode('overview');
+    setPageDesktopMode('fullview');
   }
 
   desktopMq.addEventListener('change', (e) => {

@@ -1,5 +1,5 @@
 import { readBlockConfig, toClassName } from '../../scripts/aem.js';
-import { createOverviewSwitcher } from '../../atomic/switcher/overview-switcher.js';
+import { createOverviewSwitcher, setupOverviewSwitcher } from '../../atomic/switcher/overview-switcher.js';
 
 const DEFAULT_OVERVIEW_LABEL = 'Overview';
 const DEFAULT_FULLVIEW_LABEL = 'Full View';
@@ -205,6 +205,21 @@ function parseLayoutRows(contentRows) {
   return { slots, fullviewFragments };
 }
 
+function injectHeroSwitcher(pageRoot, tablist) {
+  const hero = pageRoot?.querySelector('.hero:not(.overview-container .hero)');
+  if (!hero || hero.querySelector('.overview-switcher-hero-host')) return;
+  const host = document.createElement('div');
+  host.className = 'overview-switcher-hero-host';
+  host.appendChild(tablist);
+  hero.appendChild(host);
+}
+
+function scheduleInjectHeroSwitcher(pageRoot, tablist) {
+  pageRoot?.addEventListener('hero:decorated', () => {
+    injectHeroSwitcher(pageRoot, tablist);
+  }, { once: true });
+}
+
 function findHeroEmAccentContent(pageRoot) {
   if (!pageRoot) return null;
   return pageRoot.querySelector('.section:not(.overview-container) .hero .hero-em-accent-content');
@@ -360,11 +375,43 @@ export default function decorate(block) {
 
   block.append(body);
 
-  panelFullview.hidden = true;
+  panelOverview.hidden = true;
 
   const section = getOverviewSection(block);
   const pageRoot = getOverviewPageRoot(section);
 
   scheduleInjectHeroEmAccentContent(pageRoot, panelOverview);
-  createOverviewSwitcher();
+
+  const tablist = createOverviewSwitcher({
+    bid,
+    panelOverviewId: panelOverview.id,
+    panelFullviewId: panelFullview.id,
+  });
+
+  const heroInner = layout.querySelector('.overview-hero-inner');
+  if (heroInner) heroInner.prepend(tablist);
+
+  const heroTablist = createOverviewSwitcher({
+    bid,
+    panelOverviewId: panelOverview.id,
+    panelFullviewId: panelFullview.id,
+    idSuffix: 'hero',
+  });
+
+  scheduleInjectHeroSwitcher(pageRoot, heroTablist);
+
+  const btnOverview = tablist.querySelector(`[aria-controls="${panelOverview.id}"]`);
+  const btnFullview = tablist.querySelector(`[aria-controls="${panelFullview.id}"]`);
+  const heroBtnOverview = heroTablist.querySelector(`[aria-controls="${panelOverview.id}"]`);
+  const heroBtnFullview = heroTablist.querySelector(`[aria-controls="${panelFullview.id}"]`);
+
+  setupOverviewSwitcher({
+    tabSets: [
+      { btnOverview, btnFullview },
+      { btnOverview: heroBtnOverview, btnFullview: heroBtnFullview },
+    ],
+    panelOverview,
+    panelFullview,
+    pageRoot,
+  });
 }
