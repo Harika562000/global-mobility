@@ -75,6 +75,23 @@
               }
             }
           }
+        },
+        {
+          "title": "Header Section",
+          "id": "header-section",
+          "description": "Section that only allows the Header block.",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/section/v1/section",
+                "template": {
+                  "name": "header section",
+                  "model": "header-section",
+                  "filter": "header-section"
+                }
+              }
+            }
+          }
         }
       ]
     },
