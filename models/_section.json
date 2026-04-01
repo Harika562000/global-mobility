@@ -56,7 +56,8 @@
         "search-results",
         "no-search-results",
         "dynamic-module",
-        "tag"
+        "tag",
+        "content-module"
       ]
     }
   ]
