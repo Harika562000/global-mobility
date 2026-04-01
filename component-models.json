@@ -475,6 +475,137 @@
     ]
   },
   {
+    "id": "content-module",
+    "fields": [
+      {
+        "component": "select",
+        "name": "classes",
+        "label": "Variation",
+        "required": true,
+        "options": [
+          {
+            "name": "Default (Standard)",
+            "value": "default-variation"
+          },
+          {
+            "name": "Full Width Headline",
+            "value": "full-width-headline"
+          },
+          {
+            "name": "Full Width Text",
+            "value": "full-width-text"
+          },
+          {
+            "name": "Two Col Text",
+            "value": "two-col-text"
+          },
+          {
+            "name": "Default with CTA",
+            "value": "default-with-cta"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "name": "eyebrow",
+        "label": "Eyebrow",
+        "valueType": "string",
+        "required": true,
+        "condition": {
+          "===": [
+            {
+              "var": "classes"
+            },
+            "default-variation"
+          ]
+        }
+      },
+      {
+        "component": "richtext",
+        "name": "description",
+        "label": "Description / First Column",
+        "valueType": "string",
+        "description": "Default H4 tag. Any heading tag will be animated. p tag for text.",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "name": "description2",
+        "label": "Second Column Content",
+        "valueType": "string",
+        "description": "Default H4 tag. Any heading tag will be animated. p tag for text.",
+        "required": true,
+        "condition": {
+          "===": [
+            {
+              "var": "classes"
+            },
+            "two-col-text"
+          ]
+        }
+      },
+      {
+        "component": "container",
+        "name": "cta",
+        "label": "CTA",
+        "valueType": "object",
+        "collapsible": true,
+        "condition": {
+          "===": [
+            {
+              "var": "classes"
+            },
+            "default-with-cta"
+          ]
+        },
+        "fields": [
+          {
+            "component": "aem-content",
+            "valueType": "string",
+            "name": "button1",
+            "label": "Button 1 Link",
+            "required": true
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "button1Title",
+            "label": "Button 1 Title",
+            "description": "Accessibility title attribute (optional)"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "button1Text",
+            "label": "Button 1 Text",
+            "required": true
+          },
+          {
+            "component": "select",
+            "name": "button1Type",
+            "label": "Button 1 Variation",
+            "valueType": "string",
+            "value": "",
+            "options": [
+              {
+                "name": "Primary",
+                "value": "primary"
+              },
+              {
+                "name": "Secondary",
+                "value": "secondary"
+              },
+              {
+                "name": "Inverted",
+                "value": "inverted"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
     "id": "dynamic-module",
     "fields": [
       {
