@@ -42,6 +42,10 @@
   font-size: 0.65em;
 }
 
+.accordion details summary > :is(p, h2, h3, h4, h5, h6) {
+  padding-right: var(--spacing-700);
+}
+
 .accordion details summary > :is(p, h2, h3, h4, h5, h6)::after {
   content: url('../../icons/plus.svg');
   position: absolute;
@@ -56,7 +60,6 @@
 
 .accordion .accordion-header {
   margin-bottom: var(--spacing-900);
-
 }
 
 .accordion .accordion-header-eyebrow {
@@ -107,8 +110,12 @@
 /* When content has a ul, the ul is a 3-column grid; when no ul (e.g. only p's), content is a 3-column grid */
 .accordion.cards .accordion-item-body .accordion-item-content:has(ul) ul {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr;
   gap: var(--spacing-600);
+
+  @media (width >= 720px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 .accordion.cards .accordion-item-body .accordion-item-content:not(:has(ul)) {
@@ -177,11 +184,10 @@
 }
 
 .accordion.small .accordion-header {
-    margin-bottom: var(--size-40);
+  margin-bottom: var(--size-40);
 }
 
 @media (width >= 720px) {
-
   .accordion .accordion-header-eyebrow {
     margin-bottom: var(--spacing-600);
   }

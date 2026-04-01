@@ -47,7 +47,7 @@ function closeAccordion(body, details) {
 
 /**
  * Builds a header from a single row with one or three cells (eyebrow, heading, description).
- * Preserves the author’s heading element (e.g. h5, p) instead of forcing an h2.
+ * Preserves the author's heading element (e.g. h5, p) instead of forcing an h2.
  */
 function buildAccordionHeader(headerRow) {
   const header = document.createElement('div');
