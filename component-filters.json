@@ -22,7 +22,8 @@
       "no-search-results",
       "dynamic-module",
       "tag",
-      "content-module"
+      "content-module",
+      "media-module"
     ]
   },
   {
@@ -56,6 +57,12 @@
     "id": "hero",
     "components": [
       "hero"
+    ]
+  },
+  {
+    "id": "media-module",
+    "components": [
+      "media-module"
     ]
   },
   {
