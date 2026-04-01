@@ -1,5 +1,17 @@
 import { loadCSS } from '../aem.js';
-import { onMobileBreakpointChange } from './utils.js';
+import { TABLET_BP } from './constants.js';
+import { onBreakpointChange, onMobileBreakpointChange } from './utils.js';
+
+export const DEFAULT_CAROUSEL_OPTIONS = Object.freeze({
+  infinite: false,
+  mobileOnly: false,
+  showBottomNav: false,
+  transitionDurationMs: 500,
+  dragThresholdPx: 5,
+  swipeCommitPx: 30,
+  swipeSlideFactor: 0.3,
+  clampToMaxOffset: false,
+});
 
 let cssReady;
 function ensureStyles() {
@@ -72,7 +84,16 @@ function clearSlideAttributes(items) {
  * Returns a destroy function to tear everything down.
  */
 function buildCarousel(container, items, opts) {
-  const { infinite, showBottomNav } = opts;
+  const {
+    infinite,
+    showBottomNav,
+    transitionDurationMs,
+    transitionEasing = 'ease',
+    dragThresholdPx,
+    swipeCommitPx,
+    swipeSlideFactor,
+    clampToMaxOffset,
+  } = opts;
 
   carouselCounter += 1;
   const carouselId = carouselCounter;
@@ -269,9 +290,12 @@ function buildCarousel(container, items, opts) {
     currentIndex = Math.max(0, Math.min(targetIdx, max));
     const target = items[currentIndex];
     if (target) {
+      const targetOffset = clampToMaxOffset
+        ? Math.min(target.offsetLeft, Math.max(0, inner.scrollWidth - track.offsetWidth))
+        : target.offsetLeft;
       inner.style.transition = shouldAnimate
-        ? 'transform 0.5s ease' : 'none';
-      inner.style.transform = `translateX(-${target.offsetLeft}px)`;
+        ? `transform ${transitionDurationMs}ms ${transitionEasing}` : 'none';
+      inner.style.transform = `translateX(-${targetOffset}px)`;
     }
 
     updateActiveCard();
@@ -323,7 +347,7 @@ function buildCarousel(container, items, opts) {
   let dragStartY = 0;
   let baseOffset = 0;
   let hasMoved = false;
-  const DRAG_THRESHOLD = 5;
+  const DRAG_THRESHOLD = dragThresholdPx;
 
   function getBaseOffset() {
     const target = items[currentIndex];
@@ -365,10 +389,10 @@ function buildCarousel(container, items, opts) {
 
     const dx = clientX - dragStartX;
     const itemW = items[0] ? items[0].offsetWidth : 1;
-    const slidesMoved = Math.round(Math.abs(dx) / (itemW * 0.3));
+    const slidesMoved = Math.round(Math.abs(dx) / (itemW * swipeSlideFactor));
     const direction = dx > 0 ? -1 : 1;
 
-    if (Math.abs(dx) > 30 && slidesMoved > 0) {
+    if (Math.abs(dx) > swipeCommitPx && slidesMoved > 0) {
       slideTo(currentIndex + direction * slidesMoved);
     } else {
       slideTo(currentIndex);
@@ -430,6 +454,7 @@ function buildCarousel(container, items, opts) {
 
   /* ---- Initial render ---- */
   slideTo(0, false);
+  inner.style.transition = `transform ${transitionDurationMs}ms ${transitionEasing}`;
 
   /* ---- Destroy function ---- */
   function destroy() {
@@ -469,7 +494,8 @@ function buildCarousel(container, items, opts) {
  *  - carousel-infinite — loops from last→first and first→last
  *
  * @param {HTMLElement} container  Element whose children become slides
- * @param {{ infinite?: boolean, mobileOnly?: boolean, showBottomNav?: boolean }} [opts]
+ * @param {{ infinite?: boolean, mobileOnly?: boolean, mobileOnlyQuery?: string,
+ *   showBottomNav?: boolean }} [opts]
  * @returns {Promise<{
  *   track: HTMLElement, nav: HTMLElement,
  *   bottomNav?: HTMLElement, dots: HTMLElement
@@ -612,26 +638,38 @@ export async function initCarousel(container, opts = {}) {
   const items = [...container.children];
   if (items.length < 2) return null;
 
-  const infinite = opts.infinite || false;
-  const mobileOnly = opts.mobileOnly || false;
-  const showBottomNav = opts.showBottomNav || false;
+  const options = {
+    ...DEFAULT_CAROUSEL_OPTIONS,
+    ...opts,
+  };
+  const {
+    infinite,
+    mobileOnly,
+    mobileOnlyQuery = TABLET_BP,
+    showBottomNav,
+  } = options;
 
   await ensureStyles();
 
   if (mobileOnly) container.classList.add('carousel-mobile');
   if (infinite) container.classList.add('carousel-infinite');
 
-  const buildOpts = { infinite, showBottomNav };
+  const buildOpts = { ...options, infinite, showBottomNav };
 
-  /* For mobileOnly, only render the carousel on mobile viewports.
-     Use matchMedia to init/destroy when crossing the breakpoint. */
+  /* For mobileOnly, only render the carousel on matching viewports.
+     Use matchMedia to init/destroy when crossing the breakpoint.
+     `mobileOnlyQuery` defaults to TABLET_BP; pass MOBILE_BP for phone-only. */
   if (mobileOnly) {
     let instance = null;
 
-    onMobileBreakpointChange((isMobile) => {
-      if (isMobile && !instance) {
+    const onViewportChange = mobileOnlyQuery === TABLET_BP
+      ? onMobileBreakpointChange
+      : (cb) => onBreakpointChange(mobileOnlyQuery, cb);
+
+    onViewportChange((isNarrow) => {
+      if (isNarrow && !instance) {
         instance = buildCarousel(container, items, buildOpts);
-      } else if (!isMobile && instance) {
+      } else if (!isNarrow && instance) {
         instance.destroy();
         instance = null;
       }

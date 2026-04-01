@@ -8,6 +8,7 @@
   {
     "id": "section",
     "components": [
+      "accordion",
       "text",
       "image",
       "button",
@@ -15,12 +16,52 @@
       "hero",
       "banner",
       "cards",
+      "carousel",
       "columns",
+      "customer-stories",
+      "embed",
       "fragment",
+      "form",
+      "hero",
+      "image",
+      "logo-set",
+      "quote",
       "search",
+      "section-title",
+      "tabs",
+      "table",
+      "text",
+      "title",
+      "video",
+      "numeralia",
+      "product-cards",
+      "sp-table",
+      "speaker-cards",
+      "content-module",
+      "cta-block",
+      "tag",
+      "logo-strip",
+      "embed-form",
+      "media-module",
+      "insights-card",
+      "contact-details",
       "search-results",
       "no-search-results",
-      "dynamic-module"
+      "embed-adaptive-form",
+      "dynamic-module",
+      "experts-card",
+      "overview"
+    ]
+  },
+  {
+    "id": "header-section",
+    "components": [
+      "header-logo",
+      "header-contact",
+      "header-login",
+      "header-search",
+      "header-menu-item",
+      "header-nav-child"
     ]
   },
   {
@@ -49,5 +90,87 @@
       "button",
       "title"
     ]
+  },
+  {
+    "id": "customer-stories",
+    "components": [
+      "fragment"
+    ]
+  },
+  {
+    "id": "form",
+    "components": [
+      "captcha",
+      "checkbox",
+      "checkbox-group",
+      "date-input",
+      "drop-down",
+      "email",
+      "file-input",
+      "form-accordion",
+      "form-button",
+      "form-fragment",
+      "form-image",
+      "form-modal",
+      "form-reset-button",
+      "form-submit-button",
+      "number-input",
+      "panel",
+      "password",
+      "plain-text",
+      "radio-group",
+      "rating",
+      "telephone-input",
+      "text-input",
+      "tnc",
+      "wizard",
+      "range"
+    ]
+  },
+  {
+    "id": "nav-section",
+    "components": [
+      "header-section"
+    ]
+  },
+  {
+    "id": "header-menu-item",
+    "components": [
+      "header-nav-child"
+    ]
+  },
+  {
+    "id": "hero",
+    "components": [
+      "hero"
+    ]
+  },
+  {
+    "id": "insights-card",
+    "components": [
+      "insights-card-item"
+    ]
+  },
+  {
+    "id": "logo-set",
+    "components": [
+      "logo-set"
+    ]
+  },
+  {
+    "id": "media-module",
+    "components": [
+      "media-module"
+    ]
+  },
+  {
+    "id": "product-cards",
+    "components": [
+      "product-card"
+    ]
+  },
+  {
+    "id": "tag",
+    "components": []
   }
 ]

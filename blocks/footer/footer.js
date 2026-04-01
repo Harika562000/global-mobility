@@ -55,6 +55,18 @@ function updateCopyrightYear(footerRoot) {
   });
 }
 
+function normalizeHref(raw) {
+  if (!raw) return '';
+  const href = raw.replace(/\u00A0/g, ' ').trim();
+  if (!href) return '';
+  if (/^(mailto:|tel:)/i.test(href)) return href;
+  if (/^www\./i.test(href)) return `https://${href}`;
+  if (!/^(https?:\/\/|\/|\.\/|\.\.\/|#)/i.test(href) && /\.[a-z]{2,}(\/|$)/i.test(href)) {
+    return `https://${href}`;
+  }
+  return href;
+}
+
 /**
  * Loads footer fragment from footer page; first 5 sections get
  * footer-brand, footer-nav, footer-tagline, footer-social, footer-utility.
@@ -104,7 +116,7 @@ export default async function decorate(block) {
   // Clone CTA button into social section for layout
   const socialContentWrapper = footer.querySelector('.footer-social > .default-content-wrapper');
   const utilityButton = footer.querySelector('.footer-utility .button');
-  utilityButton?.classList.add('original-button', 'inverted', 'size-40');
+  utilityButton?.classList.add('original-button', 'size-40');
   if (socialContentWrapper && utilityButton) {
     const clonedButton = utilityButton.cloneNode(true);
     clonedButton.classList.add('button-clone');
@@ -113,5 +125,35 @@ export default async function decorate(block) {
   }
 
   updateCopyrightYear(footer);
+
+  // Open external links in a new tab
+  footer.querySelectorAll('a[href]').forEach((link) => {
+    const rawHref = link.getAttribute('href');
+    const href = normalizeHref(rawHref);
+    if (href && href !== rawHref) {
+      link.setAttribute('href', href);
+      link.href = href;
+    }
+
+    if (href && /^(https?:\/\/|\/\/)/.test(href) && !new URL(href, window.location).hostname.includes(window.location.hostname)) {
+      link.setAttribute('target', '_blank');
+      link.setAttribute('rel', 'noopener noreferrer');
+    }
+  });
+
+  // Safety net: if any authored bare-domain URL survives, force absolute navigation on click.
+  footer.addEventListener('click', (event) => {
+    const link = event.target.closest('a[href]');
+    if (!link || !footer.contains(link)) return;
+
+    const rawHref = link.getAttribute('href');
+    const href = normalizeHref(rawHref);
+    if (!href || href === rawHref) return;
+
+    event.preventDefault();
+    const target = link.getAttribute('target') || '_self';
+    window.open(href, target);
+  });
+
   block.append(footer);
 }

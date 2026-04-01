@@ -12,7 +12,7 @@ button.button {
   margin: var(--button-margin, var(--spacing-300) 0);
   width: var(--button-width, 100%);
   border: 1px solid transparent;
-  border-radius: var(--radius-8);
+  border-radius: var(--spacing-650) var(--spacing-400) var(--spacing-650) var(--spacing-400);
   padding: var(--spacing-500) var(--spacing-600);
   min-height: 56px;
   font-family: var(--font-family-primary);

@@ -1,0 +1,249 @@
+/* Overview block — hero + 5-column grid (S&P Mobility Overview UI) */
+
+.overview {
+  width: 100%;
+}
+
+/*
+ * ≤1024px: hide only the overview block inside overview-container; all sections stay in flow.
+ * >1024px + main.overview-page-overview: show only section.overview-container; hide other sections.
+ * >1024px + main.overview-page-fullview: hide section.overview-container; show all other sections.
+ * Footer sits beside `main` (not inside it); hide it in Overview tab via :has().
+ * Classes are toggled on `main` (or section.parentElement fallback) from overview.js.
+ */
+@media (width <= 1024px) {
+  .section.overview-container > .overview-wrapper {
+    display: none !important;
+  }
+}
+
+@media (width >= 1025px) {
+  .overview-page-overview > .section:not(.overview-container) {
+    display: none !important;
+  }
+
+  .overview-page-overview > .section.overview-container {
+    display: block !important;
+  }
+
+  .overview-page-fullview > .section.overview-container {
+    display: none !important;
+  }
+
+  .overview-page-fullview > .section:not(.overview-container) {
+    display: block !important;
+  }
+
+  /* `overview-page-*` may live on `main` or a wrapper (see getOverviewPageRoot) */
+  body:has(.overview-page-overview) footer {
+    display: none !important;
+  }
+
+  body:has(.overview-page-fullview) footer {
+    display: revert !important;
+  }
+}
+
+.overview-body {
+  width: 100%;
+}
+
+/* Primary switcher lives inside `.overview-hero` (see buildOverviewLayout + overview-hero-switcher) */
+
+.overview-panels {
+  width: 100%;
+}
+
+.overview-panel[hidden] {
+  display: none;
+}
+
+.overview-panel:not([hidden]) {
+  display: block;
+}
+
+/* —— Layout shell —— */
+.overview-layout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* —— Hero (navy band + stat card; primary switcher is first child of .overview-hero-main) —— */
+.overview-hero {
+  background-color: var(--color-brand-200);
+  color: var(--color-white);
+  padding: var(--spacing-700);
+  border-radius: var(--radius-0);
+  position: relative;
+}
+
+.overview-hero-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(calc(13.75 * var(--font-size-300)), calc(20 * var(--font-size-300)));
+  gap: var(--spacing-600);
+  align-items: start;
+  max-width: var(--main-max-width);
+  margin-inline: auto;
+}
+
+.overview-hero-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-400);
+  min-width: 0;
+}
+
+/* Cloned from page hero `.hero-em-accent-content` (see scheduleInjectHeroEmAccentContent) */
+.overview-hero-main .hero-em-accent-content {
+  max-width: calc(52 * var(--font-size-300));
+}
+
+
+/* Credibility / stat card */
+.overview-hero-stat {
+  background-color: var(--color-grey-50);
+  color: var(--color-brand-200);
+  border-radius: var(--radius-12);
+  padding: var(--spacing-600);
+  min-height: calc(var(--spacing-1200) + var(--spacing-600));
+  box-sizing: border-box;
+}
+
+.overview-hero-stat :is(h2, h3, p) {
+  margin: 0;
+  color: var(--color-brand-200);
+}
+
+.overview-hero-stat :is(h2, h3):first-child {
+  font-size: clamp(var(--font-size-900), 5vw, calc(4 * var(--font-size-300)));
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-104p);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.overview-hero-stat p {
+  margin-top: var(--spacing-300);
+  font-size: var(--font-size-300);
+  line-height: var(--line-height-150p);
+  color: var(--color-brand-200);
+}
+
+/* —— Main: left column (cards + insights + products) | right column (contact) —— */
+.overview-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(calc(16.25 * var(--font-size-300)), calc(22 * var(--font-size-300)));
+  gap: var(--spacing-400);
+  align-items: stretch;
+  padding: var(--spacing-600);
+  background-color: var(--color-grey-50);
+  box-sizing: border-box;
+}
+
+.overview-main-left {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-400);
+  min-width: 0;
+}
+
+.overview-main-cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--spacing-400);
+  width: 100%;
+}
+
+/* Insights + products share the left column below the cards */
+.overview-main-subrow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--spacing-400);
+  width: 100%;
+}
+
+.overview-main-right {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Card tiles (light blue action cards) */
+.overview-grid-card {
+  background: linear-gradient(180deg, var(--color-blue-light) 0%, var(--color-blue-50) 100%);
+  border-radius: var(--radius-12);
+  padding: var(--spacing-500);
+  min-height: var(--spacing-1200);
+  box-sizing: border-box;
+  border: var(--border-width-100) solid var(--color-blue-200);
+}
+
+/* Large white blocks */
+.overview-grid-insights,
+.overview-grid-products {
+  background-color: var(--color-white);
+  border-radius: var(--radius-12);
+  padding: var(--spacing-500);
+  min-height: calc(var(--spacing-1200) + var(--spacing-700));
+  box-sizing: border-box;
+  border: var(--border-width-100) solid var(--color-grey-200);
+}
+
+.overview-grid-contact {
+  flex: 1;
+  background-color: var(--color-white);
+  border-radius: var(--radius-12);
+  padding: var(--spacing-500);
+  min-height: 0;
+  box-sizing: border-box;
+  border: var(--border-width-100) solid var(--color-grey-200);
+}
+
+.overview-slot-inner {
+  min-width: 0;
+}
+
+/* Full View tab stack */
+.overview-fullview-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-400);
+  padding: var(--spacing-400) 0;
+}
+
+/* —— Responsive —— */
+@media (width <= 1024px) {
+  .overview-hero-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .overview-hero-stat {
+    max-width: 100%;
+  }
+
+  .overview-main {
+    grid-template-columns: 1fr;
+  }
+
+  .overview-main-right {
+    flex: none;
+  }
+
+  .overview-grid-contact {
+    flex: none;
+  }
+
+  .overview-main-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .overview-main-subrow {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (width <= 600px) {
+  .overview-main-cards {
+    grid-template-columns: 1fr;
+  }
+}

@@ -155,6 +155,7 @@
     --color-tag-fill: #4A6066;
     --color-footer: #161616;
     --color-gradient-primary: var(--color-white);
+    --color-quiet-light: #EFEFE5;
   
     /* ========================================
        TYPOGRAPHY - FONT FAMILY
@@ -543,6 +544,7 @@
     --size-20: 20px;
     --size-29: 29px;
     --size-24: 24px;
+    --size-28: 28px;
     --size-32: 32px;
     --size-40: 40px;
     --size-48: 48px;
@@ -574,6 +576,7 @@
     --spacing-400: var(--size-16);
     --spacing-500: var(--size-20);
     --spacing-600: var(--size-24);
+    --spacing-650: var(--size-28);
     --spacing-700: var(--size-32);
     --spacing-800: var(--size-40);
     --spacing-900: var(--size-48);
@@ -722,6 +725,7 @@
     --background-color-alt: var(--surface-light-grey);
     --background-color-dark: var(--surface-dark);
     --background-color-accent: var(--color-brand-400);
+    --background-color-quiet-light: var(--color-quiet-light); /* #EFEFE5 */
     
     /* Link Colors */
     --link-color: var(--color-brand-300);

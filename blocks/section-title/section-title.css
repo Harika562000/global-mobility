@@ -1,0 +1,33 @@
+.section-title .eye-brow-text {
+    display: block;
+  }
+  
+  /* Optional variation: second row with heading + CTA (two divs) */
+  .section-title .title-row-with-cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-400);
+    margin-bottom: var(--spacing-600);
+  }
+  
+  .section-title h4,
+  .section-title h5,
+  .section-title h6 {
+    margin-top: var(--spacing-0);
+  }
+  
+  .section-title a.button:any-link {
+    margin: var(--spacing-0);
+  }
+  
+  .section-title p:last-of-type {
+    font-size: var(--responsive-font-body-400);
+  }
+  
+  @media (width < 720px) {
+    .section-title a.button:any-link {
+      margin-top: var(--spacing-600);
+    }
+  }

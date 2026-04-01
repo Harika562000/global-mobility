@@ -1,4 +1,5 @@
 import ApiClient from './api-client.js';
+// import { MOCK_SEARCH_RESPONSE } from './lucidworks-mock-data.js';
 
 const baseUrl = 'https://publish-p184787-e1941575.adobeaemcloud.com';
 
@@ -109,6 +110,24 @@ export default class LucidworksClient {
     }
 
     const url = `${this.baseUrl}/search-results?${params}`;
+    const result = await this.apiClient.get(url, this.headers);
+    return result.ok ? result.data : null;
+  }
+
+  async fetchTags(options = {}) {
+    const {
+      q = '',
+      start = 0,
+      rows,
+    } = options;
+
+    const params = new URLSearchParams();
+    if (q) params.set('q', q);
+    if (start) params.set('start', String(start));
+    if (rows != null && rows !== '') params.set('rows', String(rows));
+
+    const qs = params.toString();
+    const url = `${this.baseUrl}/search-results${qs ? `?${qs}` : ''}`;
     const result = await this.apiClient.get(url, this.headers);
     return result.ok ? result.data : null;
   }
