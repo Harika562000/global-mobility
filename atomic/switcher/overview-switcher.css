@@ -19,6 +19,12 @@
   left: 32px;
 }
 
+@media (width <= 1024px) {
+  .overview-switcher {
+    display: none;
+  }
+}
+
 .overview-switcher-tab {
   flex: 1 1 0;
   display: flex;

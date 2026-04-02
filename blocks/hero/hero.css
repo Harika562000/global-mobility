@@ -101,7 +101,7 @@ main > div.hero-section {
   background: linear-gradient(270deg, rgb(0 0 0 / var(--opacity-0)) 0%, rgb(0 0 0 / var(--opacity-90)) 100%);
 }
 
-.hero .hero-em-accent-content {
+.hero-em-accent-content {
   position: relative;
   z-index: 1;
   width: 100%;
@@ -111,11 +111,11 @@ main > div.hero-section {
   margin: 0;
 }
 
-.hero .hero-em-accent-content > div {
+hero-em-accent-content > div {
   max-width: 100%;
 }
 
-.hero .hero-em-accent-content h1 {
+.hero-em-accent-content h1 {
   font-size: var(--font-size-900);  /* TO DO : Need to handled from typography */
   line-height: var(--line-height-120p);  /* TO DO : Need to handled from typography */
   padding: 0;
@@ -123,14 +123,14 @@ main > div.hero-section {
   max-width: 100%;
 }
 
-.hero .hero-em-accent-content h1 em {
+.hero-em-accent-content h1 em {
   font-style: normal;
   background: linear-gradient(88.41deg, #1C76D3 -2.79%, #B8D6DF 89.07%);
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.hero .hero-em-accent-content p {
+.hero-em-accent-content p {
   margin: 0;
   padding: 0;
   color: var(--color-grey-300);
@@ -141,14 +141,14 @@ main > div.hero-section {
 
 /* TO DO : Need to handled from typography */
 @media (width >= 510px) {
-  .hero .hero-em-accent-content h1 {
+  .hero-em-accent-content h1 {
     line-height: var(--line-height-104p);
   }
 }
 
 /* TO DO : Need to handled from typography */
 @media (width >= 720px) {
-  .hero .hero-em-accent-content h1 {
+  .hero-em-accent-content h1 {
     font-size: var(--font-size-1200);
   }
 }
@@ -164,7 +164,7 @@ main > div.hero-section {
     min-height: 640px;
   }
 
-  .hero .hero-em-accent-content {
+  .hero-em-accent-content {
     max-width: 50%;
   }
 }
@@ -174,7 +174,7 @@ main > div.hero-section {
     min-height: 737px;
   }
 
-  .hero .hero-em-accent-content {
+  .hero-em-accent-content {
     max-width: 50%;
   }
 }
@@ -329,16 +329,16 @@ main > div.hero-section {
   line-height: var(--line-height-100p);
 }
 
+.hero-em-accent-content p:not(.button-container > p) {
+  margin-top: var(--spacing-700);
+}
+
 .hero .hero-black-colored-right-content > p:first-of-type {
   margin: var(--spacing-600) 0 var(--spacing-700) 0;
   padding: 0;
   font-size: var(--responsive-font-body-400);
   line-height: var(--responsive-line-height-26);
   font-weight: var(--type-body-400-weight);
-}
-
-.hero .hero-em-accent-content p:not(.button-container > p) {
-  margin-top: var(--spacing-700);
 }
 
 .hero .hero-black-colored-right-image {

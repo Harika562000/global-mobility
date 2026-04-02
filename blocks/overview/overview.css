@@ -42,10 +42,18 @@
   body:has(.overview-page-fullview) footer {
     display: revert !important;
   }
+
+  body:has(.overview-page-overview) {
+    background-color: var(--color-grey-50);
+  }
 }
 
 .overview-body {
   width: 100%;
+}
+
+main > .overview-container{
+  padding: 0;
 }
 
 /* Primary switcher lives inside `.overview-hero` (see buildOverviewLayout + overview-hero-switcher) */
@@ -80,9 +88,11 @@
 
 .overview-hero-inner {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(calc(13.75 * var(--font-size-300)), calc(20 * var(--font-size-300)));
+
+  /* TODO: Width is placeholder value, need to make changes */
+  grid-template-columns: minmax(0, 1fr) minmax(calc(13.75 * var(--font-size-300)), 420px);
   gap: var(--spacing-600);
-  align-items: start;
+  align-items: center;
   max-width: var(--main-max-width);
   margin-inline: auto;
 }
@@ -96,9 +106,24 @@
 
 /* Cloned from page hero `.hero-em-accent-content` (see scheduleInjectHeroEmAccentContent) */
 .overview-hero-main .hero-em-accent-content {
-  max-width: calc(52 * var(--font-size-300));
+  max-width: 100%;
+  padding: 0;
+  margin-top: var(--spacing-400);
 }
 
+.overview-hero-main .hero-em-accent-content .button-container {
+  display: none;
+}
+
+@media (width >= 720px) {
+  .overview-hero-main .hero-em-accent-content h1 {
+    font-size: var(--font-size-1100);
+  }
+
+  .overview-hero-main .hero-em-accent-content p:not(.button-container > p) {
+    margin-top: var( --spacing-300);
+  }
+}
 
 /* Credibility / stat card */
 .overview-hero-stat {
@@ -106,7 +131,10 @@
   color: var(--color-brand-200);
   border-radius: var(--radius-12);
   padding: var(--spacing-600);
-  min-height: calc(var(--spacing-1200) + var(--spacing-600));
+
+  /* TODO: min-height and min-width are placeholder values, need to make changes */
+  min-height: 263px;
+  min-width: 421px;
   box-sizing: border-box;
 }
 
@@ -136,7 +164,6 @@
   gap: var(--spacing-400);
   align-items: stretch;
   padding: var(--spacing-600);
-  background-color: var(--color-grey-50);
   box-sizing: border-box;
 }
 

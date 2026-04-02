@@ -247,11 +247,7 @@ function scheduleInjectHeroEmAccentContent(pageRoot, panelOverview) {
     clone.classList.add('overview-hero-em-accent-clone');
     clone.querySelectorAll('[id]').forEach((el) => el.removeAttribute('id'));
 
-    const header = clone.querySelector('h1');
-    const h2 = document.createElement('h2');
-    h2.innerHTML = header.innerHTML;
-
-    heroMain.append(h2);
+    heroMain.append(clone);
     done = true;
     return true;
   };
@@ -276,10 +272,10 @@ function buildOverviewLayout(slots) {
   const heroMain = document.createElement('div');
   heroMain.className = 'overview-hero-main';
 
-  const copy = document.createElement('div');
-  copy.className = 'overview-hero-copy';
-  if (slots.hero?.childNodes.length) copy.appendChild(slots.hero);
-  heroMain.appendChild(copy);
+  // const copy = document.createElement('div');
+  // copy.className = 'overview-hero-copy';
+  // if (slots.hero?.childNodes.length) copy.appendChild(slots.hero);
+  // heroMain.appendChild(copy);
 
   const stat = document.createElement('aside');
   stat.className = 'overview-hero-stat';
