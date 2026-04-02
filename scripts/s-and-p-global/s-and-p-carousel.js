@@ -11,6 +11,7 @@ export const DEFAULT_CAROUSEL_OPTIONS = Object.freeze({
   swipeCommitPx: 30,
   swipeSlideFactor: 0.3,
   clampToMaxOffset: false,
+  vertical: false,
 });
 
 let cssReady;
@@ -93,12 +94,14 @@ function buildCarousel(container, items, opts) {
     swipeCommitPx,
     swipeSlideFactor,
     clampToMaxOffset,
+    vertical,
   } = opts;
 
   carouselCounter += 1;
   const carouselId = carouselCounter;
 
   container.classList.add('carousel-initialized');
+  if (vertical) container.classList.add('carousel-vertical');
   container.setAttribute('role', 'region');
   container.setAttribute('aria-roledescription', 'carousel');
   if (!container.getAttribute('aria-label')) {
@@ -212,7 +215,12 @@ function buildCarousel(container, items, opts) {
   });
 
   /* ---- Assemble ---- */
-  container.append(nav, track, dots);
+  if (vertical) {
+    nav.hidden = true;
+    container.append(track, dots);
+  } else {
+    container.append(nav, track, dots);
+  }
 
   /* ---- State ---- */
   let currentIndex = 0;
@@ -290,12 +298,16 @@ function buildCarousel(container, items, opts) {
     currentIndex = Math.max(0, Math.min(targetIdx, max));
     const target = items[currentIndex];
     if (target) {
-      const targetOffset = clampToMaxOffset
-        ? Math.min(target.offsetLeft, Math.max(0, inner.scrollWidth - track.offsetWidth))
-        : target.offsetLeft;
       inner.style.transition = shouldAnimate
         ? `transform ${transitionDurationMs}ms ${transitionEasing}` : 'none';
-      inner.style.transform = `translateX(-${targetOffset}px)`;
+      if (vertical) {
+        inner.style.transform = `translateY(-${target.offsetTop}px)`;
+      } else {
+        const targetOffset = clampToMaxOffset
+          ? Math.min(target.offsetLeft, Math.max(0, inner.scrollWidth - track.offsetWidth))
+          : target.offsetLeft;
+        inner.style.transform = `translateX(-${targetOffset}px)`;
+      }
     }
 
     updateActiveCard();
@@ -333,10 +345,12 @@ function buildCarousel(container, items, opts) {
 
   /* ---- Keyboard: arrow keys ---- */
   container.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft') {
+    const prevKey = vertical ? 'ArrowUp' : 'ArrowLeft';
+    const nextKey = vertical ? 'ArrowDown' : 'ArrowRight';
+    if (e.key === prevKey) {
       e.preventDefault();
       slideTo(currentIndex - 1);
-    } else if (e.key === 'ArrowRight') {
+    } else if (e.key === nextKey) {
       e.preventDefault();
       slideTo(currentIndex + 1);
     }
@@ -351,7 +365,8 @@ function buildCarousel(container, items, opts) {
 
   function getBaseOffset() {
     const target = items[currentIndex];
-    return target ? target.offsetLeft : 0;
+    if (!target) return 0;
+    return vertical ? target.offsetTop : target.offsetLeft;
   }
 
   function onDragStart(clientX, clientY) {
@@ -368,31 +383,39 @@ function buildCarousel(container, items, opts) {
     if (!isDragging) return;
     const dx = clientX - dragStartX;
     const dy = clientY - dragStartY;
+    const primary = vertical ? dy : dx;
+    const secondary = vertical ? dx : dy;
 
-    if (!hasMoved && Math.abs(dx) < DRAG_THRESHOLD) return;
-    if (!hasMoved && Math.abs(dy) > Math.abs(dx)) {
+    if (!hasMoved && Math.abs(primary) < DRAG_THRESHOLD) return;
+    if (!hasMoved && Math.abs(secondary) > Math.abs(primary)) {
       isDragging = false;
       track.style.cursor = '';
       return;
     }
 
     hasMoved = true;
-    inner.style.transform = `translateX(${-baseOffset + dx}px)`;
+    if (vertical) {
+      inner.style.transform = `translateY(${-baseOffset + dy}px)`;
+    } else {
+      inner.style.transform = `translateX(${-baseOffset + dx}px)`;
+    }
   }
 
-  function onDragEnd(clientX) {
+  function onDragEnd(clientX, clientY) {
     if (!isDragging) return;
     isDragging = false;
     track.style.cursor = '';
 
     if (!hasMoved) return;
 
-    const dx = clientX - dragStartX;
-    const itemW = items[0] ? items[0].offsetWidth : 1;
-    const slidesMoved = Math.round(Math.abs(dx) / (itemW * swipeSlideFactor));
-    const direction = dx > 0 ? -1 : 1;
+    const delta = vertical ? clientY - dragStartY : clientX - dragStartX;
+    const firstItem = items[0];
+    let itemSize = 1;
+    if (firstItem) itemSize = vertical ? firstItem.offsetHeight : firstItem.offsetWidth;
+    const slidesMoved = Math.round(Math.abs(delta) / (itemSize * swipeSlideFactor));
+    const direction = delta > 0 ? -1 : 1;
 
-    if (Math.abs(dx) > swipeCommitPx && slidesMoved > 0) {
+    if (Math.abs(delta) > swipeCommitPx && slidesMoved > 0) {
       slideTo(currentIndex + direction * slidesMoved);
     } else {
       slideTo(currentIndex);
@@ -414,7 +437,7 @@ function buildCarousel(container, items, opts) {
 
   window.addEventListener('mouseup', (e) => {
     if (!isDragging) return;
-    onDragEnd(e.clientX);
+    onDragEnd(e.clientX, e.clientY);
   }, { signal });
 
   /* Touch drag */
@@ -433,7 +456,7 @@ function buildCarousel(container, items, opts) {
   track.addEventListener('touchend', (e) => {
     if (!isDragging) return;
     const touch = e.changedTouches[0];
-    onDragEnd(touch.clientX);
+    onDragEnd(touch.clientX, touch.clientY);
   }, { passive: true, signal });
 
   /* Prevent click after drag */
@@ -445,16 +468,36 @@ function buildCarousel(container, items, opts) {
     }
   }, { capture: true, signal });
 
+  /* ---- Vertical: constrain track height to one slide ---- */
+  function updateTrackHeight() {
+    if (!vertical) return;
+    const firstItem = items[0];
+    if (firstItem) track.style.height = `${firstItem.offsetHeight}px`;
+  }
+
   /* ---- Resize: recalculate position ---- */
   let resizeTimer;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => slideTo(currentIndex, false), 150);
+    resizeTimer = setTimeout(() => {
+      updateTrackHeight();
+      slideTo(currentIndex, false);
+    }, 150);
   }, { signal });
 
   /* ---- Initial render ---- */
   slideTo(0, false);
   inner.style.transition = `transform ${transitionDurationMs}ms ${transitionEasing}`;
+
+  if (vertical) {
+    const ro = new ResizeObserver(() => {
+      if (!items[0] || !items[0].offsetHeight) return;
+      updateTrackHeight();
+      slideTo(currentIndex, false);
+      ro.disconnect();
+    });
+    ro.observe(items[0]);
+  }
 
   /* ---- Destroy function ---- */
   function destroy() {
@@ -471,7 +514,8 @@ function buildCarousel(container, items, opts) {
     dots.remove();
 
     // Remove classes & ARIA
-    container.classList.remove('carousel-initialized');
+    if (vertical) track.style.height = '';
+    container.classList.remove('carousel-initialized', 'carousel-vertical');
     container.removeAttribute('role');
     container.removeAttribute('aria-roledescription');
     container.removeAttribute('aria-label');

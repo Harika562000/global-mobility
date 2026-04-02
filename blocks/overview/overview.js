@@ -1,5 +1,6 @@
 import { readBlockConfig, toClassName } from '../../scripts/aem.js';
 import { createOverviewSwitcher, setupOverviewSwitcher } from '../../atomic/switcher/overview-switcher.js';
+import { initCarousel } from '../../scripts/s-and-p-global/s-and-p-carousel.js';
 
 const DEFAULT_OVERVIEW_LABEL = 'Overview';
 const DEFAULT_FULLVIEW_LABEL = 'Full View';
@@ -226,40 +227,63 @@ function findHeroEmAccentContent(pageRoot) {
 }
 
 /**
- * Clone `hero-em-accent-content` from the Full View hero into the overview hero column:
- * inserted in `.overview-hero-main` before `.overview-hero-copy` (under `.overview-hero-inner`).
+ * Extract heading and description from the Full View hero and inject into overview hero.
+ * Listens for `hero:decorated` so injection happens after hero.js has built its DOM.
  */
 function scheduleInjectHeroEmAccentContent(pageRoot, panelOverview) {
   const heroMain = panelOverview.querySelector('.overview-hero-main');
   if (!heroMain) return;
 
-  let done = false;
-  const tryInject = () => {
-    if (done) return true;
-    if (heroMain.querySelector('.overview-hero-em-accent-clone')) {
-      done = true;
-      return true;
-    }
+  pageRoot?.addEventListener('hero:decorated', () => {
     const source = findHeroEmAccentContent(pageRoot);
-    if (!source) return false;
+    if (!source || heroMain.querySelector('.overview-hero-title')) return;
 
-    const clone = source.cloneNode(true);
-    clone.classList.add('overview-hero-em-accent-clone');
-    clone.querySelectorAll('[id]').forEach((el) => el.removeAttribute('id'));
+    const sourceHeading = source.querySelector('h1, h2, h3');
+    const sourceDesc = source.querySelector('p:not(.button-container p)');
+    if (!sourceHeading && !sourceDesc) return;
 
-    heroMain.append(clone);
-    done = true;
-    return true;
-  };
+    const content = document.createElement('div');
+    content.className = 'hero-em-accent-content';
 
-  let frames = 0;
-  const tick = () => {
-    frames += 1;
-    if (tryInject() || frames > 100) return;
-    requestAnimationFrame(tick);
-  };
-  requestAnimationFrame(tick);
-  window.addEventListener('load', tryInject, { once: true });
+    if (sourceHeading) {
+      const h1 = document.createElement('h1');
+      h1.innerHTML = sourceHeading.innerHTML;
+      content.append(h1);
+    }
+
+    if (sourceDesc) {
+      const p = document.createElement('p');
+      p.innerHTML = sourceDesc.innerHTML;
+      content.append(p);
+    }
+
+    heroMain.append(content);
+  }, { once: true });
+}
+
+function scheduleInjectNumeraliaStat(pageRoot, panelOverview) {
+  const stat = panelOverview.querySelector('.overview-hero-stat');
+  if (!stat) return;
+
+  pageRoot?.addEventListener('numeralia:decorated', () => {
+    const source = pageRoot.querySelector('.numeralia:not(.overview-container .numeralia) .stats');
+    if (!source) return;
+
+    const statItems = [...source.querySelectorAll('.stat-item')];
+    if (!statItems.length) return;
+
+    statItems.forEach((item) => {
+      const clone = item.cloneNode(true);
+      const numberEl = clone.querySelector('.numeralia-number');
+      if (numberEl) {
+        const value = numberEl.getAttribute('data-target') || '';
+        numberEl.classList.add('animated');
+        numberEl.innerHTML = `<span class="numeralia-number-wrapper"><span class="numeralia-number-scroll"><span class="number-item">${value}</span></span></span>`;
+      }
+      stat.append(clone);
+    });
+    initCarousel(stat, { mobileOnly: false, infinite: false, vertical: true });
+  }, { once: true });
 }
 
 function buildOverviewLayout(slots) {
@@ -395,6 +419,7 @@ export default function decorate(block) {
   });
 
   scheduleInjectHeroSwitcher(pageRoot, heroTablist);
+  scheduleInjectNumeraliaStat(pageRoot, panelOverview);
 
   const btnOverview = tablist.querySelector(`[aria-controls="${panelOverview.id}"]`);
   const btnFullview = tablist.querySelector(`[aria-controls="${panelFullview.id}"]`);

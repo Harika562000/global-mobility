@@ -125,12 +125,22 @@ main > .overview-container{
   }
 }
 
+/* Stat carousel — block-specific layout glue */
+.overview-hero-stat.carousel-initialized {
+  gap: var(--spacing-300);
+}
+
+.overview-hero-stat .carousel-track {
+  flex: 1;
+  min-width: 0;
+}
+
 /* Credibility / stat card */
 .overview-hero-stat {
-  background-color: var(--color-grey-50);
+  background-color: var(--color-quiet-light);
   color: var(--color-brand-200);
   border-radius: var(--radius-12);
-  padding: var(--spacing-600);
+  padding: var(--spacing-950) var(--spacing-600);
 
   /* TODO: min-height and min-width are placeholder values, need to make changes */
   min-height: 263px;
@@ -138,23 +148,27 @@ main > .overview-container{
   box-sizing: border-box;
 }
 
-.overview-hero-stat :is(h2, h3, p) {
-  margin: 0;
-  color: var(--color-brand-200);
+.overview-hero-stat .stat-item {
+  text-align: center;
 }
 
-.overview-hero-stat :is(h2, h3):first-child {
-  font-size: clamp(var(--font-size-900), 5vw, calc(4 * var(--font-size-300)));
+.overview-hero-stat .numeralia-number {
   font-weight: var(--font-weight-bold);
-  line-height: var(--line-height-104p);
-  letter-spacing: var(--letter-spacing-tight);
+
+  /* TODO: No token for this color need to make changes */
+  color: #132445;
+
+  /* TODO: No token for this font size; need to make changes */
+  font-size: 88px;
+}
+
+.overview-hero-stat .numeralia-description {
+  /* TODO: No token for this color need to make changes */
+  color: #132445;
 }
 
 .overview-hero-stat p {
-  margin-top: var(--spacing-300);
-  font-size: var(--font-size-300);
-  line-height: var(--line-height-150p);
-  color: var(--color-brand-200);
+  margin-top: var(--spacing-400);
 }
 
 /* —— Main: left column (cards + insights + products) | right column (contact) —— */

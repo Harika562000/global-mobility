@@ -26,7 +26,7 @@
     gap: var(--spacing-400);
 }
 
-.numeralia .number {
+.numeralia-number {
     font-size: var(--responsive-number-size);
     font-weight: var(--responsive-number-weight);
     line-height: var(--responsive-number-line-height);
@@ -36,20 +36,20 @@
     color: var(--color-black);
 }
 
-.numeralia .number-wrapper {
+.numeralia-number-wrapper {
     display: inline-flex;
     overflow: clip;
     height: 1.04em;
     position: relative;
 }
 
-.numeralia .number-scroll {
+.numeralia-number-scroll {
     display: flex;
     flex-direction: column;
     transition: transform 0.4s ease-out;
 }
 
-.numeralia .number-item {
+.numeralia-number-item {
     height: 1.04em;
     line-height: var(--line-height-104p);
     flex-shrink: 0;
@@ -59,7 +59,7 @@
     display: inline-block;
 }
 
-.numeralia .description {
+.numeralia-description {
     font-size: var(--responsive-body-400-size);
     font-weight: var(--responsive-body-400-weight);
     line-height: var(--responsive-body-400-line-height);
@@ -93,7 +93,7 @@
         flex: 1;
     }
 
-    .numeralia .number-wrapper {
+    .numeralia-number-wrapper {
         gap: var(--spacing-600);
     }
 }
