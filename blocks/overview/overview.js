@@ -261,6 +261,36 @@ function scheduleInjectHeroEmAccentContent(pageRoot, panelOverview) {
   }, { once: true });
 }
 
+function scheduleInjectCards(pageRoot, panelOverview) {
+  const rowCards = panelOverview.querySelector('.overview-main-cards');
+  if (!rowCards) return;
+
+  pageRoot?.addEventListener('cards:decorated', () => {
+    const source = pageRoot.querySelector('.cards:not(.overview-container .cards)');
+    if (!source) return;
+
+    const cards = [...source.querySelectorAll('.card-item')];
+    cards.forEach((card) => {
+      const clone = card.cloneNode(true);
+      const bodyIcon = clone.querySelector('.card-body .icon');
+      const cardHead = clone.querySelector('.card-head');
+      const cardTitle = clone.querySelector('.card-title');
+
+      if (cardHead && cardTitle) {
+        const bottom = document.createElement('div');
+        bottom.className = 'card-bottom';
+        cardTitle.replaceWith(bottom);
+        bottom.append(cardTitle);
+        if (bodyIcon) bottom.append(bodyIcon);
+      }
+
+      clone.querySelector('.card-body')?.remove();
+      rowCards.append(clone);
+    });
+    rowCards.style.setProperty('--overview-cards-count', cards.length);
+  }, { once: true });
+}
+
 function scheduleInjectNumeraliaStat(pageRoot, panelOverview) {
   const stat = panelOverview.querySelector('.overview-hero-stat');
   if (!stat) return;
@@ -313,14 +343,6 @@ function buildOverviewLayout(slots) {
 
   const rowCards = document.createElement('div');
   rowCards.className = 'overview-main-cards';
-  for (let i = 0; i < 4; i += 1) {
-    const cell = document.createElement('div');
-    cell.className = 'overview-grid-card';
-    cell.dataset.cardIndex = String(i + 1);
-    const frag = slots.cards[i];
-    if (frag?.childNodes.length) cell.appendChild(frag);
-    rowCards.appendChild(cell);
-  }
 
   const insights = document.createElement('div');
   insights.className = 'overview-grid-insights';
@@ -420,6 +442,7 @@ export default function decorate(block) {
 
   scheduleInjectHeroSwitcher(pageRoot, heroTablist);
   scheduleInjectNumeraliaStat(pageRoot, panelOverview);
+  scheduleInjectCards(pageRoot, panelOverview);
 
   const btnOverview = tablist.querySelector(`[aria-controls="${panelOverview.id}"]`);
   const btnFullview = tablist.querySelector(`[aria-controls="${panelFullview.id}"]`);

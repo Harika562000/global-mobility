@@ -380,4 +380,6 @@ export default async function decorate(block) {
       }
     }
   }
+
+  block.dispatchEvent(new CustomEvent('cards:decorated', { bubbles: true }));
 }

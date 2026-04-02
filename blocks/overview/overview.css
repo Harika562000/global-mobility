@@ -177,7 +177,7 @@ main > .overview-container{
   grid-template-columns: minmax(0, 1fr) minmax(calc(16.25 * var(--font-size-300)), calc(22 * var(--font-size-300)));
   gap: var(--spacing-400);
   align-items: stretch;
-  padding: var(--spacing-600);
+  padding: var(--spacing-400) 0;
   box-sizing: border-box;
 }
 
@@ -190,7 +190,7 @@ main > .overview-container{
 
 .overview-main-cards {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--overview-cards-count, 4), minmax(0, 1fr));
   gap: var(--spacing-400);
   width: 100%;
 }
@@ -210,13 +210,63 @@ main > .overview-container{
 }
 
 /* Card tiles (light blue action cards) */
-.overview-grid-card {
-  background: linear-gradient(180deg, var(--color-blue-light) 0%, var(--color-blue-50) 100%);
+.overview-main-cards .card-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  /* TODO: color token for this background is not available need to make changes */
+  background: #B8EAF5;
   border-radius: var(--radius-12);
   padding: var(--spacing-500);
-  min-height: var(--spacing-1200);
+
+  /* TODO: no style token for 189px */
+  min-height: 189px;
   box-sizing: border-box;
   border: var(--border-width-100) solid var(--color-blue-200);
+  text-decoration: none;
+  color: inherit;
+}
+
+.overview-main-cards .card-head {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.overview-main-cards .card-head .icon {
+  display: block;
+}
+
+.overview-main-cards .card-title {
+  font-weight: var(--font-weight-bold);
+
+  /* TODO: No token for this color need to make changes */
+  color: #132445;
+  font-size: var(--font-size-200);
+  line-height: var(--line-height-22);
+  flex: 1;
+}
+
+.overview-main-cards .card-bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--size-6);
+}
+
+.overview-main-cards .card-bottom .icon-arrow-right {
+  height: var(--size-12);
+  width: var(--size-12);
+  transform: rotate(324deg);
+  transition: transform 0.3s ease;
+  display: inline-flex;
+}
+
+.overview-main-cards .card-item:hover .card-bottom .icon-arrow-right,
+.overview-main-cards .card-item:focus-visible .card-bottom .icon-arrow-right {
+  transform: rotate(360deg);
 }
 
 /* Large white blocks */
