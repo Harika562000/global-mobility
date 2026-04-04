@@ -254,11 +254,13 @@ main > .overview-container{
   align-items: flex-end;
   justify-content: space-between;
   gap: var(--size-6);
+  width: 100%;
 }
 
 .overview-main-cards .card-bottom .icon-arrow-right {
-  height: var(--size-12);
+  flex-shrink: 0;
   width: var(--size-12);
+  height: var(--size-12);
   transform: rotate(324deg);
   transition: transform 0.3s ease;
   display: inline-flex;
