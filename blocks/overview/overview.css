@@ -277,7 +277,6 @@ main > .overview-container{
   background-color: var(--color-white);
   border-radius: var(--radius-12);
   padding: var(--spacing-500);
-  min-height: calc(var(--spacing-1200) + var(--spacing-700));
   box-sizing: border-box;
   border: var(--border-width-100) solid var(--color-grey-200);
 }
@@ -294,6 +293,75 @@ main > .overview-container{
 
 .overview-slot-inner {
   min-width: 0;
+}
+
+/* Products slot */
+.overview-grid-products {
+  /* TODO: no style token for 300px */
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+}
+
+.overview-grid-products .overview-products-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.overview-grid-products .overview-products-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-400);
+}
+
+.overview-grid-products .overview-products-title,
+.overview-grid-products .overview-products-row-title {
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-200);
+  line-height: var(--line-height-22);
+  color: var(--color-black);
+}
+
+/* .overview-products-cta shares styles with .text-link-button in lazy-styles.css */
+.overview-grid-products .overview-products-cta {
+  justify-content: flex-end;
+}
+
+.overview-grid-products .overview-products-divider {
+  border: none;
+  border-top: var(--border-width-100) solid var(--color-grey-subtle);
+  margin: 0;
+}
+
+.overview-grid-products .overview-products-row {
+  display: flex;
+  align-items: self-end;
+  justify-content: space-between;
+  gap: var(--spacing-200);
+  text-decoration: none;
+
+  /* TODO: no style token for 17px */
+  padding: 17px var(--spacing-300) var(--spacing-300);
+}
+
+.overview-grid-products .overview-products-row-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.overview-grid-products .overview-products-row-lottie {
+  flex-shrink: 0;
+  width: var(--size-48, 48px);
+  height: var(--size-48, 48px);
+  overflow: hidden;
+}
+
+.overview-grid-products .overview-products-row-lottie > div {
+  width: 100%;
+  height: 100%;
+  transform: scale(1.5);
 }
 
 /* Full View tab stack */

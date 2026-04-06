@@ -1,6 +1,7 @@
 import { readBlockConfig, toClassName } from '../../scripts/aem.js';
 import { createOverviewSwitcher, setupOverviewSwitcher } from '../../atomic/switcher/overview-switcher.js';
 import { initCarousel } from '../../scripts/s-and-p-global/s-and-p-carousel.js';
+import { loadLottie, bindLottieHover } from '../../scripts/s-and-p-global/lib/lottie.js';
 
 const DEFAULT_OVERVIEW_LABEL = 'Overview';
 const DEFAULT_FULLVIEW_LABEL = 'Full View';
@@ -316,6 +317,102 @@ function scheduleInjectNumeraliaStat(pageRoot, panelOverview) {
   }, { once: true });
 }
 
+function scheduleInjectProductCards(pageRoot, panelOverview) {
+  const productsSlot = panelOverview.querySelector('.overview-grid-products');
+  if (!productsSlot) return;
+
+  pageRoot?.addEventListener('product-cards:decorated', () => {
+    const source = pageRoot.querySelector('.product-cards:not(.overview-container .product-cards)');
+    if (!source) return;
+
+    // --- Header: section title + Browse Catalog CTA ---
+    const section = source.closest('.section');
+    const headerEl = section?.querySelector('.default-content-wrapper, .section-title-wrapper');
+    const heading = headerEl?.querySelector('h1, h2, h3, h4, h5, h6');
+    // CTA may have been moved into the carousel nav by bindSectionCtaToCarousel
+    const ctaLink = headerEl?.querySelector('a[href]')
+      || section?.querySelector('.carousel-cta a[href]')
+      || source.querySelector('.carousel-cta a[href]');
+
+    const header = document.createElement('div');
+    header.className = 'overview-products-header';
+
+    if (heading) {
+      const titleEl = document.createElement('span');
+      titleEl.className = 'overview-products-title';
+      titleEl.textContent = heading.textContent.trim();
+      header.append(titleEl);
+    }
+
+    if (ctaLink) {
+      const ctaClone = document.createElement('a');
+      ctaClone.className = 'overview-products-cta text-link-button';
+      ctaClone.href = ctaLink.getAttribute('href') || '#';
+      ctaClone.textContent = ctaLink.textContent.trim();
+      if (ctaLink.getAttribute('target')) ctaClone.target = ctaLink.getAttribute('target');
+      header.append(ctaClone);
+    }
+
+    productsSlot.append(header);
+
+    // --- Product rows: title left, lottie right, separated by dividers ---
+    const list = document.createElement('div');
+    list.className = 'overview-products-list';
+    productsSlot.append(list);
+
+    const items = [...source.querySelectorAll('.product-card-item')];
+    items.forEach((item) => {
+      const divider = document.createElement('hr');
+      divider.className = 'overview-products-divider';
+      list.append(divider);
+
+      const isLink = item.tagName === 'A' && item.href;
+      const row = document.createElement(isLink ? 'a' : 'div');
+      row.className = 'overview-products-row';
+      if (isLink) {
+        row.href = item.getAttribute('href');
+        if (item.getAttribute('target')) row.target = item.getAttribute('target');
+        if (item.getAttribute('rel')) row.rel = item.getAttribute('rel');
+      }
+
+      const titleEl = item.querySelector('.product-card-title-text');
+      const titleSpan = document.createElement('span');
+      titleSpan.className = 'overview-products-row-title';
+      titleSpan.textContent = titleEl?.textContent?.trim() || '';
+      row.append(titleSpan);
+
+      const lottieHost = item.querySelector('.product-card-lottie');
+      if (lottieHost) {
+        const lottieWrap = document.createElement('div');
+        lottieWrap.className = 'overview-products-row-lottie';
+        const lottieDest = document.createElement('div');
+        lottieWrap.append(lottieDest);
+        row.append(lottieWrap);
+
+        const jsonStr = lottieHost.dataset.lottieJson;
+        if (jsonStr) {
+          let chartJson;
+          try { chartJson = JSON.parse(jsonStr); } catch (e) { /* ignore */ }
+          if (chartJson) {
+            loadLottie().then((lottie) => {
+              const animation = lottie.loadAnimation({
+                container: lottieDest,
+                renderer: 'svg',
+                loop: false,
+                autoplay: false,
+                animationData: chartJson,
+              });
+              bindLottieHover(animation, row);
+            }).catch(() => { /* ignore */ });
+          }
+        }
+      }
+
+      list.append(row);
+    });
+  }, { once: true });
+}
+
 function buildOverviewLayout(slots) {
   const hero = document.createElement('div');
   hero.className = 'overview-hero';
@@ -443,6 +540,7 @@ export default function decorate(block) {
   scheduleInjectHeroSwitcher(pageRoot, heroTablist);
   scheduleInjectNumeraliaStat(pageRoot, panelOverview);
   scheduleInjectCards(pageRoot, panelOverview);
+  scheduleInjectProductCards(pageRoot, panelOverview);
 
   const btnOverview = tablist.querySelector(`[aria-controls="${panelOverview.id}"]`);
   const btnFullview = tablist.querySelector(`[aria-controls="${panelFullview.id}"]`);

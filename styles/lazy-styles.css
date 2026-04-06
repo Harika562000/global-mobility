@@ -1,1 +1,23 @@
 /* add global styles that can be loaded post LCP here */
+
+/* Shared utility: plain underline text link that looks like inline text, not a button.
+   Used by: product-cards (compact variant CTA) and overview products slot CTA. */
+a.text-link-button,
+.product-cards-container:has(.product-cards.product-cards-compact) .section-title .title-row-with-cta > div:last-child .button {
+  background: transparent;
+  border: 0;
+  min-height: auto;
+  padding: 0;
+  margin: 0;
+  width: auto;
+  color: var(--typography-secondary);
+  font-size: var(--font-size-200);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-22);
+  letter-spacing: var(--letter-spacing-tight);
+  justify-content: flex-end;
+  text-decoration: none;
+
+  /* TODO: Token for 0.75px underline thickness */
+  box-shadow: 0 0.75px 0 var(--typography-secondary);
+}

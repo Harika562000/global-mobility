@@ -290,6 +290,7 @@ export default async function decorate(block) {
       chartWrapper.className = 'product-card-chart';
       const lottieHost = document.createElement('div');
       lottieHost.className = 'product-card-lottie';
+      lottieHost.dataset.lottieJson = JSON.stringify(chartJson);
       chartWrapper.append(lottieHost);
       head.append(chartWrapper);
       loadLottie()
@@ -451,4 +452,6 @@ export default async function decorate(block) {
       }
     }
   }
+
+  block.dispatchEvent(new CustomEvent('product-cards:decorated', { bubbles: true }));
 }
