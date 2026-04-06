@@ -190,14 +190,18 @@ export function cleanAemTagListForSearchQuery(raw) {
 }
 
 /**
- * Display polish: strip trailing " page" from template/type labels (case-insensitive).
+ * Display polish: strip trailing template suffixes from type labels (case-insensitive).
+ * Handles e.g. "… Page", "… Details", "… Details Page" (insight details pages).
  * @param {string} [value]
  * @returns {string}
  */
 export function stripTrailingPageFromTagLabel(value) {
-  const s = String(value || '').trim();
+  let s = String(value || '').trim();
   if (!s) return '';
-  return s.replace(/\s+page$/i, '').trim();
+  s = s.replace(/\s+details\s+page$/i, '').trim();
+  s = s.replace(/\s+page$/i, '').trim();
+  s = s.replace(/\s+details$/i, '').trim();
+  return s;
 }
 
 /* ========================================================================
@@ -288,6 +292,20 @@ export function getSectionMetaValue(sections, key) {
 }
 
 /**
+ * Read time from head meta / section metadata tables.
+ * @param {Record<string, string>} head
+ * @param {Array<Record<string, string>>} sections
+ * @returns {string}
+ */
+function resolveTimeToRead(head, sections) {
+  const fromMeta = firstNonEmpty([
+    head.timetoread,
+    getSectionMetaValue(sections, 'timetoread'),
+  ]);
+  return (fromMeta && String(fromMeta).trim()) || '';
+}
+
+/**
  * @param {Document} doc
  * @param {string} key
  * @returns {string}
@@ -304,18 +322,6 @@ export function getTwitterImageFromHead(doc) {
   const m = doc.head.querySelector('meta[name="twitter:image"]')
     || doc.head.querySelector('meta[name="twitter:image:src"]');
   return m?.getAttribute('content')?.trim() || '';
-}
-
-/**
- * Rough read time from word count (~200 wpm).
- * @param {string} [text]
- * @returns {string} e.g. "5 min"
- */
-export function estimateReadTime(text) {
-  const words = (text || '').trim().split(/\s+/).filter(Boolean).length;
-  if (!words) return '';
-  const minutes = Math.max(1, Math.ceil(words / 200));
-  return `${minutes} min`;
 }
 
 /**
@@ -357,7 +363,6 @@ function publishDateFromSections(sections) {
  */
 export function buildCardDataFromExtractedMetadata(doc, pageUrl) {
   const { head = {}, sections = [] } = extractPageMetadata(doc);
-  const bodyText = doc.body?.textContent || '';
 
   const title = firstNonEmpty([
     head['og:title'],
@@ -384,11 +389,9 @@ export function buildCardDataFromExtractedMetadata(doc, pageUrl) {
   ]));
 
   const tag = stripTrailingPageFromTagLabel(firstNonEmpty([
-    head['content-type'],
+    head.pagetype,
     head['og:type'],
-    getSectionMetaValue(sections, 'content-type'),
-    head.pagetemplate,
-    getSectionMetaValue(sections, 'pagetemplate'),
+    getSectionMetaValue(sections, 'pagetype'),
   ]));
 
   return {
@@ -397,7 +400,7 @@ export function buildCardDataFromExtractedMetadata(doc, pageUrl) {
     description,
     tag,
     publishDate,
-    timeToRead: estimateReadTime(bodyText),
+    timeToRead: resolveTimeToRead(head, sections) || '0 min',
     link: pageUrl.href,
   };
 }
@@ -410,13 +413,13 @@ export function buildCardDataFromExtractedMetadata(doc, pageUrl) {
  *   publishDate: string, timeToRead: string, link: string }}
  */
 export function buildCardDataFromFetchedDocument(doc, pageUrl) {
-  const bodyText = doc.body?.textContent || '';
+  const { head, sections } = extractPageMetadata(doc);
   return {
     image: firstNonEmpty([getMeta(doc, 'og:image'), getTwitterImageFromHead(doc)]),
     title: firstNonEmpty([getMeta(doc, 'og:title'), doc.title]),
     description: firstNonEmpty([getMeta(doc, 'og:description'), getMeta(doc, 'description')]),
     tag: stripTrailingPageFromTagLabel(firstNonEmpty([
-      getMeta(doc, 'content-type'),
+      getMeta(doc, 'pagetype'),
       getMeta(doc, 'og:type'),
       getMeta(doc, 'pagetemplate'),
     ])),
@@ -426,7 +429,7 @@ export function buildCardDataFromFetchedDocument(doc, pageUrl) {
       getMeta(doc, 'article:published_time'),
       getMeta(doc, 'publish_date'),
     ])),
-    timeToRead: estimateReadTime(bodyText),
+    timeToRead: resolveTimeToRead(head, sections) || '0 min',
     link: pageUrl.href,
   };
 }
@@ -538,7 +541,7 @@ export function cardDataFromLucidworksDoc(doc) {
   ]);
 
   const tag = stripTrailingPageFromTagLabel(pickFirstDocString(doc, [
-    'attribute_content_type_s',
+    'attribute_page_type_s',
     'category_s',
     'type_s',
   ]));
@@ -546,9 +549,16 @@ export function cardDataFromLucidworksDoc(doc) {
   const publishDate = ensurePublishDate(pickFirstDocString(doc, [
     'date_added_s',
     'date_added_dt',
-    'published_date_s',
+    'published_date_dt',
     'attribute_article_published_time_s',
   ]));
+
+  const timeToReadFromMeta = pickFirstDocString(doc, [
+    'timetoread',
+    'timetoread_s',
+    'attribute_timetoread_s',
+    'attribute_timetoread_t',
+  ]);
 
   return {
     imageUrl,
@@ -556,7 +566,7 @@ export function cardDataFromLucidworksDoc(doc) {
     description,
     tag,
     publishDate,
-    timeToRead: estimateReadTime(description),
+    timeToRead: timeToReadFromMeta || '0 min',
     link,
   };
 }
@@ -574,26 +584,64 @@ export function dedupeCardsByLink(cards) {
   });
 }
 
+/** Lucidworks `attribute_page_type_s` values for card grids (Insights vs Experts). */
+export const LUCIDWORKS_PAGE_TYPES = {
+  INSIGHTS: 'Insights Details Page',
+  EXPERTS: 'Experts Page',
+};
+
+/**
+ * Collect full AEM tag paths from flat Tags text + any `tags_*` keys in block config.
+ * @param {string} selectedTags
+ * @param {Record<string, unknown>} [blockConfig]
+ * @returns {string} Comma-separated tag ids for cleanAemTagListForSearchQuery
+ */
+function collectTagPathsForLucidworksQuery(selectedTags, blockConfig) {
+  const parts = [...normalizeTaxonomyFieldList(selectedTags)];
+  if (blockConfig && typeof blockConfig === 'object') {
+    Object.entries(blockConfig).forEach(([key, val]) => {
+      if (!key.startsWith('tags_')) return;
+      if (val == null || val === '') return;
+      const s = Array.isArray(val) ? val.join(',') : String(val);
+      parts.push(...normalizeTaxonomyFieldList(s));
+    });
+  }
+  return [...new Set(parts)].filter(Boolean).join(',');
+}
+
 /**
  * Tag-based card list from Lucidworks (no per-page HTML fetch).
- * @param {string} selectedTags Comma-separated AEM tag ids or cleaned segments
+ * Request shape: q=last-segment terms (comma-separated) + fq=attribute_page_type_s:"…".
+ *
+ * @param {string} selectedTags Comma-separated AEM tag ids (optional with tags_* in blockConfig)
  * @param {number} limit Max cards
- * @param {{ maxCards?: number }} [options] Hard cap (default 6)
+ * @param {object} [options]
+ * @param {number} [options.maxCards] Hard cap (default 6)
+ * @param {string} [options.pageType] attribute_page_type_s value (required)
+ * @param {Record<string, unknown>} [options.blockConfig] Flattened config from collectConfigRows
+ * @param {boolean} [options.forInsightsCard] Pass true for insights card (fl=*&wt=json on request)
  * @returns {Promise<NonNullable<ReturnType<typeof cardDataFromLucidworksDoc>>[]>}
  */
 export async function fetchCardsFromTagSearch(selectedTags, limit, options = {}) {
   const maxCards = options.maxCards ?? 6;
-  const q = cleanAemTagListForSearchQuery(selectedTags);
-  if (!q) return [];
+  const { pageType, blockConfig = {}, forInsightsCard = false } = options;
+  if (!pageType) return [];
+
   const capped = Math.min(maxCards, Math.max(1, Number(limit) || maxCards));
+
+  const tagPaths = collectTagPathsForLucidworksQuery(selectedTags, blockConfig);
+  const q = cleanAemTagListForSearchQuery(tagPaths);
+  if (!q) return [];
 
   try {
     const { default: LucidworksClient } = await import('./lucidworks-client.js');
     const client = new LucidworksClient();
     const data = await client.fetchTags({
-      q,
-      rows: capped,
       start: 0,
+      rows: capped,
+      pageType,
+      q,
+      forInsightsCard,
     });
     if (!data) return [];
     const docs = data?.response?.docs;

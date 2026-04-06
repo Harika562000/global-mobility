@@ -10,6 +10,7 @@ import {
   fetchPageMetadata,
   getManualPageUrlsFromConfig,
   isAuthorEnvironment,
+  LUCIDWORKS_PAGE_TYPES,
   tryPushPathname,
 } from '../../scripts/s-and-p-global/utils.js';
 
@@ -522,7 +523,7 @@ function createCardElement(card, style) {
   titleRow.className = 'insights-card-title';
   const titleText = document.createElement('p');
   titleText.className = 'insights-card-title-text';
-  titleText.textContent = card.title || '';
+  titleText.textContent = card.title?.split('|')[0] || '';
   titleRow.append(titleText);
   if (card.timeToRead) {
     const titleTime = document.createElement('span');
@@ -600,11 +601,17 @@ async function buildCardsForSource({
   cardTags,
   cardCount,
   manualCards,
+  blockConfig,
 }) {
   if (contentSource === 'manual-authoring') return manualCards;
 
   if (contentSource === 'tags') {
-    const fromSearch = await fetchCardsFromTagSearch(cardTags, cardCount, { maxCards: MAX_CARDS });
+    const fromSearch = await fetchCardsFromTagSearch(cardTags, cardCount, {
+      maxCards: MAX_CARDS,
+      pageType: LUCIDWORKS_PAGE_TYPES.INSIGHTS,
+      blockConfig: blockConfig || {},
+      forInsightsCard: true,
+    });
     /* No fallback to manual cards when Tags is selected. */
     return fromSearch;
   }
@@ -645,7 +652,7 @@ function wireExploreCtaPlacement(block, actions) {
   const exploreCta = actions.querySelector('.insights-card-cta-button');
   if (!exploreCta) return;
 
-  const mobileMq = window.matchMedia('(max-width: 720px)');
+  const mobileMq = window.matchMedia('(max-width: 719px)');
   const placeExploreCta = () => {
     if (mobileMq.matches) block.append(exploreCta);
     else actions.append(exploreCta);
@@ -689,6 +696,7 @@ export default async function decorate(block) {
     cardTags,
     cardCount,
     manualCards,
+    blockConfig: config,
   });
 
   cards = orderCardsByPublishDate(cards).slice(0, cardCount);

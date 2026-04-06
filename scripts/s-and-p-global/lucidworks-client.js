@@ -37,6 +37,17 @@ export default class LucidworksClient {
   }
 
   /**
+   * Page-type filter (no local tag param).
+   * Published fq shape: attribute_page_type_s:"Experts Page". Encoded colon is %3A.
+   * @param {string} pageTypeValue
+   * @returns {string}
+   */
+  static buildPageTypeFq(pageTypeValue) {
+    const term = LucidworksClient.escapeLuceneTerm(String(pageTypeValue || '').trim());
+    return `attribute_page_type_s:"${term}"`;
+  }
+
+  /**
    * Initializes typeahead suggestions.
    *
    * @param {Object} [options] - Options for typeahead
@@ -114,17 +125,46 @@ export default class LucidworksClient {
     return result.ok ? result.data : null;
   }
 
+  /**
+   * Tag-driven card search: q= comma-separated term list (e.g. last path segments) + fq page type.
+   * Does not use fetchSearchResults — keeps that API unchanged for the main search UI.
+   *
+   * @param {Object} [options]
+   * @param {string} [options.q] - Main query (e.g. from cleanAemTagListForSearchQuery)
+   * @param {string} [options.pageType] - Sets fq page type; requires non-empty q
+   * @param {number} [options.start=0]
+   * @param {number} [options.rows=10]
+   * @param {boolean} [options.forInsightsCard] - Append fl=* and wt=json (insights card grid)
+   * @returns {Promise<Object|null>}
+   */
   async fetchTags(options = {}) {
     const {
       q = '',
       start = 0,
-      rows,
+      rows = 10,
+      pageType,
+      forInsightsCard = false,
     } = options;
 
-    const params = new URLSearchParams();
-    if (q) params.set('q', q);
-    if (start) params.set('start', String(start));
-    if (rows != null && rows !== '') params.set('rows', String(rows));
+    const params = new URLSearchParams({
+      start: String(start),
+      rows: String(rows),
+    });
+
+    if (pageType) {
+      if (!q) {
+        return null;
+      }
+      params.set('q', q);
+      params.append('fq', LucidworksClient.buildPageTypeFq(pageType));
+    } else if (q) {
+      params.set('q', q);
+    }
+
+    if (forInsightsCard) {
+      params.set('fl', '*');
+      params.set('wt', 'json');
+    }
 
     const qs = params.toString();
     const url = `${this.baseUrl}/search-results${qs ? `?${qs}` : ''}`;
