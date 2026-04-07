@@ -64,9 +64,5 @@
   {
     "id": "tag",
     "components": []
-  },
-  {
-    "id": "video",
-    "components": []
   }
 ]

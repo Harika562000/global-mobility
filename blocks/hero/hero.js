@@ -4,168 +4,15 @@ import { eyebrowDecorator, decorateTags } from '../../scripts/scripts.js';
  * Hero block: three variations (UE authoring reference).
  *
  * Variation summary (from UE authoring UI):
- * - Image as background: media (image or video), heading, description.
- * - Two-colored:        media (image or video), heading, description.
- * - Black-colored:      media (image or video), tag, eyebrow, heading, description.
- *
- * Media field accepts:
- *  - An image asset  → rendered as <picture>
- *  - An MP4/WebM URL → rendered as autoplay muted looping <video> (same as video block)
- *  - A YouTube URL   → rendered as autoplay muted iframe embed (same as video block)
- *  - A Vimeo URL     → rendered as autoplay muted iframe embed (same as video block)
+ * - Image as background: image, heading, description.
+ * - Two-colored:        image, heading, description.
+ * - Black-colored: image, tag, eyebrow, heading, description.
  */
 
-// ─── Video embed helpers (mirrors blocks/video/video.js behaviour) ────────────
-
-/**
- * Build a YouTube iframe embed, muted and autoplaying for background use.
- * @param {URL} url
- * @returns {HTMLElement}
- */
-function embedYoutube(url) {
-  const usp = new URLSearchParams(url.search);
-  const suffixParams = {
-    autoplay: '1',
-    mute: '1',
-    controls: '0',
-    disablekb: '1',
-    loop: '1',
-    playsinline: '1',
-  };
-  const suffix = `&${Object.entries(suffixParams).map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&')}`;
-  let vid = usp.get('v') ? encodeURIComponent(usp.get('v')) : '';
-  const embed = url.pathname;
-  if (url.origin.includes('youtu.be')) {
-    [, vid] = url.pathname.split('/');
-  }
-  const temp = document.createElement('div');
-  temp.innerHTML = `<div class="hero-media-embed">
-    <iframe src="https://www.youtube.com${vid ? `/embed/${vid}?rel=0&v=${vid}${suffix}` : embed}"
-      allow="autoplay; fullscreen; picture-in-picture; encrypted-media; accelerometer; gyroscope; picture-in-picture"
-      allowfullscreen="" scrolling="no" title="Content from Youtube" loading="lazy"></iframe>
-  </div>`;
-  return temp.children.item(0);
-}
-
-/**
- * Build a Vimeo iframe embed, muted and autoplaying for background use.
- * @param {URL} url
- * @returns {HTMLElement}
- */
-function embedVimeo(url) {
-  const [, video] = url.pathname.split('/');
-  const suffixParams = { autoplay: '1', background: '1' };
-  const suffix = `?${Object.entries(suffixParams).map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&')}`;
-  const temp = document.createElement('div');
-  temp.innerHTML = `<div class="hero-media-embed">
-    <iframe src="https://player.vimeo.com/video/${video}${suffix}"
-      frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen
-      title="Content from Vimeo" loading="lazy"></iframe>
-  </div>`;
-  return temp.children.item(0);
-}
-
-/**
- * Build an autoplay muted looping <video> element for MP4/WebM.
- * @param {string} src
- * @returns {HTMLVideoElement}
- */
-function createAutoplayVideo(src) {
-  const video = document.createElement('video');
-  video.setAttribute('autoplay', '');
-  video.setAttribute('muted', '');
-  video.setAttribute('loop', '');
-  video.setAttribute('playsinline', '');
-  video.setAttribute('preload', 'metadata');
-  video.removeAttribute('controls');
-  video.muted = true;
-
-  const source = document.createElement('source');
-  source.setAttribute('src', src);
-  source.setAttribute('type', `video/${src.split('.').pop()}`);
-  video.appendChild(source);
-  return video;
-}
-
-/**
- * Detect if a URL string is a video (YouTube, Vimeo, or video file extension).
- * Returns 'youtube' | 'vimeo' | 'file' | null.
- * @param {string} href
- */
-function detectMediaType(href) {
-  if (!href) return null;
-  const lower = href.toLowerCase();
-  if (lower.includes('youtube.com') || lower.includes('youtu.be')) return 'youtube';
-  if (lower.includes('vimeo.com')) return 'vimeo';
-  const ext = lower.split('?')[0].split('.').pop();
-  if (['mp4', 'webm', 'ogg'].includes(ext)) return 'file';
-  return null;
-}
-
-// ─── Hero helpers ─────────────────────────────────────────────────────────────
-
+/** Get the value cell (content) from a row; UE often uses row = [label, value]. */
 function getValueCell(row) {
   if (!row) return null;
   return row.children.length > 1 ? row.children[1] : row.children[0] || row;
-}
-
-function getRowLabel(row) {
-  return (row?.children[0]?.textContent || '').trim().toLowerCase();
-}
-
-function findRowByLabel(rows, fromIdx, toIdx, labelPart) {
-  const lower = (labelPart || '').toLowerCase();
-  for (let i = fromIdx; i <= toIdx; i += 1) {
-    const label = getRowLabel(rows[i]);
-    if (label.includes(lower)) return i;
-  }
-  return -1;
-}
-
-function findRowByLabels(rows, fromIdx, toIdx, labels) {
-  return labels.reduce(
-    (found, label) => (found >= 0 ? found : findRowByLabel(rows, fromIdx, toIdx, label)),
-    -1,
-  );
-}
-
-/**
- * Build the hero media wrapper div containing either an image (<picture>),
- * a native video element, or an iframe embed — depending on what the author
- * placed in the media row.
- *
- * @param {string} wrapperClass  CSS class(es) for the wrapper div
- * @param {HTMLElement|null} picture  <picture> element from the media row (if any)
- * @param {string|null} videoHref   URL from an <a> in the media row (if any)
- * @returns {HTMLElement|null}
- */
-function createHeroMedia(wrapperClass, picture, videoHref) {
-  const mediaType = detectMediaType(videoHref);
-  const hasVideo = !!mediaType;
-
-  if (!picture && !hasVideo) return null;
-
-  const wrapper = document.createElement('div');
-  wrapper.className = wrapperClass;
-  if (picture) wrapper.classList.add('has-picture');
-  if (hasVideo) wrapper.classList.add('has-video');
-
-  if (picture) wrapper.appendChild(picture);
-
-  if (hasVideo) {
-    const url = new URL(videoHref);
-    let embed;
-    if (mediaType === 'youtube') {
-      embed = embedYoutube(url);
-    } else if (mediaType === 'vimeo') {
-      embed = embedVimeo(url);
-    } else {
-      embed = createAutoplayVideo(videoHref);
-    }
-    wrapper.appendChild(embed);
-  }
-
-  return wrapper;
 }
 
 function appendContent(row, target, fallbackHeading = false) {
@@ -195,12 +42,12 @@ function appendContent(row, target, fallbackHeading = false) {
   }
 }
 
-function decorateEmAccent(block, rows, media, rowIndices) {
-  const bgDiv = media || document.createElement('div');
-  bgDiv.classList.add('hero-em-accent-background');
-  const bgPicture = bgDiv.querySelector('picture');
-  if (bgPicture) {
-    bgPicture.querySelector('img')?.setAttribute('loading', 'eager');
+function decorateEmAccent(block, rows, picture, rowIndices) {
+  const bgDiv = document.createElement('div');
+  bgDiv.className = 'hero-em-accent-background';
+  if (picture) {
+    picture.querySelector('img')?.setAttribute('loading', 'eager');
+    bgDiv.appendChild(picture);
   }
 
   const contentDiv = document.createElement('div');
@@ -217,21 +64,22 @@ function decorateEmAccent(block, rows, media, rowIndices) {
   block.appendChild(contentDiv);
 }
 
-function decorateTwoColoredRight(block, rows, media, rowIndices) {
+function decorateTwoColoredRight(block, rows, picture, rowIndices) {
   const contentDiv = document.createElement('div');
   contentDiv.className = 'hero-two-colored-right-content';
 
   appendContent(rows[rowIndices.heading], contentDiv, true);
   appendContent(rows[rowIndices.description], contentDiv);
 
+  const imageDiv = document.createElement('div');
+  imageDiv.className = 'hero-two-colored-right-image';
+  if (picture) imageDiv.appendChild(picture);
+
   block.appendChild(contentDiv);
-  if (media) {
-    media.classList.add('hero-two-colored-right-image');
-    block.appendChild(media);
-  }
+  block.appendChild(imageDiv);
 }
 
-function decorateBlackColoredRight(block, rows, media, rowIndices) {
+function decorateBlackColoredRight(block, rows, picture, rowIndices) {
   const contentDiv = document.createElement('div');
   contentDiv.className = 'hero-black-colored-right-content';
 
@@ -271,11 +119,12 @@ function decorateBlackColoredRight(block, rows, media, rowIndices) {
   }
   decorateTags(contentDiv);
 
+  const imageDiv = document.createElement('div');
+  imageDiv.className = 'hero-black-colored-right-image';
+  if (picture) imageDiv.appendChild(picture);
+
   block.appendChild(contentDiv);
-  if (media) {
-    media.classList.add('hero-black-colored-right-image');
-    block.appendChild(media);
-  }
+  block.appendChild(imageDiv);
 }
 
 export default function decorate(block) {
@@ -291,28 +140,17 @@ export default function decorate(block) {
   const isTwoColoredRight = block.classList.contains('hero-two-colored-right');
 
   const lastDataRow = rows.length - 1;
-  const hasVariationRow = !rows[0]?.querySelector('picture, video, a');
-  const contentStart = hasVariationRow ? 1 : 0;
+  const hasVariationRow = !rows[0]?.querySelector('picture');
+  const idx = hasVariationRow ? 1 : 0;
 
-  // ── Locate the single "media" row (replaces separate image + video rows) ──
-  const mediaRowIndex = isBlackColoredRight
-    ? 0
-    : findRowByLabels(rows, contentStart, lastDataRow, ['media', 'image', 'video']);
+  const picture = isBlackColoredRight
+    ? rows[0]?.querySelector('picture')
+    : rows[idx]?.querySelector('picture');
 
-  const altRowIndex = isBlackColoredRight
-    ? 0
-    : findRowByLabels(rows, contentStart, lastDataRow, ['media alt', 'image alt', 'alt']);
-
-  // Extract picture (for image assets) and/or a href (for video URLs)
-  const mediaRow = mediaRowIndex >= 0 ? rows[mediaRowIndex] : null;
-  const picture = mediaRow?.querySelector('picture') || null;
-  const mediaLink = mediaRow?.querySelector('a');
-  const videoHref = mediaLink ? mediaLink.href : null;
-
-  // Apply alt text to the image if present
   if (isBlackColoredRight) {
-    if (picture && mediaRow) {
-      const altCell = getValueCell(mediaRow);
+    const pictureRow = rows[0];
+    if (picture && pictureRow) {
+      const altCell = getValueCell(pictureRow);
       const alt = altCell?.textContent?.trim();
       if (alt) {
         const img = picture.querySelector('img');
@@ -320,35 +158,22 @@ export default function decorate(block) {
       }
     }
   } else {
-    const altText = altRowIndex >= 0 ? getValueCell(rows[altRowIndex])?.textContent?.trim() : '';
+    const altText = getValueCell(rows[idx + 1])?.textContent?.trim();
     if (picture && altText) {
       const img = picture.querySelector('img');
       if (img) img.setAttribute('alt', altText);
     }
   }
 
-  const headingIdx = isBlackColoredRight
-    ? 2
-    : findRowByLabel(rows, contentStart, lastDataRow, 'heading');
-  const descriptionIdx = isBlackColoredRight
-    ? 3
-    : findRowByLabels(
-      rows,
-      contentStart,
-      lastDataRow,
-      ['description', 'sub-heading', 'sub heading'],
-    );
-  const eyebrowIdx = isBlackColoredRight ? 1 : -1;
-  const firstButtonRow = isBlackColoredRight
-    ? 4
-    : Math.max(
-      contentStart,
-      headingIdx,
-      descriptionIdx,
-      altRowIndex,
-      mediaRowIndex,
-    ) + 1;
-
+  const firstButtonRow = isBlackColoredRight ? 4 : idx + 4;
+  const findRowByLabel = (dataRows, fromIdx, toIdx, labelPart) => {
+    const lower = (labelPart || '').toLowerCase();
+    for (let i = fromIdx; i <= toIdx; i += 1) {
+      const label = (dataRows[i]?.children[0]?.textContent || '').toLowerCase();
+      if (label.includes(lower)) return i;
+    }
+    return -1;
+  };
   let tagTitleIdx = isBlackColoredRight
     ? findRowByLabel(rows, firstButtonRow, lastDataRow, 'tag title')
     : -1;
@@ -367,6 +192,8 @@ export default function decorate(block) {
     const isKnownTagVariation = (val) => knownVariations
       .includes((val || '').trim().toLowerCase());
 
+    // If we couldn't find the labeled rows, assume the last row is tag title
+    // and the row before it is variation.
     if (tagTitleIdx < 0) tagTitleIdx = lastDataRow;
     if (tagVariationIdx < 0) {
       const candidateIdx = tagTitleIdx - 1;
@@ -376,34 +203,30 @@ export default function decorate(block) {
       }
     }
   }
-
   const rowIndices = isBlackColoredRight
     ? {
-      eyebrow: eyebrowIdx,
-      heading: headingIdx,
-      description: descriptionIdx,
+      eyebrow: 1,
+      heading: 2,
+      description: 3,
       tagVariation: tagVariationIdx,
       tag: tagTitleIdx >= 0 ? tagTitleIdx : lastDataRow,
-      firstButtonRow,
+      firstButtonRow: 4,
     }
     : {
       eyebrow: -1,
-      heading: headingIdx,
-      description: descriptionIdx,
+      heading: idx + 2,
+      description: idx + 3,
       tagVariation: -1,
       tag: lastDataRow,
       firstButtonRow,
     };
 
-  // Build the unified media element (image, MP4, YouTube or Vimeo)
-  const media = createHeroMedia('hero-media', picture, videoHref);
-
   if (isBlackColoredRight) {
-    decorateBlackColoredRight(block, rows, media, rowIndices);
+    decorateBlackColoredRight(block, rows, picture, rowIndices);
   } else if (isTwoColoredRight) {
-    decorateTwoColoredRight(block, rows, media, rowIndices);
+    decorateTwoColoredRight(block, rows, picture, rowIndices);
   } else {
-    decorateEmAccent(block, rows, media, rowIndices);
+    decorateEmAccent(block, rows, picture, rowIndices);
   }
 
   rows.forEach((r) => r.remove());

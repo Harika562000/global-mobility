@@ -34,18 +34,16 @@
         {
           "component": "reference",
           "valueType": "string",
-          "name": "media",
-          "label": "Media (Image or Video)",
-          "description": "Upload an image, or paste a YouTube / Vimeo / MP4 URL for video.",
+          "name": "image",
+          "label": "Image",
           "multi": false,
-          "required": false
+          "required": true
         },
         {
           "component": "text",
           "valueType": "string",
-          "name": "mediaAlt",
-          "label": "Media Alt Text",
-          "description": "Alt text for the image (not required for video).",
+          "name": "imageAlt",
+          "label": "Image Alt Text",
           "value": ""
         },
         {

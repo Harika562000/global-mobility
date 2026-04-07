@@ -93,34 +93,6 @@ main > div.hero-section {
   padding: 0;
 }
 
-/* Native <video> as background */
-.hero .hero-em-accent-background video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
-
-/* iframe embed (YouTube / Vimeo) as background */
-.hero .hero-em-accent-background .hero-media-embed {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.hero .hero-em-accent-background .hero-media-embed iframe {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-  object-fit: cover;
-}
-
 .hero:not(.hero-two-colored-right, .hero-black-colored-right)::before {
   content: '';
   position: absolute;
@@ -238,37 +210,11 @@ main > div.hero-section {
   display: block;
 }
 
-/* Native <video> as right-side media */
-.hero .hero-two-colored-right-image.has-video picture,
-.hero .hero-two-colored-right-image.has-video video {
-  position: absolute;
-  inset: 0;
-}
-
-.hero .hero-two-colored-right-image video,
 .hero .hero-two-colored-right-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: var(--radius-12);
-}
-
-/* iframe embed (YouTube / Vimeo) as right-side media */
-.hero .hero-two-colored-right-image .hero-media-embed {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.hero .hero-two-colored-right-image .hero-media-embed iframe {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-  object-fit: cover;
 }
 
 .hero-two-colored-right h2 {
@@ -409,37 +355,11 @@ main > div.hero-section {
   display: block;
 }
 
-/* Native <video> as right-side media */
-.hero .hero-black-colored-right-image.has-video picture,
-.hero .hero-black-colored-right-image.has-video video {
-  position: absolute;
-  inset: 0;
-}
-
-.hero .hero-black-colored-right-image video,
 .hero .hero-black-colored-right-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: var(--radius-12);
-}
-
-/* iframe embed (YouTube / Vimeo) as right-side media */
-.hero .hero-black-colored-right-image .hero-media-embed {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.hero .hero-black-colored-right-image .hero-media-embed iframe {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-  object-fit: cover;
 }
 
 @media (width >= 720px) {
@@ -525,17 +445,13 @@ main > div.hero-section {
 
 .hero-section .hero-two-colored-right-content img,
 .hero-section .hero-black-colored-right-content img,
-.hero-section .hero-two-colored-right-content video,
-.hero-section .hero-black-colored-right-content video,
 .hero-section .hero-two-colored-right-content picture,
 .hero-section .hero-black-colored-right-content picture {
   max-width: 100%;
   height: auto;
 }
 
-/* Keep hero right-side image/video responsive and within container */
-.hero-section .hero-black-colored-right-image video,
-.hero-section .hero-two-colored-right-image video,
+/* Keep hero right-side image responsive and within container */
 .hero-section .hero-black-colored-right-image img,
 .hero-section .hero-two-colored-right-image img {
   max-width: 100%;
