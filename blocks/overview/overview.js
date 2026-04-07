@@ -277,15 +277,37 @@ function scheduleInjectCards(pageRoot, panelOverview) {
       const cardHead = clone.querySelector('.card-head');
       const cardTitle = clone.querySelector('.card-title');
 
+      // Extract description text before removing card-body
+      const bodyText = [...(clone.querySelector('.card-body')?.childNodes || [])]
+        .filter((n) => !(n.classList?.contains('icon')))
+        .map((n) => n.textContent?.trim())
+        .filter(Boolean)
+        .join(' ');
+
       if (cardHead && cardTitle) {
         const bottom = document.createElement('div');
         bottom.className = 'card-bottom';
+
+        const textContent = document.createElement('div');
+        textContent.className = 'card-bottom-content';
+
+        // Insert bottom at cardTitle's position before moving cardTitle into it
         cardTitle.replaceWith(bottom);
-        bottom.append(cardTitle);
+        textContent.append(cardTitle);
+
+        if (bodyText) {
+          const desc = document.createElement('p');
+          desc.className = 'card-description';
+          desc.textContent = bodyText;
+          textContent.append(desc);
+        }
+
+        bottom.append(textContent);
         if (bodyIcon) bottom.append(bodyIcon);
       }
 
       clone.querySelector('.card-body')?.remove();
+
       rowCards.append(clone);
     });
     rowCards.style.setProperty('--overview-cards-count', cards.length);

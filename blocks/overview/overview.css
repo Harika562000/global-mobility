@@ -220,8 +220,8 @@ main > .overview-container{
   border-radius: var(--radius-12);
   padding: var(--spacing-500);
 
-  /* TODO: no style token for 189px */
-  min-height: 189px;
+  /* TODO: no style token for 220px */
+  min-height: 220px;
   box-sizing: border-box;
   border: var(--border-width-100) solid var(--color-blue-200);
   text-decoration: none;
@@ -231,7 +231,6 @@ main > .overview-container{
 .overview-main-cards .card-head {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   height: 100%;
 }
 
@@ -255,6 +254,15 @@ main > .overview-container{
   justify-content: space-between;
   gap: var(--size-6);
   width: 100%;
+  margin-top: auto;
+}
+
+.overview-main-cards .card-bottom-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
+  min-width: 0;
 }
 
 .overview-main-cards .card-bottom .icon-arrow-right {
@@ -269,6 +277,27 @@ main > .overview-container{
 .overview-main-cards .card-item:hover .card-bottom .icon-arrow-right,
 .overview-main-cards .card-item:focus-visible .card-bottom .icon-arrow-right {
   transform: rotate(360deg);
+}
+
+.overview-main-cards .card-description {
+  /* TODO: No token for this color need to make changes */
+  color: #132445;
+  font-size: var(--font-size-100);
+  margin: 0;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.3s ease, max-height 0.3s ease;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.overview-main-cards .card-item:hover .card-description,
+.overview-main-cards .card-item:focus-visible .card-description {
+  opacity: 1;
+  max-height: 150px;
 }
 
 /* Large white blocks */
