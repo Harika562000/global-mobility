@@ -49,10 +49,20 @@
     ]
   },
   {
+    "id": "hero",
+    "components": [
+      "hero"
+    ]
+  },
+  {
     "id": "tabs",
     "components": [
       "tabs-item",
       "tabs-toc-item"
     ]
+  },
+  {
+    "id": "tag",
+    "components": []
   }
 ]

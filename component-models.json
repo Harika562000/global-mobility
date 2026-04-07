@@ -483,20 +483,20 @@
       {
         "component": "select",
         "name": "classes",
-        "label": "Variation",
+        "label": "Hero Block Variation",
         "valueType": "string",
         "options": [
           {
-            "name": "Default (Em Accent)",
+            "name": "Image as background",
             "value": ""
           },
           {
-            "name": "Two Colored Right",
-            "value": "two-colored-right"
+            "name": "Image on the right (two-colored)",
+            "value": "hero-two-colored-right"
           },
           {
-            "name": "Black Colored Right",
-            "value": "black-colored-right"
+            "name": "Image on the right (black-colored)",
+            "value": "hero-black-colored-right"
           }
         ]
       },
@@ -505,7 +505,8 @@
         "valueType": "string",
         "name": "image",
         "label": "Image",
-        "multi": false
+        "multi": false,
+        "required": false
       },
       {
         "component": "text",
@@ -515,48 +516,218 @@
         "value": ""
       },
       {
+        "component": "reference",
+        "valueType": "string",
+        "name": "video",
+        "label": "Video",
+        "multi": false,
+        "required": false
+      },
+      {
         "component": "text",
         "valueType": "string",
-        "name": "eyebrow",
+        "name": "eyebrow text",
         "label": "Eyebrow Text",
-        "value": ""
+        "value": "",
+        "condition": {
+          "===": [
+            {
+              "var": [
+                "classes",
+                ""
+              ]
+            },
+            "hero-black-colored-right"
+          ]
+        }
       },
       {
         "component": "richtext",
         "name": "heading",
         "label": "Heading",
         "valueType": "string",
-        "description": "Use italic for accent/gradient text"
+        "description": "Required. Use italic for accent/gradient.",
+        "required": true
       },
       {
         "component": "richtext",
         "name": "description",
-        "label": "Description",
-        "valueType": "string"
+        "label": "Sub-heading",
+        "valueType": "string",
+        "description": "Optional."
       },
       {
-        "component": "text",
-        "name": "ctaLabel",
-        "label": "Primary CTA Label",
-        "valueType": "string"
+        "component": "container",
+        "name": "cta1",
+        "label": "CTA",
+        "valueType": "object",
+        "collapsible": true,
+        "condition": {
+          "!==": [
+            {
+              "var": [
+                "classes",
+                ""
+              ]
+            },
+            "hero-two-colored-right"
+          ]
+        },
+        "fields": [
+          {
+            "component": "aem-content",
+            "valueType": "string",
+            "name": "button1",
+            "label": "Button Link"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "button1Title",
+            "label": "Button Title",
+            "description": "Accessibility title attribute (optional)"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "button1Text",
+            "label": "Button Text"
+          },
+          {
+            "component": "select",
+            "name": "button1Type",
+            "label": "Button Variation",
+            "valueType": "string",
+            "value": "",
+            "options": [
+              {
+                "name": "Primary",
+                "value": "primary"
+              },
+              {
+                "name": "Secondary",
+                "value": "secondary"
+              },
+              {
+                "name": "Inverted",
+                "value": "inverted"
+              }
+            ]
+          }
+        ]
       },
       {
-        "component": "text",
-        "name": "ctaUrl",
-        "label": "Primary CTA URL",
-        "valueType": "string"
+        "component": "container",
+        "name": "cta2",
+        "label": "CTA",
+        "valueType": "object",
+        "collapsible": true,
+        "condition": {
+          "===": [
+            {
+              "var": [
+                "classes",
+                ""
+              ]
+            },
+            ""
+          ]
+        },
+        "fields": [
+          {
+            "component": "aem-content",
+            "valueType": "string",
+            "name": "button2",
+            "label": "Button Link"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "button2Title",
+            "label": "Button Title",
+            "description": "Accessibility title attribute (optional)"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "button2Text",
+            "label": "Button Text"
+          },
+          {
+            "component": "select",
+            "name": "button2Type",
+            "label": "Button Variation",
+            "valueType": "string",
+            "value": "",
+            "options": [
+              {
+                "name": "Primary",
+                "value": "primary"
+              },
+              {
+                "name": "Secondary",
+                "value": "secondary"
+              },
+              {
+                "name": "Inverted",
+                "value": "inverted"
+              }
+            ]
+          }
+        ]
       },
       {
-        "component": "text",
-        "name": "secondaryCtaLabel",
-        "label": "Secondary CTA Label",
-        "valueType": "string"
-      },
-      {
-        "component": "text",
-        "name": "secondaryCtaUrl",
-        "label": "Secondary CTA URL",
-        "valueType": "string"
+        "component": "container",
+        "name": "tag",
+        "label": "Tag",
+        "valueType": "object",
+        "collapsible": true,
+        "condition": {
+          "===": [
+            {
+              "var": [
+                "classes",
+                ""
+              ]
+            },
+            "hero-black-colored-right"
+          ]
+        },
+        "fields": [
+          {
+            "component": "select",
+            "valueType": "string",
+            "name": "tagVariation",
+            "label": "Tag variation",
+            "value": "",
+            "options": [
+              {
+                "name": "Outline",
+                "value": "outline"
+              },
+              {
+                "name": "Fill",
+                "value": "fill"
+              },
+              {
+                "name": "Glass",
+                "value": "glass"
+              },
+              {
+                "name": "Dark",
+                "value": "dark"
+              }
+            ]
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "tag-title",
+            "label": "Tag title",
+            "value": "",
+            "required": true
+          }
+        ]
       }
     ]
   },
@@ -655,6 +826,44 @@
         "name": "section-reference-text",
         "value": "",
         "label": "Section Reference Text"
+      }
+    ]
+  },
+  {
+    "id": "tag",
+    "fields": [
+      {
+        "component": "select",
+        "valueType": "string",
+        "name": "tagVariation",
+        "label": "Tag variation",
+        "value": "",
+        "options": [
+          {
+            "name": "Outline",
+            "value": "outline"
+          },
+          {
+            "name": "Fill",
+            "value": "fill"
+          },
+          {
+            "name": "Glass",
+            "value": "glass"
+          },
+          {
+            "name": "Dark",
+            "value": "dark"
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "tag-title",
+        "label": "Tag title",
+        "value": "",
+        "required": true
       }
     ]
   }

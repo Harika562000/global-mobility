@@ -27,7 +27,6 @@ main > div.hero-section {
   display: flex;
   align-items: flex-end;
   min-height: 300px;
-  width: 100%;
   overflow: hidden;
   margin: 0;
   padding: 0;
@@ -92,6 +91,15 @@ main > div.hero-section {
   object-position: center;
   margin: 0;
   padding: 0;
+}
+
+.hero .hero-em-accent-background video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 .hero:not(.hero-two-colored-right, .hero-black-colored-right)::before {
@@ -211,6 +219,13 @@ main > div.hero-section {
   display: block;
 }
 
+.hero .hero-two-colored-right-image.has-video picture,
+.hero .hero-two-colored-right-image.has-video video {
+  position: absolute;
+  inset: 0;
+}
+
+.hero .hero-two-colored-right-image video,
 .hero .hero-two-colored-right-image img {
   width: 100%;
   height: 100%;
@@ -356,6 +371,13 @@ main > div.hero-section {
   display: block;
 }
 
+.hero .hero-black-colored-right-image.has-video picture,
+.hero .hero-black-colored-right-image.has-video video {
+  position: absolute;
+  inset: 0;
+}
+
+.hero .hero-black-colored-right-image video,
 .hero .hero-black-colored-right-image img {
   width: 100%;
   height: 100%;
@@ -403,6 +425,8 @@ main > div.hero-section {
 
   .hero .hero-black-colored-right-image {
     flex: 1 0 0%;
+    min-width: 0;
+    overflow: hidden;
   }
 }
 
@@ -413,6 +437,8 @@ main > div.hero-section {
 
   .hero .hero-black-colored-right-image {
     max-width: 50%;
+    min-width: 0;
+    overflow: hidden;
   }
 }
 
@@ -442,8 +468,19 @@ main > div.hero-section {
 
 .hero-section .hero-two-colored-right-content img,
 .hero-section .hero-black-colored-right-content img,
+.hero-section .hero-two-colored-right-content video,
+.hero-section .hero-black-colored-right-content video,
 .hero-section .hero-two-colored-right-content picture,
 .hero-section .hero-black-colored-right-content picture {
   max-width: 100%;
   height: auto;
 }
+
+/* Keep hero right-side image responsive and within container */
+.hero-section .hero-black-colored-right-image video,
+.hero-section .hero-two-colored-right-image video,
+.hero-section .hero-black-colored-right-image img,
+.hero-section .hero-two-colored-right-image img {
+  max-width: 100%;
+}
+
