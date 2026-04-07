@@ -1,12 +1,18 @@
 import { eyebrowDecorator, decorateTags } from '../../scripts/scripts.js';
+import decorateVideo from '../video/video.js';
 
 /**
 * Hero block: three variations (UE authoring reference).
 *
 * Variation summary (from UE authoring UI):
-* - Image as background: image, heading, description.
-* - Two-colored:        image, heading, description.
-* - Black-colored: image, tag, eyebrow, heading, description.
+* - Image as background: image, heading, description, optional nested video block.
+* - Two-colored:        image/video, heading, description.
+* - Black-colored: image/video, tag, eyebrow, heading, description.
+*
+* Video support:
+* - A nested Video block (blocks/video) placed in the hero content area will be
+*   used as the media element (background or right-side) for the hero.
+* - The video block's decorate() is called so it handles YouTube, Vimeo and MP4.
 */
 
 /** Get the value cell (content) from a row; UE often uses row = [label, value]. */
@@ -74,6 +80,43 @@ function createMediaWrapper(className, picture, video) {
   }
 
   return mediaDiv;
+}
+
+/**
+ * Find a nested Video block inside the hero rows and initialise it.
+ * Returns { videoBlock, rowIndex } or null if none found.
+ */
+async function findAndDecorateVideoBlock(rows) {
+  let found = null;
+  let foundIndex = -1;
+  rows.forEach((row, i) => {
+    if (!found) {
+      const videoBlock = row.querySelector('.block.video');
+      if (videoBlock) {
+        found = videoBlock;
+        foundIndex = i;
+      }
+    }
+  });
+  if (found) {
+    // Mark as background autoplay for hero use
+    found.classList.add('autoplay');
+    await decorateVideo(found);
+    return { videoBlock: found, rowIndex: foundIndex };
+  }
+  return null;
+}
+
+/**
+ * Wrap a decorated video block for use as hero media.
+ * Adds hero-specific classes so CSS can position it correctly.
+ */
+function createVideoBlockWrapper(className, videoBlock) {
+  if (!videoBlock) return null;
+  const wrapper = document.createElement('div');
+  wrapper.className = `${className} has-video-block`;
+  wrapper.appendChild(videoBlock);
+  return wrapper;
 }
 
 function appendContent(row, target, fallbackHeading = false) {
@@ -186,7 +229,7 @@ function decorateBlackColoredRight(block, rows, media, rowIndices) {
   }
 }
 
-export default function decorate(block) {
+export default async function decorate(block) {
   const rows = [...block.querySelectorAll(':scope > div')];
   if (!rows.length) return;
 
@@ -198,6 +241,11 @@ export default function decorate(block) {
   const isBlackColoredRight = block.classList.contains('hero-black-colored-right');
   const isTwoColoredRight = block.classList.contains('hero-two-colored-right');
 
+  // Check for a nested Video block first — it takes priority over a raw <video> element
+  const nestedVideoResult = await findAndDecorateVideoBlock(rows);
+  const videoBlockRowIndex = nestedVideoResult ? nestedVideoResult.rowIndex : -1;
+  const decoratedVideoBlock = nestedVideoResult ? nestedVideoResult.videoBlock : null;
+
   const lastDataRow = rows.length - 1;
   const hasVariationRow = !rows[0]?.querySelector('picture, video');
   const contentStart = hasVariationRow ? 1 : 0;
@@ -207,7 +255,11 @@ export default function decorate(block) {
   const altRowIndex = isBlackColoredRight
     ? 0
     : findRowByLabel(rows, contentStart, lastDataRow, 'image alt');
-  const videoRowIndex = findRowByLabel(rows, contentStart, lastDataRow, 'video');
+
+  // Only look for a raw <video> row if no nested video block was found
+  const videoRowIndex = decoratedVideoBlock
+    ? -1
+    : findRowByLabel(rows, contentStart, lastDataRow, 'video');
 
   const picture = imageRowIndex >= 0 ? rows[imageRowIndex]?.querySelector('picture') : null;
   const video = videoRowIndex >= 0 ? rows[videoRowIndex]?.querySelector('video') : null;
@@ -252,6 +304,7 @@ export default function decorate(block) {
       descriptionIdx,
       altRowIndex,
       videoRowIndex,
+      videoBlockRowIndex,
       imageRowIndex,
     ) + 1;
   let tagTitleIdx = isBlackColoredRight
@@ -301,7 +354,13 @@ export default function decorate(block) {
       firstButtonRow,
     };
 
-  const media = createMediaWrapper('hero-media', picture, video);
+  // Build the media element: prefer the nested video block, fall back to picture/raw video
+  let media;
+  if (decoratedVideoBlock) {
+    media = createVideoBlockWrapper('hero-media', decoratedVideoBlock);
+  } else {
+    media = createMediaWrapper('hero-media', picture, video);
+  }
 
   if (isBlackColoredRight) {
     decorateBlackColoredRight(block, rows, media, rowIndices);

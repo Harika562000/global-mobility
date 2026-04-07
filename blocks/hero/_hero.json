@@ -116,7 +116,7 @@
   "filters": [
     {
       "id": "hero",
-      "components": ["hero"]
+      "components": ["hero", "video"]
     }
   ]
 }

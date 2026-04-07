@@ -51,7 +51,8 @@
   {
     "id": "hero",
     "components": [
-      "hero"
+      "hero",
+      "video"
     ]
   },
   {
@@ -63,6 +64,10 @@
   },
   {
     "id": "tag",
+    "components": []
+  },
+  {
+    "id": "video",
     "components": []
   }
 ]

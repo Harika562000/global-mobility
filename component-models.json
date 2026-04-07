@@ -866,5 +866,61 @@
         "required": true
       }
     ]
+  },
+  {
+    "id": "video",
+    "fields": [
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "uri",
+        "label": "Video"
+      },
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "value": "",
+        "label": "Options",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Variation",
+            "children": [
+              {
+                "name": "Embed Video",
+                "value": "embed-video"
+              }
+            ]
+          },
+          {
+            "name": "Playback",
+            "children": [
+              {
+                "name": "AutoPlay",
+                "value": "autoplay"
+              },
+              {
+                "name": "Show Controls",
+                "value": "show-controls"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "placeholder_image",
+        "label": "Placeholder Image",
+        "multi": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "placeholder_imageAlt",
+        "value": "",
+        "label": "Placeholder Image Alt Text"
+      }
+    ]
   }
 ]
