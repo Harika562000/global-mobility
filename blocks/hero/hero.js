@@ -1,21 +1,109 @@
 import { eyebrowDecorator, decorateTags } from '../../scripts/scripts.js';
-import decorateVideo from '../video/video.js';
 
 /**
-* Hero block: three variations (UE authoring reference).
-*
-* Variation summary (from UE authoring UI):
-* - Image as background: image, heading, description, optional nested video block.
-* - Two-colored:        image/video, heading, description.
-* - Black-colored: image/video, tag, eyebrow, heading, description.
-*
-* Video support:
-* - A nested Video block (blocks/video) placed in the hero content area will be
-*   used as the media element (background or right-side) for the hero.
-* - The video block's decorate() is called so it handles YouTube, Vimeo and MP4.
-*/
+ * Hero block: three variations (UE authoring reference).
+ *
+ * Variation summary (from UE authoring UI):
+ * - Image as background: media (image or video), heading, description.
+ * - Two-colored:        media (image or video), heading, description.
+ * - Black-colored:      media (image or video), tag, eyebrow, heading, description.
+ *
+ * Media field accepts:
+ *  - An image asset  → rendered as <picture>
+ *  - An MP4/WebM URL → rendered as autoplay muted looping <video> (same as video block)
+ *  - A YouTube URL   → rendered as autoplay muted iframe embed (same as video block)
+ *  - A Vimeo URL     → rendered as autoplay muted iframe embed (same as video block)
+ */
 
-/** Get the value cell (content) from a row; UE often uses row = [label, value]. */
+// ─── Video embed helpers (mirrors blocks/video/video.js behaviour) ────────────
+
+/**
+ * Build a YouTube iframe embed, muted and autoplaying for background use.
+ * @param {URL} url
+ * @returns {HTMLElement}
+ */
+function embedYoutube(url) {
+  const usp = new URLSearchParams(url.search);
+  const suffixParams = {
+    autoplay: '1',
+    mute: '1',
+    controls: '0',
+    disablekb: '1',
+    loop: '1',
+    playsinline: '1',
+  };
+  const suffix = `&${Object.entries(suffixParams).map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&')}`;
+  let vid = usp.get('v') ? encodeURIComponent(usp.get('v')) : '';
+  const embed = url.pathname;
+  if (url.origin.includes('youtu.be')) {
+    [, vid] = url.pathname.split('/');
+  }
+  const temp = document.createElement('div');
+  temp.innerHTML = `<div class="hero-media-embed">
+    <iframe src="https://www.youtube.com${vid ? `/embed/${vid}?rel=0&v=${vid}${suffix}` : embed}"
+      allow="autoplay; fullscreen; picture-in-picture; encrypted-media; accelerometer; gyroscope; picture-in-picture"
+      allowfullscreen="" scrolling="no" title="Content from Youtube" loading="lazy"></iframe>
+  </div>`;
+  return temp.children.item(0);
+}
+
+/**
+ * Build a Vimeo iframe embed, muted and autoplaying for background use.
+ * @param {URL} url
+ * @returns {HTMLElement}
+ */
+function embedVimeo(url) {
+  const [, video] = url.pathname.split('/');
+  const suffixParams = { autoplay: '1', background: '1' };
+  const suffix = `?${Object.entries(suffixParams).map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join('&')}`;
+  const temp = document.createElement('div');
+  temp.innerHTML = `<div class="hero-media-embed">
+    <iframe src="https://player.vimeo.com/video/${video}${suffix}"
+      frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen
+      title="Content from Vimeo" loading="lazy"></iframe>
+  </div>`;
+  return temp.children.item(0);
+}
+
+/**
+ * Build an autoplay muted looping <video> element for MP4/WebM.
+ * @param {string} src
+ * @returns {HTMLVideoElement}
+ */
+function createAutoplayVideo(src) {
+  const video = document.createElement('video');
+  video.setAttribute('autoplay', '');
+  video.setAttribute('muted', '');
+  video.setAttribute('loop', '');
+  video.setAttribute('playsinline', '');
+  video.setAttribute('preload', 'metadata');
+  video.removeAttribute('controls');
+  video.muted = true;
+
+  const source = document.createElement('source');
+  source.setAttribute('src', src);
+  source.setAttribute('type', `video/${src.split('.').pop()}`);
+  video.appendChild(source);
+  return video;
+}
+
+/**
+ * Detect if a URL string is a video (YouTube, Vimeo, or video file extension).
+ * Returns 'youtube' | 'vimeo' | 'file' | null.
+ * @param {string} href
+ */
+function detectMediaType(href) {
+  if (!href) return null;
+  const lower = href.toLowerCase();
+  if (lower.includes('youtube.com') || lower.includes('youtu.be')) return 'youtube';
+  if (lower.includes('vimeo.com')) return 'vimeo';
+  const ext = lower.split('?')[0].split('.').pop();
+  if (['mp4', 'webm', 'ogg'].includes(ext)) return 'file';
+  return null;
+}
+
+// ─── Hero helpers ─────────────────────────────────────────────────────────────
+
 function getValueCell(row) {
   if (!row) return null;
   return row.children.length > 1 ? row.children[1] : row.children[0] || row;
@@ -41,81 +129,42 @@ function findRowByLabels(rows, fromIdx, toIdx, labels) {
   );
 }
 
-function findRowByExactLabel(rows, fromIdx, toIdx, labelText) {
-  const lower = (labelText || '').toLowerCase();
-  for (let i = fromIdx; i <= toIdx; i += 1) {
-    if (getRowLabel(rows[i]) === lower) return i;
-  }
-  return -1;
-}
-
-function configureVideo(video, poster) {
-  if (!video) return;
-  video.muted = true;
-  video.loop = true;
-  video.autoplay = true;
-  video.playsInline = true;
-  video.setAttribute('muted', '');
-  video.setAttribute('loop', '');
-  video.setAttribute('autoplay', '');
-  video.setAttribute('playsinline', '');
-  video.setAttribute('preload', 'metadata');
-  video.removeAttribute('controls');
-  if (poster) video.setAttribute('poster', poster);
-}
-
-function createMediaWrapper(className, picture, video) {
-  if (!picture && !video) return null;
-
-  const mediaDiv = document.createElement('div');
-  mediaDiv.className = className;
-  if (picture) mediaDiv.classList.add('has-picture');
-  if (video) mediaDiv.classList.add('has-video');
-
-  const poster = picture?.querySelector('img')?.getAttribute('src');
-  if (picture) mediaDiv.appendChild(picture);
-  if (video) {
-    configureVideo(video, poster);
-    mediaDiv.appendChild(video);
-  }
-
-  return mediaDiv;
-}
-
 /**
- * Find a nested Video block inside the hero rows and initialise it.
- * Returns { videoBlock, rowIndex } or null if none found.
+ * Build the hero media wrapper div containing either an image (<picture>),
+ * a native video element, or an iframe embed — depending on what the author
+ * placed in the media row.
+ *
+ * @param {string} wrapperClass  CSS class(es) for the wrapper div
+ * @param {HTMLElement|null} picture  <picture> element from the media row (if any)
+ * @param {string|null} videoHref   URL from an <a> in the media row (if any)
+ * @returns {HTMLElement|null}
  */
-async function findAndDecorateVideoBlock(rows) {
-  let found = null;
-  let foundIndex = -1;
-  rows.forEach((row, i) => {
-    if (!found) {
-      const videoBlock = row.querySelector('.block.video');
-      if (videoBlock) {
-        found = videoBlock;
-        foundIndex = i;
-      }
-    }
-  });
-  if (found) {
-    // Mark as background autoplay for hero use
-    found.classList.add('autoplay');
-    await decorateVideo(found);
-    return { videoBlock: found, rowIndex: foundIndex };
-  }
-  return null;
-}
+function createHeroMedia(wrapperClass, picture, videoHref) {
+  const mediaType = detectMediaType(videoHref);
+  const hasVideo = !!mediaType;
 
-/**
- * Wrap a decorated video block for use as hero media.
- * Adds hero-specific classes so CSS can position it correctly.
- */
-function createVideoBlockWrapper(className, videoBlock) {
-  if (!videoBlock) return null;
+  if (!picture && !hasVideo) return null;
+
   const wrapper = document.createElement('div');
-  wrapper.className = `${className} has-video-block`;
-  wrapper.appendChild(videoBlock);
+  wrapper.className = wrapperClass;
+  if (picture) wrapper.classList.add('has-picture');
+  if (hasVideo) wrapper.classList.add('has-video');
+
+  if (picture) wrapper.appendChild(picture);
+
+  if (hasVideo) {
+    const url = new URL(videoHref);
+    let embed;
+    if (mediaType === 'youtube') {
+      embed = embedYoutube(url);
+    } else if (mediaType === 'vimeo') {
+      embed = embedVimeo(url);
+    } else {
+      embed = createAutoplayVideo(videoHref);
+    }
+    wrapper.appendChild(embed);
+  }
+
   return wrapper;
 }
 
@@ -229,7 +278,7 @@ function decorateBlackColoredRight(block, rows, media, rowIndices) {
   }
 }
 
-export default async function decorate(block) {
+export default function decorate(block) {
   const rows = [...block.querySelectorAll(':scope > div')];
   if (!rows.length) return;
 
@@ -241,33 +290,29 @@ export default async function decorate(block) {
   const isBlackColoredRight = block.classList.contains('hero-black-colored-right');
   const isTwoColoredRight = block.classList.contains('hero-two-colored-right');
 
-  // Check for a nested Video block first — it takes priority over a raw <video> element
-  const nestedVideoResult = await findAndDecorateVideoBlock(rows);
-  const videoBlockRowIndex = nestedVideoResult ? nestedVideoResult.rowIndex : -1;
-  const decoratedVideoBlock = nestedVideoResult ? nestedVideoResult.videoBlock : null;
-
   const lastDataRow = rows.length - 1;
-  const hasVariationRow = !rows[0]?.querySelector('picture, video');
+  const hasVariationRow = !rows[0]?.querySelector('picture, video, a');
   const contentStart = hasVariationRow ? 1 : 0;
-  const imageRowIndex = isBlackColoredRight
+
+  // ── Locate the single "media" row (replaces separate image + video rows) ──
+  const mediaRowIndex = isBlackColoredRight
     ? 0
-    : findRowByExactLabel(rows, contentStart, lastDataRow, 'image');
+    : findRowByLabels(rows, contentStart, lastDataRow, ['media', 'image', 'video']);
+
   const altRowIndex = isBlackColoredRight
     ? 0
-    : findRowByLabel(rows, contentStart, lastDataRow, 'image alt');
+    : findRowByLabels(rows, contentStart, lastDataRow, ['media alt', 'image alt', 'alt']);
 
-  // Only look for a raw <video> row if no nested video block was found
-  const videoRowIndex = decoratedVideoBlock
-    ? -1
-    : findRowByLabel(rows, contentStart, lastDataRow, 'video');
+  // Extract picture (for image assets) and/or a href (for video URLs)
+  const mediaRow = mediaRowIndex >= 0 ? rows[mediaRowIndex] : null;
+  const picture = mediaRow?.querySelector('picture') || null;
+  const mediaLink = mediaRow?.querySelector('a');
+  const videoHref = mediaLink ? mediaLink.href : null;
 
-  const picture = imageRowIndex >= 0 ? rows[imageRowIndex]?.querySelector('picture') : null;
-  const video = videoRowIndex >= 0 ? rows[videoRowIndex]?.querySelector('video') : null;
-
+  // Apply alt text to the image if present
   if (isBlackColoredRight) {
-    const pictureRow = rows[imageRowIndex];
-    if (picture && pictureRow) {
-      const altCell = getValueCell(pictureRow);
+    if (picture && mediaRow) {
+      const altCell = getValueCell(mediaRow);
       const alt = altCell?.textContent?.trim();
       if (alt) {
         const img = picture.querySelector('img');
@@ -293,9 +338,7 @@ export default async function decorate(block) {
       lastDataRow,
       ['description', 'sub-heading', 'sub heading'],
     );
-  const eyebrowIdx = isBlackColoredRight
-    ? 1
-    : -1;
+  const eyebrowIdx = isBlackColoredRight ? 1 : -1;
   const firstButtonRow = isBlackColoredRight
     ? 4
     : Math.max(
@@ -303,10 +346,9 @@ export default async function decorate(block) {
       headingIdx,
       descriptionIdx,
       altRowIndex,
-      videoRowIndex,
-      videoBlockRowIndex,
-      imageRowIndex,
+      mediaRowIndex,
     ) + 1;
+
   let tagTitleIdx = isBlackColoredRight
     ? findRowByLabel(rows, firstButtonRow, lastDataRow, 'tag title')
     : -1;
@@ -325,8 +367,6 @@ export default async function decorate(block) {
     const isKnownTagVariation = (val) => knownVariations
       .includes((val || '').trim().toLowerCase());
 
-    // If we couldn't find the labeled rows, assume the last row is tag title
-    // and the row before it is variation.
     if (tagTitleIdx < 0) tagTitleIdx = lastDataRow;
     if (tagVariationIdx < 0) {
       const candidateIdx = tagTitleIdx - 1;
@@ -336,6 +376,7 @@ export default async function decorate(block) {
       }
     }
   }
+
   const rowIndices = isBlackColoredRight
     ? {
       eyebrow: eyebrowIdx,
@@ -354,13 +395,8 @@ export default async function decorate(block) {
       firstButtonRow,
     };
 
-  // Build the media element: prefer the nested video block, fall back to picture/raw video
-  let media;
-  if (decoratedVideoBlock) {
-    media = createVideoBlockWrapper('hero-media', decoratedVideoBlock);
-  } else {
-    media = createMediaWrapper('hero-media', picture, video);
-  }
+  // Build the unified media element (image, MP4, YouTube or Vimeo)
+  const media = createHeroMedia('hero-media', picture, videoHref);
 
   if (isBlackColoredRight) {
     decorateBlackColoredRight(block, rows, media, rowIndices);

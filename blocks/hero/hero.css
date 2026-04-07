@@ -93,6 +93,7 @@ main > div.hero-section {
   padding: 0;
 }
 
+/* Native <video> as background */
 .hero .hero-em-accent-background video {
   position: absolute;
   inset: 0;
@@ -102,50 +103,22 @@ main > div.hero-section {
   object-position: center;
 }
 
-/* Video block used as hero background (em-accent) */
-.hero .hero-em-accent-background.has-video-block {
+/* iframe embed (YouTube / Vimeo) as background */
+.hero .hero-em-accent-background .hero-media-embed {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
-  overflow: hidden;
-}
-
-.hero .hero-em-accent-background.has-video-block .video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
   pointer-events: none;
 }
 
-.hero .hero-em-accent-background.has-video-block .video > * {
+.hero .hero-em-accent-background .hero-media-embed iframe {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-}
-
-.hero .hero-em-accent-background.has-video-block .video iframe,
-.hero .hero-em-accent-background.has-video-block .video video {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
   border: 0;
-}
-
-.hero .hero-em-accent-background.has-video-block .video > div {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100% !important;
-  padding-bottom: 0 !important;
+  object-fit: cover;
 }
 
 .hero:not(.hero-two-colored-right, .hero-black-colored-right)::before {
@@ -265,43 +238,11 @@ main > div.hero-section {
   display: block;
 }
 
+/* Native <video> as right-side media */
 .hero .hero-two-colored-right-image.has-video picture,
 .hero .hero-two-colored-right-image.has-video video {
   position: absolute;
   inset: 0;
-}
-
-/* Video block used as right-side media (two-colored) */
-.hero .hero-two-colored-right-image.has-video-block .video {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-.hero .hero-two-colored-right-image.has-video-block .video iframe,
-.hero .hero-two-colored-right-image.has-video-block .video video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border: 0;
-  border-radius: var(--radius-12);
-}
-
-.hero .hero-two-colored-right-image.has-video-block .video > div {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100% !important;
-  padding-bottom: 0 !important;
-}
-
-.hero .hero-two-colored-right-image.has-video-block .video-placeholder,
-.hero .hero-two-colored-right-image.has-video-block .video-placeholder picture,
-.hero .hero-two-colored-right-image.has-video-block .video-placeholder img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 .hero .hero-two-colored-right-image video,
@@ -310,6 +251,24 @@ main > div.hero-section {
   height: 100%;
   object-fit: cover;
   border-radius: var(--radius-12);
+}
+
+/* iframe embed (YouTube / Vimeo) as right-side media */
+.hero .hero-two-colored-right-image .hero-media-embed {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.hero .hero-two-colored-right-image .hero-media-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  object-fit: cover;
 }
 
 .hero-two-colored-right h2 {
@@ -450,43 +409,11 @@ main > div.hero-section {
   display: block;
 }
 
+/* Native <video> as right-side media */
 .hero .hero-black-colored-right-image.has-video picture,
 .hero .hero-black-colored-right-image.has-video video {
   position: absolute;
   inset: 0;
-}
-
-/* Video block used as right-side media (black-colored) */
-.hero .hero-black-colored-right-image.has-video-block .video {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-.hero .hero-black-colored-right-image.has-video-block .video iframe,
-.hero .hero-black-colored-right-image.has-video-block .video video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border: 0;
-  border-radius: var(--radius-12);
-}
-
-.hero .hero-black-colored-right-image.has-video-block .video > div {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100% !important;
-  padding-bottom: 0 !important;
-}
-
-.hero .hero-black-colored-right-image.has-video-block .video-placeholder,
-.hero .hero-black-colored-right-image.has-video-block .video-placeholder picture,
-.hero .hero-black-colored-right-image.has-video-block .video-placeholder img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 .hero .hero-black-colored-right-image video,
@@ -495,6 +422,24 @@ main > div.hero-section {
   height: 100%;
   object-fit: cover;
   border-radius: var(--radius-12);
+}
+
+/* iframe embed (YouTube / Vimeo) as right-side media */
+.hero .hero-black-colored-right-image .hero-media-embed {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.hero .hero-black-colored-right-image .hero-media-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  object-fit: cover;
 }
 
 @media (width >= 720px) {
@@ -588,7 +533,7 @@ main > div.hero-section {
   height: auto;
 }
 
-/* Keep hero right-side image responsive and within container */
+/* Keep hero right-side image/video responsive and within container */
 .hero-section .hero-black-colored-right-image video,
 .hero-section .hero-two-colored-right-image video,
 .hero-section .hero-black-colored-right-image img,

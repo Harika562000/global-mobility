@@ -51,8 +51,7 @@
   {
     "id": "hero",
     "components": [
-      "hero",
-      "video"
+      "hero"
     ]
   },
   {

@@ -34,25 +34,19 @@
         {
           "component": "reference",
           "valueType": "string",
-          "name": "image",
-          "label": "Image",
+          "name": "media",
+          "label": "Media (Image or Video)",
+          "description": "Upload an image, or paste a YouTube / Vimeo / MP4 URL for video.",
           "multi": false,
           "required": false
         },
         {
           "component": "text",
           "valueType": "string",
-          "name": "imageAlt",
-          "label": "Image Alt Text",
+          "name": "mediaAlt",
+          "label": "Media Alt Text",
+          "description": "Alt text for the image (not required for video).",
           "value": ""
-        },
-        {
-          "component": "reference",
-          "valueType": "string",
-          "name": "video",
-          "label": "Video",
-          "multi": false,
-          "required": false
         },
         {
           "component": "text",
@@ -116,7 +110,7 @@
   "filters": [
     {
       "id": "hero",
-      "components": ["hero", "video"]
+      "components": ["hero"]
     }
   ]
 }
