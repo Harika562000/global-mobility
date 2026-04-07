@@ -554,7 +554,7 @@
         }
       },
       {
-        "component": "aem-content",
+        "component": "reference",
         "valueType": "string",
         "name": "video",
         "label": "Video",
