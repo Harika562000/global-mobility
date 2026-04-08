@@ -6,20 +6,67 @@ import {
   decorateSections,
   decorateBlocks,
   decorateTemplateAndTheme,
+  getMetadata,
   waitForFirstImage,
   loadSection,
   loadSections,
   loadCSS,
 } from './aem.js';
+import {
+  applyTaxonomyLabelsToMetas,
+  observeTaxonomyMetaInjections,
+  scheduleTaxonomyMetaRelabel,
+} from './taxonomy-metadata.js';
+
+// Intercept fetch to inject CSRF token for AEM adaptive form FDM calls
+(function initCsrfProtection() {
+  const originalFetch = window.fetch;
+  window.fetch = function csrfFetch(...args) {
+    const [url, options] = args;
+    let urlStr = '';
+    if (typeof url === 'string') {
+      urlStr = url;
+    } else if (url instanceof Request) {
+      urlStr = url.url;
+    }
+    if (urlStr.includes('.af.dermis') && options && options.method === 'POST') {
+      return originalFetch('/libs/granite/csrf/token.json')
+        .then((resp) => resp.json())
+        .then((data) => {
+          if (data && data.token) {
+            if (!options.headers) options.headers = {};
+            if (options.headers instanceof Headers) {
+              options.headers.set('CSRF-Token', data.token);
+            } else {
+              options.headers['CSRF-Token'] = data.token;
+            }
+            // Also add to body for maximum compatibility
+            if (options.body instanceof FormData || options.body instanceof URLSearchParams) {
+              options.body.append(':cq_csrf_token', data.token);
+            } else if (typeof options.body === 'string') {
+              options.body += `&${encodeURIComponent(':cq_csrf_token')}=${encodeURIComponent(data.token)}`;
+            } else if (options.body && typeof options.body === 'object') {
+              options.body[':cq_csrf_token'] = data.token;
+            }
+          }
+          return originalFetch(url, options);
+        });
+    }
+    return originalFetch.apply(this, args);
+  };
+}());
+
+/** Base origin for dynamic imports (e.g. plugins). */
+export const NX_ORIGIN = typeof window !== 'undefined' ? window.location.origin : '';
 
 /**
- * Extracts text from a source element/string and returns it wrapped in:
- * <span class="eye-brow-text {additionalClass}">Extracted text</span>
- *
- * @param {Element|string} source Element (or string) to extract text from
- * @param {string} [additionalClass=''] Additional CSS class(es) to append
- * @returns {HTMLSpanElement|null} Span element or null if no text found
- */
+* Extracts text from a source element/string and returns it wrapped in:
+* <span class="eye-brow-text {additionalClass}">Extracted text</span>
+*
+* @param {Element|string} source Element (or string) to extract text from
+* @param {string} [additionalClass=''] Additional CSS class(es) to append
+* @returns {HTMLSpanElement|null} Span element or null if no text found
+*/
 export function eyebrowDecorator(source, additionalClass = '') {
   const text = (typeof source === 'string' ? source : source?.textContent || '').trim();
   if (!text) return null;
@@ -30,53 +77,50 @@ export function eyebrowDecorator(source, additionalClass = '') {
 }
 
 /**
- * Finds raw "tag" block tables (authored inside other blocks) and replaces
- * each with a styled <span class="tag tag-{variation}"> element.
- *
- * Authored table format (nested inside a parent block):
- *   Row 1 cell: tag (tag-dark)   — block name + variation
- *   Row 2 cell: DataSet          — visible label text
- *
- * @param {Element} container The container to search for tag tables
- */
+* Returns tag class string for a variation name (e.g. "dark" -> "tag tag-dark").
+* @param {string} [variation] Variation name, with or without "tag-" prefix
+* @returns {string} Class string for the tag span
+*/
+export function getTagClasses(variation) {
+  const v = (variation || '').trim().toLowerCase().replace(/^tag-/, '');
+  return v ? `tag tag-${v}` : 'tag tag-dark';
+}
+
+/**
+* Decorates nested tag tables inside a container (e.g. Hero, sections).
+* Finds tables with row1 = "tag (tag-dark)", row2 = label text, replaces each with a tag span.
+*
+* @param {Element} container The container to search for tag tables
+*/
 export function decorateTags(container) {
   container.querySelectorAll('table').forEach((table) => {
-    const rows = [...table.querySelectorAll('tr')];
-    if (rows.length < 2) return;
+    const trs = [...table.querySelectorAll('tr')];
+    if (trs.length < 2) return;
 
-    const headerCell = rows[0].querySelector('td, th');
+    const headerCell = trs[0].querySelector('td, th');
     if (!headerCell) return;
 
     const headerText = headerCell.textContent.trim().toLowerCase();
     const tagMatch = headerText.match(/^tag(?:\s*\(([^)]+)\))?$/);
     if (!tagMatch) return;
 
-    let classes = 'tag';
-    if (tagMatch[1]) {
-      let variation = tagMatch[1].trim();
-      if (!variation.startsWith('tag-')) {
-        variation = `tag-${variation}`;
-      }
-      classes += ` ${variation}`;
-    }
-
-    const contentCell = rows[1].querySelector('td, th');
-    if (!contentCell) return;
-    const hasContent = contentCell.textContent.trim() || contentCell.querySelector('span.icon');
-    if (!hasContent) return;
+    const variation = tagMatch[1] ? tagMatch[1].trim() : '';
+    const contentCell = trs[1].querySelector('td, th');
+    const content = contentCell ? contentCell.textContent.trim() : '';
+    if (!content) return;
 
     const span = document.createElement('span');
-    span.className = classes;
-    span.append(...contentCell.cloneNode(true).childNodes);
+    span.className = getTagClasses(variation);
+    span.textContent = content;
     table.replaceWith(span);
   });
 }
 
 /**
- * Moves all the attributes from a given elmenet to another given element.
- * @param {Element} from the element to copy attributes from
- * @param {Element} to the element to copy attributes to
- */
+* Moves all the attributes from a given elmenet to another given element.
+* @param {Element} from the element to copy attributes from
+* @param {Element} to the element to copy attributes to
+*/
 export function moveAttributes(from, to, attributes) {
   if (!attributes) {
     // eslint-disable-next-line no-param-reassign
@@ -92,10 +136,10 @@ export function moveAttributes(from, to, attributes) {
 }
 
 /**
- * Move instrumentation attributes from a given element to another given element.
- * @param {Element} from the element to copy attributes from
- * @param {Element} to the element to copy attributes to
- */
+* Move instrumentation attributes from a given element to another given element.
+* @param {Element} from the element to copy attributes from
+* @param {Element} to the element to copy attributes to
+*/
 export function moveInstrumentation(from, to) {
   moveAttributes(
     from,
@@ -107,8 +151,8 @@ export function moveInstrumentation(from, to) {
 }
 
 /**
- * load fonts.css and set a session storage flag
- */
+* load fonts.css and set a session storage flag
+*/
 async function loadFonts() {
   await loadCSS(`${window.hlx.codeBasePath}/styles/fonts.css`);
   try {
@@ -118,10 +162,21 @@ async function loadFonts() {
   }
 }
 
+function autolinkModals(doc) {
+  doc.addEventListener('click', async (e) => {
+    const origin = e.target.closest('a');
+    if (origin && origin.href && origin.href.includes('/modals/')) {
+      e.preventDefault();
+      const { openModal } = await import(`${window.hlx.codeBasePath}/blocks/modal/modal.js`);
+      openModal(origin.href);
+    }
+  });
+}
+
 /**
- * Builds all synthetic blocks in a container element.
- * @param {Element} main The container element
- */
+* Builds all synthetic blocks in a container element.
+* @param {Element} main The container element
+*/
 function buildAutoBlocks() {
   try {
     // TODO: add auto block, if needed
@@ -131,28 +186,113 @@ function buildAutoBlocks() {
   }
 }
 
+function a11yLinks(main) {
+  const links = main.querySelectorAll('a');
+  links.forEach((link) => {
+    let label = link.textContent;
+    if (!label && link.querySelector('span.icon')) {
+      const icon = link.querySelector('span.icon');
+      label = icon ? icon.classList[1]?.split('-')[1] : label;
+    }
+    link.setAttribute('aria-label', label);
+  });
+}
+
 /**
- * Decorates the main element.
- * @param {Element} main The main element
- */
+* Decorates the main element.
+* @param {Element} main The main element
+*/
 // eslint-disable-next-line import/prefer-default-export
 export function decorateMain(main) {
   // hopefully forward compatible button decoration
   decorateButtons(main);
   decorateIcons(main);
-  decorateTags(main);
   buildAutoBlocks(main);
   decorateSections(main);
   decorateBlocks(main);
+  // add aria-label to links
+  a11yLinks(main);
+
+  // Ensure UE add-component on <main> always resolves a section filter.
+  // nav-main is applied conditionally below for the nav page.
+  main.dataset.aueFilter = 'main';
+
+  const markHeaderMenuItemContainers = (headerSection) => {
+    const contentRoot = headerSection.querySelector(':scope > .default-content-wrapper')
+      || headerSection;
+
+    contentRoot.querySelectorAll('[data-aue-component="header-menu-item"]').forEach((row) => {
+      row.dataset.aueType = 'container';
+      row.dataset.aueFilter = 'header-menu-item';
+    });
+  };
+
+  const initHeaderSectionAuthoring = (headerSection) => {
+    if (!headerSection || headerSection.dataset.headerSectionAuthoringInit === 'true') {
+      return;
+    }
+
+    const hostSection = headerSection.closest('.section') || headerSection;
+
+    headerSection.dataset.aueType = 'container';
+    headerSection.dataset.aueFilter = 'header-section';
+    hostSection.dataset.aueType = 'container';
+    hostSection.dataset.aueFilter = 'header-section';
+    const contentRoot = headerSection.querySelector(':scope > .default-content-wrapper')
+      || headerSection;
+
+    contentRoot.dataset.aueType = 'container';
+    contentRoot.dataset.aueFilter = 'header-section';
+
+    markHeaderMenuItemContainers(headerSection);
+
+    const observer = new MutationObserver(() => {
+      markHeaderMenuItemContainers(headerSection);
+    });
+
+    observer.observe(contentRoot, {
+      childList: true,
+      subtree: false,
+    });
+
+    headerSection.dataset.headerSectionAuthoringInit = 'true';
+  };
+
+  // Initialize header-section authoring helpers anywhere header-section exists.
+  // This ensures clicking header-section opens its dedicated child filter.
+  main.querySelectorAll('.header-section, [data-aue-component="header-section"], [data-aue-model="header-section"]').forEach((headerSection) => {
+    initHeaderSectionAuthoring(headerSection);
+  });
+
+  if (main.dataset.headerSectionObserverAttached !== 'true') {
+    const sectionObserver = new MutationObserver(() => {
+      main.querySelectorAll('.header-section, [data-aue-component="header-section"], [data-aue-model="header-section"]').forEach((headerSection) => {
+        initHeaderSectionAuthoring(headerSection);
+      });
+    });
+
+    sectionObserver.observe(main, {
+      childList: true,
+      subtree: false,
+    });
+
+    main.dataset.headerSectionObserverAttached = 'true';
+  }
 }
 
 /**
- * Loads everything needed to get to LCP.
- * @param {Element} doc The container element
- */
+* Loads everything needed to get to LCP.
+* @param {Element} doc The container element
+*/
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
+  await applyTaxonomyLabelsToMetas(doc);
+  scheduleTaxonomyMetaRelabel(doc);
+  observeTaxonomyMetaInjections(doc);
   decorateTemplateAndTheme();
+  if (getMetadata('breadcrumbs').toLowerCase() === 'true') {
+    doc.body.dataset.breadcrumbs = true;
+  }
   const main = doc.querySelector('main');
   if (main) {
     decorateMain(main);
@@ -171,11 +311,13 @@ async function loadEager(doc) {
 }
 
 /**
- * Loads everything that doesn't need to be delayed.
- * @param {Element} doc The container element
- */
+* Loads everything that doesn't need to be delayed.
+* @param {Element} doc The container element
+*/
 async function loadLazy(doc) {
-  loadHeader(doc.querySelector('header'));
+  autolinkModals(doc);
+
+  await applyTaxonomyLabelsToMetas(doc);
 
   const main = doc.querySelector('main');
   await loadSections(main);
@@ -184,6 +326,7 @@ async function loadLazy(doc) {
   const element = hash ? doc.getElementById(hash.substring(1)) : false;
   if (hash && element) element.scrollIntoView();
 
+  loadHeader(doc.querySelector('header'));
   loadFooter(doc.querySelector('footer'));
 
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
@@ -191,9 +334,9 @@ async function loadLazy(doc) {
 }
 
 /**
- * Loads everything that happens a lot later,
- * without impacting the user experience.
- */
+* Loads everything that happens a lot later,
+* without impacting the user experience.
+*/
 function loadDelayed() {
   // eslint-disable-next-line import/no-cycle
   window.setTimeout(() => import('./delayed.js'), 3000);
