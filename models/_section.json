@@ -47,15 +47,22 @@
         "image",
         "button",
         "title",
-        "hero",
+        "accordion",
         "banner",
+        "card-grid-carousel",
         "cards",
         "columns",
-        "accordion",
+        "experts-card",
         "fragment",
+        "hero",
+        "insights-card",
+        "media-module",
+        "product-cards",
+        "section-title",
+        "speaker-cards",
         "tabs",
-        "video",
-        "card-grid-carousel"
+        "tag",
+        "video"
       ]
     }
   ]
