@@ -14,15 +14,15 @@
 
 @media (width >= 720px) {
   .card-grid-carousel {
-    --cgc-card-width: 380px;
-    --cgc-card-height: 360px;
+    --cgc-card-width: 450px;
+    --cgc-card-height: 300px;
   }
 }
 
 @media (width >= 1025px) {
   .card-grid-carousel {
-    --cgc-card-width: 440px;
-    --cgc-card-height: 380px;
+    --cgc-card-width: 450px;
+    --cgc-card-height: 300px;
   }
 }
 
@@ -207,7 +207,6 @@ a.card-grid-carousel-card:focus-visible {
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
-  align-items: center;
   min-height: 80px;
   margin-bottom: var(--spacing-400);
 }
