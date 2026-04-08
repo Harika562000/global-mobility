@@ -1,0 +1,353 @@
+{
+  "definitions": [
+    {
+      "title": "Insights Card Grid",
+      "id": "insights-card",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block",
+            "template": {
+              "name": "insights-card",
+              "model": "insights-card",
+              "filter": "insights-card"
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "Insight Card Item",
+      "id": "insights-card-item",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block/item",
+            "template": {
+              "name": "Insight Card Item",
+              "model": "insights-card-item",
+              "title": "Card Title"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "insights-card",
+      "fields": [
+        {
+          "component": "select",
+          "name": "classes",
+          "label": "Variation",
+          "valueType": "string",
+          "value": "featured-cards",
+          "options": [
+            { "name": "Featured Cards", "value": "featured-cards" },
+            { "name": "Condensed Cards", "value": "condensed-cards" }
+          ]
+        },
+        {
+          "component": "container",
+          "name": "sectionHeader",
+          "label": "Section Header",
+          "valueType": "object",
+          "collapsible": true,
+          "fields": [
+            {
+              "component": "text",
+              "valueType": "string",
+              "name": "eyebrow",
+              "label": "Eyebrow Text",
+              "value": "",
+              "required": true
+            },
+            {
+              "component": "richtext",
+              "name": "section-title",
+              "label": "Section title",
+              "valueType": "string",
+              "required": true,
+              "description": "For Default variation, use H4 tag. Any heading tag will be used."
+            },
+            {
+              "component": "aem-content",
+              "valueType": "string",
+              "name": "button1",
+              "label": "Button Link",
+              "required": true
+            },      
+            {
+              "component": "text",
+              "valueType": "string",
+              "name": "button1Title",
+              "label": "Button Title",
+              "description": "Accessibility title attribute (optional)"
+            },
+            {
+              "component": "text",
+              "valueType": "string",
+              "name": "button1Text",
+              "label": "Button Text",
+              "required": true
+            },
+            {
+              "component": "select",
+              "name": "button1Type",
+              "label": "Button Variation",
+              "valueType": "string",
+              "value": "",
+              "options": [
+                { "name": "Primary", "value": "primary" },
+                { "name": "Secondary", "value": "secondary" },
+                { "name": "Inverted", "value": "inverted" }
+              ]
+            }
+          ]
+        },
+        {
+          "component": "select",
+          "name": "contentSource",
+          "label": "Content Source",
+          "valueType": "string",
+          "value": "",
+          "description": "Default is Manual Authoring (use + to add cards). For Manual Page Selection, add up to 6 pages in Manual Page Configuration. For Tags, open Tags Configuration and complete the required fields.",
+          "options": [
+            { "name": "Manual Authoring (Default)", "value": "" },
+            { "name": "Tags", "value": "tags" },
+            {
+              "name": "Manual Page Selection",
+              "value": "manual-page-selection"
+            }
+          ]
+        },
+        {
+          "component": "container",
+          "name": "tags",
+          "label": "Tags Configuration",
+          "valueType": "object",
+          "collapsible": true,
+          "condition": { "===": [{ "var": ["contentSource", ""] }, "tags"] },
+          "fields": [
+            {
+              "component": "aem-tag",
+              "name": "pillars",
+              "label": "Pillars",
+              "value": "",
+              "valueType": "string",
+              "multi": false,
+              "rootPath": "/content/cq:tags/mobility-global/pillars-and-need-states"
+            },
+            {
+              "component": "aem-tag",
+              "name": "insightsThoughtLeaderContentType",
+              "label": "Insights and Thought Leader Content Type",
+              "value": "",
+              "valueType": "string",
+              "rootPath": "/content/cq:tags/mobility-global/insights-and-intelligence/insight-and-thought-leader-content-type"
+            },
+            {
+              "component": "aem-tag",
+              "name": "topic",
+              "label": "Topic",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/insights-and-intelligence/topic"
+            },
+            {
+              "component": "aem-tag",
+              "name": "theme",
+              "label": "Theme",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/insights-and-intelligence/theme"
+            },
+            {
+              "component": "aem-tag",
+              "name": "series",
+              "label": "Series",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/insights-and-intelligence/series"
+            },
+            {
+              "component": "aem-tag",
+              "name": "marketSalesRegion",
+              "label": "Market Sales Region",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/contextual-variables/market-context/market-sales-region"
+            },
+            {
+              "component": "aem-tag",
+              "name": "marketRegion",
+              "label": "Market Region",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/contextual-variables/market-context/market-region"
+            },
+            {
+              "component": "aem-tag",
+              "name": "marketCountry",
+              "label": "Market Country",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/contextual-variables/market-context/market-country"
+            },
+            {
+              "component": "aem-tag",
+              "name": "regulatoryContext",
+              "label": "Regulatory Context",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/contextual-variables/regulatory-and-operating-context/regulatory-context"
+            },
+            {
+              "component": "aem-tag",
+              "name": "industrySector",
+              "label": "Industry / Sector",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/contextual-variables/segmentation-and-user-context/industry-or-sector"
+            },
+            {
+              "component": "aem-tag",
+              "name": "audienceRole",
+              "label": "Audience Role",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/contextual-variables/segmentation-and-user-context/audience-role"
+            },
+            {
+              "component": "aem-tag",
+              "name": "contentFormat",
+              "label": "Content Format",
+              "value": "",
+              "valueType": "string",
+              "rootPath": "/content/cq:tags/mobility-global/system-and-structural-tags/content-formats"
+            },
+            {
+              "component": "aem-tag",
+              "name": "eventFormat",
+              "label": "Event Format",
+              "value": "",
+              "valueType": "string",
+              "rootPath": "/content/cq:tags/mobility-global/system-and-structural-tags/content-formats/event-formats"
+            }
+          ]
+        },
+        {
+          "component": "container",
+          "name": "manualPageSelection",
+          "label": "Manual Page Configuration",
+          "valueType": "object",
+          "collapsible": true,
+          "condition": { "===": [{ "var": ["contentSource", ""] }, "manual-page-selection"] },
+          "fields": [
+            {
+              "component": "aem-content",
+              "valueType": "string",
+              "name": "pageUrl1",
+              "label": "Page URL 1"
+            },
+            {
+              "component": "aem-content",
+              "valueType": "string",
+              "name": "pageUrl2",
+              "label": "Page URL 2"
+            },
+            {
+              "component": "aem-content",
+              "valueType": "string",
+              "name": "pageUrl3",
+              "label": "Page URL 3"
+            },
+            {
+              "component": "aem-content",
+              "valueType": "string",
+              "name": "pageUrl4",
+              "label": "Page URL 4"
+            },
+            {
+              "component": "aem-content",
+              "valueType": "string",
+              "name": "pageUrl5",
+              "label": "Page URL 5"
+            },
+            {
+              "component": "aem-content",
+              "valueType": "string",
+              "name": "pageUrl6",
+              "label": "Page URL 6"
+            }
+          ]
+        }
+
+      ]
+    },
+    {
+      "id": "insights-card-item",
+      "fields": [
+        {
+          "component": "reference",
+          "valueType": "string",
+          "name": "featuredImage",
+          "label": "Featured Image",
+          "multi": false
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "featuredImageAlt",
+          "label": "Featured Image Alt Text"
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "cardTitle",
+          "label": "Card Title",
+          "required": true
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "cardDescription",
+          "label": "Card Description"
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "cardTag",
+          "label": "Card Tag"
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "publishDate",
+          "label": "Publish Date",
+          "description": "ISO date format recommended (YYYY-MM-DD)"
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "timeToRead",
+          "label": "Time to Read"
+        },
+        {
+          "component": "aem-content",
+          "valueType": "string",
+          "name": "cardLink",
+          "label": "Card Link",
+          "required": true
+        }
+      ]
+    }
+  ],
+  "filters": [
+    {
+      "id": "insights-card",
+      "components": ["insights-card-item"]
+    }
+  ]
+}

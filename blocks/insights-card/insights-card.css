@@ -1,0 +1,390 @@
+/* =============================================================================
+   Insights card block
+   ============================================================================= */
+
+/* -----------------------------------------------------------------------------
+   No-JS / before decorate(): hide internal authoring rows (flat UE layout)
+   decorate() replaces the block and adds .initialized — these rules do not apply then.
+   ----------------------------------------------------------------------------- */
+
+.insights-card.block:not(.initialized) {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-600);
+}
+
+/* Flat block: row 1 eyebrow, 2 title, 3 CTA — hide config slots from row 4 onward */
+.insights-card.block:not(.initialized) > div:nth-child(n + 4) {
+  display: none;
+}
+
+/* Keep manual page URLs and multi-column manual cards (they include a real link) */
+.insights-card.block:not(.initialized) > div:nth-child(n + 4):has(a[href]) {
+  display: block;
+}
+
+/* -----------------------------------------------------------------------------
+   Container & design tokens
+   ----------------------------------------------------------------------------- */
+
+.insights-card-container {
+  overflow: hidden;
+}
+
+.insights-card {
+  --card-width: 280px;
+  --card-height: 373px;
+  --header-width: 382px;
+
+  @media (width >= 510px) {
+    --card-width-condensed: 413px;
+    --card-height-condensed: 150px;
+  }
+
+  @media (width >= 1025px) {
+    --card-width: 571px;
+    --card-height: 380px;
+    --active-card-height: 406px;
+    --card-height-condensed: 180px;
+    --card-width-condensed: 571px;
+    --card-height-condensed-active: 190px;
+  }
+}
+
+@media (width >= 510px) {
+  .insights-card.condensed-cards {
+    --card-height: var(--card-height-condensed);
+    --active-card-height: var(--card-height-condensed-active);
+    --card-width: var(--card-width-condensed);
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   Section header (eyebrow, title, CTA)
+   ----------------------------------------------------------------------------- */
+
+.insights-card .header {
+  margin-bottom: var(--spacing-600);
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+
+  .eye-brow-text {
+    margin-bottom: var(--spacing-400);
+
+    @media (width >= 1025px) {
+      margin-bottom: var(--spacing-600);
+    }
+  }
+}
+
+.insights-card .header-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.insights-card .header-content .section-title h4 {
+  margin-bottom: var(--spacing-0);
+}
+
+.insights-card .carousel-header .actions {
+  display: flex;
+  gap: var(--spacing-200);
+
+  .carousel-nav {
+    position: relative;
+  }
+}
+
+/* Explore CTA appended to block root on featured-cards <720px (insights-card.js) */
+@media (width < 720px) {
+  .insights-card.featured-cards > .insights-card-explore-cta {
+    width: 100%;
+    margin-top: var(--spacing-600);
+  }
+}
+
+@media (width >= 720px) and (width < 1025px) {
+  .insights-card .header {
+    flex-direction: row;
+    gap: var(--spacing-600);
+    align-items: end;
+  }
+}
+
+@media (width >= 720px) {
+  .insights-card.condensed-cards .header {
+    flex-direction: row;
+    gap: var(--spacing-600);
+    align-items: end;
+    margin-bottom: var(--spacing-900);
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   Carousel track
+   ----------------------------------------------------------------------------- */
+
+.insights-card .carousel-track {
+  overflow: visible;
+  clip-path: inset(0 -100vw 0 0);
+}
+
+.insights-card .carousel-track-inner {
+  gap: var(--spacing-200);
+  align-items: end;
+}
+
+/* -----------------------------------------------------------------------------
+   Card shell — grid stacks .media (z-index 0) and .body (z-index 1)
+   ----------------------------------------------------------------------------- */
+
+.insights-card .card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  width: var(--card-width);
+  height: var(--card-height);
+  text-decoration: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+
+  .media {
+    grid-area: 1 / 1;
+    z-index: 0;
+    min-width: 0;
+    min-height: 0;
+    place-self: stretch;
+
+    picture {
+      display: block;
+      height: 100%;
+      width: 100%;
+    }
+
+    img {
+      display: block;
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+      border-radius: 0;
+    }
+  }
+}
+
+.insights-card .carousel-track-inner > .card {
+  flex: 0 0 var(--card-width);
+  width: var(--card-width);
+  min-width: var(--card-width);
+  max-width: var(--card-width);
+}
+
+.insights-card .card .body {
+  grid-area: 1 / 1;
+  z-index: 1;
+  color: var(--color-white);
+  padding: var(--spacing-500);
+  height: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: var(--spacing-200);
+  background: linear-gradient(180.14deg, rgb(0 0 0 / 0%) 0.12%, rgb(0 0 0 / 90%) 99.88%);
+}
+
+/* -----------------------------------------------------------------------------
+   Tag pill (uses global .tag / .tag-dark)
+   ----------------------------------------------------------------------------- */
+
+.insights-card .card .insights-card-tag-overlay {
+  position: absolute;
+  top: var(--spacing-400);
+  right: var(--spacing-400);
+  z-index: 2;
+}
+
+/* -----------------------------------------------------------------------------
+   Card body: title + description
+   ----------------------------------------------------------------------------- */
+
+.insights-card .card .insights-card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: var(--spacing-200);
+  width: 100%;
+  height: auto;
+}
+
+.insights-card .card .insights-card-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+  gap: var(--spacing-400);
+  margin: 0;
+  transition: color 0.2s ease;
+}
+
+.insights-card .card .insights-card-title .insights-card-title-text {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-600);
+  font-weight: var(--fixed-body-600-bold-weight);
+  line-height: var(--fixed-body-600-bold-line-height);
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+}
+
+.insights-card .card .insights-card-title .insights-card-title-time {
+  display: none;
+}
+
+.insights-card .card .insights-card-description {
+  display: flex;
+  width: 100%;
+  gap: var(--spacing-200);
+  align-items: flex-end;
+  justify-content: space-between;
+  margin: 0;
+  font-family: var(--font-family-primary);
+  font-size: var(--responsive-body-200-size);
+  font-weight: var(--responsive-body-200-weight);
+  line-height: var(--responsive-body-200-line-height);
+  letter-spacing: var(--letter-spacing-tight);
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.3s ease, max-height 0.3s ease;
+}
+
+.insights-card .card .insights-card-description .insights-card-description-text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 7;
+  line-clamp: 7;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+/* -----------------------------------------------------------------------------
+   Footer (datetime + arrow)
+   ----------------------------------------------------------------------------- */
+
+.insights-card .card .insights-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-200);
+}
+
+.insights-card .card .insights-card-footer .insights-card-footer-time,
+.insights-card .card .insights-card-footer .insights-card-footer-date {
+  font-size: var(--font-size-200);
+  font-weight: var(--font-weight-regular);
+  color: var(--typography-tertiary);
+  opacity: 0.9;
+}
+
+.insights-card .card .insights-card-footer:has(.insights-card-footer-date) .insights-card-footer-time::after {
+  content: " | ";
+}
+
+.insights-card .card .insights-card-footer .icon-arrow-right {
+  flex: 0 0 var(--size-20, 20px);
+  display: flex;
+  width: var(--icon-size-xsm);
+  height: var(--icon-size-xsm);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: rotate(-45deg);
+}
+
+.insights-card .card .insights-card-footer .icon-arrow-right img {
+  width: var(--icon-size-xsm);
+  height: var(--icon-size-xsm);
+  filter: brightness(0) invert(1);
+}
+
+@media (width >= 1025px) {
+  .insights-card .card .insights-card-footer .insights-card-footer-time {
+    display: none;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   Hover / focus / carousel active states
+   ----------------------------------------------------------------------------- */
+
+.insights-card .card:hover .insights-card-footer .icon-arrow-right,
+.insights-card .card:focus-visible .insights-card-footer .icon-arrow-right {
+  transform: rotate(0deg);
+}
+
+.insights-card .card:hover .insights-card-description,
+.insights-card .card:focus-within .insights-card-description {
+  opacity: 1;
+  max-height: 200px;
+}
+
+@media (width < 1025px) {
+  .insights-card .card.active .insights-card-footer .icon-arrow-right {
+    transform: rotate(0deg);
+  }
+
+  .insights-card .card.active .insights-card-description {
+    opacity: 1;
+    max-height: 200px;
+  }
+}
+
+@media (width >= 510px) {
+  .insights-card.condensed-cards .insights-card-title .insights-card-title-text {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .insights-card.condensed-cards .insights-card-description .insights-card-description-text {
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+  
+}
+
+/* -----------------------------------------------------------------------------
+   Desktop (>= 1025px): layout, active slide height, title time, hide footer time
+   ----------------------------------------------------------------------------- */
+
+@media (width >= 1025px) {
+  .insights-card .carousel-track-inner > .card.active {
+    height: var(--active-card-height);
+    min-height: var(--active-card-height);
+  }
+
+  .insights-card .card .insights-card-title .insights-card-title-time {
+    display: block;
+    font-size: var(--font-size-200);
+    font-weight: var(--font-weight-regular);
+    color: var(--typography-tertiary);
+    opacity: 0.9;
+    flex-shrink: 0;
+  }
+
+  .insights-card .header {
+    margin-bottom: var(--spacing-0);
+    min-width: var(--header-width);
+  }
+
+  .insights-card.featured-cards {
+    display: flex;
+    gap: var(--spacing-1300);
+  }
+}

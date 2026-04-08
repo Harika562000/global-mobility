@@ -468,6 +468,273 @@
     ]
   },
   {
+    "id": "experts-card",
+    "fields": [
+      {
+        "component": "container",
+        "name": "sectionHeader",
+        "label": "Section Header",
+        "valueType": "object",
+        "collapsible": true,
+        "fields": [
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "eyebrow",
+            "label": "Eyebrow Text",
+            "value": "",
+            "required": true
+          },
+          {
+            "component": "richtext",
+            "name": "section-title",
+            "label": "Section title",
+            "valueType": "string",
+            "required": true,
+            "description": "Use H4 or another heading tag as needed."
+          },
+          {
+            "component": "aem-content",
+            "valueType": "string",
+            "name": "button1",
+            "label": "Button Link"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "button1Title",
+            "label": "Button Title",
+            "description": "Accessibility title attribute (optional)"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "button1Text",
+            "label": "Button Text"
+          },
+          {
+            "component": "select",
+            "name": "button1Type",
+            "label": "Button Variation",
+            "valueType": "string",
+            "value": "",
+            "options": [
+              {
+                "name": "Primary",
+                "value": "primary"
+              },
+              {
+                "name": "Secondary",
+                "value": "secondary"
+              },
+              {
+                "name": "Inverted",
+                "value": "inverted"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "component": "select",
+        "name": "contentSource",
+        "label": "Content Source",
+        "valueType": "string",
+        "value": "",
+        "description": "Default is Manual Authoring (use + to add expert cards). For Manual Page Selection, add up to 4 pages in Manual Page Configuration. For Tags, open Tags Configuration and complete the required fields.",
+        "options": [
+          {
+            "name": "Manual Authoring (Default)",
+            "value": ""
+          },
+          {
+            "name": "Tags",
+            "value": "tags"
+          },
+          {
+            "name": "Manual Page Selection",
+            "value": "manual-page-selection"
+          }
+        ]
+      },
+      {
+        "component": "container",
+        "name": "tags",
+        "label": "Tags Configuration",
+        "valueType": "object",
+        "collapsible": true,
+        "condition": {
+          "===": [
+            {
+              "var": [
+                "contentSource",
+                ""
+              ]
+            },
+            "tags"
+          ]
+        },
+        "fields": [
+          {
+            "component": "aem-tag",
+            "name": "pillars",
+            "label": "Pillars",
+            "value": "",
+            "valueType": "string",
+            "multi": false,
+            "rootPath": "/content/cq:tags/mobility-global/pillars-and-need-states"
+          },
+          {
+            "component": "aem-tag",
+            "name": "needStates",
+            "label": "Need States",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/pillars-and-need-states"
+          },
+          {
+            "component": "aem-tag",
+            "name": "productCapability",
+            "label": "Product Capability",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/products-and-platforms/product-capabilities"
+          },
+          {
+            "component": "aem-tag",
+            "name": "topic",
+            "label": "Topic",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/insights-and-intelligence/topic"
+          },
+          {
+            "component": "aem-tag",
+            "name": "servicesAdvisory",
+            "label": "Services & Advisory",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/products-and-platforms/services-and-advisory"
+          },
+          {
+            "component": "aem-tag",
+            "name": "industrySector",
+            "label": "Industry / Sector",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/contextual-variables/segmentation-and-user-context/industry-or-sector"
+          },
+          {
+            "component": "aem-tag",
+            "name": "marketSalesRegion",
+            "label": "Market Sales Region",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/contextual-variables/market-context/market-sales-region"
+          },
+          {
+            "component": "aem-tag",
+            "name": "marketRegion",
+            "label": "Market Region",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/contextual-variables/market-context/market-region"
+          },
+          {
+            "component": "aem-tag",
+            "name": "marketCountry",
+            "label": "Market Country",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/contextual-variables/market-context/market-country"
+          }
+        ]
+      },
+      {
+        "component": "container",
+        "name": "manualPageSelection",
+        "label": "Manual Page Configuration",
+        "valueType": "object",
+        "collapsible": true,
+        "condition": {
+          "===": [
+            {
+              "var": [
+                "contentSource",
+                ""
+              ]
+            },
+            "manual-page-selection"
+          ]
+        },
+        "fields": [
+          {
+            "component": "aem-content",
+            "valueType": "string",
+            "name": "pageUrl1",
+            "label": "Page URL 1"
+          },
+          {
+            "component": "aem-content",
+            "valueType": "string",
+            "name": "pageUrl2",
+            "label": "Page URL 2"
+          },
+          {
+            "component": "aem-content",
+            "valueType": "string",
+            "name": "pageUrl3",
+            "label": "Page URL 3"
+          },
+          {
+            "component": "aem-content",
+            "valueType": "string",
+            "name": "pageUrl4",
+            "label": "Page URL 4"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "experts-card-item",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "featuredImage",
+        "label": "Photo",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "featuredImageAlt",
+        "label": "Photo alt text"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cardTitle",
+        "label": "Name / Title",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cardDescription",
+        "label": "Description / Role"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "cardLink",
+        "label": "Profile link",
+        "required": true
+      }
+    ]
+  },
+  {
     "id": "fragment",
     "fields": [
       {
@@ -853,6 +1120,1101 @@
             "required": true
           }
         ]
+      }
+    ]
+  },
+  {
+    "id": "insights-card",
+    "fields": [
+      {
+        "component": "select",
+        "name": "classes",
+        "label": "Variation",
+        "valueType": "string",
+        "value": "featured-cards",
+        "options": [
+          {
+            "name": "Featured Cards",
+            "value": "featured-cards"
+          },
+          {
+            "name": "Condensed Cards",
+            "value": "condensed-cards"
+          }
+        ]
+      },
+      {
+        "component": "container",
+        "name": "sectionHeader",
+        "label": "Section Header",
+        "valueType": "object",
+        "collapsible": true,
+        "fields": [
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "eyebrow",
+            "label": "Eyebrow Text",
+            "value": "",
+            "required": true
+          },
+          {
+            "component": "richtext",
+            "name": "section-title",
+            "label": "Section title",
+            "valueType": "string",
+            "required": true,
+            "description": "For Default variation, use H4 tag. Any heading tag will be used."
+          },
+          {
+            "component": "aem-content",
+            "valueType": "string",
+            "name": "button1",
+            "label": "Button Link",
+            "required": true
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "button1Title",
+            "label": "Button Title",
+            "description": "Accessibility title attribute (optional)"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "button1Text",
+            "label": "Button Text",
+            "required": true
+          },
+          {
+            "component": "select",
+            "name": "button1Type",
+            "label": "Button Variation",
+            "valueType": "string",
+            "value": "",
+            "options": [
+              {
+                "name": "Primary",
+                "value": "primary"
+              },
+              {
+                "name": "Secondary",
+                "value": "secondary"
+              },
+              {
+                "name": "Inverted",
+                "value": "inverted"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "component": "select",
+        "name": "contentSource",
+        "label": "Content Source",
+        "valueType": "string",
+        "value": "",
+        "description": "Default is Manual Authoring (use + to add cards). For Manual Page Selection, add up to 6 pages in Manual Page Configuration. For Tags, open Tags Configuration and complete the required fields.",
+        "options": [
+          {
+            "name": "Manual Authoring (Default)",
+            "value": ""
+          },
+          {
+            "name": "Tags",
+            "value": "tags"
+          },
+          {
+            "name": "Manual Page Selection",
+            "value": "manual-page-selection"
+          }
+        ]
+      },
+      {
+        "component": "container",
+        "name": "tags",
+        "label": "Tags Configuration",
+        "valueType": "object",
+        "collapsible": true,
+        "condition": {
+          "===": [
+            {
+              "var": [
+                "contentSource",
+                ""
+              ]
+            },
+            "tags"
+          ]
+        },
+        "fields": [
+          {
+            "component": "aem-tag",
+            "name": "pillars",
+            "label": "Pillars",
+            "value": "",
+            "valueType": "string",
+            "multi": false,
+            "rootPath": "/content/cq:tags/mobility-global/pillars-and-need-states"
+          },
+          {
+            "component": "aem-tag",
+            "name": "insightsThoughtLeaderContentType",
+            "label": "Insights and Thought Leader Content Type",
+            "value": "",
+            "valueType": "string",
+            "rootPath": "/content/cq:tags/mobility-global/insights-and-intelligence/insight-and-thought-leader-content-type"
+          },
+          {
+            "component": "aem-tag",
+            "name": "topic",
+            "label": "Topic",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/insights-and-intelligence/topic"
+          },
+          {
+            "component": "aem-tag",
+            "name": "theme",
+            "label": "Theme",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/insights-and-intelligence/theme"
+          },
+          {
+            "component": "aem-tag",
+            "name": "series",
+            "label": "Series",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/insights-and-intelligence/series"
+          },
+          {
+            "component": "aem-tag",
+            "name": "marketSalesRegion",
+            "label": "Market Sales Region",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/contextual-variables/market-context/market-sales-region"
+          },
+          {
+            "component": "aem-tag",
+            "name": "marketRegion",
+            "label": "Market Region",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/contextual-variables/market-context/market-region"
+          },
+          {
+            "component": "aem-tag",
+            "name": "marketCountry",
+            "label": "Market Country",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/contextual-variables/market-context/market-country"
+          },
+          {
+            "component": "aem-tag",
+            "name": "regulatoryContext",
+            "label": "Regulatory Context",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/contextual-variables/regulatory-and-operating-context/regulatory-context"
+          },
+          {
+            "component": "aem-tag",
+            "name": "industrySector",
+            "label": "Industry / Sector",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/contextual-variables/segmentation-and-user-context/industry-or-sector"
+          },
+          {
+            "component": "aem-tag",
+            "name": "audienceRole",
+            "label": "Audience Role",
+            "value": "",
+            "valueType": "string[]",
+            "rootPath": "/content/cq:tags/mobility-global/contextual-variables/segmentation-and-user-context/audience-role"
+          },
+          {
+            "component": "aem-tag",
+            "name": "contentFormat",
+            "label": "Content Format",
+            "value": "",
+            "valueType": "string",
+            "rootPath": "/content/cq:tags/mobility-global/system-and-structural-tags/content-formats"
+          },
+          {
+            "component": "aem-tag",
+            "name": "eventFormat",
+            "label": "Event Format",
+            "value": "",
+            "valueType": "string",
+            "rootPath": "/content/cq:tags/mobility-global/system-and-structural-tags/content-formats/event-formats"
+          }
+        ]
+      },
+      {
+        "component": "container",
+        "name": "manualPageSelection",
+        "label": "Manual Page Configuration",
+        "valueType": "object",
+        "collapsible": true,
+        "condition": {
+          "===": [
+            {
+              "var": [
+                "contentSource",
+                ""
+              ]
+            },
+            "manual-page-selection"
+          ]
+        },
+        "fields": [
+          {
+            "component": "aem-content",
+            "valueType": "string",
+            "name": "pageUrl1",
+            "label": "Page URL 1"
+          },
+          {
+            "component": "aem-content",
+            "valueType": "string",
+            "name": "pageUrl2",
+            "label": "Page URL 2"
+          },
+          {
+            "component": "aem-content",
+            "valueType": "string",
+            "name": "pageUrl3",
+            "label": "Page URL 3"
+          },
+          {
+            "component": "aem-content",
+            "valueType": "string",
+            "name": "pageUrl4",
+            "label": "Page URL 4"
+          },
+          {
+            "component": "aem-content",
+            "valueType": "string",
+            "name": "pageUrl5",
+            "label": "Page URL 5"
+          },
+          {
+            "component": "aem-content",
+            "valueType": "string",
+            "name": "pageUrl6",
+            "label": "Page URL 6"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "insights-card-item",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "featuredImage",
+        "label": "Featured Image",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "featuredImageAlt",
+        "label": "Featured Image Alt Text"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cardTitle",
+        "label": "Card Title",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cardDescription",
+        "label": "Card Description"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "cardTag",
+        "label": "Card Tag"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "publishDate",
+        "label": "Publish Date",
+        "description": "ISO date format recommended (YYYY-MM-DD)"
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "timeToRead",
+        "label": "Time to Read"
+      },
+      {
+        "component": "aem-content",
+        "valueType": "string",
+        "name": "cardLink",
+        "label": "Card Link",
+        "required": true
+      }
+    ]
+  },
+  {
+    "id": "media-module",
+    "fields": [
+      {
+        "component": "multiselect",
+        "name": "classes",
+        "label": "Media Module Variation",
+        "valueType": "string",
+        "value": "default",
+        "options": [
+          {
+            "name": "Default",
+            "value": "default"
+          },
+          {
+            "name": "Expert",
+            "children": [
+              {
+                "name": "Left",
+                "value": "expert, left"
+              },
+              {
+                "name": "Right",
+                "value": "expert, right"
+              },
+              {
+                "name": "No Asset (Full Width)",
+                "value": "expert, no-asset"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "component": "container",
+        "name": "tag",
+        "label": "Tag",
+        "valueType": "object",
+        "collapsible": true,
+        "condition": {
+          "or": [
+            {
+              "===": [
+                {
+                  "var": [
+                    "classes",
+                    ""
+                  ]
+                },
+                "default"
+              ]
+            },
+            {
+              "===": [
+                {
+                  "var": [
+                    "classes",
+                    ""
+                  ]
+                },
+                ""
+              ]
+            }
+          ]
+        },
+        "fields": [
+          {
+            "component": "select",
+            "valueType": "string",
+            "name": "tagVariation",
+            "label": "Tag variation",
+            "value": "",
+            "options": [
+              {
+                "name": "Outline",
+                "value": "outline"
+              },
+              {
+                "name": "Fill",
+                "value": "fill"
+              },
+              {
+                "name": "Glass",
+                "value": "glass"
+              },
+              {
+                "name": "Dark",
+                "value": "dark"
+              }
+            ]
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "tag-title",
+            "label": "Tag title",
+            "value": "",
+            "required": true
+          }
+        ]
+      },
+      {
+        "component": "container",
+        "name": "sectionTitle",
+        "label": "Section Title",
+        "valueType": "object",
+        "collapsible": true,
+        "condition": {
+          "or": [
+            {
+              "===": [
+                {
+                  "var": [
+                    "classes",
+                    ""
+                  ]
+                },
+                "default"
+              ]
+            },
+            {
+              "===": [
+                {
+                  "var": [
+                    "classes",
+                    ""
+                  ]
+                },
+                ""
+              ]
+            }
+          ]
+        },
+        "fields": [
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "eyebrow",
+            "label": "Eyebrow Text",
+            "value": "",
+            "required": true
+          },
+          {
+            "component": "richtext",
+            "name": "section-title",
+            "label": "Section title",
+            "valueType": "string",
+            "required": true
+          },
+          {
+            "component": "richtext",
+            "name": "body",
+            "label": "Body Text",
+            "valueType": "string",
+            "description": "Optional. For Default variation, use p tag for text."
+          },
+          {
+            "component": "container",
+            "name": "cta",
+            "label": "CTA",
+            "valueType": "object",
+            "collapsible": true,
+            "fields": [
+              {
+                "component": "aem-content",
+                "valueType": "string",
+                "name": "button1",
+                "label": "Button Link"
+              },
+              {
+                "component": "text",
+                "valueType": "string",
+                "name": "button1Title",
+                "label": "Button Title",
+                "description": "Accessibility title attribute (optional)"
+              },
+              {
+                "component": "text",
+                "valueType": "string",
+                "name": "button1Text",
+                "label": "Button Text"
+              },
+              {
+                "component": "select",
+                "name": "button1Type",
+                "label": "Button Variation",
+                "valueType": "string",
+                "value": "",
+                "options": [
+                  {
+                    "name": "Primary",
+                    "value": "primary"
+                  },
+                  {
+                    "name": "Secondary",
+                    "value": "secondary"
+                  },
+                  {
+                    "name": "Inverted",
+                    "value": "inverted"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "component": "container",
+        "name": "cta1",
+        "label": "CTA",
+        "valueType": "object",
+        "collapsible": true,
+        "condition": {
+          "or": [
+            {
+              "===": [
+                {
+                  "var": [
+                    "classes",
+                    ""
+                  ]
+                },
+                "default"
+              ]
+            },
+            {
+              "===": [
+                {
+                  "var": [
+                    "classes",
+                    ""
+                  ]
+                },
+                ""
+              ]
+            }
+          ]
+        },
+        "fields": [
+          {
+            "component": "aem-content",
+            "valueType": "string",
+            "name": "button1",
+            "label": "Button Link"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "button1Title",
+            "label": "Button Title",
+            "description": "Accessibility title attribute (optional)"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "button1Text",
+            "label": "Button Text"
+          },
+          {
+            "component": "select",
+            "name": "button1Type",
+            "label": "Button Variation",
+            "valueType": "string",
+            "value": "",
+            "options": [
+              {
+                "name": "Primary",
+                "value": "primary"
+              },
+              {
+                "name": "Secondary",
+                "value": "secondary"
+              },
+              {
+                "name": "Inverted",
+                "value": "inverted"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "component": "container",
+        "name": "cta2",
+        "label": "CTA",
+        "valueType": "object",
+        "collapsible": true,
+        "condition": {
+          "or": [
+            {
+              "===": [
+                {
+                  "var": [
+                    "classes",
+                    ""
+                  ]
+                },
+                "default"
+              ]
+            },
+            {
+              "===": [
+                {
+                  "var": [
+                    "classes",
+                    ""
+                  ]
+                },
+                ""
+              ]
+            }
+          ]
+        },
+        "fields": [
+          {
+            "component": "aem-content",
+            "valueType": "string",
+            "name": "button2",
+            "label": "Button Link"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "button2Title",
+            "label": "Button Title",
+            "description": "Accessibility title attribute (optional)"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "button2Text",
+            "label": "Button Text"
+          },
+          {
+            "component": "select",
+            "name": "button2Type",
+            "label": "Button Variation",
+            "valueType": "string",
+            "value": "",
+            "options": [
+              {
+                "name": "Primary",
+                "value": "primary"
+              },
+              {
+                "name": "Secondary",
+                "value": "secondary"
+              },
+              {
+                "name": "Inverted",
+                "value": "inverted"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "eyebrow",
+        "label": "Eyebrow Text",
+        "value": "",
+        "required": true,
+        "condition": {
+          "and": [
+            {
+              "!==": [
+                {
+                  "var": [
+                    "classes",
+                    ""
+                  ]
+                },
+                "default"
+              ]
+            },
+            {
+              "!==": [
+                {
+                  "var": [
+                    "classes",
+                    ""
+                  ]
+                },
+                ""
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "component": "richtext",
+        "name": "rte",
+        "label": "Body (RTE)",
+        "valueType": "string",
+        "description": "Rich text content (supports headings, paragraphs, lists, links).",
+        "condition": {
+          "and": [
+            {
+              "!==": [
+                {
+                  "var": [
+                    "classes",
+                    ""
+                  ]
+                },
+                "default"
+              ]
+            },
+            {
+              "!==": [
+                {
+                  "var": [
+                    "classes",
+                    ""
+                  ]
+                },
+                ""
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "profileImage",
+        "label": "Image",
+        "multi": false,
+        "condition": {
+          "and": [
+            {
+              "!==": [
+                {
+                  "var": [
+                    "classes",
+                    ""
+                  ]
+                },
+                "default"
+              ]
+            },
+            {
+              "!==": [
+                {
+                  "var": [
+                    "classes",
+                    ""
+                  ]
+                },
+                ""
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "profileImageAlt",
+        "label": "Image Alt Text",
+        "value": "",
+        "condition": {
+          "and": [
+            {
+              "!==": [
+                {
+                  "var": [
+                    "classes",
+                    ""
+                  ]
+                },
+                "default"
+              ]
+            },
+            {
+              "!==": [
+                {
+                  "var": [
+                    "classes",
+                    ""
+                  ]
+                },
+                ""
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "mediaAsset",
+        "label": "Media Asset",
+        "multi": false,
+        "description": "Select video, image, or GIF from DAM",
+        "condition": {
+          "or": [
+            {
+              "===": [
+                {
+                  "var": [
+                    "classes",
+                    ""
+                  ]
+                },
+                "default"
+              ]
+            },
+            {
+              "===": [
+                {
+                  "var": [
+                    "classes",
+                    ""
+                  ]
+                },
+                ""
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "product-cards",
+    "fields": [
+      {
+        "component": "select",
+        "name": "classes",
+        "label": "Product Cards Variant",
+        "valueType": "string",
+        "value": "",
+        "options": [
+          {
+            "name": "Default",
+            "value": ""
+          },
+          {
+            "name": "Compact",
+            "value": "product-cards-compact"
+          },
+          {
+            "name": "Compact Large",
+            "value": "product-cards-compact-large"
+          },
+          {
+            "name": "Default + Carousel",
+            "value": "carousel"
+          },
+          {
+            "name": "Default + Carousel (Mobile Only)",
+            "value": "carousel-mobile"
+          },
+          {
+            "name": "Compact + Carousel",
+            "value": "product-cards-compact, carousel"
+          },
+          {
+            "name": "Compact + Carousel (Mobile Only)",
+            "value": "product-cards-compact, carousel-mobile"
+          },
+          {
+            "name": "Compact Large + Carousel",
+            "value": "product-cards-compact-large, carousel"
+          },
+          {
+            "name": "Compact Large + Carousel (Mobile Only)",
+            "value": "product-cards-compact-large, carousel-mobile"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "product-card",
+    "fields": [
+      {
+        "component": "text",
+        "name": "chartJson",
+        "label": "Chart JSON (Lottie)",
+        "valueType": "string",
+        "value": "",
+        "description": "Optional. Paste valid Lottie JSON to show an animated graphic above the title."
+      },
+      {
+        "component": "richtext",
+        "name": "title",
+        "label": "Product Card Title",
+        "valueType": "string",
+        "value": "",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "name": "description",
+        "label": "Product Card Description",
+        "valueType": "string",
+        "value": "",
+        "required": true
+      },
+      {
+        "component": "aem-content",
+        "name": "link",
+        "label": "Product Card Link",
+        "description": "Makes the entire card clickable. Optional."
+      }
+    ]
+  },
+  {
+    "id": "section-title",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "eyebrow",
+        "label": "Eyebrow Text",
+        "value": "",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "name": "section-title",
+        "label": "Section title",
+        "valueType": "string",
+        "required": true
+      },
+      {
+        "component": "richtext",
+        "name": "body",
+        "label": "Body Text",
+        "valueType": "string",
+        "description": "Optional. For Default variation, use p tag for text."
+      },
+      {
+        "component": "container",
+        "name": "cta",
+        "label": "CTA",
+        "valueType": "object",
+        "collapsible": true,
+        "fields": [
+          {
+            "component": "aem-content",
+            "valueType": "string",
+            "name": "button1",
+            "label": "Button Link"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "button1Title",
+            "label": "Button Title",
+            "description": "Accessibility title attribute (optional)"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "button1Text",
+            "label": "Button Text"
+          },
+          {
+            "component": "select",
+            "name": "button1Type",
+            "label": "Button Variation",
+            "valueType": "string",
+            "value": "",
+            "options": [
+              {
+                "name": "Primary",
+                "value": "primary"
+              },
+              {
+                "name": "Secondary",
+                "value": "secondary"
+              },
+              {
+                "name": "Inverted",
+                "value": "inverted"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "speaker-cards",
+    "description": "Click on the + icon to add Speaker Card items.",
+    "fields": [
+      {
+        "component": "select",
+        "name": "classes",
+        "value": "speaker-cards-default",
+        "label": "Variation",
+        "valueType": "string",
+        "options": [
+          {
+            "name": "Speaker Cards Default",
+            "value": "speaker-cards-default"
+          },
+          {
+            "name": "Speaker Cards Hover",
+            "value": "speaker-cards-hover"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "speaker-card",
+    "fields": [
+      {
+        "component": "reference",
+        "valueType": "string",
+        "name": "cardImage",
+        "label": "Card Image",
+        "multi": false,
+        "required": true,
+        "description": "Required. Speaker photo or avatar."
+      },
+      {
+        "component": "text",
+        "name": "cardTitle",
+        "label": "Card Title",
+        "valueType": "string",
+        "required": true,
+        "description": "Required. Speaker name."
+      },
+      {
+        "component": "richtext",
+        "name": "cardDescription",
+        "label": "Card Description",
+        "valueType": "string",
+        "required": true,
+        "description": "Required. Speaker role or bio."
+      },
+      {
+        "component": "aem-content",
+        "name": "cardLink",
+        "label": "Card Link",
+        "description": "Optional. Makes the entire card clickable."
       }
     ]
   },

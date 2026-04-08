@@ -19,7 +19,8 @@
       "accordion",
       "fragment",
       "tabs",
-      "video"
+      "video",
+      "card-grid-carousel"
     ]
   },
   {
@@ -50,9 +51,39 @@
     ]
   },
   {
+    "id": "experts-card",
+    "components": [
+      "experts-card-item"
+    ]
+  },
+  {
     "id": "hero",
     "components": [
       "hero"
+    ]
+  },
+  {
+    "id": "insights-card",
+    "components": [
+      "insights-card-item"
+    ]
+  },
+  {
+    "id": "media-module",
+    "components": [
+      "media-module"
+    ]
+  },
+  {
+    "id": "product-cards",
+    "components": [
+      "product-card"
+    ]
+  },
+  {
+    "id": "speaker-cards",
+    "components": [
+      "speaker-card"
     ]
   },
   {
