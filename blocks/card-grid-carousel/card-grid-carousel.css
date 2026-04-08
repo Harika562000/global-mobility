@@ -7,15 +7,19 @@
    ----------------------------------------------------------------------------- */
 
 .card-grid-carousel {
-  --cgc-card-width: 268px;
-  --cgc-card-height: 340px;
+  --cgc-card-width: 280px;
+  --cgc-card-height: 300px;
   --cgc-card-gap: var(--spacing-200, 8px);
+  background: #EFEFE5;
+  border-radius: 12px;
+  padding: 36px 20px;
 }
 
 @media (width >= 720px) {
   .card-grid-carousel {
     --cgc-card-width: 450px;
     --cgc-card-height: 300px;
+    padding: 32px 24px;
   }
 }
 
@@ -23,8 +27,20 @@
   .card-grid-carousel {
     --cgc-card-width: 450px;
     --cgc-card-height: 300px;
+    padding: 32px 24px;
+    background: #EFEFE5;
   }
 }
+
+@media (width >= 1440px) {
+  .card-grid-carousel {
+    --cgc-card-width: 450px;
+    --cgc-card-height: 300px;
+    padding: 56px 117px;
+    background: #EFEFE5;
+  }
+}
+
 
 /* -----------------------------------------------------------------------------
    Block container — allow carousel to peek next card on the right
@@ -49,11 +65,20 @@
 
 .card-grid-carousel .card-grid-carousel-eyebrow .eye-brow-text {
   font-family: var(--font-family-accent);
-  font-size: var(--type-eyebrow-size);
+  font-size: 14px;
   font-weight: var(--font-weight-regular);
-  letter-spacing: var(--letter-spacing-tight);
   text-transform: uppercase;
-  color: var(--typography-accent-1);
+  line-height: 22px;
+  letter-spacing: 15%;
+  color: #0064D2;
+}
+
+@media (width >= 720px) {
+  .card-grid-carousel .card-grid-carousel-eyebrow .eye-brow-text {
+    font-size: 16px;
+    line-height: 26px;
+    letter-spacing: 16%;
+  }
 }
 
 /* Title row — stacked on mobile */
@@ -86,9 +111,22 @@
 .card-grid-carousel .card-grid-carousel-title h5,
 .card-grid-carousel .card-grid-carousel-title h6 {
   margin: 0;
-  font-family: var(--font-family-primary);
-  font-weight: var(--font-weight-bold);
-  color: var(--typography-primary);
+  font-weight: 600;
+  font-size: 24px;
+  letter-spacing: -4%;
+  line-height: 130%;
+  color: #000000;
+}
+
+@media (width >= 720px) {
+  .card-grid-carousel .card-grid-carousel-title h1,
+  .card-grid-carousel .card-grid-carousel-title h2,
+  .card-grid-carousel .card-grid-carousel-title h3,
+  .card-grid-carousel .card-grid-carousel-title h4,
+  .card-grid-carousel .card-grid-carousel-title h5,
+  .card-grid-carousel .card-grid-carousel-title h6 {
+    font-size: 32px;
+  }
 }
 
 /* Actions wrapper — always flex so nav slots in correctly */
@@ -164,7 +202,7 @@
   min-height: var(--cgc-card-height);
   flex-shrink: 0;
   padding: var(--spacing-700) var(--spacing-600);
-  background-color: var(--surface-light, #fff);
+  background-color: transparent;
   border: var(--border-width-100, 1px) solid var(--border-subtle, #EFEFE5);
   border-radius: var(--radius-sm);
   box-sizing: border-box;
@@ -188,10 +226,23 @@ a.card-grid-carousel-card:focus-visible {
 /* Label / year */
 .card-grid-carousel .card-grid-carousel-card-label {
   font-family: var(--font-family-primary);
-  font-size: var(--font-size-400);
+  font-size: 18px;
   font-weight: var(--font-weight-regular);
-  color: var(--typography-primary);
+  color: #132445;
+  letter-spacing: -4%;
   margin-bottom: var(--spacing-300);
+  line-height: 80%;
+}
+
+@media (width >= 720px) {
+  .card-grid-carousel .card-grid-carousel-card-label {
+    font-family: var(--font-family-primary);
+    font-size: 24px;
+    font-weight: var(--font-weight-regular);
+    color: #132445;
+    letter-spacing: -4%;
+    margin-bottom: var(--spacing-300);
+  }
 }
 
 /* Divider */
@@ -214,7 +265,7 @@ a.card-grid-carousel-card:focus-visible {
 .card-grid-carousel .card-grid-carousel-card-image picture,
 .card-grid-carousel .card-grid-carousel-card-image img {
   display: block;
-  max-width: 100%;
+  width: 146px;
   max-height: 80px;
   width: auto;
   height: auto;
@@ -224,11 +275,19 @@ a.card-grid-carousel-card:focus-visible {
 /* Description */
 .card-grid-carousel .card-grid-carousel-card-desc {
   font-family: var(--font-family-primary);
-  font-size: var(--responsive-body-200-size);
-  font-weight: var(--responsive-body-200-weight);
-  line-height: var(--responsive-body-200-line-height);
-  color: var(--typography-secondary);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
   margin-top: auto;
+  color: #132445;
+  letter-spacing: -4%;
+}
+
+@media (width >= 720px) {
+  .card-grid-carousel .card-grid-carousel-card-desc {
+  font-size: 16px;
+  line-height: 26px;
+}
 }
 
 .card-grid-carousel .card-grid-carousel-card-desc p {
@@ -241,6 +300,7 @@ a.card-grid-carousel-card:focus-visible {
 
 .card-grid-carousel .carousel-dots {
   display: flex;
+  padding: 24px 0 0;
 }
 
 @media (width >= 720px) {
