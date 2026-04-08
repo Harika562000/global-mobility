@@ -9,7 +9,7 @@
 .card-grid-carousel {
   --cgc-card-width: 268px;
   --cgc-card-height: 340px;
-  --cgc-card-gap: var(--spacing-200);
+  --cgc-card-gap: var(--spacing-200, 8px);
 
   @media (width >= 720px) {
     --cgc-card-width: 380px;
@@ -23,7 +23,7 @@
 }
 
 /* -----------------------------------------------------------------------------
-   Block container
+   Block container — allow carousel track to peek cards
    ----------------------------------------------------------------------------- */
 
 .card-grid-carousel-container {
@@ -31,7 +31,7 @@
 }
 
 /* -----------------------------------------------------------------------------
-   Header: eyebrow → title row (title + nav side by side on desktop)
+   Header: eyebrow → title row (title + nav side by side on ≥720px)
    ----------------------------------------------------------------------------- */
 
 .card-grid-carousel .card-grid-carousel-header {
@@ -52,7 +52,7 @@
   color: var(--typography-accent-1);
 }
 
-/* Title row: title left, nav right — stacked on mobile, row on desktop */
+/* Title row: stacked on mobile, side-by-side on ≥720px */
 .card-grid-carousel .card-grid-carousel-title-row {
   display: flex;
   flex-direction: column;
@@ -84,7 +84,7 @@
   color: var(--typography-primary);
 }
 
-/* Actions (carousel nav buttons) */
+/* Actions — holds carousel nav buttons */
 .card-grid-carousel .card-grid-carousel-actions {
   flex-shrink: 0;
   display: flex;
@@ -92,7 +92,7 @@
   gap: var(--spacing-200);
 }
 
-/* Hide nav on mobile — dots handle navigation there */
+/* Nav buttons: hidden on mobile (dots handle nav), shown on ≥720px */
 .card-grid-carousel .card-grid-carousel-actions .carousel-nav {
   display: none;
 
@@ -104,14 +104,24 @@
 }
 
 /* -----------------------------------------------------------------------------
-   Carousel track — clips overflow to the right
+   Carousel track container
+   The carousel JS wraps .card-grid-carousel-track children inside:
+     .carousel-track > .carousel-track-inner
+   We must NOT set overflow:hidden on the track container itself —
+   that is handled by .carousel-track which the JS inserts.
    ----------------------------------------------------------------------------- */
 
+.card-grid-carousel .card-grid-carousel-track {
+  overflow: visible;
+}
+
+/* Allow the card peek effect: clip to the right only */
 .card-grid-carousel .carousel-track {
   overflow: visible;
   clip-path: inset(0 -100vw 0 0);
 }
 
+/* Horizontal flex strip — gap uses block token */
 .card-grid-carousel .carousel-track-inner {
   gap: var(--cgc-card-gap);
   align-items: stretch;
@@ -125,10 +135,12 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  /* Fixed card dimensions so carousel can calculate offsets correctly */
   width: var(--cgc-card-width);
   min-width: var(--cgc-card-width);
   max-width: var(--cgc-card-width);
   min-height: var(--cgc-card-height);
+  flex: 0 0 var(--cgc-card-width);
   flex-shrink: 0;
   padding: var(--spacing-500);
   background-color: var(--surface-light, #fff);
@@ -139,10 +151,6 @@
   color: inherit;
   cursor: default;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.card-grid-carousel .card-grid-carousel-track > .carousel-track-inner > .card-grid-carousel-card {
-  flex: 0 0 var(--cgc-card-width);
 }
 
 /* Hoverable link cards */
@@ -157,7 +165,7 @@ a.card-grid-carousel-card:focus-visible {
   text-decoration: none;
 }
 
-/* Label / year */
+/* Label / year at top */
 .card-grid-carousel .card-grid-carousel-card-label {
   font-family: var(--font-family-primary);
   font-size: var(--font-size-400);
@@ -166,14 +174,14 @@ a.card-grid-carousel-card:focus-visible {
   margin-bottom: var(--spacing-300);
 }
 
-/* Divider */
+/* Horizontal rule divider */
 .card-grid-carousel .card-grid-carousel-card-divider {
   border: none;
   border-top: var(--border-width-100, 1px) solid var(--border-subtle, #e0e0e0);
   margin: 0 0 var(--spacing-400);
 }
 
-/* Image / logo */
+/* Image / logo — centred, constrained height */
 .card-grid-carousel .card-grid-carousel-card-image {
   flex: 1 1 auto;
   display: flex;
@@ -192,7 +200,7 @@ a.card-grid-carousel-card:focus-visible {
   object-fit: contain;
 }
 
-/* Description */
+/* Description — pinned to bottom */
 .card-grid-carousel .card-grid-carousel-card-desc {
   font-family: var(--font-family-primary);
   font-size: var(--responsive-body-200-size);
@@ -207,31 +215,14 @@ a.card-grid-carousel-card:focus-visible {
 }
 
 /* -----------------------------------------------------------------------------
-   Dots — show on mobile, hide on desktop
+   Dots — show on mobile (<720px), hide on desktop
+   Override the shared carousel CSS within this block.
    ----------------------------------------------------------------------------- */
 
 .card-grid-carousel .carousel-dots {
   display: flex;
-  gap: var(--spacing-200);
-  margin-top: var(--spacing-500);
 
   @media (width >= 720px) {
     display: none;
   }
-}
-
-.card-grid-carousel .carousel-dot {
-  width: 24px;
-  height: 6px;
-  border-radius: var(--radius-full, 999px);
-  border: none;
-  background-color: var(--border-subtle, #d0d0d0);
-  cursor: pointer;
-  padding: 0;
-  transition: background-color 0.2s ease, width 0.2s ease;
-}
-
-.card-grid-carousel .carousel-dot.active {
-  background-color: var(--typography-primary, #1a1a1a);
-  width: 32px;
 }
