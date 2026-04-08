@@ -72,7 +72,9 @@ function extractHeaderData(rows) {
     cardRows.push(row);
   });
 
-  return { eyebrow, titleNode, headerRows, cardRows };
+  return {
+    eyebrow, titleNode, headerRows, cardRows,
+  };
 }
 
 /**
