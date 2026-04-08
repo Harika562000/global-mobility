@@ -141,7 +141,7 @@
 
 /* Horizontal flex strip — override global 50% rule from s-and-p-carousel.css */
 .card-grid-carousel .carousel-track-inner {
-  gap: var(--cgc-card-gap);
+  gap: 16px;
   align-items: stretch;
 }
 
@@ -163,9 +163,9 @@
   max-width: var(--cgc-card-width);
   min-height: var(--cgc-card-height);
   flex-shrink: 0;
-  padding: var(--spacing-500);
+  padding: var(--spacing-700) var(--spacing-600);
   background-color: var(--surface-light, #fff);
-  border: var(--border-width-100, 1px) solid var(--border-subtle, #e0e0e0);
+  border: var(--border-width-100, 1px) solid var(--border-subtle, #EFEFE5);
   border-radius: var(--radius-sm);
   box-sizing: border-box;
   text-decoration: none;
@@ -205,6 +205,8 @@ a.card-grid-carousel-card:focus-visible {
 .card-grid-carousel .card-grid-carousel-card-image {
   flex: 1 1 auto;
   display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
   align-items: center;
   min-height: 80px;
   margin-bottom: var(--spacing-400);
