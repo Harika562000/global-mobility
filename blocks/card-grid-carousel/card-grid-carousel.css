@@ -212,17 +212,6 @@
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-a.card-grid-carousel-card {
-  cursor: pointer;
-}
-
-a.card-grid-carousel-card:hover,
-a.card-grid-carousel-card:focus-visible {
-  border-color: var(--border-interactive, #0a3461);
-  box-shadow: 0 2px 12px rgb(0 0 0 / 8%);
-  text-decoration: none;
-}
-
 /* Label / year */
 .card-grid-carousel .card-grid-carousel-card-label {
   font-family: var(--font-family-primary);

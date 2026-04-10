@@ -126,27 +126,9 @@ function createCardElement(row) {
   const labelCell = cells[0] || null;
   const imageCell = cells[1] || null;
   const descCell = cells[2] || null;
-  const linkCell = cells[3] || null;
 
-  const linkEl = linkCell?.querySelector('a[href]');
-  const href = linkEl?.getAttribute('href') || linkEl?.href || '';
-
-  const isLink = !!href;
-  const card = document.createElement(isLink ? 'a' : 'div');
+  const card = document.createElement('div');
   card.className = 'card-grid-carousel-card';
-
-  if (isLink) {
-    card.href = href;
-    try {
-      const url = new URL(href, window.location.origin);
-      if (url.origin !== window.location.origin) {
-        card.target = '_blank';
-        card.rel = 'noopener noreferrer';
-      }
-    } catch {
-      // relative link – fine as-is
-    }
-  }
 
   // Label / year at top
   if (labelCell?.textContent.trim()) {
