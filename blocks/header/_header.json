@@ -76,6 +76,22 @@
           }
         }
       }
+    },
+    {
+      "title": "Header Nav Child",
+      "id": "header-nav-child",
+      "model": "header-nav-child",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block/item",
+            "template": {
+              "name": "Header Nav Child",
+              "model": "header-nav-child"
+            }
+          }
+        }
+      }
     }
 ],
   "models": [

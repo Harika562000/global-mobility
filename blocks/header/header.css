@@ -549,9 +549,7 @@ header nav .nav-item-trigger {
   background: none;
   border: 0;
   border-radius: 0;
-  font: inherit;
   font-weight: 500;
-  color: inherit;
   cursor: pointer;
   text-align: left;
   position: relative;
@@ -777,7 +775,6 @@ header nav .nav-mega-col.nav-mega-col-static {
 header nav .nav-col-title {
   margin: 0 0 8px;
   font-weight: 700;
-  color: inherit;
 }
 
 /* stylelint-disable-next-line no-descending-specificity */
@@ -954,7 +951,7 @@ header nav .nav-mega-col.is-active .nav-col-title {
       content: none;
     }
 
-    header nav .nav-item-has-children[aria-expanded='true'] .nav-mega-col.nav-mega-col-link .nav-col-title.nav-col-title-has-link::after {
+    header nav .nav-item-has-children[aria-expanded='true'] .nav-mega-col.nav-mega-col-link.nav-mega-col-link-external .nav-col-title.nav-col-title-has-external-link::after {
       content: '';
       width: var(--size-16,16px);
       height: var(--size-16,16px);
@@ -1106,7 +1103,6 @@ header nav .nav-col-links .nav-col-links-list {
 
 header nav .nav-col-links .nav-col-links-list li a {
   text-decoration: none;
-  color: inherit;
 }
 
 header nav .nav-col-links .nav-col-links-list li:hover,
@@ -1122,7 +1118,6 @@ header nav .nav-col-links .nav-col-links-list li a:focus-visible {
 header nav .nav-contact,
 header nav .nav-login {
   text-decoration: none;
-  color: inherit;
 }
 
 header nav .nav-contact.button.secondary{
@@ -1475,6 +1470,7 @@ header nav .nav-search-btn .nav-search-label {
     justify-content: flex-start;
     position: relative;
     background: none;
+    text-decoration: none;
   }
 
   header nav .nav-col-title {
@@ -1505,7 +1501,7 @@ header nav .nav-search-btn .nav-search-label {
     content: none;
   }
 
-  header nav .nav-mega-col.nav-mega-col-link .nav-col-title.nav-col-title-has-link::after {
+  header nav .nav-mega-col.nav-mega-col-link.nav-mega-col-link-external .nav-col-title.nav-col-title-has-external-link::after {
     content: '';
     width: var(--size-16,16px);
     height: var(--size-16,16px);
@@ -1618,6 +1614,12 @@ header nav .nav-search-btn .nav-search-label {
     min-width: 220px;
   }
 
+  header nav .nav-col-links .nav-col-links-heading {
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-22);
+    box-sizing: border-box;
+  }
+
   header nav .nav-col-links .nav-col-links-panels {
     flex: 1 1 auto;
     min-width: 0;
@@ -1634,6 +1636,12 @@ header nav .nav-search-btn .nav-search-label {
 
   header nav .nav-col-links .nav-col-links-panel.is-active {
     display: block;
+  }
+
+  header nav .nav-col-links-panel.is-active .nav-col-links-list {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
   }
 
   header nav .nav-col-links .nav-col-links-list li {
