@@ -1,0 +1,302 @@
+/* =============================================================================
+   Experts card block (carousel below 1025px; flex row on desktop when not init)
+   ============================================================================= */
+
+.experts-card.block:not(.initialized) {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-600);
+}
+
+.experts-card.block:not(.initialized) > div:nth-child(n + 4) {
+  display: none;
+}
+
+.experts-card.block:not(.initialized) > div:nth-child(n + 4):has(a[href]) {
+  display: block;
+}
+
+.experts-card-container {
+  overflow: hidden;
+}
+
+.experts-card {
+  --card-width: 280px;
+  --card-height: 373px;
+
+  @media (width >= 1025px) and (width < 1440px) {
+    --card-height: 608px;
+    --card-width: 100%;
+  }
+
+  @media (width >= 1920px) {
+    --card-height: 427px;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   Section header (same pattern as insights-card)
+   ----------------------------------------------------------------------------- */
+
+.experts-card .header {
+  margin-bottom: var(--spacing-600);
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+
+  .eye-brow-text {
+    margin-bottom: var(--spacing-200);
+
+    @media (width >= 1025px) {
+      margin-bottom: var(--spacing-600);
+    }
+  }
+}
+
+.experts-card .header-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.experts-card .header-content .section-title h4 {
+  margin-bottom: var(--spacing-0);
+}
+
+.experts-card .carousel-header .actions {
+  display: flex;
+  gap: var(--spacing-200);
+
+  .carousel-nav {
+    position: relative;
+  }
+}
+
+@media (width < 1025px) {
+  .experts-card > .experts-card-explore-cta {
+    width: 100%;
+    margin-top: var(--spacing-600);
+
+    p,
+    a {
+      width: 100%;
+    }
+  }
+}
+
+@media (width >= 720px) {
+  .experts-card .header {
+    flex-direction: row;
+    gap: var(--spacing-600);
+    align-items: end;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   Desktop: flex row of cards when carousel is not initialized
+   ----------------------------------------------------------------------------- */
+
+.experts-card .track.carousel:not(.carousel-initialized) {
+  display: flex;
+  gap: var(--spacing-400);
+  align-items: flex-end;
+}
+
+.experts-card .carousel-track {
+  overflow: visible;
+  clip-path: inset(0 -100vw 0 0);
+}
+
+.experts-card .carousel-track-inner {
+  gap: var(--spacing-200);
+  align-items: end;
+}
+
+/* -----------------------------------------------------------------------------
+   Card shell
+   ----------------------------------------------------------------------------- */
+
+.experts-card .card {
+  flex: 1;
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  height: var(--card-height);
+  text-decoration: none;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+
+  .media {
+    grid-area: 1 / 1;
+    z-index: 0;
+    min-width: 0;
+    min-height: 0;
+    place-self: stretch;
+
+    picture {
+      display: block;
+      height: 100%;
+      width: 100%;
+    }
+
+    img {
+      display: block;
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+      border-radius: 0;
+      filter: grayscale(100%);
+    }
+  }
+}
+
+.experts-card .carousel-track-inner > .card {
+  flex: 0 0 var(--card-width);
+  width: var(--card-width);
+  min-width: var(--card-width);
+  max-width: var(--card-width);
+}
+
+.experts-card .card .body {
+  grid-area: 1 / 1;
+  z-index: 1;
+  color: var(--color-white);
+  padding: var(--spacing-500);
+  height: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: var(--spacing-200);
+  background: linear-gradient(
+    180.14deg,
+    rgb(0 0 0 / 0%) 0.12%,
+    rgb(0 0 0 / 90%) 99.88%
+  );
+}
+
+/* -----------------------------------------------------------------------------
+   Body row: copy (title + description) + arrow
+   ----------------------------------------------------------------------------- */
+
+.experts-card .card .experts-card-body-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--spacing-400);
+  width: 100%;
+}
+
+.experts-card .card .experts-card-copy {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.experts-card .card .experts-card-title {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-600);
+  font-weight: var(--fixed-body-600-bold-weight);
+  line-height: var(--fixed-body-600-bold-line-height);
+  margin: 0;
+  transition: color 0.2s ease;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.experts-card .card .experts-card-description {
+  display: flex;
+  width: 100%;
+  margin: 0;
+  font-family: var(--font-family-primary);
+  font-size: var(--responsive-body-200-size);
+  font-weight: var(--responsive-body-200-weight);
+  line-height: var(--responsive-body-200-line-height);
+  letter-spacing: var(--letter-spacing-tight);
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.3s ease, max-height 0.3s ease;
+}
+
+.experts-card .card .experts-card-description .experts-card-description-text {
+  margin-top: var(--spacing-200);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 9;
+  line-clamp: 9;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.experts-card .card .experts-card-arrow {
+  flex: 0 0 var(--size-20, 20px);
+  display: flex;
+  align-items: flex-end;
+}
+
+.experts-card .card .experts-card-arrow .icon-arrow-right {
+  display: flex;
+  width: var(--icon-size-xsm);
+  height: var(--icon-size-xsm);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: rotate(-45deg);
+}
+
+.experts-card .card .experts-card-arrow .icon-arrow-right img {
+  width: var(--icon-size-xsm);
+  height: var(--icon-size-xsm);
+  filter: brightness(0) invert(1);
+}
+
+/* -----------------------------------------------------------------------------
+   Hover / focus / carousel active (match insights-card behavior)
+   ----------------------------------------------------------------------------- */
+
+.experts-card .card:hover .experts-card-arrow .icon-arrow-right,
+.experts-card .card:focus-visible .experts-card-arrow .icon-arrow-right {
+  transform: rotate(0deg);
+}
+
+.experts-card .card:hover .experts-card-description,
+.experts-card .card:focus-within .experts-card-description {
+  opacity: 1;
+  max-height: 200px;
+}
+
+@media (width < 1025px) {
+  .experts-card .card.active .experts-card-arrow .icon-arrow-right {
+    transform: rotate(0deg);
+  }
+
+  .experts-card .card.active .experts-card-description {
+    opacity: 1;
+    max-height: 200px;
+  }
+}
+
+@media (width >= 1025px) {
+  .experts-card .carousel-track-inner > .card.active {
+    height: var(--active-card-height);
+    min-height: var(--active-card-height);
+  }
+
+  .experts-card .header {
+    margin-bottom: var(--spacing-900);
+  }
+}
+
+@media (width >= 1025px) and (width < 1440px) {
+  .experts-card .track.carousel:not(.carousel-initialized) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-400);
+  }
+}

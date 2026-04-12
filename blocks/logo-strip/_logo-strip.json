@@ -1,0 +1,98 @@
+{
+  "definitions": [
+    {
+      "title": "Logo Strip",
+      "id": "logo-strip",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block",
+            "template": {
+              "name": "Logo Strip",
+              "model": "logo-strip",
+              "filter": "logo-strip"
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "Logo Strip Item",
+      "id": "logo-strip-item",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block/item",
+            "template": {
+              "name": "Logo Strip Item",
+              "model": "logo-strip-item"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "logo-strip",
+      "fields": [
+        {
+          "component": "select",
+          "name": "desktopColumns",
+          "label": "Desktop columns",
+          "valueType": "string",
+          "value": "col-md-8",
+          "description": "Number of logo columns on desktop",
+          "options": [
+            { "name": "2 columns", "value": "col-md-2" },
+            { "name": "3 columns", "value": "col-md-3" },
+            { "name": "4 columns", "value": "col-md-4" },
+            { "name": "5 columns", "value": "col-md-5" },
+            { "name": "6 columns", "value": "col-md-6" },
+            { "name": "7 columns", "value": "col-md-7" },
+            { "name": "8 columns (default)", "value": "col-md-8" }
+          ]
+        },
+        {
+          "component": "select",
+          "name": "mobileColumns",
+          "label": "Mobile columns",
+          "valueType": "string",
+          "value": "col-sm-2",
+          "description": "Number of logo columns on small screens.",
+          "options": [
+            { "name": "1 column", "value": "col-sm-1" },
+            { "name": "2 columns (default)", "value": "col-sm-2" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "logo-strip-item",
+      "fields": [
+        { "component": "reference", "valueType": "string", "name": "logo1", "label": "Logo 1", "multi": false },
+        { "component": "text", "valueType": "string", "name": "logo1Alt", "label": "Logo 1 alt text" },
+        { "component": "reference", "valueType": "string", "name": "logo2", "label": "Logo 2", "multi": false },
+        { "component": "text", "valueType": "string", "name": "logo2Alt", "label": "Logo 2 alt text" },
+        { "component": "reference", "valueType": "string", "name": "logo3", "label": "Logo 3", "multi": false },
+        { "component": "text", "valueType": "string", "name": "logo3Alt", "label": "Logo 3 alt text" },
+        { "component": "reference", "valueType": "string", "name": "logo4", "label": "Logo 4", "multi": false },
+        { "component": "text", "valueType": "string", "name": "logo4Alt", "label": "Logo 4 alt text" },
+        { "component": "reference", "valueType": "string", "name": "logo5", "label": "Logo 5", "multi": false },
+        { "component": "text", "valueType": "string", "name": "logo5Alt", "label": "Logo 5 alt text" },
+        { "component": "reference", "valueType": "string", "name": "logo6", "label": "Logo 6", "multi": false },
+        { "component": "text", "valueType": "string", "name": "logo6Alt", "label": "Logo 6 alt text" },
+        { "component": "reference", "valueType": "string", "name": "logo7", "label": "Logo 7", "multi": false },
+        { "component": "text", "valueType": "string", "name": "logo7Alt", "label": "Logo 7 alt text" },
+        { "component": "reference", "valueType": "string", "name": "logo8", "label": "Logo 8", "multi": false },
+        { "component": "text", "valueType": "string", "name": "logo8Alt", "label": "Logo 8 alt text" }
+      ]
+    }
+  ],
+  "filters": [
+    {
+      "id": "logo-strip",
+      "components": ["logo-strip-item"]
+    }
+  ]
+}
