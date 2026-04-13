@@ -70,13 +70,6 @@
           "description": "Optional."
         },
         {
-          "component": "boolean",
-          "name": "playOnce",
-          "label": "Play one time",
-          "valueType": "boolean",
-          "value": false
-        },
-        {
           "component": "container",
           "name": "cta1",
           "label": "CTA",
@@ -108,6 +101,13 @@
           "fields": [
             { "...": "../tag/_tag.json#/models/tag/fields" }
           ]
+        },
+        {
+          "component": "boolean",
+          "name": "playOnce",
+          "label": "Play one time",
+          "valueType": "boolean",
+          "value": false
         }
       ]
     }

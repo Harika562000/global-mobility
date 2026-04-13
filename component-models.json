@@ -6649,13 +6649,6 @@
         "description": "Optional."
       },
       {
-        "component": "boolean",
-        "name": "playOnce",
-        "label": "Play one time",
-        "valueType": "boolean",
-        "value": false
-      },
-      {
         "component": "container",
         "name": "cta1",
         "label": "CTA",
@@ -6831,6 +6824,13 @@
             "required": true
           }
         ]
+      },
+      {
+        "component": "boolean",
+        "name": "playOnce",
+        "label": "Play one time",
+        "valueType": "boolean",
+        "value": false
       }
     ]
   },
