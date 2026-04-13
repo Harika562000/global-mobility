@@ -65,18 +65,32 @@ function createMuteToggle(video) {
  * @returns {{ video: HTMLVideoElement, muteBtn: HTMLButtonElement }}
  */
 function createBackgroundVideo(src, playOnce = false) {
-  const video = createVideoElement(resolveVideoSrc(src), {
-    autoplay: !playOnce, // loop mode: autoplay immediately; playOnce: IO triggers play
-    muted: true,
-    loop: !playOnce,
-    preload: 'auto',
-    controls: false,
-    ariaLabel: 'Hero background video',
-    objectFit: 'cover',
-  });
+  // Build the video element — always muted + playsinline so browsers allow autoplay
+  const video = document.createElement('video');
+  video.setAttribute('muted', '');
+  video.muted = true; // property must also be set for cross-browser consistency
+  video.setAttribute('playsinline', ''); // required for autoplay on iOS/mobile
+  video.setAttribute('preload', 'auto');
+  video.setAttribute('aria-label', 'Hero background video');
+  video.style.setProperty('--video-object-fit', 'cover');
+
+  if (!playOnce) {
+    video.setAttribute('loop', '');
+    video.setAttribute('autoplay', '');
+  }
+
+  const source = document.createElement('source');
+  source.setAttribute('src', resolveVideoSrc(src));
+  // Derive MIME type from extension; default to video/mp4
+  const ext = src.split('?')[0].split('.').pop().toLowerCase();
+  const mimeMap = {
+    mp4: 'video/mp4', mov: 'video/mp4', webm: 'video/webm', ogg: 'video/ogg',
+  };
+  source.setAttribute('type', mimeMap[ext] || 'video/mp4');
+  video.append(source);
 
   if (playOnce) {
-    // Play once when the hero enters the viewport
+    // Play once on viewport entry (≥25% visible), then stop
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -88,10 +102,17 @@ function createBackgroundVideo(src, playOnce = false) {
       },
       { threshold: 0.25 },
     );
-    // Observe the video element itself (it will be inside .hero-em-accent-background)
     video.addEventListener('ended', () => video.pause(), { once: true });
-    // Attach observer after the element is in the DOM
+    // Observe after insertion into DOM
     requestAnimationFrame(() => observer.observe(video.closest('.hero-em-accent-background') || video));
+  } else {
+    // Loop mode — programmatically trigger play after DOM insertion to work around
+    // browsers that ignore the autoplay attribute when the video is added dynamically
+    requestAnimationFrame(() => {
+      video.play().catch(() => {
+        // Autoplay blocked (e.g. strict browser policy) — video stays paused silently
+      });
+    });
   }
 
   const muteBtn = createMuteToggle(video);
