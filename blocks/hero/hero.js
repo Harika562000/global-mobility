@@ -1,4 +1,5 @@
 import { eyebrowDecorator, decorateTags } from '../../scripts/scripts.js';
+import { isVideoLink, resolveVideoSrc, createVideoElement } from '../../scripts/media-decorator.js';
 
 /**
  * Hero block: three variations (UE authoring reference).
@@ -9,26 +10,13 @@ import { eyebrowDecorator, decorateTags } from '../../scripts/scripts.js';
  * - Black-colored: image, tag, eyebrow, heading, description.
  *
  * The `image` reference field accepts both images and videos from DAM.
- * When a video asset is picked, it is rendered as a <video> element
- * instead of a <picture> — no additional field is needed.
+ * When a video asset is picked, EDS renders it as an <a href="...video.mp4">
+ * instead of a <picture> — the same reference field covers both image and video.
  */
 
-/** Video extensions / AEM Assets Delivery API /play pattern */
-const VIDEO_SRC_RE = /\.(mp4|mov|webm|ogg)(\?.*)?$/i;
-const AEM_DELIVERY_RE = /delivery-p\d+-e\d+\.adobeaemcloud\.com\/adobe\/assets\/urn:[^/]+\/play/i;
-
 /**
- * Returns true when the href points to a video asset.
- * @param {string} href
- * @returns {boolean}
- */
-function isVideoHref(href = '') {
-  return VIDEO_SRC_RE.test(href) || AEM_DELIVERY_RE.test(href);
-}
-
-/**
- * Extracts a video <a> element from a row cell if the reference field
- * resolved to a video asset instead of a picture.
+ * Extracts a video <a> element from a row if the reference field
+ * resolved to a video asset (produces an <a href>) rather than an image (<picture>).
  *
  * @param {Element} row
  * @returns {HTMLAnchorElement|null}
@@ -36,53 +24,46 @@ function isVideoHref(href = '') {
 function getVideoLink(row) {
   if (!row) return null;
   const anchors = [...row.querySelectorAll('a[href]')];
-  return anchors.find((a) => isVideoHref(a.href)) || null;
+  return anchors.find((a) => isVideoLink(a.href)) || null;
 }
 
 /**
- * Builds a <video> element for use as a full-bleed background (default variation).
- * Autoplay, muted, loop — mirrors hero-video block behaviour.
+ * Creates a full-bleed background video for the default (em-accent) variation.
+ * Delegates to the shared createVideoElement() so publish-host rewriting,
+ * MIME-type detection, and edit-mode guards all apply consistently.
  *
- * @param {string} src
+ * @param {string} src - Raw href from the <a> element
  * @returns {HTMLVideoElement}
  */
 function createBackgroundVideo(src) {
-  const video = document.createElement('video');
-  video.setAttribute('autoplay', '');
-  video.setAttribute('muted', '');
-  video.setAttribute('loop', '');
-  video.setAttribute('playsinline', '');
-  video.setAttribute('preload', 'auto');
-  video.setAttribute('aria-label', 'Hero background video');
-  video.muted = true;
-  video.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;';
-
-  const source = document.createElement('source');
-  source.src = src;
-  source.type = src.includes('/play') ? 'video/mp4' : `video/${src.split('.').pop().split('?')[0].toLowerCase() || 'mp4'}`;
-  video.append(source);
-  return video;
+  return createVideoElement(resolveVideoSrc(src), {
+    autoplay: true,
+    muted: true,
+    loop: true,
+    preload: 'auto',
+    controls: false,
+    ariaLabel: 'Hero background video',
+    objectFit: 'cover',
+  });
 }
 
 /**
- * Builds a <video> element for use as a side/inline asset (two-colored / black-colored variations).
- * Shows native controls, no autoplay.
+ * Creates a side/inline video for two-colored and black-colored variations.
+ * Shows native controls; no autoplay.
  *
- * @param {string} src
+ * @param {string} src - Raw href from the <a> element
  * @returns {HTMLVideoElement}
  */
 function createInlineVideo(src) {
-  const video = document.createElement('video');
-  video.setAttribute('controls', '');
-  video.setAttribute('preload', 'metadata');
-  video.setAttribute('aria-label', 'Hero video');
-  video.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:var(--radius-12);';
-
-  const source = document.createElement('source');
-  source.src = src;
-  source.type = src.includes('/play') ? 'video/mp4' : `video/${src.split('.').pop().split('?')[0].toLowerCase() || 'mp4'}`;
-  video.append(source);
-  return video;
+  return createVideoElement(resolveVideoSrc(src), {
+    autoplay: false,
+    muted: false,
+    loop: false,
+    preload: 'metadata',
+    controls: true,
+    ariaLabel: 'Hero video',
+    objectFit: 'cover',
+  });
 }
 
 /** Get the value cell (content) from a row; UE often uses row = [label, value]. */
@@ -230,7 +211,13 @@ export default function decorate(block) {
   const isTwoColoredRight = block.classList.contains('hero-two-colored-right');
 
   const lastDataRow = rows.length - 1;
-  const hasVariationRow = !rows[0]?.querySelector('picture');
+  // rows[0] is the media (image/video) row when it contains a <picture> OR a video <a>.
+  // If it contains neither, it's the variation/classes text row.
+  const firstRowHasMedia = !!(
+    rows[0]?.querySelector('picture')
+    || [...(rows[0]?.querySelectorAll('a[href]') || [])].find((a) => isVideoLink(a.href))
+  );
+  const hasVariationRow = !firstRowHasMedia;
   const idx = hasVariationRow ? 1 : 0;
 
   // Detect whether the reference field resolved to a video or an image.

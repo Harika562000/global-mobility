@@ -52,7 +52,7 @@ const AEM_PUBLISH_HOST = 'publish-p99952-e1559416.adobeaemcloud.com';
  * @param {string} href  Fully resolved href from an <a> element
  * @returns {string}     Publicly accessible video URL
  */
-function resolveVideoSrc(href) {
+export function resolveVideoSrc(href) {
   if (!href) return href;
   try {
     const url = new URL(href);
