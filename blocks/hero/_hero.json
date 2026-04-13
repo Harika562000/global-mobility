@@ -32,41 +32,6 @@
           ]
         },
         {
-          "component": "boolean",
-          "name": "autoplay",
-          "label": "Autoplay",
-          "valueType": "boolean",
-          "value": true
-        },
-        {
-          "component": "boolean",
-          "name": "muted",
-          "label": "Muted",
-          "valueType": "boolean",
-          "value": true
-        },
-        {
-          "component": "boolean",
-          "name": "loop",
-          "label": "Loop",
-          "valueType": "boolean",
-          "value": true
-        },
-        {
-          "component": "boolean",
-          "name": "showControls",
-          "label": "Show Controls",
-          "valueType": "boolean",
-          "value": false
-        },
-        {
-          "component": "boolean",
-          "name": "playOnce",
-          "label": "Play video once (viewport triggered)",
-          "valueType": "boolean",
-          "value": false
-        },
-        {
           "component": "reference",
           "valueType": "string",
           "name": "image",
@@ -103,6 +68,41 @@
           "label": "Sub-heading",
           "valueType": "string",
           "description": "Optional."
+        },
+        {
+          "component": "boolean",
+          "name": "autoplay",
+          "label": "Autoplay",
+          "valueType": "boolean",
+          "value": true
+        },
+        {
+          "component": "boolean",
+          "name": "muted",
+          "label": "Muted",
+          "valueType": "boolean",
+          "value": true
+        },
+        {
+          "component": "boolean",
+          "name": "loop",
+          "label": "Loop",
+          "valueType": "boolean",
+          "value": true
+        },
+        {
+          "component": "boolean",
+          "name": "showControls",
+          "label": "Show Controls",
+          "valueType": "boolean",
+          "value": false
+        },
+        {
+          "component": "boolean",
+          "name": "playOnce",
+          "label": "Play video once (viewport triggered)",
+          "valueType": "boolean",
+          "value": false
         },
         {
           "component": "container",
