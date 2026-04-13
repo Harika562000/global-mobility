@@ -405,15 +405,17 @@ export default function decorate(block) {
     playOnce,
   };
 
-  // Remove any boolean/flag rows from the DOM immediately so they are never
-  // rendered as visible text content by appendContent loops.
-  rows.forEach((r) => {
+  // Remove any boolean/flag rows from both the DOM and the rows array so they
+  // are never rendered as visible text content by appendContent loops.
+  for (let i = rows.length - 1; i >= 0; i -= 1) {
+    const r = rows[i];
     const label = (r.children[0]?.textContent || '').toLowerCase().replace(/[\s-]/g, '');
     const val = (r.children[1] || r.children[0])?.textContent?.trim().toLowerCase();
     if (label === 'playonce' && (val === 'true' || val === 'false')) {
       r.remove();
+      rows.splice(i, 1); // remove from array so appendContent loops skip it
     }
-  });
+  }
 
   if (isBlackColoredRight) {
     decorateBlackColoredRight(block, rows, picture, videoLink, rowIndices, videoFlags);
