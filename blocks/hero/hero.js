@@ -147,9 +147,9 @@ function buildVideo(src, flags, ariaLabel = 'Hero video') {
       { threshold: 0.25 },
     );
     video.addEventListener('ended', () => video.pause(), { once: true });
-    requestAnimationFrame(() => {
-      observer.observe(video.parentElement || video);
-    });
+    // Observe the block section wrapper for a stable viewport target
+    const getTarget = () => video.closest('.section') || video.closest('.hero') || video.parentElement || video;
+    requestAnimationFrame(() => observer.observe(getTarget()));
   } else if (effectiveAutoplay) {
     // Programmatic play after DOM insertion — reliable across all browsers
     requestAnimationFrame(() => {
@@ -404,6 +404,16 @@ export default function decorate(block) {
     showControls: false,
     playOnce,
   };
+
+  // Remove any boolean/flag rows from the DOM immediately so they are never
+  // rendered as visible text content by appendContent loops.
+  rows.forEach((r) => {
+    const label = (r.children[0]?.textContent || '').toLowerCase().replace(/[\s-]/g, '');
+    const val = (r.children[1] || r.children[0])?.textContent?.trim().toLowerCase();
+    if (label === 'playonce' && (val === 'true' || val === 'false')) {
+      r.remove();
+    }
+  });
 
   if (isBlackColoredRight) {
     decorateBlackColoredRight(block, rows, picture, videoLink, rowIndices, videoFlags);
