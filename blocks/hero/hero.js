@@ -7,7 +7,83 @@ import { eyebrowDecorator, decorateTags } from '../../scripts/scripts.js';
  * - Image as background: image, heading, description.
  * - Two-colored:        image, heading, description.
  * - Black-colored: image, tag, eyebrow, heading, description.
+ *
+ * The `image` reference field accepts both images and videos from DAM.
+ * When a video asset is picked, it is rendered as a <video> element
+ * instead of a <picture> — no additional field is needed.
  */
+
+/** Video extensions / AEM Assets Delivery API /play pattern */
+const VIDEO_SRC_RE = /\.(mp4|mov|webm|ogg)(\?.*)?$/i;
+const AEM_DELIVERY_RE = /delivery-p\d+-e\d+\.adobeaemcloud\.com\/adobe\/assets\/urn:[^/]+\/play/i;
+
+/**
+ * Returns true when the href points to a video asset.
+ * @param {string} href
+ * @returns {boolean}
+ */
+function isVideoHref(href = '') {
+  return VIDEO_SRC_RE.test(href) || AEM_DELIVERY_RE.test(href);
+}
+
+/**
+ * Extracts a video <a> element from a row cell if the reference field
+ * resolved to a video asset instead of a picture.
+ *
+ * @param {Element} row
+ * @returns {HTMLAnchorElement|null}
+ */
+function getVideoLink(row) {
+  if (!row) return null;
+  const anchors = [...row.querySelectorAll('a[href]')];
+  return anchors.find((a) => isVideoHref(a.href)) || null;
+}
+
+/**
+ * Builds a <video> element for use as a full-bleed background (default variation).
+ * Autoplay, muted, loop — mirrors hero-video block behaviour.
+ *
+ * @param {string} src
+ * @returns {HTMLVideoElement}
+ */
+function createBackgroundVideo(src) {
+  const video = document.createElement('video');
+  video.setAttribute('autoplay', '');
+  video.setAttribute('muted', '');
+  video.setAttribute('loop', '');
+  video.setAttribute('playsinline', '');
+  video.setAttribute('preload', 'auto');
+  video.setAttribute('aria-label', 'Hero background video');
+  video.muted = true;
+  video.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;';
+
+  const source = document.createElement('source');
+  source.src = src;
+  source.type = src.includes('/play') ? 'video/mp4' : `video/${src.split('.').pop().split('?')[0].toLowerCase() || 'mp4'}`;
+  video.append(source);
+  return video;
+}
+
+/**
+ * Builds a <video> element for use as a side/inline asset (two-colored / black-colored variations).
+ * Shows native controls, no autoplay.
+ *
+ * @param {string} src
+ * @returns {HTMLVideoElement}
+ */
+function createInlineVideo(src) {
+  const video = document.createElement('video');
+  video.setAttribute('controls', '');
+  video.setAttribute('preload', 'metadata');
+  video.setAttribute('aria-label', 'Hero video');
+  video.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:var(--radius-12);';
+
+  const source = document.createElement('source');
+  source.src = src;
+  source.type = src.includes('/play') ? 'video/mp4' : `video/${src.split('.').pop().split('?')[0].toLowerCase() || 'mp4'}`;
+  video.append(source);
+  return video;
+}
 
 /** Get the value cell (content) from a row; UE often uses row = [label, value]. */
 function getValueCell(row) {
@@ -42,10 +118,14 @@ function appendContent(row, target, fallbackHeading = false) {
   }
 }
 
-function decorateEmAccent(block, rows, picture, rowIndices) {
+function decorateEmAccent(block, rows, picture, videoLink, rowIndices) {
   const bgDiv = document.createElement('div');
   bgDiv.className = 'hero-em-accent-background';
-  if (picture) {
+  if (videoLink) {
+    // Video asset selected — render as full-bleed autoplay background video
+    const video = createBackgroundVideo(videoLink.href);
+    bgDiv.appendChild(video);
+  } else if (picture) {
     picture.querySelector('img')?.setAttribute('loading', 'eager');
     bgDiv.appendChild(picture);
   }
@@ -64,7 +144,7 @@ function decorateEmAccent(block, rows, picture, rowIndices) {
   block.appendChild(contentDiv);
 }
 
-function decorateTwoColoredRight(block, rows, picture, rowIndices) {
+function decorateTwoColoredRight(block, rows, picture, videoLink, rowIndices) {
   const contentDiv = document.createElement('div');
   contentDiv.className = 'hero-two-colored-right-content';
 
@@ -73,13 +153,18 @@ function decorateTwoColoredRight(block, rows, picture, rowIndices) {
 
   const imageDiv = document.createElement('div');
   imageDiv.className = 'hero-two-colored-right-image';
-  if (picture) imageDiv.appendChild(picture);
+  if (videoLink) {
+    // Video asset selected — render as side inline video
+    imageDiv.appendChild(createInlineVideo(videoLink.href));
+  } else if (picture) {
+    imageDiv.appendChild(picture);
+  }
 
   block.appendChild(contentDiv);
   block.appendChild(imageDiv);
 }
 
-function decorateBlackColoredRight(block, rows, picture, rowIndices) {
+function decorateBlackColoredRight(block, rows, picture, videoLink, rowIndices) {
   const contentDiv = document.createElement('div');
   contentDiv.className = 'hero-black-colored-right-content';
 
@@ -121,7 +206,12 @@ function decorateBlackColoredRight(block, rows, picture, rowIndices) {
 
   const imageDiv = document.createElement('div');
   imageDiv.className = 'hero-black-colored-right-image';
-  if (picture) imageDiv.appendChild(picture);
+  if (videoLink) {
+    // Video asset selected — render as side inline video
+    imageDiv.appendChild(createInlineVideo(videoLink.href));
+  } else if (picture) {
+    imageDiv.appendChild(picture);
+  }
 
   block.appendChild(contentDiv);
   block.appendChild(imageDiv);
@@ -143,9 +233,18 @@ export default function decorate(block) {
   const hasVariationRow = !rows[0]?.querySelector('picture');
   const idx = hasVariationRow ? 1 : 0;
 
-  const picture = isBlackColoredRight
-    ? rows[0]?.querySelector('picture')
-    : rows[idx]?.querySelector('picture');
+  // Detect whether the reference field resolved to a video or an image.
+  // A video produces an <a href="...mp4|/play"> link; an image produces <picture>.
+  const mediaRow = isBlackColoredRight ? rows[0] : rows[idx];
+  const videoLink = getVideoLink(mediaRow);
+
+  let picture = null;
+  if (!videoLink) {
+    // Image asset — extract the <picture> from the appropriate row
+    picture = isBlackColoredRight
+      ? rows[0]?.querySelector('picture')
+      : rows[idx]?.querySelector('picture');
+  }
 
   if (isBlackColoredRight) {
     const pictureRow = rows[0];
@@ -222,11 +321,11 @@ export default function decorate(block) {
     };
 
   if (isBlackColoredRight) {
-    decorateBlackColoredRight(block, rows, picture, rowIndices);
+    decorateBlackColoredRight(block, rows, picture, videoLink, rowIndices);
   } else if (isTwoColoredRight) {
-    decorateTwoColoredRight(block, rows, picture, rowIndices);
+    decorateTwoColoredRight(block, rows, picture, videoLink, rowIndices);
   } else {
-    decorateEmAccent(block, rows, picture, rowIndices);
+    decorateEmAccent(block, rows, picture, videoLink, rowIndices);
   }
 
   rows.forEach((r) => r.remove());

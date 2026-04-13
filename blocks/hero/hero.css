@@ -93,6 +93,19 @@ main > div.hero-section {
   padding: 0;
 }
 
+/* Video background — same full-bleed treatment as the background image */
+.hero .hero-em-accent-background video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  margin: 0;
+  padding: 0;
+}
+
 .hero:not(.hero-two-colored-right, .hero-black-colored-right)::before {
   content: '';
   position: absolute;
@@ -210,7 +223,8 @@ main > div.hero-section {
   display: block;
 }
 
-.hero .hero-two-colored-right-image img {
+.hero .hero-two-colored-right-image img,
+.hero .hero-two-colored-right-image video {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -355,7 +369,8 @@ main > div.hero-section {
   display: block;
 }
 
-.hero .hero-black-colored-right-image img {
+.hero .hero-black-colored-right-image img,
+.hero .hero-black-colored-right-image video {
   width: 100%;
   height: 100%;
   object-fit: cover;
