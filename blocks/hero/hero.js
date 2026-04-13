@@ -1,4 +1,5 @@
 import { eyebrowDecorator, decorateTags } from '../../scripts/scripts.js';
+import { isVideoLink, resolveVideoSrc } from '../../scripts/media-decorator.js';
 
 /**
  * Hero block: three variations (UE authoring reference).
@@ -7,7 +8,145 @@ import { eyebrowDecorator, decorateTags } from '../../scripts/scripts.js';
  * - Image as background: image, heading, description.
  * - Two-colored:        image, heading, description.
  * - Black-colored: image, tag, eyebrow, heading, description.
+ *
+ * The `image` reference field accepts both images and videos from DAM.
+ * When a video asset is picked, EDS renders it as an <a href="...video.mp4">
+ * instead of a <picture> — the same reference field covers both image and video.
  */
+
+/**
+ * Extracts a video <a> element from a row if the reference field
+ * resolved to a video asset (produces an <a href>) rather than an image (<picture>).
+ *
+ * @param {Element} row
+ * @returns {HTMLAnchorElement|null}
+ */
+function getVideoLink(row) {
+  if (!row) return null;
+  const anchors = [...row.querySelectorAll('a[href]')];
+  return anchors.find((a) => isVideoLink(a.href)) || null;
+}
+
+/**
+ * Creates a mute/unmute toggle button for the hero video overlay.
+ *
+ * @param {HTMLVideoElement} video
+ * @returns {HTMLButtonElement}
+ */
+function createMuteToggle(video) {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.classList.add('hero-video-mute-btn');
+
+  const update = () => {
+    const muted = video.muted || video.volume === 0;
+    btn.setAttribute('aria-label', muted ? 'Unmute video' : 'Mute video');
+    btn.setAttribute('aria-pressed', String(muted));
+    btn.classList.toggle('is-muted', muted);
+  };
+
+  btn.addEventListener('click', () => {
+    video.muted = !video.muted;
+    update();
+  });
+  video.addEventListener('volumechange', update);
+  update();
+  return btn;
+}
+
+/**
+ * Builds a <video> element from the authored flags and src.
+ * Used by all three variations.
+ *
+ * Rules:
+ * - playOnce overrides autoplay + loop (plays once on viewport entry, then stops)
+ * - autoplay + muted are required by browser autoplay policy
+ * - showControls adds native browser controls
+ * - When autoplay is on, a mute/unmute overlay button is also added so the end
+ *   user can unmute
+ *
+ * @param {string}  src
+ * @param {Object}  flags
+ * @param {boolean} flags.autoplay
+ * @param {boolean} flags.muted
+ * @param {boolean} flags.loop
+ * @param {boolean} flags.showControls
+ * @param {boolean} flags.playOnce
+ * @param {string}  [ariaLabel]
+ * @returns {{ video: HTMLVideoElement, muteBtn: HTMLButtonElement|null }}
+ */
+function buildVideo(src, flags, ariaLabel = 'Hero video', block = null) {
+  const {
+    autoplay,
+    muted,
+    loop,
+    showControls,
+    playOnce,
+  } = flags;
+
+  // playOnce overrides autoplay/loop
+  const effectiveAutoplay = playOnce ? false : autoplay;
+  const effectiveLoop = playOnce ? false : loop;
+  // Browsers require muted for autoplay — force it when autoplay or playOnce is on
+  const effectiveMuted = (effectiveAutoplay || playOnce) ? true : muted;
+
+  const video = document.createElement('video');
+  video.setAttribute('aria-label', ariaLabel);
+  video.setAttribute('preload', effectiveAutoplay || playOnce ? 'auto' : 'metadata');
+  video.setAttribute('playsinline', ''); // required for autoplay on iOS/mobile
+  video.style.setProperty('--video-object-fit', 'cover');
+
+  // Always set both attribute and property for muted (browser quirk)
+  if (effectiveMuted) {
+    video.setAttribute('muted', '');
+    video.muted = true;
+  }
+  if (effectiveLoop) video.setAttribute('loop', '');
+  if (showControls) video.setAttribute('controls', '');
+  if (effectiveAutoplay) video.setAttribute('autoplay', '');
+
+  const source = document.createElement('source');
+  source.setAttribute('src', resolveVideoSrc(src));
+  const ext = src.split('?')[0].split('.').pop().toLowerCase();
+  const mimeMap = {
+    mp4: 'video/mp4', mov: 'video/mp4', webm: 'video/webm', ogg: 'video/ogg',
+  };
+  source.setAttribute('type', mimeMap[ext] || 'video/mp4');
+  video.append(source);
+
+  if (playOnce) {
+    // Ensure video is paused on load — only plays once when component enters viewport
+    video.pause();
+    // Play once when ≥25% of this specific hero block enters the viewport.
+    // `block` is passed in so we always observe the correct instance even when
+    // multiple hero blocks exist on the same page.
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            video.play().catch(() => {});
+            observer.disconnect();
+          }
+        });
+      },
+      { threshold: 0.25 },
+    );
+    // Stop after first play-through
+    video.addEventListener('ended', () => video.pause(), { once: true });
+    // Use the passed block reference — never rely on video.closest() which
+    // returns null before the video is inserted into the DOM.
+    requestAnimationFrame(() => observer.observe(block || video));
+  } else if (effectiveAutoplay) {
+    // Programmatic play after DOM insertion — reliable across all browsers
+    requestAnimationFrame(() => {
+      video.play().catch(() => {});
+    });
+  }
+
+  // Mute/unmute button when video starts muted (autoplay or playOnce)
+  const muteBtn = effectiveMuted ? createMuteToggle(video) : null;
+  return { video, muteBtn };
+}
 
 /** Get the value cell (content) from a row; UE often uses row = [label, value]. */
 function getValueCell(row) {
@@ -42,10 +181,15 @@ function appendContent(row, target, fallbackHeading = false) {
   }
 }
 
-function decorateEmAccent(block, rows, picture, rowIndices) {
+function decorateEmAccent(block, rows, picture, videoLink, rowIndices, videoFlags) {
   const bgDiv = document.createElement('div');
   bgDiv.className = 'hero-em-accent-background';
-  if (picture) {
+  let muteBtn = null;
+  if (videoLink) {
+    const built = buildVideo(videoLink.href, videoFlags, 'Hero background video', block);
+    bgDiv.appendChild(built.video);
+    muteBtn = built.muteBtn;
+  } else if (picture) {
     picture.querySelector('img')?.setAttribute('loading', 'eager');
     bgDiv.appendChild(picture);
   }
@@ -62,9 +206,11 @@ function decorateEmAccent(block, rows, picture, rowIndices) {
 
   block.appendChild(bgDiv);
   block.appendChild(contentDiv);
+  // Mute button appended directly on the block (above the gradient ::before overlay)
+  if (muteBtn) block.appendChild(muteBtn);
 }
 
-function decorateTwoColoredRight(block, rows, picture, rowIndices) {
+function decorateTwoColoredRight(block, rows, picture, videoLink, rowIndices, videoFlags) {
   const contentDiv = document.createElement('div');
   contentDiv.className = 'hero-two-colored-right-content';
 
@@ -73,13 +219,19 @@ function decorateTwoColoredRight(block, rows, picture, rowIndices) {
 
   const imageDiv = document.createElement('div');
   imageDiv.className = 'hero-two-colored-right-image';
-  if (picture) imageDiv.appendChild(picture);
+  if (videoLink) {
+    const { video, muteBtn } = buildVideo(videoLink.href, videoFlags, 'Hero video', block);
+    imageDiv.appendChild(video);
+    if (muteBtn) imageDiv.appendChild(muteBtn);
+  } else if (picture) {
+    imageDiv.appendChild(picture);
+  }
 
   block.appendChild(contentDiv);
   block.appendChild(imageDiv);
 }
 
-function decorateBlackColoredRight(block, rows, picture, rowIndices) {
+function decorateBlackColoredRight(block, rows, picture, videoLink, rowIndices, videoFlags) {
   const contentDiv = document.createElement('div');
   contentDiv.className = 'hero-black-colored-right-content';
 
@@ -121,7 +273,13 @@ function decorateBlackColoredRight(block, rows, picture, rowIndices) {
 
   const imageDiv = document.createElement('div');
   imageDiv.className = 'hero-black-colored-right-image';
-  if (picture) imageDiv.appendChild(picture);
+  if (videoLink) {
+    const { video, muteBtn } = buildVideo(videoLink.href, videoFlags, 'Hero video', block);
+    imageDiv.appendChild(video);
+    if (muteBtn) imageDiv.appendChild(muteBtn);
+  } else if (picture) {
+    imageDiv.appendChild(picture);
+  }
 
   block.appendChild(contentDiv);
   block.appendChild(imageDiv);
@@ -140,32 +298,35 @@ export default function decorate(block) {
   const isTwoColoredRight = block.classList.contains('hero-two-colored-right');
 
   const lastDataRow = rows.length - 1;
-  const hasVariationRow = !rows[0]?.querySelector('picture');
-  const idx = hasVariationRow ? 1 : 0;
 
-  const picture = isBlackColoredRight
-    ? rows[0]?.querySelector('picture')
-    : rows[idx]?.querySelector('picture');
+  // Find the media row — the first row that contains a <picture> or a video <a href>.
+  // Boolean/text control fields (autoplay, muted, loop, etc.) appear before the image
+  // field in the UE panel and produce plain-text rows with no media content.
+  const mediaIdx = rows.findIndex((r) => (
+    r.querySelector('picture')
+    || [...r.querySelectorAll('a[href]')].find((a) => isVideoLink(a.href))
+  ));
+  const idx = mediaIdx >= 0 ? mediaIdx : 0;
 
-  if (isBlackColoredRight) {
-    const pictureRow = rows[0];
-    if (picture && pictureRow) {
-      const altCell = getValueCell(pictureRow);
-      const alt = altCell?.textContent?.trim();
-      if (alt) {
-        const img = picture.querySelector('img');
-        if (img) img.setAttribute('alt', alt);
-      }
-    }
-  } else {
-    const altText = getValueCell(rows[idx + 1])?.textContent?.trim();
-    if (picture && altText) {
-      const img = picture.querySelector('img');
-      if (img) img.setAttribute('alt', altText);
-    }
+  // Detect whether the reference field resolved to a video or an image.
+  const mediaRow = rows[idx];
+  const videoLink = getVideoLink(mediaRow);
+
+  let picture = null;
+  if (!videoLink) {
+    picture = mediaRow?.querySelector('picture') || null;
   }
 
-  const firstButtonRow = isBlackColoredRight ? 4 : idx + 4;
+  // Apply alt text from the row immediately following the media row
+  const altText = getValueCell(rows[idx + 1])?.textContent?.trim();
+  if (picture && altText) {
+    const img = picture.querySelector('img');
+    if (img) img.setAttribute('alt', altText);
+  }
+
+  // firstButtonRow: scan forward from mediaIdx + 2 (skip media + alt rows)
+  // For black-colored-right the heading is at idx+2 and description at idx+3
+  const firstButtonRow = idx + 4;
   const findRowByLabel = (dataRows, fromIdx, toIdx, labelPart) => {
     const lower = (labelPart || '').toLowerCase();
     for (let i = fromIdx; i <= toIdx; i += 1) {
@@ -221,12 +382,35 @@ export default function decorate(block) {
       firstButtonRow,
     };
 
+  // Single authoring flag: "Play one time".
+  // UE renders boolean fields as a single-cell <div> containing only "true" or "false"
+  // (no label). The row may appear at any position (depends on variation / empty CTA rows).
+  // Scan all rows, take the first match, read + remove it.
+  let playOnce = false;
+  for (let i = rows.length - 1; i >= 0; i -= 1) {
+    const val = rows[i]?.textContent?.trim().toLowerCase();
+    if (val === 'true' || val === 'false') {
+      playOnce = val === 'true';
+      rows[i].remove();
+      rows.splice(i, 1);
+      break;
+    }
+  }
+
+  const videoFlags = {
+    autoplay: !playOnce,
+    muted: true,
+    loop: !playOnce,
+    showControls: false,
+    playOnce,
+  };
+
   if (isBlackColoredRight) {
-    decorateBlackColoredRight(block, rows, picture, rowIndices);
+    decorateBlackColoredRight(block, rows, picture, videoLink, rowIndices, videoFlags);
   } else if (isTwoColoredRight) {
-    decorateTwoColoredRight(block, rows, picture, rowIndices);
+    decorateTwoColoredRight(block, rows, picture, videoLink, rowIndices, videoFlags);
   } else {
-    decorateEmAccent(block, rows, picture, rowIndices);
+    decorateEmAccent(block, rows, picture, videoLink, rowIndices, videoFlags);
   }
 
   rows.forEach((r) => r.remove());

@@ -26,16 +26,16 @@
           "label": "Hero Block Variation",
           "valueType": "string",
           "options": [
-            { "name": "Image as background", "value": "" },
-            { "name": "Image on the right (two-colored)", "value": "hero-two-colored-right" },
-            { "name": "Image on the right (black-colored)", "value": "hero-black-colored-right" }
+            { "name": "Media as background", "value": "" },
+            { "name": "Media on the right (two-colored)", "value": "hero-two-colored-right" },
+            { "name": "Media on the right (black-colored)", "value": "hero-black-colored-right" }
           ]
         },
         {
           "component": "reference",
           "valueType": "string",
           "name": "image",
-          "label": "Image",
+          "label": "Image / Video",
           "multi": false,
           "required": true
         },
@@ -101,6 +101,14 @@
           "fields": [
             { "...": "../tag/_tag.json#/models/tag/fields" }
           ]
+        },
+        {
+          "component": "boolean",
+          "name": "playOnce",
+          "label": "Play one time",
+          "valueType": "boolean",
+          "key-value": true,
+          "value": false
         }
       ]
     }

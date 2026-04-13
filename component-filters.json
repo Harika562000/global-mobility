@@ -22,7 +22,7 @@
       "embed",
       "fragment",
       "form",
-      "hero",
+      "hero-video",
       "image",
       "logo-set",
       "quote",
@@ -71,9 +71,21 @@
     ]
   },
   {
+    "id": "card-grid-carousel",
+    "components": [
+      "card-grid-carousel-item"
+    ]
+  },
+  {
     "id": "cards",
     "components": [
       "card"
+    ]
+  },
+  {
+    "id": "carousel",
+    "components": [
+      "carousel-item"
     ]
   },
   {
@@ -95,6 +107,12 @@
     "id": "customer-stories",
     "components": [
       "fragment"
+    ]
+  },
+  {
+    "id": "experts-card",
+    "components": [
+      "experts-card-item"
     ]
   },
   {
@@ -158,6 +176,12 @@
     ]
   },
   {
+    "id": "logo-strip",
+    "components": [
+      "logo-strip-item"
+    ]
+  },
+  {
     "id": "media-module",
     "components": [
       "media-module"
@@ -170,7 +194,54 @@
     ]
   },
   {
+    "id": "sp-table",
+    "components": [
+      "sp-table-item"
+    ]
+  },
+  {
+    "id": "speaker-cards",
+    "components": [
+      "speaker-card"
+    ]
+  },
+  {
+    "id": "table",
+    "components": [
+      "table-row"
+    ]
+  },
+  {
+    "id": "table-2-columns",
+    "components": [
+      "table-col-2"
+    ]
+  },
+  {
+    "id": "table-3-columns",
+    "components": [
+      "table-col-3"
+    ]
+  },
+  {
+    "id": "table-4-columns",
+    "components": [
+      "table-col-4"
+    ]
+  },
+  {
+    "id": "tabs",
+    "components": [
+      "tabs-item",
+      "tabs-toc-item"
+    ]
+  },
+  {
     "id": "tag",
+    "components": []
+  },
+  {
+    "id": "video",
     "components": []
   }
 ]

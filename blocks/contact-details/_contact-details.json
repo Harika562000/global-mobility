@@ -1,0 +1,101 @@
+{
+  "definitions": [
+    {
+      "title": "Contact Details",
+      "id": "contact-details",
+      "model": "contact-details",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block",
+            "template": {
+              "name": "Contact Details",
+              "model": "contact-details"
+            }
+          }
+        },
+        "da": {
+          "name": "contact-details",
+          "rows": 9,
+          "columns": 1
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "contact-details",
+      "fields": [
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "eyebrow",
+          "label": "Eyebrow",
+          "value": "",
+          "required": true
+        },
+        {
+          "component": "richtext",
+          "name": "heading",
+          "label": "Heading",
+          "valueType": "string",
+          "required": true
+        },
+        {
+          "component": "richtext",
+          "name": "body",
+          "label": "Body text",
+          "valueType": "string",
+          "value": "",
+          "description": "Optional supporting copy below the heading."
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "contact1Title",
+          "label": "Contact 1 — Title",
+          "value": "",
+          "required": true,
+          "description": "Up to three regions; Contact 1 is required. Leave Contacts 2–3 empty if unused."
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "contact1Phone",
+          "label": "Contact 1 — Phone number",
+          "value": "",
+          "required": true
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "contact2Title",
+          "label": "Contact 2 — Title",
+          "value": ""
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "contact2Phone",
+          "label": "Contact 2 — Phone number",
+          "value": ""
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "contact3Title",
+          "label": "Contact 3 — Title",
+          "value": ""
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "contact3Phone",
+          "label": "Contact 3 — Phone number",
+          "value": ""
+        }
+      ]
+    }
+  ],
+  "filters": []
+}

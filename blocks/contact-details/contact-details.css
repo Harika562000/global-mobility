@@ -1,0 +1,326 @@
+/* ========================================
+   Section — contact-details-container spacing
+   Figma: main container gap = 48px (spacing-900)
+   ======================================== */
+
+   .section.contact-details-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .section.contact-details-container .section-title p {
+    margin: var(--spacing-900) 0
+  }
+  
+  /* ========================================
+     Contact Details — block layout
+     Figma Container: flex, gap = 24px (spacing-600)
+     ======================================== */
+  
+  /* Intro: eyebrow, heading, optional body (UE field rows) */
+  .contact-details .contact-details-intro {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: var(--spacing-900);
+  }
+
+  .contact-details .contact-details-heading :where(h1, h2, h3, h4, h5, h6) {
+    margin: 0 0 var(--spacing-900) 0;
+  }
+
+  .contact-details .contact-details-body {
+    font-family: var(--font-family-primary);
+    font-size: var(--type-body-500-size);
+    line-height: var(--line-height-26);
+    color: var(--typography-main);
+  }
+
+  .contact-details .contact-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-700);
+  }
+  
+  /* ========================================
+     Map — decorative dotted world map
+     Figma: rounded-24px, overflow-clip, self-stretch shrink-0
+     ======================================== */
+  
+  .contact-details .contact-map {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 539 / 266;
+    border-radius: var(--spacing-600);
+    overflow: clip;
+    flex-shrink: 0;
+  }
+  
+  .contact-details .contact-map-svg {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .contact-details .contact-map-svg svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* Geotag pins — Figma: absolute, top 57.2%, width 67.6%, center-x only */
+  .contact-details .contact-map-geotags {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 60%;
+    z-index: 2;
+    pointer-events: none;
+  }
+  
+  /* Geotag pin — outer circle (48px); Figma: smooth 400ms on hover */
+  .contact-details .contact-geotag {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+  }
+  
+  /* Geotag pin — inner bordered circle; Figma: 400ms transition on hover */
+  .contact-details .contact-geotag-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--size-40);
+    height: var(--size-40);
+    padding: var(--spacing-200);
+    border-radius: var(--radius-circle);
+    aspect-ratio: 1;
+    background-color: var(--color-white);
+    border: 1.7px solid var(--color-icon-primary);
+    transition: border-color 400ms ease, box-shadow 400ms ease;
+    box-sizing: border-box;
+  }
+  
+  .contact-details .contact-geotag-icons {
+    position: relative;
+    width: var(--icon-size-md);
+    height: var(--icon-size-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .contact-details .contact-geotag-img {
+    width: var(--icon-size-md);
+    height: var(--icon-size-md);
+    display: block;
+    object-fit: contain;
+    transition: opacity 400ms ease;
+  }
+
+  .contact-details .contact-geotag-img-hover {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .contact-details .contact-geotag.active .contact-geotag-img-hover {
+    opacity: 1;
+  }
+
+  .contact-details .contact-geotag.active .contact-geotag-img-default {
+    opacity: 0;
+  }
+  
+  /* Geotag highlighted state — solid dark blue icon (fill + stroke) to match design */
+  .contact-details .contact-geotag.active {
+    transform: scale(1.15);
+  }
+  
+  .contact-details .contact-geotag.active .contact-geotag-inner {
+    border-color: var(--color-icon-primary);
+    border-width: 2px;
+    background-color: var(--color-white);
+  }
+  
+  /* ========================================
+     Map region overlays — positioned per Figma
+     Each overlay fetched from its own SVG and
+     uses --fill-0 CSS var to toggle visibility
+     ======================================== */
+  
+  /* Figma: on hover smooth opacity transition 400ms */
+  .contact-details .contact-map-region {
+    position: absolute;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 400ms ease;
+  }
+  
+  .contact-details .contact-map-region img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .contact-details .contact-map-region-am {
+    inset: 1.29% 62.76% 0 0;
+  }
+  
+  .contact-details .contact-map-region-apac {
+    inset: 28.3% 3.17% 6.43% 58.96%;
+  }
+  
+  .contact-details .contact-map-region-emea {
+    inset: 0 36.14% 14.15% 26.63%;
+  }
+  
+  .contact-details[data-active-region="am"] .contact-map-region-am,
+  .contact-details[data-active-region="apac"] .contact-map-region-apac,
+  .contact-details[data-active-region="emea"] .contact-map-region-emea {
+    opacity: 1;
+  }
+  
+  /* ========================================
+     Cards container
+     Figma: flex-col, gap = 16px (spacing-400)
+     ======================================== */
+  
+  .contact-details .contact-cards {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-400);
+  }
+  
+  /* ========================================
+     Card — individual contact card
+     Figma: bg #f5f5f5, rounded 12px, px 24px, py 16px, gap 12px
+     ======================================== */
+  
+  /* Figma: card hover 400ms smooth transition */
+  .contact-details .contact-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-300);
+    padding: var(--spacing-400) var(--spacing-600);
+    background-color: var(--surface-light-grey);
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    color: var(--typography-main);
+    cursor: pointer;
+    transition: background-color 400ms ease;
+  }
+  
+  @media (hover: hover) {
+    .contact-details .contact-card:hover {
+      background-color: var(--surface-dark);
+      color: var(--color-white);
+    }
+  }
+  
+  .contact-details .contact-card.touched {
+    background-color: var(--surface-dark);
+    color: var(--color-white);
+  }
+  
+  /* Card title — Header 700 Semibold, 24px, 1.4 line-height */
+  .contact-details .contact-card-title {
+    margin: 0;
+    font-family: var(--font-family-primary);
+    font-size: var(--type-header-700-size);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-140p);
+    letter-spacing: var(--letter-spacing-tight);
+  }
+  
+  /* Phone row — flex, gap 12px, height 40px */
+  .contact-details .contact-card-phone {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-300);
+    height: var(--size-40);
+  }
+  
+  /* Phone icon container — 40px white circle */
+  .contact-details .contact-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--size-40);
+    height: var(--size-40);
+    border-radius: var(--radius-pill);
+    background-color: var(--color-white);
+    flex-shrink: 0;
+  }
+  
+  .contact-details .contact-card-icon .icon {
+    width: var(--icon-size-md);
+    height: var(--icon-size-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .contact-details .contact-card-icon .icon svg {
+    width: var(--icon-size-md);
+    height: var(--icon-size-md);
+  }
+  
+  /* Phone number — Body 500 Medium, 18px, 26px line-height */
+  .contact-details .contact-card-number {
+    font-family: var(--font-family-primary);
+    font-size: var(--type-body-500-size);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--line-height-26);
+    letter-spacing: var(--letter-spacing-tight);
+  }
+  
+  /* ========================================
+     Desktop layout (1025+)
+     Two-column: map (shrink-0 self-stretch) left,
+                 cards (flex-1) right
+     Figma Container: flex-row, gap = 24px (spacing-600)
+     ======================================== */
+  
+  @media (width >= 1025px) {
+    .section.contact-details-container .eye-brow-text,
+    .contact-details .contact-details-intro .eye-brow-text {
+      margin-bottom: var(--spacing-600);
+    }
+
+    .contact-details .contact-content {
+      flex-direction: row;
+      align-items: center;
+      gap: var(--spacing-600);
+    }
+  
+    .contact-details .contact-map {
+      flex: 0 0 55%;
+    }
+  
+    .contact-details .contact-cards {
+      flex: 1 0 0;
+      min-width: 0;
+    }
+
+  }
+
+  @media (width >= 1440px) {
+    .contact-details .contact-content {
+      gap: var(--spacing-950);
+    }
+  }
+
+  @media (width >= 1920px) {
+    .contact-details .contact-content {
+      gap: var(--spacing-1300);
+    }
+  }
+  
+  

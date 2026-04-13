@@ -1,0 +1,180 @@
+/* Speaker Cards – flex layout, carousel on mobile */
+
+/* Container query anchor on the wrapper */
+.speaker-cards-wrapper {
+  container-type: inline-size;
+  margin-top: 24px;
+}
+
+@media (width >= 1025px) {
+  .speaker-cards-wrapper {
+    margin-top: 48px;
+  }
+}
+
+/* ── Block container ── */
+.speaker-cards {
+  --gap: var(--spacing-600, 24px);
+  --speaker-card-img-size: 116px;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-400);
+  justify-content: space-between;
+}
+
+/* ── Tablet: 3-column grid (720px – 1024px), no carousel ── */
+@media (width >= 720px) and (width <= 1024px) {
+  .speaker-cards .speaker-card,
+  .speaker-cards > [data-aue-resource] {
+    flex: 0 0 calc((100% - 2 * var(--gap)) / 3);
+    max-width: none;
+  }
+}
+
+/* ── Card – shared base (flex row: image | content + arrow) ── */
+.speaker-cards .speaker-card,
+.speaker-cards > [data-aue-resource] {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--speaker-card-gap, 25px);
+  position: relative;
+  max-width: var(--max-mobile-width, 247px);
+  cursor: pointer;
+}
+
+@media (width >= 1025px) {
+  .speaker-cards .speaker-card,
+  .speaker-cards > [data-aue-resource] {
+    align-items: center;
+    flex-direction: row;
+    max-width: var(--max-desktop-width, 381px);
+  }
+}
+
+
+
+/* ── Circular image ── */
+.speaker-cards .speaker-card-image,
+.speaker-cards [data-aue-resource] > div:first-child {
+  flex: 0 0 var(--speaker-card-img-size);
+  width: var(--speaker-card-img-size);
+  height: var(--speaker-card-img-size);
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.speaker-cards .speaker-card-image picture,
+.speaker-cards .speaker-card-image img,
+.speaker-cards [data-aue-prop="cardImage"] picture,
+.speaker-cards [data-aue-prop="cardImage"] img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── Content container (title + description) ── */
+.speaker-cards .speaker-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-200);
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Title ── */
+.speaker-cards .speaker-card-title,
+.speaker-cards [data-aue-prop="cardTitle"] {
+  margin: 0;
+  color: var(--typography-black);
+  font-size: var(--font-size-600);
+  font-weight: var(--font-weight-bold);
+  line-height: 160%;
+  letter-spacing: -0.8px;
+}
+
+/* ── Description ── */
+.speaker-cards .speaker-card-description,
+.speaker-cards [data-aue-prop="cardDescription"] {
+  color: var(--typography-black);
+  font-size: var(--font-size-200);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-140p);
+  letter-spacing: var(--letter-spacing-140p);
+  margin: 0;
+}
+
+.speaker-cards .speaker-card-description p,
+.speaker-cards [data-aue-prop="cardDescription"] p {
+  margin: 0;
+}
+
+/* ── Arrow icon – hover variant only ── */
+.speaker-cards.speaker-cards-hover .speaker-card-description {
+  position: relative;
+  padding-right: 20px;
+}
+
+.speaker-cards.speaker-cards-hover .speaker-card-description::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 16px;
+  height: 16px;
+  background: url('/icons/arrow-right.svg') no-repeat center / contain;
+  transition: transform 0.2s ease;
+  transform: rotate(-30deg);
+}
+
+.speaker-cards.speaker-cards-hover .speaker-card:hover .speaker-card-description::after {
+  transform: rotate(0deg);
+}
+
+/* ── Clickable card link ── */
+.speaker-cards .speaker-card-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.speaker-cards.speaker-cards-hover .speaker-card:has(.speaker-card-link) .speaker-card-description::after {
+  display: none;
+}
+
+/* stylelint-disable no-descending-specificity */
+
+/* ── Universal Editor: UE-only divs (title, description, link) ── */
+
+/* In UE, divs 2 & 3 (title, description) sit after the image in the flex row —
+   stack them into a column using flex-wrap trick */
+.speaker-cards [data-aue-resource] > div:nth-child(2),
+.speaker-cards [data-aue-resource] > div:nth-child(3) {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* Hide the AEM link div (fourth child) — managed via properties panel */
+.speaker-cards [data-aue-resource] > div:nth-child(4) {
+  display: none;
+}
+
+/* stylelint-enable no-descending-specificity */
+
+/* ── Mobile carousel (s-and-p-carousel) ── */
+
+.speaker-cards.carousel-initialized .carousel-track-inner > .speaker-card {
+  flex: 0 0 100%;
+  min-width: 0;
+  align-items: center;
+}
+
+.speaker-cards.carousel-initialized .carousel-dots {
+  justify-content: flex-start;
+  padding-top: var(--spacing-500, 20px);
+}
+
+.speaker-cards.carousel-initialized .carousel-nav {
+  display: none;
+}

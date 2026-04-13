@@ -1,0 +1,310 @@
+/* =============================================================================
+   Card Grid Carousel block
+   ============================================================================= */
+
+/* -----------------------------------------------------------------------------
+   Design tokens
+   ----------------------------------------------------------------------------- */
+
+.card-grid-carousel {
+  --cgc-card-width: 280px;
+  --cgc-card-height: 300px;
+  --cgc-card-gap: var(--spacing-200, 8px);
+  background: #EFEFE5;
+  border-radius: 12px;
+  padding: 36px 20px;
+}
+
+@media (width >= 720px) {
+  .card-grid-carousel {
+    --cgc-card-width: 450px;
+    --cgc-card-height: 300px;
+    padding: 32px 24px;
+  }
+}
+
+@media (width >= 1025px) {
+  .card-grid-carousel {
+    --cgc-card-width: 450px;
+    --cgc-card-height: 300px;
+    padding: 32px 24px;
+    background: #EFEFE5;
+  }
+}
+
+@media (width >= 1440px) {
+  .card-grid-carousel {
+    --cgc-card-width: 450px;
+    --cgc-card-height: 300px;
+    padding: 56px 117px;
+    background: #EFEFE5;
+  }
+}
+
+
+/* -----------------------------------------------------------------------------
+   Block container — allow carousel to peek next card on the right
+   ----------------------------------------------------------------------------- */
+
+.card-grid-carousel-container {
+  overflow: hidden;
+}
+
+/* -----------------------------------------------------------------------------
+   Header
+   ----------------------------------------------------------------------------- */
+
+.card-grid-carousel .card-grid-carousel-header {
+  margin-bottom: var(--spacing-600);
+}
+
+/* Eyebrow */
+.card-grid-carousel .card-grid-carousel-eyebrow {
+  margin-bottom: var(--spacing-300);
+}
+
+.card-grid-carousel .card-grid-carousel-eyebrow .eye-brow-text {
+  font-family: var(--font-family-accent);
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  text-transform: uppercase;
+  line-height: 22px;
+  letter-spacing: 15%;
+  color: #0064D2;
+}
+
+@media (width >= 720px) {
+  .card-grid-carousel .card-grid-carousel-eyebrow .eye-brow-text {
+    font-size: 16px;
+    line-height: 26px;
+    letter-spacing: 16%;
+  }
+}
+
+/* Title row — stacked on mobile */
+.card-grid-carousel .card-grid-carousel-title-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-400);
+  align-items: flex-start;
+}
+
+/* Title row — side-by-side on >= 720px */
+@media (width >= 720px) {
+  .card-grid-carousel .card-grid-carousel-title-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-600);
+  }
+}
+
+.card-grid-carousel .card-grid-carousel-title {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.card-grid-carousel .card-grid-carousel-title h1,
+.card-grid-carousel .card-grid-carousel-title h2,
+.card-grid-carousel .card-grid-carousel-title h3,
+.card-grid-carousel .card-grid-carousel-title h4,
+.card-grid-carousel .card-grid-carousel-title h5,
+.card-grid-carousel .card-grid-carousel-title h6 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 24px;
+  letter-spacing: -4%;
+  line-height: 130%;
+  color: #000000;
+}
+
+@media (width >= 720px) {
+  .card-grid-carousel .card-grid-carousel-title h1,
+  .card-grid-carousel .card-grid-carousel-title h2,
+  .card-grid-carousel .card-grid-carousel-title h3,
+  .card-grid-carousel .card-grid-carousel-title h4,
+  .card-grid-carousel .card-grid-carousel-title h5,
+  .card-grid-carousel .card-grid-carousel-title h6 {
+    font-size: 32px;
+  }
+}
+
+/* Actions wrapper — always flex so nav slots in correctly */
+.card-grid-carousel .card-grid-carousel-actions {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-200);
+}
+
+/* Nav buttons — hidden on mobile (<720px) */
+.card-grid-carousel .card-grid-carousel-actions .carousel-nav {
+  display: none;
+}
+
+/* Nav buttons — shown on desktop (>=720px), reset global absolute positioning */
+@media (width >= 720px) {
+  .card-grid-carousel .card-grid-carousel-actions .carousel-nav {
+    display: flex;
+    gap: var(--spacing-200);
+    align-items: center;
+    position: static;
+    top: auto;
+    right: auto;
+  }
+}
+
+@media (width >= 1025px) {
+  .card-grid-carousel .card-grid-carousel-actions .carousel-nav {
+    position: static;
+    top: auto;
+    right: auto;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   Carousel track container
+   The JS wraps children as:  .card-grid-carousel-track > .carousel-track > .carousel-track-inner
+   ----------------------------------------------------------------------------- */
+
+.card-grid-carousel .card-grid-carousel-track {
+  overflow: visible;
+}
+
+/* Clip right overflow only (peek effect for next card) */
+.card-grid-carousel .carousel-track {
+  overflow: visible;
+  clip-path: inset(0 -100vw 0 0);
+}
+
+/* Horizontal flex strip — override global 50% rule from s-and-p-carousel.css */
+.card-grid-carousel .carousel-track-inner {
+  gap: 16px;
+  align-items: stretch;
+}
+
+.card-grid-carousel .carousel-track-inner > * {
+  flex: 0 0 var(--cgc-card-width);
+}
+
+/* -----------------------------------------------------------------------------
+   Card
+   ----------------------------------------------------------------------------- */
+
+.card-grid-carousel .card-grid-carousel-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 var(--cgc-card-width);
+  width: var(--cgc-card-width);
+  min-width: var(--cgc-card-width);
+  max-width: var(--cgc-card-width);
+  min-height: var(--cgc-card-height);
+  flex-shrink: 0;
+  padding: var(--spacing-700) var(--spacing-600);
+  background-color: transparent;
+  border: var(--border-width-100, 1px) solid var(--border-subtle, #EFEFE5);
+  border-radius: var(--radius-sm);
+  box-sizing: border-box;
+  text-decoration: none;
+  color: inherit;
+  cursor: default;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+a.card-grid-carousel-card {
+  cursor: pointer;
+}
+
+a.card-grid-carousel-card:hover,
+a.card-grid-carousel-card:focus-visible {
+  border-color: var(--border-interactive, #0a3461);
+  box-shadow: 0 2px 12px rgb(0 0 0 / 8%);
+  text-decoration: none;
+}
+
+/* Label / year */
+.card-grid-carousel .card-grid-carousel-card-label {
+  font-family: var(--font-family-primary);
+  font-size: 18px;
+  font-weight: var(--font-weight-regular);
+  color: #132445;
+  letter-spacing: -4%;
+  margin-bottom: var(--spacing-300);
+  line-height: 80%;
+}
+
+@media (width >= 720px) {
+  .card-grid-carousel .card-grid-carousel-card-label {
+    font-family: var(--font-family-primary);
+    font-size: 24px;
+    font-weight: var(--font-weight-regular);
+    color: #132445;
+    letter-spacing: -4%;
+    margin-bottom: var(--spacing-300);
+  }
+}
+
+/* Divider */
+.card-grid-carousel .card-grid-carousel-card-divider {
+  border: none;
+  border-top: var(--border-width-100, 1px) solid var(--border-subtle, #e0e0e0);
+  margin: 0 0 var(--spacing-400);
+}
+
+/* Image / logo */
+.card-grid-carousel .card-grid-carousel-card-image {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  min-height: 80px;
+  margin-bottom: var(--spacing-400);
+}
+
+.card-grid-carousel .card-grid-carousel-card-image picture,
+.card-grid-carousel .card-grid-carousel-card-image img {
+  display: block;
+  width: 146px;
+  max-height: 80px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Description */
+.card-grid-carousel .card-grid-carousel-card-desc {
+  font-family: var(--font-family-primary);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 22px;
+  margin-top: auto;
+  color: #132445;
+  letter-spacing: -4%;
+}
+
+@media (width >= 720px) {
+  .card-grid-carousel .card-grid-carousel-card-desc {
+  font-size: 16px;
+  line-height: 26px;
+}
+}
+
+.card-grid-carousel .card-grid-carousel-card-desc p {
+  margin: 0;
+}
+
+/* -----------------------------------------------------------------------------
+   Dots — visible on mobile, hidden on desktop (>= 720px)
+   ----------------------------------------------------------------------------- */
+
+.card-grid-carousel .carousel-dots {
+  display: flex;
+  padding: 24px 0 0;
+}
+
+@media (width >= 720px) {
+  .card-grid-carousel .carousel-dots {
+    display: none;
+  }
+}

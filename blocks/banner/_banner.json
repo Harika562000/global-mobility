@@ -48,7 +48,7 @@
           "valueType": "string"
         },
         {
-          "...": "../../models/elements/_button-fields.json#/fields"
+          "...": "../../models/elements/_button-fields-set1.json#/fields"
         }
       ]
     }
