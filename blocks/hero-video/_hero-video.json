@@ -63,8 +63,7 @@
           "valueType": "string",
           "name": "videoSrc",
           "label": "Video Source",
-          "description": "Link to the video asset (.mp4, .mov, .webm, or .ogg).",
-          "required": true
+          "description": "Link to the video asset (.mp4, .mov, .webm, or .ogg)."
         },
         {
           "component": "reference",
