@@ -98,6 +98,12 @@
     ]
   },
   {
+    "id": "footer-section",
+    "components": [
+      "footer-section-link"
+    ]
+  },
+  {
     "id": "form",
     "components": [
       "captcha",

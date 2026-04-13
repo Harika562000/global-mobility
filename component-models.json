@@ -1021,6 +1021,74 @@
     ]
   },
   {
+    "id": "footer-logo",
+    "fields": [
+      {
+        "component": "reference",
+        "name": "imageMobile",
+        "label": "Logo Image — Mobile (< 520px)",
+        "multi": false
+      },
+      {
+        "component": "reference",
+        "name": "imageTablet",
+        "label": "Logo Image — Tablet (520px – 1024px)",
+        "multi": false
+      },
+      {
+        "component": "reference",
+        "name": "imageDesktop",
+        "label": "Logo Image — Desktop (1025px+)",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "name": "alt",
+        "label": "Alt Text",
+        "valueType": "string",
+        "value": ""
+      },
+      {
+        "component": "text",
+        "name": "url",
+        "label": "Logo Link URL",
+        "valueType": "string",
+        "value": "/"
+      }
+    ]
+  },
+  {
+    "id": "footer-section",
+    "fields": [
+      {
+        "component": "text",
+        "name": "heading",
+        "label": "Section Heading",
+        "valueType": "string",
+        "required": true
+      }
+    ]
+  },
+  {
+    "id": "footer-section-link",
+    "fields": [
+      {
+        "component": "text",
+        "name": "label",
+        "label": "Link Label",
+        "valueType": "string",
+        "required": true
+      },
+      {
+        "component": "text",
+        "name": "url",
+        "label": "Link URL",
+        "valueType": "string",
+        "required": true
+      }
+    ]
+  },
+  {
     "id": "form",
     "fields": [
       {
