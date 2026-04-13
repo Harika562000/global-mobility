@@ -107,6 +107,7 @@
           "name": "playOnce",
           "label": "Play one time",
           "valueType": "boolean",
+          "key-value": true,
           "value": false
         }
       ]
