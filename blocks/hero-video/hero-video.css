@@ -1,0 +1,109 @@
+/**
+ * Hero Video Block – Block-specific styles
+ * ============================================================
+ * Builds on top of styles/media.css (loaded by media-decorator).
+ * Only hero-video layout concerns live here; generic video wrapper
+ * rules stay in the shared stylesheet.
+ *
+ * Variants:
+ *   .hero-video            → full-bleed autoplay background video
+ *   .hero-video.hero-modal → poster + centred play trigger, modal playback
+ */
+
+/* ============================================================
+   Block container
+   ============================================================ */
+
+.hero-video {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+
+  /* Default aspect ratio on mobile */
+  aspect-ratio: 16 / 9;
+
+  /* Dark surface behind the video while it loads */
+  background-color: var(--color-brand-200, #172443);
+}
+
+/* ============================================================
+   Video wrapper overrides – full-bleed hero
+   ============================================================ */
+
+.hero-video .video-wrapper {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-video .video-wrapper video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ============================================================
+   Hero Modal variant – poster in-flow, play trigger centred
+   ============================================================ */
+
+.hero-video.hero-modal {
+  /* Let the poster image set the intrinsic height */
+  aspect-ratio: unset;
+  height: auto;
+}
+
+.hero-video.hero-modal .video-wrapper--modal {
+  position: relative;
+  width: 100%;
+}
+
+.hero-video.hero-modal .video-wrapper--modal picture {
+  position: static;
+  display: block;
+  width: 100%;
+}
+
+.hero-video.hero-modal .video-wrapper--modal picture img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+/* Increase play trigger size for hero prominence */
+.hero-video.hero-modal .video-play-trigger {
+  width: 5rem;
+  height: 5rem;
+  border-width: 3px;
+}
+
+/* ============================================================
+   Responsive
+   ============================================================ */
+
+/* Tablet: taller aspect ratio to fill more of the viewport */
+@media (width >= 720px) {
+  .hero-video {
+    aspect-ratio: 21 / 9;
+  }
+}
+
+/* Desktop: full viewport height option */
+@media (width >= 1025px) {
+  .hero-video {
+    aspect-ratio: unset;
+    height: 100vh;
+    max-height: 800px;
+  }
+
+  .hero-video.hero-modal {
+    height: auto;
+    max-height: none;
+  }
+
+  .hero-video.hero-modal .video-play-trigger {
+    width: 6rem;
+    height: 6rem;
+  }
+}
