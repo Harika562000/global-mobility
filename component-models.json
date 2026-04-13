@@ -6548,6 +6548,14 @@
       {
         "component": "reference",
         "valueType": "string",
+        "name": "videoSrcReference",
+        "label": "Video Source (Reference)",
+        "description": "Alternative: pick the video asset directly from DAM (used if Video Source link is not set).",
+        "multi": false
+      },
+      {
+        "component": "reference",
+        "valueType": "string",
         "name": "posterImage",
         "label": "Poster Image",
         "description": "Thumbnail shown before the video plays (required for hero-modal variant).",
