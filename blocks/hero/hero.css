@@ -107,7 +107,8 @@ main > div.hero-section {
 }
 
 /* ---- Mute / Unmute button overlay ---- */
-.hero .hero-em-accent-background .hero-video-mute-btn {
+/* Button is appended directly on .hero (above the ::before gradient overlay) */
+.hero .hero-video-mute-btn {
   position: absolute;
   bottom: var(--spacing-600, 24px);
   right: var(--spacing-600, 24px);
@@ -126,15 +127,15 @@ main > div.hero-section {
   backdrop-filter: blur(4px);
 }
 
-.hero .hero-em-accent-background .hero-video-mute-btn:hover,
-.hero .hero-em-accent-background .hero-video-mute-btn:focus-visible {
+.hero .hero-video-mute-btn:hover,
+.hero .hero-video-mute-btn:focus-visible {
   background: rgb(0 0 0 / 75%);
   outline: 2px solid var(--color-white, #fff);
   outline-offset: 2px;
 }
 
 /* Speaker icon via CSS — filled when muted, outlined when unmuted */
-.hero .hero-em-accent-background .hero-video-mute-btn::before {
+.hero .hero-video-mute-btn::before {
   content: '';
   display: block;
   width: 20px;
@@ -153,7 +154,7 @@ main > div.hero-section {
 }
 
 /* Muted: speaker with X */
-.hero .hero-em-accent-background .hero-video-mute-btn.is-muted::before {
+.hero .hero-video-mute-btn.is-muted::before {
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='11 5 6 9 2 9 2 15 6 15 11 19 11 5'/%3E%3Cline x1='23' y1='9' x2='17' y2='15'/%3E%3Cline x1='17' y1='9' x2='23' y2='15'/%3E%3C/svg%3E");
   -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='11 5 6 9 2 9 2 15 6 15 11 19 11 5'/%3E%3Cline x1='23' y1='9' x2='17' y2='15'/%3E%3Cline x1='17' y1='9' x2='23' y2='15'/%3E%3C/svg%3E");
 }

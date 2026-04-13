@@ -55,25 +55,6 @@ function createMuteToggle(video) {
 }
 
 /**
- * Reads a boolean video-control flag from the authored rows.
- * UE renders boolean fields as a row with the field name in col-0 and "true"/"false" in col-1.
- *
- * @param {Element[]} rows       - All block rows
- * @param {string}    fieldName  - Lowercase field name to look for (e.g. "autoplay")
- * @param {boolean}   defaultVal - Value to return when the row is not present
- * @returns {boolean}
- */
-function readBooleanFlag(rows, fieldName, defaultVal) {
-  const row = rows.find((r) => {
-    const label = (r.children[0]?.textContent || '').toLowerCase().replace(/[\s-]/g, '');
-    return label === fieldName.replace(/[\s-]/g, '');
-  });
-  if (!row) return defaultVal;
-  const val = (row.children[1] || row.children[0])?.textContent?.trim().toLowerCase();
-  return val === 'true';
-}
-
-/**
  * Builds a <video> element from the authored flags and src.
  * Used by all three variations.
  *
@@ -94,7 +75,7 @@ function readBooleanFlag(rows, fieldName, defaultVal) {
  * @param {string}  [ariaLabel]
  * @returns {{ video: HTMLVideoElement, muteBtn: HTMLButtonElement|null }}
  */
-function buildVideo(src, flags, ariaLabel = 'Hero video') {
+function buildVideo(src, flags, ariaLabel = 'Hero video', block = null) {
   const {
     autoplay,
     muted,
@@ -134,7 +115,11 @@ function buildVideo(src, flags, ariaLabel = 'Hero video') {
   video.append(source);
 
   if (playOnce) {
-    // Play once when the component enters the viewport (≥25% visible)
+    // Ensure video is paused on load — only plays once when component enters viewport
+    video.pause();
+    // Play once when ≥25% of this specific hero block enters the viewport.
+    // `block` is passed in so we always observe the correct instance even when
+    // multiple hero blocks exist on the same page.
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -146,10 +131,11 @@ function buildVideo(src, flags, ariaLabel = 'Hero video') {
       },
       { threshold: 0.25 },
     );
+    // Stop after first play-through
     video.addEventListener('ended', () => video.pause(), { once: true });
-    // Observe the block section wrapper for a stable viewport target
-    const getTarget = () => video.closest('.section') || video.closest('.hero') || video.parentElement || video;
-    requestAnimationFrame(() => observer.observe(getTarget()));
+    // Use the passed block reference — never rely on video.closest() which
+    // returns null before the video is inserted into the DOM.
+    requestAnimationFrame(() => observer.observe(block || video));
   } else if (effectiveAutoplay) {
     // Programmatic play after DOM insertion — reliable across all browsers
     requestAnimationFrame(() => {
@@ -198,10 +184,11 @@ function appendContent(row, target, fallbackHeading = false) {
 function decorateEmAccent(block, rows, picture, videoLink, rowIndices, videoFlags) {
   const bgDiv = document.createElement('div');
   bgDiv.className = 'hero-em-accent-background';
+  let muteBtn = null;
   if (videoLink) {
-    const { video, muteBtn } = buildVideo(videoLink.href, videoFlags, 'Hero background video');
-    bgDiv.appendChild(video);
-    if (muteBtn) bgDiv.appendChild(muteBtn);
+    const built = buildVideo(videoLink.href, videoFlags, 'Hero background video', block);
+    bgDiv.appendChild(built.video);
+    muteBtn = built.muteBtn;
   } else if (picture) {
     picture.querySelector('img')?.setAttribute('loading', 'eager');
     bgDiv.appendChild(picture);
@@ -219,6 +206,8 @@ function decorateEmAccent(block, rows, picture, videoLink, rowIndices, videoFlag
 
   block.appendChild(bgDiv);
   block.appendChild(contentDiv);
+  // Mute button appended directly on the block (above the gradient ::before overlay)
+  if (muteBtn) block.appendChild(muteBtn);
 }
 
 function decorateTwoColoredRight(block, rows, picture, videoLink, rowIndices, videoFlags) {
@@ -231,7 +220,7 @@ function decorateTwoColoredRight(block, rows, picture, videoLink, rowIndices, vi
   const imageDiv = document.createElement('div');
   imageDiv.className = 'hero-two-colored-right-image';
   if (videoLink) {
-    const { video, muteBtn } = buildVideo(videoLink.href, videoFlags, 'Hero video');
+    const { video, muteBtn } = buildVideo(videoLink.href, videoFlags, 'Hero video', block);
     imageDiv.appendChild(video);
     if (muteBtn) imageDiv.appendChild(muteBtn);
   } else if (picture) {
@@ -285,7 +274,7 @@ function decorateBlackColoredRight(block, rows, picture, videoLink, rowIndices, 
   const imageDiv = document.createElement('div');
   imageDiv.className = 'hero-black-colored-right-image';
   if (videoLink) {
-    const { video, muteBtn } = buildVideo(videoLink.href, videoFlags, 'Hero video');
+    const { video, muteBtn } = buildVideo(videoLink.href, videoFlags, 'Hero video', block);
     imageDiv.appendChild(video);
     if (muteBtn) imageDiv.appendChild(muteBtn);
   } else if (picture) {
@@ -394,9 +383,20 @@ export default function decorate(block) {
     };
 
   // Single authoring flag: "Play one time".
-  // Default behaviour: autoplay, muted, loop continuously.
-  // When playOnce=true: video plays once when it enters the viewport (muted), no loop.
-  const playOnce = readBooleanFlag(rows, 'playonce', false);
+  // UE renders boolean fields as a single-cell <div> containing only "true" or "false"
+  // (no label). The row may appear at any position (depends on variation / empty CTA rows).
+  // Scan all rows, take the first match, read + remove it.
+  let playOnce = false;
+  for (let i = rows.length - 1; i >= 0; i -= 1) {
+    const val = rows[i]?.textContent?.trim().toLowerCase();
+    if (val === 'true' || val === 'false') {
+      playOnce = val === 'true';
+      rows[i].remove();
+      rows.splice(i, 1);
+      break;
+    }
+  }
+
   const videoFlags = {
     autoplay: !playOnce,
     muted: true,
@@ -404,18 +404,6 @@ export default function decorate(block) {
     showControls: false,
     playOnce,
   };
-
-  // Remove any boolean/flag rows from both the DOM and the rows array so they
-  // are never rendered as visible text content by appendContent loops.
-  for (let i = rows.length - 1; i >= 0; i -= 1) {
-    const r = rows[i];
-    const label = (r.children[0]?.textContent || '').toLowerCase().replace(/[\s-]/g, '');
-    const val = (r.children[1] || r.children[0])?.textContent?.trim().toLowerCase();
-    if (label === 'playonce' && (val === 'true' || val === 'false')) {
-      r.remove();
-      rows.splice(i, 1); // remove from array so appendContent loops skip it
-    }
-  }
 
   if (isBlackColoredRight) {
     decorateBlackColoredRight(block, rows, picture, videoLink, rowIndices, videoFlags);

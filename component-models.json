@@ -6587,15 +6587,15 @@
         "valueType": "string",
         "options": [
           {
-            "name": "Image as background",
+            "name": "Media as background",
             "value": ""
           },
           {
-            "name": "Image on the right (two-colored)",
+            "name": "Media on the right (two-colored)",
             "value": "hero-two-colored-right"
           },
           {
-            "name": "Image on the right (black-colored)",
+            "name": "Media on the right (black-colored)",
             "value": "hero-black-colored-right"
           }
         ]
