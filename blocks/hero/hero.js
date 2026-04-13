@@ -28,23 +28,74 @@ function getVideoLink(row) {
 }
 
 /**
- * Creates a full-bleed background video for the default (em-accent) variation.
- * Delegates to the shared createVideoElement() so publish-host rewriting,
- * MIME-type detection, and edit-mode guards all apply consistently.
+ * Creates a mute/unmute toggle button for the hero video overlay.
  *
- * @param {string} src - Raw href from the <a> element
- * @returns {HTMLVideoElement}
+ * @param {HTMLVideoElement} video
+ * @returns {HTMLButtonElement}
  */
-function createBackgroundVideo(src) {
-  return createVideoElement(resolveVideoSrc(src), {
-    autoplay: true,
+function createMuteToggle(video) {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.classList.add('hero-video-mute-btn');
+
+  const update = () => {
+    const muted = video.muted || video.volume === 0;
+    btn.setAttribute('aria-label', muted ? 'Unmute video' : 'Mute video');
+    btn.setAttribute('aria-pressed', String(muted));
+    btn.classList.toggle('is-muted', muted);
+  };
+
+  btn.addEventListener('click', () => {
+    video.muted = !video.muted;
+    update();
+  });
+  video.addEventListener('volumechange', update);
+  update();
+  return btn;
+}
+
+/**
+ * Creates a full-bleed background video for the default (em-accent) variation.
+ * - Default: autoplay, muted, loop continuously.
+ * - playOnce: autoplay muted on viewport entry, plays once (no loop), then pauses.
+ * - User-facing mute/unmute button is always added.
+ *
+ * @param {string}  src      - Raw href from the <a> element
+ * @param {boolean} playOnce - When true, plays once on viewport entry instead of looping
+ * @returns {{ video: HTMLVideoElement, muteBtn: HTMLButtonElement }}
+ */
+function createBackgroundVideo(src, playOnce = false) {
+  const video = createVideoElement(resolveVideoSrc(src), {
+    autoplay: !playOnce, // loop mode: autoplay immediately; playOnce: IO triggers play
     muted: true,
-    loop: true,
+    loop: !playOnce,
     preload: 'auto',
     controls: false,
     ariaLabel: 'Hero background video',
     objectFit: 'cover',
   });
+
+  if (playOnce) {
+    // Play once when the hero enters the viewport
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            video.play().catch(() => {});
+            observer.disconnect();
+          }
+        });
+      },
+      { threshold: 0.25 },
+    );
+    // Observe the video element itself (it will be inside .hero-em-accent-background)
+    video.addEventListener('ended', () => video.pause(), { once: true });
+    // Attach observer after the element is in the DOM
+    requestAnimationFrame(() => observer.observe(video.closest('.hero-em-accent-background') || video));
+  }
+
+  const muteBtn = createMuteToggle(video);
+  return { video, muteBtn };
 }
 
 /**
@@ -99,13 +150,15 @@ function appendContent(row, target, fallbackHeading = false) {
   }
 }
 
-function decorateEmAccent(block, rows, picture, videoLink, rowIndices) {
+function decorateEmAccent(block, rows, picture, videoLink, rowIndices, playOnce) {
   const bgDiv = document.createElement('div');
   bgDiv.className = 'hero-em-accent-background';
   if (videoLink) {
     // Video asset selected — render as full-bleed autoplay background video
-    const video = createBackgroundVideo(videoLink.href);
+    const { video, muteBtn } = createBackgroundVideo(videoLink.href, playOnce);
     bgDiv.appendChild(video);
+    // Mute button sits above the gradient overlay (z-index via CSS)
+    bgDiv.appendChild(muteBtn);
   } else if (picture) {
     picture.querySelector('img')?.setAttribute('loading', 'eager');
     bgDiv.appendChild(picture);
@@ -307,12 +360,22 @@ export default function decorate(block) {
       firstButtonRow,
     };
 
+  // Detect "play once" authoring option — EDS renders boolean fields as text "true"/"false"
+  // or as a data attribute depending on the UE version.
+  const playOnceRow = rows.find((r) => {
+    const label = (r.children[0]?.textContent || '').toLowerCase().replace(/\s/g, '');
+    return label === 'playonce' || label === 'play-once' || label === 'playvideoonce';
+  });
+  const playOnceValue = playOnceRow
+    ? getValueCell(playOnceRow)?.textContent?.trim().toLowerCase() === 'true'
+    : block.dataset.playonce === 'true' || block.dataset.playOnce === 'true';
+
   if (isBlackColoredRight) {
     decorateBlackColoredRight(block, rows, picture, videoLink, rowIndices);
   } else if (isTwoColoredRight) {
     decorateTwoColoredRight(block, rows, picture, videoLink, rowIndices);
   } else {
-    decorateEmAccent(block, rows, picture, videoLink, rowIndices);
+    decorateEmAccent(block, rows, picture, videoLink, rowIndices, playOnceValue);
   }
 
   rows.forEach((r) => r.remove());

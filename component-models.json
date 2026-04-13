@@ -6604,7 +6604,8 @@
         "component": "reference",
         "valueType": "string",
         "name": "image",
-        "label": "Image",
+        "label": "Image / Video",
+        "description": "Pick an image or a video asset from DAM. When a video is selected the fields below control playback.",
         "multi": false,
         "required": true
       },
@@ -6614,6 +6615,21 @@
         "name": "imageAlt",
         "label": "Image Alt Text",
         "value": ""
+      },
+      {
+        "component": "boolean",
+        "name": "playOnce",
+        "label": "Play video once",
+        "description": "When enabled the video plays once when it enters the viewport, then stops. Default: loop continuously.",
+        "valueType": "boolean",
+        "value": false,
+        "condition": {
+          "!!": [
+            {
+              "var": "image"
+            }
+          ]
+        }
       },
       {
         "component": "text",
