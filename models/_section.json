@@ -40,7 +40,7 @@
           "page": {
             "resourceType": "core/franklin/components/section/v1/section",
             "template": {
-              "name": "footer section",
+              "name": "Footer Section",
               "model": "footer-section",
               "filter": "footer-section"
             }

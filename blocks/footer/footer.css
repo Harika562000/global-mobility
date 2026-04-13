@@ -97,6 +97,28 @@ footer .footer-utility li > a {
   color: var(--typography-inverse);
 }
 
+/* Footer Logo */
+
+footer .footer-section .footer-logo {
+  display: inline-flex;
+  margin-bottom: var(--spacing-1200);
+}
+
+@media (width >= 720px) {
+  footer .footer-section .footer-logo {
+    margin-bottom: var(--size-72);
+  }
+}
+
+footer .footer-section .footer-logo a {
+  display: inline-flex;
+}
+
+footer .footer-section .footer-logo img {
+  width: var(--size-144);
+  height: auto;
+}
+
 footer .copyright-symbol {
   color: var(--color-grey-600);
   font-weight: var(--font-weight-bold);
