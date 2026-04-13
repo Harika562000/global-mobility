@@ -98,6 +98,7 @@ function createAutoplayVideo(source) {
 }
 
 const loadVideoEmbed = (block, link, autoplay, background) => {
+  if (!link) return;
   if (block.dataset.embedLoaded === 'true') {
     return;
   }
