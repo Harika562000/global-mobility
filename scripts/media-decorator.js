@@ -30,6 +30,53 @@ const MIME_MAP = {
   ogg: 'video/ogg',
 };
 
+/**
+ * Known AEM publish hostname for this project (derived from fstab.yaml).
+ * /content/dam/ assets must be served from publish, not from author or EDS.
+ */
+const AEM_PUBLISH_HOST = 'publish-p99952-e1559416.adobeaemcloud.com';
+
+/**
+ * Resolves a video asset href to a publicly accessible absolute URL.
+ *
+ * On EDS preview/live pages the browser resolves "/content/dam/..." hrefs
+ * against the EDS origin (e.g. *.aem.page), which returns 404 because EDS
+ * does not serve DAM assets.  Any URL whose pathname starts with /content/dam/
+ * must be rewritten to the AEM publish host so the video can actually load.
+ *
+ * Handles three cases:
+ *   1. Already on publish-* host  → return unchanged
+ *   2. On author-* host           → flip author- prefix to publish-
+ *   3. On any other host (EDS)    → replace host with AEM_PUBLISH_HOST
+ *
+ * @param {string} href  Fully resolved href from an <a> element
+ * @returns {string}     Publicly accessible video URL
+ */
+function resolveVideoSrc(href) {
+  if (!href) return href;
+  try {
+    const url = new URL(href);
+    if (url.pathname.startsWith('/content/dam/')) {
+      if (url.hostname.startsWith('publish-')) {
+        // Already on publish — nothing to do
+        return href;
+      }
+      if (url.hostname.startsWith('author-')) {
+        // Flip author- → publish- (same program/env IDs)
+        url.hostname = url.hostname.replace(/^author-/, 'publish-');
+      } else {
+        // EDS domain or localhost — rewrite to known publish host
+        url.hostname = AEM_PUBLISH_HOST;
+        url.port = '';
+      }
+      return url.toString();
+    }
+  } catch (e) {
+    // Not a parseable URL — return as-is
+  }
+  return href;
+}
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -261,7 +308,7 @@ export async function decorateMedia(container, variant = 'default', overrides = 
   if (!videoLinks.length) return;
 
   videoLinks.forEach((link) => {
-    const videoSrc = link.href;
+    const videoSrc = resolveVideoSrc(link.href);
 
     // Find a poster picture/img within the same cell or block
     const posterSelector = opts.posterSelector || 'picture';
