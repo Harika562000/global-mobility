@@ -309,47 +309,35 @@ export default function decorate(block) {
   const isTwoColoredRight = block.classList.contains('hero-two-colored-right');
 
   const lastDataRow = rows.length - 1;
-  // rows[0] is the media (image/video) row when it contains a <picture> OR a video <a>.
-  // If it contains neither, it's the variation/classes text row.
-  const firstRowHasMedia = !!(
-    rows[0]?.querySelector('picture')
-    || [...(rows[0]?.querySelectorAll('a[href]') || [])].find((a) => isVideoLink(a.href))
-  );
-  const hasVariationRow = !firstRowHasMedia;
-  const idx = hasVariationRow ? 1 : 0;
+
+  // Find the media row — the first row that contains a <picture> or a video <a href>.
+  // Boolean/text control fields (autoplay, muted, loop, etc.) appear before the image
+  // field in the UE panel and produce plain-text rows with no media content.
+  const mediaIdx = rows.findIndex((r) => (
+    r.querySelector('picture')
+    || [...r.querySelectorAll('a[href]')].find((a) => isVideoLink(a.href))
+  ));
+  const idx = mediaIdx >= 0 ? mediaIdx : 0;
 
   // Detect whether the reference field resolved to a video or an image.
-  // A video produces an <a href="...mp4|/play"> link; an image produces <picture>.
-  const mediaRow = isBlackColoredRight ? rows[0] : rows[idx];
+  const mediaRow = rows[idx];
   const videoLink = getVideoLink(mediaRow);
 
   let picture = null;
   if (!videoLink) {
-    // Image asset — extract the <picture> from the appropriate row
-    picture = isBlackColoredRight
-      ? rows[0]?.querySelector('picture')
-      : rows[idx]?.querySelector('picture');
+    picture = mediaRow?.querySelector('picture') || null;
   }
 
-  if (isBlackColoredRight) {
-    const pictureRow = rows[0];
-    if (picture && pictureRow) {
-      const altCell = getValueCell(pictureRow);
-      const alt = altCell?.textContent?.trim();
-      if (alt) {
-        const img = picture.querySelector('img');
-        if (img) img.setAttribute('alt', alt);
-      }
-    }
-  } else {
-    const altText = getValueCell(rows[idx + 1])?.textContent?.trim();
-    if (picture && altText) {
-      const img = picture.querySelector('img');
-      if (img) img.setAttribute('alt', altText);
-    }
+  // Apply alt text from the row immediately following the media row
+  const altText = getValueCell(rows[idx + 1])?.textContent?.trim();
+  if (picture && altText) {
+    const img = picture.querySelector('img');
+    if (img) img.setAttribute('alt', altText);
   }
 
-  const firstButtonRow = isBlackColoredRight ? 4 : idx + 4;
+  // firstButtonRow: scan forward from mediaIdx + 2 (skip media + alt rows)
+  // For black-colored-right the heading is at idx+2 and description at idx+3
+  const firstButtonRow = idx + 4;
   const findRowByLabel = (dataRows, fromIdx, toIdx, labelPart) => {
     const lower = (labelPart || '').toLowerCase();
     for (let i = fromIdx; i <= toIdx; i += 1) {
