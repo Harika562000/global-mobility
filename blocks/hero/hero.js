@@ -393,15 +393,16 @@ export default function decorate(block) {
       firstButtonRow,
     };
 
-  // Read video control flags from authored rows.
-  // Defaults: autoplay=true, muted=true, loop=true, showControls=false, playOnce=false
-  // playOnce overrides autoplay + loop.
+  // Single authoring flag: "Play one time".
+  // Default behaviour: autoplay, muted, loop continuously.
+  // When playOnce=true: video plays once when it enters the viewport (muted), no loop.
+  const playOnce = readBooleanFlag(rows, 'playonce', false);
   const videoFlags = {
-    autoplay: readBooleanFlag(rows, 'autoplay', true),
-    muted: readBooleanFlag(rows, 'muted', true),
-    loop: readBooleanFlag(rows, 'loop', true),
-    showControls: readBooleanFlag(rows, 'showcontrols', false),
-    playOnce: readBooleanFlag(rows, 'playonce', false),
+    autoplay: !playOnce,
+    muted: true,
+    loop: !playOnce,
+    showControls: false,
+    playOnce,
   };
 
   if (isBlackColoredRight) {
