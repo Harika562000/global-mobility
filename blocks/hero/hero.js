@@ -1,5 +1,5 @@
 import { eyebrowDecorator, decorateTags } from '../../scripts/scripts.js';
-import { isVideoLink, resolveVideoSrc, createVideoElement } from '../../scripts/media-decorator.js';
+import { isVideoLink, resolveVideoSrc } from '../../scripts/media-decorator.js';
 
 /**
  * Hero block: three variations (UE authoring reference).
@@ -55,33 +55,77 @@ function createMuteToggle(video) {
 }
 
 /**
- * Creates a full-bleed background video for the default (em-accent) variation.
- * - Default: autoplay, muted, loop continuously.
- * - playOnce: autoplay muted on viewport entry, plays once (no loop), then pauses.
- * - User-facing mute/unmute button is always added.
+ * Reads a boolean video-control flag from the authored rows.
+ * UE renders boolean fields as a row with the field name in col-0 and "true"/"false" in col-1.
  *
- * @param {string}  src      - Raw href from the <a> element
- * @param {boolean} playOnce - When true, plays once on viewport entry instead of looping
- * @returns {{ video: HTMLVideoElement, muteBtn: HTMLButtonElement }}
+ * @param {Element[]} rows       - All block rows
+ * @param {string}    fieldName  - Lowercase field name to look for (e.g. "autoplay")
+ * @param {boolean}   defaultVal - Value to return when the row is not present
+ * @returns {boolean}
  */
-function createBackgroundVideo(src, playOnce = false) {
-  // Build the video element — always muted + playsinline so browsers allow autoplay
+function readBooleanFlag(rows, fieldName, defaultVal) {
+  const row = rows.find((r) => {
+    const label = (r.children[0]?.textContent || '').toLowerCase().replace(/[\s-]/g, '');
+    return label === fieldName.replace(/[\s-]/g, '');
+  });
+  if (!row) return defaultVal;
+  const val = (row.children[1] || row.children[0])?.textContent?.trim().toLowerCase();
+  return val === 'true';
+}
+
+/**
+ * Builds a <video> element from the authored flags and src.
+ * Used by all three variations.
+ *
+ * Rules:
+ * - playOnce overrides autoplay + loop (plays once on viewport entry, then stops)
+ * - autoplay + muted are required by browser autoplay policy
+ * - showControls adds native browser controls
+ * - When autoplay is on, a mute/unmute overlay button is also added so the end
+ *   user can unmute
+ *
+ * @param {string}  src
+ * @param {Object}  flags
+ * @param {boolean} flags.autoplay
+ * @param {boolean} flags.muted
+ * @param {boolean} flags.loop
+ * @param {boolean} flags.showControls
+ * @param {boolean} flags.playOnce
+ * @param {string}  [ariaLabel]
+ * @returns {{ video: HTMLVideoElement, muteBtn: HTMLButtonElement|null }}
+ */
+function buildVideo(src, flags, ariaLabel = 'Hero video') {
+  const {
+    autoplay,
+    muted,
+    loop,
+    showControls,
+    playOnce,
+  } = flags;
+
+  // playOnce overrides autoplay/loop
+  const effectiveAutoplay = playOnce ? false : autoplay;
+  const effectiveLoop = playOnce ? false : loop;
+  // Browsers require muted for autoplay — force it when autoplay or playOnce is on
+  const effectiveMuted = (effectiveAutoplay || playOnce) ? true : muted;
+
   const video = document.createElement('video');
-  video.setAttribute('muted', '');
-  video.muted = true; // property must also be set for cross-browser consistency
+  video.setAttribute('aria-label', ariaLabel);
+  video.setAttribute('preload', effectiveAutoplay || playOnce ? 'auto' : 'metadata');
   video.setAttribute('playsinline', ''); // required for autoplay on iOS/mobile
-  video.setAttribute('preload', 'auto');
-  video.setAttribute('aria-label', 'Hero background video');
   video.style.setProperty('--video-object-fit', 'cover');
 
-  if (!playOnce) {
-    video.setAttribute('loop', '');
-    video.setAttribute('autoplay', '');
+  // Always set both attribute and property for muted (browser quirk)
+  if (effectiveMuted) {
+    video.setAttribute('muted', '');
+    video.muted = true;
   }
+  if (effectiveLoop) video.setAttribute('loop', '');
+  if (showControls) video.setAttribute('controls', '');
+  if (effectiveAutoplay) video.setAttribute('autoplay', '');
 
   const source = document.createElement('source');
   source.setAttribute('src', resolveVideoSrc(src));
-  // Derive MIME type from extension; default to video/mp4
   const ext = src.split('?')[0].split('.').pop().toLowerCase();
   const mimeMap = {
     mp4: 'video/mp4', mov: 'video/mp4', webm: 'video/webm', ogg: 'video/ogg',
@@ -90,7 +134,7 @@ function createBackgroundVideo(src, playOnce = false) {
   video.append(source);
 
   if (playOnce) {
-    // Play once on viewport entry (≥25% visible), then stop
+    // Play once when the component enters the viewport (≥25% visible)
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -103,39 +147,19 @@ function createBackgroundVideo(src, playOnce = false) {
       { threshold: 0.25 },
     );
     video.addEventListener('ended', () => video.pause(), { once: true });
-    // Observe after insertion into DOM
-    requestAnimationFrame(() => observer.observe(video.closest('.hero-em-accent-background') || video));
-  } else {
-    // Loop mode — programmatically trigger play after DOM insertion to work around
-    // browsers that ignore the autoplay attribute when the video is added dynamically
     requestAnimationFrame(() => {
-      video.play().catch(() => {
-        // Autoplay blocked (e.g. strict browser policy) — video stays paused silently
-      });
+      observer.observe(video.parentElement || video);
+    });
+  } else if (effectiveAutoplay) {
+    // Programmatic play after DOM insertion — reliable across all browsers
+    requestAnimationFrame(() => {
+      video.play().catch(() => {});
     });
   }
 
-  const muteBtn = createMuteToggle(video);
+  // Mute/unmute button when video starts muted (autoplay or playOnce)
+  const muteBtn = effectiveMuted ? createMuteToggle(video) : null;
   return { video, muteBtn };
-}
-
-/**
- * Creates a side/inline video for two-colored and black-colored variations.
- * Shows native controls; no autoplay.
- *
- * @param {string} src - Raw href from the <a> element
- * @returns {HTMLVideoElement}
- */
-function createInlineVideo(src) {
-  return createVideoElement(resolveVideoSrc(src), {
-    autoplay: false,
-    muted: false,
-    loop: false,
-    preload: 'metadata',
-    controls: true,
-    ariaLabel: 'Hero video',
-    objectFit: 'cover',
-  });
 }
 
 /** Get the value cell (content) from a row; UE often uses row = [label, value]. */
@@ -171,15 +195,13 @@ function appendContent(row, target, fallbackHeading = false) {
   }
 }
 
-function decorateEmAccent(block, rows, picture, videoLink, rowIndices, playOnce) {
+function decorateEmAccent(block, rows, picture, videoLink, rowIndices, videoFlags) {
   const bgDiv = document.createElement('div');
   bgDiv.className = 'hero-em-accent-background';
   if (videoLink) {
-    // Video asset selected — render as full-bleed autoplay background video
-    const { video, muteBtn } = createBackgroundVideo(videoLink.href, playOnce);
+    const { video, muteBtn } = buildVideo(videoLink.href, videoFlags, 'Hero background video');
     bgDiv.appendChild(video);
-    // Mute button sits above the gradient overlay (z-index via CSS)
-    bgDiv.appendChild(muteBtn);
+    if (muteBtn) bgDiv.appendChild(muteBtn);
   } else if (picture) {
     picture.querySelector('img')?.setAttribute('loading', 'eager');
     bgDiv.appendChild(picture);
@@ -199,7 +221,7 @@ function decorateEmAccent(block, rows, picture, videoLink, rowIndices, playOnce)
   block.appendChild(contentDiv);
 }
 
-function decorateTwoColoredRight(block, rows, picture, videoLink, rowIndices) {
+function decorateTwoColoredRight(block, rows, picture, videoLink, rowIndices, videoFlags) {
   const contentDiv = document.createElement('div');
   contentDiv.className = 'hero-two-colored-right-content';
 
@@ -209,8 +231,9 @@ function decorateTwoColoredRight(block, rows, picture, videoLink, rowIndices) {
   const imageDiv = document.createElement('div');
   imageDiv.className = 'hero-two-colored-right-image';
   if (videoLink) {
-    // Video asset selected — render as side inline video
-    imageDiv.appendChild(createInlineVideo(videoLink.href));
+    const { video, muteBtn } = buildVideo(videoLink.href, videoFlags, 'Hero video');
+    imageDiv.appendChild(video);
+    if (muteBtn) imageDiv.appendChild(muteBtn);
   } else if (picture) {
     imageDiv.appendChild(picture);
   }
@@ -219,7 +242,7 @@ function decorateTwoColoredRight(block, rows, picture, videoLink, rowIndices) {
   block.appendChild(imageDiv);
 }
 
-function decorateBlackColoredRight(block, rows, picture, videoLink, rowIndices) {
+function decorateBlackColoredRight(block, rows, picture, videoLink, rowIndices, videoFlags) {
   const contentDiv = document.createElement('div');
   contentDiv.className = 'hero-black-colored-right-content';
 
@@ -262,8 +285,9 @@ function decorateBlackColoredRight(block, rows, picture, videoLink, rowIndices) 
   const imageDiv = document.createElement('div');
   imageDiv.className = 'hero-black-colored-right-image';
   if (videoLink) {
-    // Video asset selected — render as side inline video
-    imageDiv.appendChild(createInlineVideo(videoLink.href));
+    const { video, muteBtn } = buildVideo(videoLink.href, videoFlags, 'Hero video');
+    imageDiv.appendChild(video);
+    if (muteBtn) imageDiv.appendChild(muteBtn);
   } else if (picture) {
     imageDiv.appendChild(picture);
   }
@@ -381,22 +405,23 @@ export default function decorate(block) {
       firstButtonRow,
     };
 
-  // Detect "play once" authoring option — EDS renders boolean fields as text "true"/"false"
-  // or as a data attribute depending on the UE version.
-  const playOnceRow = rows.find((r) => {
-    const label = (r.children[0]?.textContent || '').toLowerCase().replace(/\s/g, '');
-    return label === 'playonce' || label === 'play-once' || label === 'playvideoonce';
-  });
-  const playOnceValue = playOnceRow
-    ? getValueCell(playOnceRow)?.textContent?.trim().toLowerCase() === 'true'
-    : block.dataset.playonce === 'true' || block.dataset.playOnce === 'true';
+  // Read video control flags from authored rows.
+  // Defaults: autoplay=true, muted=true, loop=true, showControls=false, playOnce=false
+  // playOnce overrides autoplay + loop.
+  const videoFlags = {
+    autoplay: readBooleanFlag(rows, 'autoplay', true),
+    muted: readBooleanFlag(rows, 'muted', true),
+    loop: readBooleanFlag(rows, 'loop', true),
+    showControls: readBooleanFlag(rows, 'showcontrols', false),
+    playOnce: readBooleanFlag(rows, 'playonce', false),
+  };
 
   if (isBlackColoredRight) {
-    decorateBlackColoredRight(block, rows, picture, videoLink, rowIndices);
+    decorateBlackColoredRight(block, rows, picture, videoLink, rowIndices, videoFlags);
   } else if (isTwoColoredRight) {
-    decorateTwoColoredRight(block, rows, picture, videoLink, rowIndices);
+    decorateTwoColoredRight(block, rows, picture, videoLink, rowIndices, videoFlags);
   } else {
-    decorateEmAccent(block, rows, picture, videoLink, rowIndices, playOnceValue);
+    decorateEmAccent(block, rows, picture, videoLink, rowIndices, videoFlags);
   }
 
   rows.forEach((r) => r.remove());

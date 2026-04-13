@@ -6587,15 +6587,15 @@
         "valueType": "string",
         "options": [
           {
-            "name": "Image as background",
+            "name": "Media as background",
             "value": ""
           },
           {
-            "name": "Image on the right (two-colored)",
+            "name": "Media on the right (two-colored)",
             "value": "hero-two-colored-right"
           },
           {
-            "name": "Image on the right (black-colored)",
+            "name": "Media on the right (black-colored)",
             "value": "hero-black-colored-right"
           }
         ]
@@ -6605,7 +6605,7 @@
         "valueType": "string",
         "name": "image",
         "label": "Image / Video",
-        "description": "Pick an image or a video asset from DAM. When a video is selected the fields below control playback.",
+        "description": "Pick an image or a video asset from DAM. When a video is selected, the options below control playback behaviour.",
         "multi": false,
         "required": true
       },
@@ -6618,18 +6618,43 @@
       },
       {
         "component": "boolean",
-        "name": "playOnce",
-        "label": "Play video once",
-        "description": "When enabled the video plays once when it enters the viewport, then stops. Default: loop continuously.",
+        "name": "autoplay",
+        "label": "Autoplay",
+        "description": "Video starts playing automatically (muted). Cannot be used together with 'Play video once'.",
         "valueType": "boolean",
-        "value": false,
-        "condition": {
-          "!!": [
-            {
-              "var": "image"
-            }
-          ]
-        }
+        "value": true
+      },
+      {
+        "component": "boolean",
+        "name": "muted",
+        "label": "Muted",
+        "description": "Video starts muted. End user can unmute using the mute button.",
+        "valueType": "boolean",
+        "value": true
+      },
+      {
+        "component": "boolean",
+        "name": "loop",
+        "label": "Loop",
+        "description": "Video loops continuously. Disable to play through once (with autoplay) or use 'Play video once' for viewport-triggered single play.",
+        "valueType": "boolean",
+        "value": true
+      },
+      {
+        "component": "boolean",
+        "name": "showControls",
+        "label": "Show Controls",
+        "description": "Show native browser video controls (play/pause, seek, volume, fullscreen).",
+        "valueType": "boolean",
+        "value": false
+      },
+      {
+        "component": "boolean",
+        "name": "playOnce",
+        "label": "Play video once (viewport triggered)",
+        "description": "Video plays automatically once when the component enters the viewport, then stops. Overrides Autoplay and Loop settings.",
+        "valueType": "boolean",
+        "value": false
       },
       {
         "component": "text",
