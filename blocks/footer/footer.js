@@ -99,6 +99,29 @@ function decorateFooterLogo(block) {
 }
 
 /**
+ * Decorates the footer-tag-line block: extracts the richtext content from inside
+ * the block's cell and places it in a footer-tag-line-wrapper div, replacing the
+ * anonymous decorateSections wrapper.
+ */
+function decorateFooterTagLine(block) {
+  const cell = block.querySelector(':scope > div > div');
+  if (!cell) return;
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'footer-tag-line-wrapper';
+  while (cell.firstChild) {
+    wrapper.append(cell.firstChild);
+  }
+
+  const anonymousDiv = block.parentElement;
+  if (anonymousDiv && !anonymousDiv.className) {
+    anonymousDiv.replaceWith(wrapper);
+  } else {
+    block.replaceWith(wrapper);
+  }
+}
+
+/**
  * Decorates a footer-links block: row 0 = optional column heading, row 1+ = footer-link items.
  * Each link item: cell[0]=url anchor, cell[1]=display text.
  * External links get an arrow-up-right icon inside the <u> wrapper.
@@ -195,6 +218,10 @@ export default async function decorate(block) {
       logoWrapper.replaceWith(footerLogoBlock);
     }
   }
+
+  // Decorate footer-tag-line block inside footer-section
+  const footerTagLineBlock = footerSection?.querySelector(':scope > div > .footer-tag-line');
+  if (footerTagLineBlock) decorateFooterTagLine(footerTagLineBlock);
 
   // Collect, decorate, and wrap footer-links blocks inside footer-section.
   // decorateSections() wraps each block in an anonymous <div>, so blocks are
