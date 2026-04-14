@@ -1,4 +1,4 @@
-import { getMetadata } from '../../scripts/aem.js';
+import { getMetadata, decorateIcons } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
 
 /** Footer section class names, in display order (brand, nav, tagline, social, utility, section). */
@@ -99,6 +99,67 @@ function decorateFooterLogo(block) {
 }
 
 /**
+ * Decorates a footer-links block: row 0 = optional column heading, row 1+ = footer-link items.
+ * Each link item: cell[0]=url anchor, cell[1]=display text.
+ * External links get an arrow-up-right icon inside the <u> wrapper.
+ */
+function decorateFooterLinks(block) {
+  const rows = Array.from(block.children);
+  if (!rows.length) return;
+
+  const headingText = rows[0]?.textContent?.trim();
+  const ul = document.createElement('ul');
+
+  rows.slice(1).forEach((row) => {
+    const cells = Array.from(row.children);
+    const anchor = cells[0]?.querySelector('a');
+    if (!anchor) return;
+
+    const customText = cells[1]?.textContent?.trim();
+    const linkText = customText || anchor.textContent.trim();
+    const rawHref = anchor.getAttribute('href') || '';
+    const href = normalizeHref(rawHref);
+
+    let isExternal = false;
+    try {
+      isExternal = !!href
+        && /^(https?:\/\/|\/\/)/.test(href)
+        && !new URL(href, window.location).hostname.includes(window.location.hostname);
+    } catch { /* malformed href — treat as internal */ }
+
+    const u = document.createElement('u');
+    u.textContent = linkText;
+    if (isExternal) {
+      const iconSpan = document.createElement('span');
+      iconSpan.className = 'icon icon-arrow-up-right';
+      u.append(iconSpan);
+    }
+
+    anchor.classList.remove('button', 'primary', 'secondary', 'inverted');
+    anchor.textContent = '';
+    anchor.append(u);
+    if (href && href !== rawHref) anchor.setAttribute('href', href);
+    if (isExternal) {
+      anchor.setAttribute('target', '_blank');
+      anchor.setAttribute('rel', 'noopener noreferrer');
+    }
+
+    const li = document.createElement('li');
+    li.append(anchor);
+    ul.append(li);
+  });
+
+  block.innerHTML = '';
+  if (headingText) {
+    const heading = document.createElement('p');
+    heading.className = 'footer-links-heading';
+    heading.textContent = headingText;
+    block.append(heading);
+  }
+  if (ul.children.length) block.append(ul);
+}
+
+/**
  * Loads footer fragment from footer page; first 6 sections get
  * footer-brand, footer-nav, footer-tagline, footer-social, footer-utility, footer-section.
  */
@@ -122,9 +183,40 @@ export default async function decorate(block) {
     }
   });
 
+  const footerSection = footer.querySelector('.footer-section');
+
   // Decorate footer-logo block inside footer-section
   const footerLogoBlock = footer.querySelector('.footer-section .footer-logo');
-  if (footerLogoBlock) decorateFooterLogo(footerLogoBlock);
+  if (footerLogoBlock) {
+    decorateFooterLogo(footerLogoBlock);
+    // Unwrap the anonymous div added by decorateSections
+    const logoWrapper = footerLogoBlock.parentElement;
+    if (logoWrapper && logoWrapper !== footerSection && !logoWrapper.className) {
+      logoWrapper.replaceWith(footerLogoBlock);
+    }
+  }
+
+  // Collect, decorate, and wrap footer-links blocks inside footer-section.
+  // decorateSections() wraps each block in an anonymous <div>, so blocks are
+  // at depth 2 (.footer-section > div > .footer-links), not depth 1.
+  const footerLinksBlocks = footerSection
+    ? Array.from(footerSection.querySelectorAll(':scope > div > .footer-links'))
+    : [];
+  if (footerLinksBlocks.length) {
+    const linksWrapper = document.createElement('div');
+    linksWrapper.className = 'footer-links-wrapper columns';
+    const linksRow = document.createElement('div');
+    const firstWrapper = footerLinksBlocks[0].parentElement;
+    footerSection.insertBefore(linksWrapper, firstWrapper);
+    footerLinksBlocks.forEach((linksBlock) => {
+      const wrapperDiv = linksBlock.parentElement;
+      decorateFooterLinks(linksBlock);
+      linksRow.append(linksBlock);
+      wrapperDiv.remove();
+    });
+    linksWrapper.append(linksRow);
+    decorateIcons(linksWrapper);
+  }
 
   // Wrap footer-social content in .footer-social-content
   const socialSection = footer.querySelector('.footer-social');
