@@ -3,23 +3,40 @@
    ============================================================================= */
 
 /* -----------------------------------------------------------------------------
-   Block container
-   Block has no background of its own — background comes from the section
-   (e.g. bg-dark, bg-quiet-light, etc.). Text colours adapt accordingly.
+   Block container — background driven by component-level class (bg-light / bg-dark)
    ----------------------------------------------------------------------------- */
 
 .brand-shape-card-grid {
-  --bscg-card-bg: var(--surface-section-backgrounds-quiet-light, #efefe5);
   --bscg-card-radius: var(--radius-sm, 12px);
   --bscg-card-gap: 16px;
-  /* Header colours inherit from section (inverted on dark sections) */
-  --bscg-header-color: currentcolor;
+  --bscg-header-color: var(--typography-main, #132445);
   --bscg-card-title-color: var(--typography-main, #132445);
   --bscg-card-cta-color: var(--typography-main, #132445);
   --bscg-arrow-color: var(--typography-accent-1, #1c76d3);
 
   padding: 36px 20px;
   box-sizing: border-box;
+  border-radius: var(--radius-sm, 12px);
+}
+
+/* Light background variant */
+.brand-shape-card-grid.bg-light {
+  background-color: var(--surface-white, #fff);
+  --bscg-header-color: var(--typography-main, #132445);
+  --bscg-card-title-color: var(--typography-main, #132445);
+  --bscg-card-cta-color: var(--typography-main, #132445);
+}
+
+/* Dark background variant */
+.brand-shape-card-grid.bg-dark {
+  background-color: var(--surface-dark, #172443);
+  --bscg-header-color: var(--typography-inverse, #fff);
+  --bscg-card-title-color: var(--typography-inverse, #fff);
+  --bscg-card-cta-color: var(--typography-inverse, #fff);
+}
+
+.brand-shape-card-grid.bg-dark .bscg-title {
+  color: var(--typography-inverse, #fff);
 }
 
 @media (width >= 720px) {
@@ -184,13 +201,12 @@
 /* Fixed card width inside the slider strip at mobile */
 .brand-shape-card-grid.slider .carousel-track-inner > .bscg-card {
   flex: 0 0 calc(100% - 40px);
-  min-width: calc(100% - 40px);
+  min-width: 280px;
 }
 
 @media (width >= 510px) {
   .brand-shape-card-grid.slider .carousel-track-inner > .bscg-card {
     flex: 0 0 calc(50% - 8px);
-    min-width: calc(50% - 8px);
   }
 }
 
@@ -215,7 +231,7 @@
 .brand-shape-card-grid.slider .carousel-dots {
   display: flex;
   padding: 20px 0 0;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 @media (width >= 1025px) {
@@ -307,16 +323,44 @@ a.bscg-card:hover .bscg-card-image img {
   /* Default (< 1440px): shaped body with large top-left radius */
   border-top-left-radius: 50px;
   padding: 44px 20px 20px;
-  background: #efefe5;
+  background: var(--color-quiet-light, #efefe5);
   height: 316px;
   box-sizing: border-box;
+}
+
+/* Card body — light background */
+.brand-shape-card-grid .bscg-card-body.card-bg-light {
+  background: var(--color-quiet-light, #efefe5);
+  --bscg-card-title-color: var(--typography-main, #132445);
+  --bscg-card-cta-color: var(--typography-main, #132445);
+}
+
+.brand-shape-card-grid .bscg-card-body.card-bg-light .bscg-card-title,
+.brand-shape-card-grid .bscg-card-body.card-bg-light .bscg-card-cta-label {
+  color: var(--typography-main, #132445);
+}
+
+/* Card body — dark background */
+.brand-shape-card-grid .bscg-card-body.card-bg-dark {
+  background: var(--surface-dark, #172443);
+  --bscg-card-title-color: var(--typography-inverse, #fff);
+  --bscg-card-cta-color: var(--typography-inverse, #fff);
+}
+
+.brand-shape-card-grid .bscg-card-body.card-bg-dark .bscg-card-title,
+.brand-shape-card-grid .bscg-card-body.card-bg-dark .bscg-card-cta-label {
+  color: var(--typography-inverse, #fff);
+}
+
+.brand-shape-card-grid .bscg-card-body.card-bg-dark .bscg-card-arrow img {
+  filter: brightness(0) invert(1);
 }
 
 @media (width >= 1440px) {
   .brand-shape-card-grid .bscg-card-body {
     border-top-left-radius: 0;
     padding: 20px;
-    height: auto;
+    width: 264px;
   }
 }
 
@@ -366,16 +410,10 @@ a.bscg-card:hover .bscg-card-image img {
 
 .brand-shape-card-grid .bscg-card-cta-label {
   font-family: var(--font-family-primary);
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 500;
-  color: var(--bscg-card-cta-color);
+  color: #132445;
   line-height: 1.4;
-}
-
-@media (width >= 1025px) {
-  .brand-shape-card-grid .bscg-card-cta-label {
-    font-size: 14px;
-  }
 }
 
 /* Arrow icon */
@@ -400,4 +438,29 @@ a.bscg-card:hover .bscg-card-image img {
 a.bscg-card:hover .bscg-card-arrow,
 a.bscg-card:focus-visible .bscg-card-arrow {
   transform: translateX(4px);
+}
+
+/* Shape decoration — sits to the right of the card body, bottom-aligned */
+.brand-shape-card-grid .bscg-card-shape {
+  display: none;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: auto;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+  left: 139px;
+  height: 316px;
+  width: 363px;
+}
+
+@media (width >= 1440px) {
+  .brand-shape-card-grid .bscg-card-shape {
+    display: block;
+  }
+}
+
+.section.brand-shape-card-grid-container {
+  padding: 36px 24px;
 }

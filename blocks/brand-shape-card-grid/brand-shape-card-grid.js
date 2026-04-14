@@ -106,11 +106,12 @@ function createHeader(eyebrow, titleNode) {
 
 /**
  * Build a single card element from a block row.
- * Authored columns: [image] [logo] [title] [CTA link]
- *   - image (required)  col 0
- *   - logo (optional)   col 1
- *   - title (required)  col 2
- *   - CTA   (optional)  col 3
+ * Authored columns: [image] [logo] [title] [CTA link] [CTA name]
+ *   - image    (required)  col 0
+ *   - logo     (optional)  col 1
+ *   - title    (required)  col 2
+ *   - CTA link (optional)  col 3 — contains the anchor/href
+ *   - CTA name (optional)  col 4 — display label for the CTA
  *
  * @param {HTMLElement} row
  * @returns {HTMLElement}
@@ -122,6 +123,8 @@ function createCardElement(row) {
   const logoCell = cells[1] || null;
   const titleCell = cells[2] || null;
   const ctaCell = cells[3] || null;
+  const ctaNameCell = cells[4] || null;
+  const cardBgCell = cells[5] || null;
 
   // Derive the card link from the CTA cell
   const linkEl = ctaCell?.querySelector('a[href]');
@@ -149,8 +152,9 @@ function createCardElement(row) {
   }
 
   // --- Card body (logo + title + CTA) ---
+  const cardBgClass = cardBgCell?.textContent?.trim() || 'card-bg-light';
   const body = document.createElement('div');
-  body.className = 'bscg-card-body';
+  body.className = `bscg-card-body ${cardBgClass}`;
 
   // Logo (optional)
   if (logoCell) {
@@ -171,13 +175,8 @@ function createCardElement(row) {
     body.append(titleWrap);
   }
 
-  // CTA row: text link + arrow indicator.
-  // In EDS document authoring the anchor's textContent is often identical to
-  // its href when no display text was typed — skip it in that case.
-  const rawCtaText = ctaCell?.querySelector('a')?.textContent?.trim() || '';
-  const rawCtaHref = ctaCell?.querySelector('a')?.getAttribute('href') || '';
-  const isCtaTextAUrl = rawCtaText.startsWith('http') || rawCtaText.startsWith('/') || rawCtaText === rawCtaHref;
-  const ctaText = isCtaTextAUrl ? '' : rawCtaText;
+  // CTA row: label (from col 4) + arrow (only when a link exists in col 3).
+  const ctaText = ctaNameCell?.textContent?.trim() || '';
 
   const ctaRow = document.createElement('div');
   ctaRow.className = 'bscg-card-cta';
@@ -189,20 +188,31 @@ function createCardElement(row) {
     ctaRow.append(ctaLabel);
   }
 
-  // Arrow icon — always rendered; rotates on hover via CSS
-  const arrowIcon = document.createElement('span');
-  arrowIcon.className = 'bscg-card-arrow';
-  arrowIcon.setAttribute('aria-hidden', 'true');
+  // Arrow icon — only rendered when a CTA link is present in col 3
+  if (isLink) {
+    const arrowIcon = document.createElement('span');
+    arrowIcon.className = 'bscg-card-arrow';
+    arrowIcon.setAttribute('aria-hidden', 'true');
 
-  const arrowImg = document.createElement('img');
-  arrowImg.src = '/icons/arrow-right.svg';
-  arrowImg.alt = '';
-  arrowImg.loading = 'lazy';
-  arrowIcon.append(arrowImg);
-  ctaRow.append(arrowIcon);
+    const arrowImg = document.createElement('img');
+    arrowImg.src = '/icons/arrow-up-right.svg';
+    arrowImg.alt = '';
+    arrowImg.loading = 'lazy';
+    arrowIcon.append(arrowImg);
+    ctaRow.append(arrowIcon);
+  }
 
   body.append(ctaRow);
   card.append(body);
+
+  // Shape decoration — positioned to the right of the card body via CSS
+  const shapeIcon = document.createElement('img');
+  shapeIcon.className = 'bscg-card-shape';
+  shapeIcon.src = '/icons/Shape.svg';
+  shapeIcon.alt = '';
+  shapeIcon.setAttribute('aria-hidden', 'true');
+  shapeIcon.loading = 'lazy';
+  card.append(shapeIcon);
 
   return card;
 }

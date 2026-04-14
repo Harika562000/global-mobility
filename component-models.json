@@ -587,18 +587,26 @@
       {
         "component": "select",
         "name": "classes",
-        "label": "Mobile Variation",
+        "label": "Block Options",
         "valueType": "string",
         "value": "",
-        "description": "Select how cards are displayed on mobile. Default shows cards inline (stacked). Slider shows a swipeable carousel.",
+        "description": "Choose the mobile variation and block background colour.",
         "options": [
           {
-            "name": "Default (Inline)",
-            "value": ""
+            "name": "Default · Light Background",
+            "value": "bg-light"
           },
           {
-            "name": "Slider (Swipeable Carousel on Mobile)",
-            "value": "slider"
+            "name": "Default · Dark Background",
+            "value": "bg-dark"
+          },
+          {
+            "name": "Slider · Light Background",
+            "value": "slider bg-light"
+          },
+          {
+            "name": "Slider · Dark Background",
+            "value": "slider bg-dark"
           }
         ]
       },
@@ -676,6 +684,24 @@
         "name": "ctaText",
         "label": "CTA Text",
         "description": "Optional label shown next to the arrow at the bottom of the card."
+      },
+      {
+        "component": "select",
+        "name": "cardBackground",
+        "label": "Card Body Background",
+        "valueType": "string",
+        "value": "card-bg-light",
+        "description": "Choose the background colour for the card body.",
+        "options": [
+          {
+            "name": "Light",
+            "value": "card-bg-light"
+          },
+          {
+            "name": "Dark",
+            "value": "card-bg-dark"
+          }
+        ]
       }
     ]
   },
