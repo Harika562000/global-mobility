@@ -43,7 +43,7 @@ let aemPublishHostPromise;
 async function loadAemPublishHost() {
   if (aemPublishHostPromise) return aemPublishHostPromise;
   aemPublishHostPromise = (async () => {
-    const value = await getConfigValue('AEM_PUBLISH_HOST');
+    const value = await getConfigValue('aem-publish-host');
     aemPublishHost = (value || '').trim() || undefined;
     return aemPublishHost;
   })();
@@ -104,9 +104,9 @@ export async function resolveVideoSrcAsync(href) {
   return resolveVideoSrc(href, publishHost);
 }
 
-export function setResolvedVideoSrc(sourceEl, href) {
+export function setResolvedVideoSrc(sourceEl, href, publishHost) {
   if (!sourceEl) return;
-  sourceEl.setAttribute('src', resolveVideoSrc(href));
+  sourceEl.setAttribute('src', resolveVideoSrc(href, publishHost));
   resolveVideoSrcAsync(href).then((resolved) => {
     if (!resolved || !sourceEl.isConnected) return;
     const current = sourceEl.getAttribute('src') || '';
