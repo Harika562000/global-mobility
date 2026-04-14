@@ -70,7 +70,11 @@
   {
     "id": "footer-section",
     "components": [
-      "footer-logo"
+      "footer-logo",
+      "footer-links",
+      "footer-tag-line",
+      "footer-social-links",
+      "footer-copyright"
     ]
   },
   {
@@ -104,6 +108,18 @@
     "id": "customer-stories",
     "components": [
       "fragment"
+    ]
+  },
+  {
+    "id": "footer-links",
+    "components": [
+      "footer-link"
+    ]
+  },
+  {
+    "id": "footer-social-links",
+    "components": [
+      "footer-social-link"
     ]
   },
   {

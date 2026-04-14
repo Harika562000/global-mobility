@@ -340,7 +340,11 @@
     {
       "id": "footer-section",
       "components": [
-        "footer-logo"
+        "footer-logo",
+        "footer-links",
+        "footer-tag-line",
+        "footer-social-links",
+        "footer-copyright"
       ]
     }
   ]
