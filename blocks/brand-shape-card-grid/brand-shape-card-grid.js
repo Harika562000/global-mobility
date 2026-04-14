@@ -124,7 +124,6 @@ function createCardElement(row) {
   const titleCell = cells[2] || null;
   const ctaCell = cells[3] || null;
   const ctaNameCell = cells[4] || null;
-  const cardBgCell = cells[5] || null;
 
   // Derive the card link from the CTA cell
   const linkEl = ctaCell?.querySelector('a[href]');
@@ -152,9 +151,8 @@ function createCardElement(row) {
   }
 
   // --- Card body (logo + title + CTA) ---
-  const cardBgClass = cardBgCell?.textContent?.trim() || 'card-bg-light';
   const body = document.createElement('div');
-  body.className = `bscg-card-body ${cardBgClass}`;
+  body.className = 'bscg-card-body';
 
   // Logo (optional)
   if (logoCell) {

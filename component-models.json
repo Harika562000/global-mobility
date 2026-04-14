@@ -684,24 +684,6 @@
         "name": "ctaText",
         "label": "CTA Text",
         "description": "Optional label shown next to the arrow at the bottom of the card."
-      },
-      {
-        "component": "select",
-        "name": "cardBackground",
-        "label": "Card Body Background",
-        "valueType": "string",
-        "value": "card-bg-light",
-        "description": "Choose the background colour for the card body.",
-        "options": [
-          {
-            "name": "Light",
-            "value": "card-bg-light"
-          },
-          {
-            "name": "Dark",
-            "value": "card-bg-dark"
-          }
-        ]
       }
     ]
   },

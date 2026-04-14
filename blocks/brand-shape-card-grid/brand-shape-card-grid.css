@@ -27,6 +27,10 @@
   --bscg-card-cta-color: var(--typography-main, #132445);
 }
 
+.brand-shape-card-grid.bg-light .bscg-eyebrow .eye-brow-text {
+  color: #132445;
+}
+
 /* Dark background variant */
 .brand-shape-card-grid.bg-dark {
   background-color: var(--surface-dark, #172443);
@@ -37,6 +41,10 @@
 
 .brand-shape-card-grid.bg-dark .bscg-title {
   color: var(--typography-inverse, #fff);
+}
+
+.brand-shape-card-grid.bg-dark .bscg-eyebrow .eye-brow-text {
+  color: #b8eaf5;
 }
 
 @media (width >= 720px) {
@@ -260,8 +268,8 @@
   text-decoration: none;
   color: var(--bscg-card-title-color);
   cursor: default;
-  /* Fixed size for mobile / tablet */
-  width: 280px;
+  /* Full width on mobile for default (inline) variation */
+  width: auto;
   min-height: 543px;
   transition: box-shadow 0.2s ease;
 }
@@ -326,34 +334,6 @@ a.bscg-card:hover .bscg-card-image img {
   background: var(--color-quiet-light, #efefe5);
   height: 316px;
   box-sizing: border-box;
-}
-
-/* Card body — light background */
-.brand-shape-card-grid .bscg-card-body.card-bg-light {
-  background: var(--color-quiet-light, #efefe5);
-  --bscg-card-title-color: var(--typography-main, #132445);
-  --bscg-card-cta-color: var(--typography-main, #132445);
-}
-
-.brand-shape-card-grid .bscg-card-body.card-bg-light .bscg-card-title,
-.brand-shape-card-grid .bscg-card-body.card-bg-light .bscg-card-cta-label {
-  color: var(--typography-main, #132445);
-}
-
-/* Card body — dark background */
-.brand-shape-card-grid .bscg-card-body.card-bg-dark {
-  background: var(--surface-dark, #172443);
-  --bscg-card-title-color: var(--typography-inverse, #fff);
-  --bscg-card-cta-color: var(--typography-inverse, #fff);
-}
-
-.brand-shape-card-grid .bscg-card-body.card-bg-dark .bscg-card-title,
-.brand-shape-card-grid .bscg-card-body.card-bg-dark .bscg-card-cta-label {
-  color: var(--typography-inverse, #fff);
-}
-
-.brand-shape-card-grid .bscg-card-body.card-bg-dark .bscg-card-arrow img {
-  filter: brightness(0) invert(1);
 }
 
 @media (width >= 1440px) {
