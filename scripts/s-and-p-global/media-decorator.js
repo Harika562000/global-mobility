@@ -12,6 +12,7 @@
  */
 
 import { loadCSS } from '../aem.js';
+import { getConfigValue } from '../configs.js';
 import { getVariantConfig, isEditMode } from './media-config.js';
 import openVideoModal from './video-modal.js';
 
@@ -31,10 +32,33 @@ const MIME_MAP = {
 };
 
 /**
- * Known AEM publish hostname for this project (derived from fstab.yaml).
- * /content/dam/ assets must be served from publish, not from author or EDS.
+ * Default AEM publish hostname for this project.
+ * Used as a fallback when no author-provided config exists.
  */
-const AEM_PUBLISH_HOST = 'publish-p99952-e1559416.adobeaemcloud.com';
+const DEFAULT_AEM_PUBLISH_HOST = 'publish-p99952-e1559416.adobeaemcloud.com';
+
+let aemPublishHost;
+let aemPublishHostPromise;
+
+async function loadAemPublishHost() {
+  if (aemPublishHostPromise) return aemPublishHostPromise;
+  aemPublishHostPromise = (async () => {
+    const value = await getConfigValue('AEM_PUBLISH_HOST')
+      || await getConfigValue('aem-publish-host')
+      || await getConfigValue('aem_publish_host');
+    aemPublishHost = (value || '').trim() || undefined;
+    return aemPublishHost;
+  })();
+  return aemPublishHostPromise;
+}
+
+// Fire-and-forget config lookup so most calls can resolve synchronously.
+loadAemPublishHost().catch(() => {});
+
+export async function getAemPublishHost() {
+  const host = await loadAemPublishHost();
+  return host || DEFAULT_AEM_PUBLISH_HOST;
+}
 
 /**
  * Resolves a video asset href to a publicly accessible absolute URL.
@@ -52,7 +76,7 @@ const AEM_PUBLISH_HOST = 'publish-p99952-e1559416.adobeaemcloud.com';
  * @param {string} href  Fully resolved href from an <a> element
  * @returns {string}     Publicly accessible video URL
  */
-export function resolveVideoSrc(href) {
+export function resolveVideoSrc(href, publishHost = aemPublishHost) {
   if (!href) return href;
   try {
     const url = new URL(href);
@@ -65,8 +89,8 @@ export function resolveVideoSrc(href) {
         // Flip author- → publish- (same program/env IDs)
         url.hostname = url.hostname.replace(/^author-/, 'publish-');
       } else {
-        // EDS domain or localhost — rewrite to known publish host
-        url.hostname = AEM_PUBLISH_HOST;
+        // EDS domain or localhost — rewrite to configured publish host (or fallback)
+        url.hostname = publishHost || DEFAULT_AEM_PUBLISH_HOST;
         url.port = '';
       }
       return url.toString();
@@ -75,6 +99,25 @@ export function resolveVideoSrc(href) {
     // Not a parseable URL — return as-is
   }
   return href;
+}
+
+export async function resolveVideoSrcAsync(href) {
+  const publishHost = await getAemPublishHost();
+  return resolveVideoSrc(href, publishHost);
+}
+
+export function setResolvedVideoSrc(sourceEl, href) {
+  if (!sourceEl) return;
+  sourceEl.setAttribute('src', resolveVideoSrc(href));
+  resolveVideoSrcAsync(href).then((resolved) => {
+    if (!resolved || !sourceEl.isConnected) return;
+    const current = sourceEl.getAttribute('src') || '';
+    if (current !== resolved) {
+      sourceEl.setAttribute('src', resolved);
+      const video = sourceEl.closest('video');
+      if (video && typeof video.load === 'function') video.load();
+    }
+  }).catch(() => {});
 }
 
 // ---------------------------------------------------------------------------
@@ -307,8 +350,8 @@ export async function decorateMedia(container, variant = 'default', overrides = 
 
   if (!videoLinks.length) return;
 
-  videoLinks.forEach((link) => {
-    const videoSrc = resolveVideoSrc(link.href);
+  await Promise.all(videoLinks.map(async (link) => {
+    const videoSrc = await resolveVideoSrcAsync(link.href);
 
     // Find a poster picture/img within the same cell or block
     const posterSelector = opts.posterSelector || 'picture';
@@ -338,5 +381,5 @@ export async function decorateMedia(container, variant = 'default', overrides = 
     } else {
       link.replaceWith(wrapper);
     }
-  });
+  }));
 }

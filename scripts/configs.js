@@ -41,9 +41,14 @@ function persistLocalSiteConfigValue(key, value) {
   }
 }
 
-function getConfigUrl() {
+function getConfigUrls() {
   const base = typeof window !== 'undefined' ? (window.hlx?.codeBasePath || '') : '';
-  return `${base}/configs.json`;
+  return [
+    // Default Franklin/AEM config mapping (see paths.json mapping to /.helix/config.json)
+    `${base}/.helix/config.json`,
+    // Back-compat / alternate publishing setup
+    `${base}/configs.json`,
+  ];
 }
 
 /**
@@ -57,11 +62,21 @@ const loadConfig = async () => {
   }
 
   try {
-    const response = await fetch(getConfigUrl());
-    if (!response.ok) {
-      throw new Error(`Failed to load configuration: ${response.status}`);
+    // Try multiple well-known config endpoints. Author-driven config should be available
+    // at `/.helix/config.json` via `paths.json` mappings.
+    const urls = getConfigUrls();
+    let lastStatus = 0;
+    for (let i = 0; i < urls.length; i += 1) {
+      const url = urls[i];
+      // eslint-disable-next-line no-await-in-loop
+      const response = await fetch(url);
+      if (response.ok) {
+        // eslint-disable-next-line no-await-in-loop
+        return response.json();
+      }
+      lastStatus = response.status;
     }
-    return response.json();
+    throw new Error(`Failed to load configuration: ${lastStatus || 'unknown'}`);
   } catch (error) {
     // eslint-disable-next-line no-console -- surface config fetch failures in devtools
     console.error('Error loading configuration:', error);

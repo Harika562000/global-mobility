@@ -1,5 +1,5 @@
 import { eyebrowDecorator, decorateTags } from '../../scripts/scripts.js';
-import { isVideoLink, resolveVideoSrc } from '../../scripts/s-and-p-global/media-decorator.js';
+import { isVideoLink, setResolvedVideoSrc } from '../../scripts/s-and-p-global/media-decorator.js';
 
 /**
  * Hero block: three variations (UE authoring reference).
@@ -106,7 +106,7 @@ function buildVideo(src, flags, ariaLabel = 'Hero video', block = null) {
   if (effectiveAutoplay) video.setAttribute('autoplay', '');
 
   const source = document.createElement('source');
-  source.setAttribute('src', resolveVideoSrc(src));
+  setResolvedVideoSrc(source, src);
   const ext = src.split('?')[0].split('.').pop().toLowerCase();
   const mimeMap = {
     mp4: 'video/mp4', mov: 'video/mp4', webm: 'video/webm', ogg: 'video/ogg',
