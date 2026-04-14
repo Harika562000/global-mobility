@@ -10,7 +10,7 @@
  *   openVideoModal(videoSrc, opts, triggerEl) → Promise<void>
  */
 
-import { createModal } from '../blocks/modal/modal.js';
+import { createModal } from '../../blocks/modal/modal.js';
 
 /**
  * Creates a <video> element configured for modal playback.

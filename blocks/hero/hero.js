@@ -1,6 +1,5 @@
 import { eyebrowDecorator, decorateTags } from '../../scripts/scripts.js';
-import { isVideoLink, setResolvedVideoSrc, getAemPublishHost } from '../../scripts/s-and-p-global/media-decorator.js';
-import { getConfigValue } from '../../scripts/configs.js';
+import { isVideoLink, setResolvedVideoSrc } from '../../scripts/s-and-p-global/media-decorator.js';
 
 /**
  * Hero block: three variations (UE authoring reference).
@@ -76,7 +75,7 @@ function createMuteToggle(video) {
  * @param {string}  [ariaLabel]
  * @returns {{ video: HTMLVideoElement, muteBtn: HTMLButtonElement|null }}
  */
-async function buildVideo(src, flags, ariaLabel = 'Hero video', block = null) {
+function buildVideo(src, flags, ariaLabel = 'Hero video', block = null) {
   const {
     autoplay,
     muted,
@@ -106,12 +105,8 @@ async function buildVideo(src, flags, ariaLabel = 'Hero video', block = null) {
   if (showControls) video.setAttribute('controls', '');
   if (effectiveAutoplay) video.setAttribute('autoplay', '');
 
-  /* Resolve publish host the same way google-tag-manager fetches its config key */
-  const configHost = await getConfigValue('aem-publish-host');
-  const publishHost = (configHost || '').trim() || await getAemPublishHost();
-
   const source = document.createElement('source');
-  setResolvedVideoSrc(source, src, publishHost);
+  setResolvedVideoSrc(source, src);
   const ext = src.split('?')[0].split('.').pop().toLowerCase();
   const mimeMap = {
     mp4: 'video/mp4', mov: 'video/mp4', webm: 'video/webm', ogg: 'video/ogg',
@@ -186,12 +181,12 @@ function appendContent(row, target, fallbackHeading = false) {
   }
 }
 
-async function decorateEmAccent(block, rows, picture, videoLink, rowIndices, videoFlags) {
+function decorateEmAccent(block, rows, picture, videoLink, rowIndices, videoFlags) {
   const bgDiv = document.createElement('div');
   bgDiv.className = 'hero-em-accent-background';
   let muteBtn = null;
   if (videoLink) {
-    const built = await buildVideo(videoLink.href, videoFlags, 'Hero background video', block);
+    const built = buildVideo(videoLink.href, videoFlags, 'Hero background video', block);
     bgDiv.appendChild(built.video);
     muteBtn = built.muteBtn;
   } else if (picture) {
@@ -215,7 +210,7 @@ async function decorateEmAccent(block, rows, picture, videoLink, rowIndices, vid
   if (muteBtn) block.appendChild(muteBtn);
 }
 
-async function decorateTwoColoredRight(block, rows, picture, videoLink, rowIndices, videoFlags) {
+function decorateTwoColoredRight(block, rows, picture, videoLink, rowIndices, videoFlags) {
   const contentDiv = document.createElement('div');
   contentDiv.className = 'hero-two-colored-right-content';
 
@@ -225,7 +220,7 @@ async function decorateTwoColoredRight(block, rows, picture, videoLink, rowIndic
   const imageDiv = document.createElement('div');
   imageDiv.className = 'hero-two-colored-right-image';
   if (videoLink) {
-    const { video, muteBtn } = await buildVideo(videoLink.href, videoFlags, 'Hero video', block);
+    const { video, muteBtn } = buildVideo(videoLink.href, videoFlags, 'Hero video', block);
     imageDiv.appendChild(video);
     if (muteBtn) imageDiv.appendChild(muteBtn);
   } else if (picture) {
@@ -236,7 +231,7 @@ async function decorateTwoColoredRight(block, rows, picture, videoLink, rowIndic
   block.appendChild(imageDiv);
 }
 
-async function decorateBlackColoredRight(block, rows, picture, videoLink, rowIndices, videoFlags) {
+function decorateBlackColoredRight(block, rows, picture, videoLink, rowIndices, videoFlags) {
   const contentDiv = document.createElement('div');
   contentDiv.className = 'hero-black-colored-right-content';
 
@@ -279,7 +274,7 @@ async function decorateBlackColoredRight(block, rows, picture, videoLink, rowInd
   const imageDiv = document.createElement('div');
   imageDiv.className = 'hero-black-colored-right-image';
   if (videoLink) {
-    const { video, muteBtn } = await buildVideo(videoLink.href, videoFlags, 'Hero video', block);
+    const { video, muteBtn } = buildVideo(videoLink.href, videoFlags, 'Hero video', block);
     imageDiv.appendChild(video);
     if (muteBtn) imageDiv.appendChild(muteBtn);
   } else if (picture) {
@@ -290,7 +285,7 @@ async function decorateBlackColoredRight(block, rows, picture, videoLink, rowInd
   block.appendChild(imageDiv);
 }
 
-export default async function decorate(block) {
+export default function decorate(block) {
   const rows = [...block.querySelectorAll(':scope > div')];
   if (!rows.length) return;
 
@@ -411,11 +406,11 @@ export default async function decorate(block) {
   };
 
   if (isBlackColoredRight) {
-    await decorateBlackColoredRight(block, rows, picture, videoLink, rowIndices, videoFlags);
+    decorateBlackColoredRight(block, rows, picture, videoLink, rowIndices, videoFlags);
   } else if (isTwoColoredRight) {
-    await decorateTwoColoredRight(block, rows, picture, videoLink, rowIndices, videoFlags);
+    decorateTwoColoredRight(block, rows, picture, videoLink, rowIndices, videoFlags);
   } else {
-    await decorateEmAccent(block, rows, picture, videoLink, rowIndices, videoFlags);
+    decorateEmAccent(block, rows, picture, videoLink, rowIndices, videoFlags);
   }
 
   rows.forEach((r) => r.remove());

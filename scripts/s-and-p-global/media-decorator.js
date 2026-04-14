@@ -12,7 +12,6 @@
  */
 
 import { loadCSS } from '../aem.js';
-import { getConfigValue } from '../configs.js';
 import { getVariantConfig, isEditMode } from './media-config.js';
 import openVideoModal from './video-modal.js';
 
@@ -43,7 +42,7 @@ let aemPublishHostPromise;
 async function loadAemPublishHost() {
   if (aemPublishHostPromise) return aemPublishHostPromise;
   aemPublishHostPromise = (async () => {
-    const value = await getConfigValue('aem-publish-host');
+    const value = DEFAULT_AEM_PUBLISH_HOST;
     aemPublishHost = (value || '').trim() || undefined;
     return aemPublishHost;
   })();
@@ -104,9 +103,9 @@ export async function resolveVideoSrcAsync(href) {
   return resolveVideoSrc(href, publishHost);
 }
 
-export function setResolvedVideoSrc(sourceEl, href, publishHost) {
+export function setResolvedVideoSrc(sourceEl, href) {
   if (!sourceEl) return;
-  sourceEl.setAttribute('src', resolveVideoSrc(href, publishHost));
+  sourceEl.setAttribute('src', resolveVideoSrc(href));
   resolveVideoSrcAsync(href).then((resolved) => {
     if (!resolved || !sourceEl.isConnected) return;
     const current = sourceEl.getAttribute('src') || '';

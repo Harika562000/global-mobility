@@ -1,9 +1,4 @@
-​import { TABLET_BP } from './constants.js';
-
-
-// Session Storage utilities
-export const getSessionStorageItem = (prop) => window.sessionStorage.getItem(prop);
-export const setSessionStorageItem = (prop, value) => window.sessionStorage.setItem(prop, value);
+import { TABLET_BP } from './constants.js';
 
 /**
  * Subscribe to a media query: call callback(matches) once with the current state
@@ -180,48 +175,6 @@ export function normalizeTaxonomyFieldList(raw) {
 }
 
 /**
- * Full cq:tag ids for Lucidworks facet filters.
- * Splits on commas and newlines, and on
- * repeated `mobility-global:` when the UE stacks tags without commas
- * (so multiple tags are not lost).
- * @param {string} [raw]
- * @returns {string[]}
- */
-function splitFullTagPathsForLucidworks(raw) {
-  if (raw == null || raw === '') return [];
-  const s = String(raw).trim();
-  if (!s) return [];
-  const chunks = s
-    .split(/[\n\r,]+/)
-    .map((t) => t.trim())
-    .filter(Boolean);
-  const out = [];
-  chunks.forEach((chunk) => {
-    const parts = chunk.split(/(?=mobility-global:)/gi).map((x) => x.trim()).filter(Boolean);
-    if (parts.length) out.push(...parts);
-  });
-  return [...new Set(out)].filter(Boolean);
-}
-
-/**
- * Universal Editor often renders AEM cq:tag ids in leaf `div`s that never become `tags_*`
- * keys in `collectConfigRows`. Collect those ids from the block DOM for Lucidworks.
- * @param {ParentNode|null|undefined} container
- * @returns {string[]}
- */
-export function extractMobilityGlobalTagPathsFromDom(container) {
-  if (!container?.querySelectorAll) return [];
-  const parts = [];
-  container.querySelectorAll('div').forEach((el) => {
-    if (el.querySelector('div')) return;
-    const t = el.textContent?.trim();
-    if (!t || !/\bmobility-global:/i.test(t)) return;
-    parts.push(...splitFullTagPathsForLucidworks(t));
-  });
-  return [...new Set(parts)].filter(Boolean);
-}
-
-/**
  * Comma-separated AEM tag ids → last path segment each, comma-separated (e.g. Lucidworks `q`).
  * @param {string} [raw]
  * @returns {string}
@@ -237,18 +190,14 @@ export function cleanAemTagListForSearchQuery(raw) {
 }
 
 /**
- * Display polish: strip trailing template suffixes from type labels (case-insensitive).
- * Handles e.g. "… Page", "… Details", "… Details Page" (insight details pages).
+ * Display polish: strip trailing " page" from template/type labels (case-insensitive).
  * @param {string} [value]
  * @returns {string}
  */
 export function stripTrailingPageFromTagLabel(value) {
-  let s = String(value || '').trim();
+  const s = String(value || '').trim();
   if (!s) return '';
-  s = s.replace(/\s+details\s+page$/i, '').trim();
-  s = s.replace(/\s+page$/i, '').trim();
-  s = s.replace(/\s+details$/i, '').trim();
-  return s;
+  return s.replace(/\s+page$/i, '').trim();
 }
 
 /* ========================================================================
@@ -268,15 +217,7 @@ export function toInternalContentPath(url, origin = typeof window !== 'undefined
   if (!url || url.origin !== origin) return '';
   const pathname = url.pathname || '/';
   const hasExtension = /\.[a-z0-9]+$/i.test(pathname);
-  if (hasExtension) {
-    let trimmed = pathname.replace(
-      /^\/content\/(mobilityglobal|mobility-global|global-mobility|globalmobility)/,
-      '',
-    );
-    trimmed = trimmed.replace(/\.html$/, '');
-    return trimmed.startsWith('/') ? trimmed : (`/${trimmed}`);
-  }
-  return pathname;
+  return hasExtension ? '' : pathname;
 }
 
 /**
@@ -347,20 +288,6 @@ export function getSectionMetaValue(sections, key) {
 }
 
 /**
- * Read time from head meta / section metadata tables.
- * @param {Record<string, string>} head
- * @param {Array<Record<string, string>>} sections
- * @returns {string}
- */
-function resolveTimeToRead(head, sections) {
-  const fromMeta = firstNonEmpty([
-    head.timetoread,
-    getSectionMetaValue(sections, 'timetoread'),
-  ]);
-  return (fromMeta && String(fromMeta).trim()) || '';
-}
-
-/**
  * @param {Document} doc
  * @param {string} key
  * @returns {string}
@@ -377,6 +304,18 @@ export function getTwitterImageFromHead(doc) {
   const m = doc.head.querySelector('meta[name="twitter:image"]')
     || doc.head.querySelector('meta[name="twitter:image:src"]');
   return m?.getAttribute('content')?.trim() || '';
+}
+
+/**
+ * Rough read time from word count (~200 wpm).
+ * @param {string} [text]
+ * @returns {string} e.g. "5 min"
+ */
+export function estimateReadTime(text) {
+  const words = (text || '').trim().split(/\s+/).filter(Boolean).length;
+  if (!words) return '';
+  const minutes = Math.max(1, Math.ceil(words / 200));
+  return `${minutes} min`;
 }
 
 /**
@@ -418,6 +357,7 @@ function publishDateFromSections(sections) {
  */
 export function buildCardDataFromExtractedMetadata(doc, pageUrl) {
   const { head = {}, sections = [] } = extractPageMetadata(doc);
+  const bodyText = doc.body?.textContent || '';
 
   const title = firstNonEmpty([
     head['og:title'],
@@ -444,9 +384,11 @@ export function buildCardDataFromExtractedMetadata(doc, pageUrl) {
   ]));
 
   const tag = stripTrailingPageFromTagLabel(firstNonEmpty([
-    head.pagetype,
+    head['content-type'],
     head['og:type'],
-    getSectionMetaValue(sections, 'pagetype'),
+    getSectionMetaValue(sections, 'content-type'),
+    head.pagetemplate,
+    getSectionMetaValue(sections, 'pagetemplate'),
   ]));
 
   return {
@@ -455,7 +397,7 @@ export function buildCardDataFromExtractedMetadata(doc, pageUrl) {
     description,
     tag,
     publishDate,
-    timeToRead: resolveTimeToRead(head, sections) || '0 min',
+    timeToRead: estimateReadTime(bodyText),
     link: pageUrl.href,
   };
 }
@@ -468,13 +410,13 @@ export function buildCardDataFromExtractedMetadata(doc, pageUrl) {
  *   publishDate: string, timeToRead: string, link: string }}
  */
 export function buildCardDataFromFetchedDocument(doc, pageUrl) {
-  const { head, sections } = extractPageMetadata(doc);
+  const bodyText = doc.body?.textContent || '';
   return {
     image: firstNonEmpty([getMeta(doc, 'og:image'), getTwitterImageFromHead(doc)]),
     title: firstNonEmpty([getMeta(doc, 'og:title'), doc.title]),
     description: firstNonEmpty([getMeta(doc, 'og:description'), getMeta(doc, 'description')]),
     tag: stripTrailingPageFromTagLabel(firstNonEmpty([
-      getMeta(doc, 'pagetype'),
+      getMeta(doc, 'content-type'),
       getMeta(doc, 'og:type'),
       getMeta(doc, 'pagetemplate'),
     ])),
@@ -484,7 +426,7 @@ export function buildCardDataFromFetchedDocument(doc, pageUrl) {
       getMeta(doc, 'article:published_time'),
       getMeta(doc, 'publish_date'),
     ])),
-    timeToRead: resolveTimeToRead(head, sections) || '0 min',
+    timeToRead: estimateReadTime(bodyText),
     link: pageUrl.href,
   };
 }
@@ -596,7 +538,7 @@ export function cardDataFromLucidworksDoc(doc) {
   ]);
 
   const tag = stripTrailingPageFromTagLabel(pickFirstDocString(doc, [
-    'attribute_page_type_s',
+    'attribute_content_type_s',
     'category_s',
     'type_s',
   ]));
@@ -604,16 +546,9 @@ export function cardDataFromLucidworksDoc(doc) {
   const publishDate = ensurePublishDate(pickFirstDocString(doc, [
     'date_added_s',
     'date_added_dt',
-    'published_date_dt',
+    'published_date_s',
     'attribute_article_published_time_s',
   ]));
-
-  const timeToReadFromMeta = pickFirstDocString(doc, [
-    'timetoread',
-    'timetoread_s',
-    'attribute_timetoread_s',
-    'attribute_timetoread_t',
-  ]);
 
   return {
     imageUrl,
@@ -621,7 +556,7 @@ export function cardDataFromLucidworksDoc(doc) {
     description,
     tag,
     publishDate,
-    timeToRead: timeToReadFromMeta || '0 min',
+    timeToRead: estimateReadTime(description),
     link,
   };
 }
@@ -639,245 +574,26 @@ export function dedupeCardsByLink(cards) {
   });
 }
 
-/** Lucidworks `attribute_page_type_s` values for card grids (Insights vs Experts). */
-export const LUCIDWORKS_PAGE_TYPES = {
-  INSIGHTS: 'Insights Details Page',
-  EXPERTS: 'Experts Page',
-};
-
-/**
- * Collect full AEM tag paths from flat Tags text, `tags_*` keys, and any other config
- * cell whose value looks like cq:tag ids (`mobility-global:…`). The latter covers UE
- * rows that do not map to `tags_*` (e.g. empty label row breaking the key chain).
- * @param {string} selectedTags
- * @param {Record<string, unknown>} [blockConfig]
- * @returns {string} Comma-separated tag ids for cleanAemTagListForSearchQuery
- */
-function collectTagPathsForLucidworksQuery(selectedTags, blockConfig) {
-  const parts = [...splitFullTagPathsForLucidworks(selectedTags)];
-  if (blockConfig && typeof blockConfig === 'object') {
-    Object.entries(blockConfig).forEach(([key, val]) => {
-      if (val == null || val === '') return;
-      const s = Array.isArray(val) ? val.join(',') : String(val);
-      if (key.startsWith('tags_')) {
-        parts.push(...splitFullTagPathsForLucidworks(s));
-        return;
-      }
-      if (/\bmobility-global:/i.test(s)) {
-        parts.push(...splitFullTagPathsForLucidworks(s));
-      }
-    });
-  }
-  return [...new Set(parts)].filter(Boolean).join(',');
-}
-
-/**
- * Path after `namespace:` in an AEM cq:tag id (Solr stores full ids like `mobility-global:…`).
- * @param {string} tagPath
- * @returns {string}
- */
-function pathAfterNamespace(tagPath) {
-  const s = String(tagPath).trim();
-  const idx = s.indexOf(':');
-  return idx >= 0 ? s.slice(idx + 1) : s;
-}
-
-/**
- * Pass-through for Lucidworks facet values (full cq:tag ids). Do not rewrite
- * `market-context/market-region/` — index / `marketregion_t` expect the AEM path as-authored.
- * @param {string} tagPath
- * @returns {string}
- */
-function normalizeLucidworksIndexedTagPath(tagPath) {
-  return String(tagPath).trim();
-}
-
-/**
- * Maps AEM tag path prefixes to their tag-config key (longest prefix wins).
- * The actual Solr field name is resolved at runtime from /tag-config.json via loadTagConfigKeyToField().
- * Prefixes are lowercase; compared against `pathAfterNamespace(tag)` lowercased.
- */
-const LUCIDWORKS_PATH_PREFIX_TO_CONFIG_KEY = [
-  ['system-and-structural-tags/content-formats/event-formats/', 'eventformat'],
-  ['system-and-structural-tags/content-formats/', 'contentformat'],
-  ['insights-and-intelligence/insight-and-thought-leader-content-type/', 'insightsthoughtleadercontenttype'],
-  ['contextual-variables/regulatory-and-operating-context/regulatory-context/', 'regulatorycontext'],
-  ['contextual-variables/market-context/market-sales-region/', 'marketsalesregion'],
-  ['contextual-variables/market-context/market-region/', 'marketregion'],
-  ['contextual-variables/market-context/market-country/', 'marketcountry'],
-  ['contextual-variables/segmentation-and-user-context/industry-or-sector/', 'industrysector'],
-  ['contextual-variables/segmentation-and-user-context/audience-role/', 'audiencerole'],
-  ['products-and-platforms/product-capabilities/', 'productcapability'],
-  ['products-and-platforms/product-families/', 'productfamily'],
-  ['products-and-platforms/services-and-advisory/', 'servicesadvisory'],
-  ['insights-and-intelligence/theme/', 'theme'],
-  ['insights-and-intelligence/series/', 'series'],
-  ['insights-and-intelligence/topic/', 'topic'],
-  ['pillars-and-need-states/need-states/', 'needstates'],
-  ['pillars-and-need-states/', 'pillars'],
-];
-
-/**
- * `configKeyToField` (tags_* key suffix → Lucidworks field) is fetched from /tag-config.json.
- * @type {Record<string, string> | null}
- */
-let tagConfigCache = null;
-let tagConfigFetchPromise = null;
-
-/**
- * Fetch and cache the `configKeyToField` map from /tag-config.json once.
- * @returns {Promise<Record<string, string>>}
- */
-async function loadTagConfigKeyToField() {
-  if (tagConfigCache) return tagConfigCache;
-  if (!tagConfigFetchPromise) {
-    tagConfigFetchPromise = (async () => {
-      const base = typeof window !== 'undefined' ? (window.hlx?.codeBasePath || '') : '';
-      try {
-        const resp = await fetch(`${base}/tag-config.json`);
-        if (!resp.ok) throw new Error(`tag-config.json: ${resp.status}`);
-        const json = await resp.json();
-        /** @type {Record<string, string>} */
-        const map = {};
-        const rows = json.data ?? json.configKeyToField ?? [];
-        if (Array.isArray(rows)) {
-          rows.forEach((row) => {
-            const key = row.key ?? row.Key;
-            const field = row.value ?? row.field ?? row.Value ?? row.Field;
-            if (key && field) map[String(key)] = String(field);
-          });
-        }
-        tagConfigCache = map;
-      } catch {
-        tagConfigCache = {};
-      }
-      return tagConfigCache;
-    })();
-  }
-  return tagConfigFetchPromise;
-}
-
-/**
- * @param {Record<string, unknown>} [blockConfig]
- * @returns {Promise<Record<string, string[]>>}
- */
-async function collectFacetFiltersFromBlockConfig(blockConfig) {
-  /** @type {Record<string, string[]>} */
-  const buckets = {};
-  if (!blockConfig || typeof blockConfig !== 'object') return buckets;
-  const configKeyToField = await loadTagConfigKeyToField();
-  Object.entries(blockConfig).forEach(([key, val]) => {
-    if (!key.startsWith('tags_')) return;
-    if (val == null || val === '') return;
-    const suffix = key.slice('tags_'.length);
-    const field = configKeyToField[suffix];
-    if (!field) return;
-    const s = Array.isArray(val) ? val.join(',') : String(val);
-    splitFullTagPathsForLucidworks(s).forEach((path) => {
-      if (!path) return;
-      const normalized = normalizeLucidworksIndexedTagPath(path);
-      if (!buckets[field]) buckets[field] = [];
-      if (!buckets[field].includes(normalized)) buckets[field].push(normalized);
-    });
-  });
-  return buckets;
-}
-
-/**
- * @param {string} [tagPathsInput] Comma-separated full tag ids
- * @returns {Promise<Record<string, string[]>>}
- */
-async function groupTagPathsByPathPrefix(tagPathsInput) {
-  const paths = splitFullTagPathsForLucidworks(tagPathsInput);
-  /** @type {Record<string, string[]>} */
-  const buckets = {};
-  const configKeyToField = await loadTagConfigKeyToField();
-  paths.forEach((fullPath) => {
-    const rest = pathAfterNamespace(fullPath);
-    const restLower = rest.toLowerCase();
-    const match = LUCIDWORKS_PATH_PREFIX_TO_CONFIG_KEY.find(([prefix]) => restLower.startsWith(prefix));
-    if (match) {
-      const [, configKey] = match;
-      const field = configKeyToField[configKey];
-      if (!field) return;
-      const normalized = normalizeLucidworksIndexedTagPath(fullPath);
-      if (!buckets[field]) buckets[field] = [];
-      if (!buckets[field].includes(normalized)) buckets[field].push(normalized);
-    }
-  });
-  return buckets;
-}
-
-/**
- * @param {Record<string, string[]>} a
- * @param {Record<string, string[]>} b
- * @returns {Record<string, string[]>}
- */
-function mergeFacetBuckets(a, b) {
-  const out = { ...a };
-  Object.entries(b).forEach(([field, values]) => {
-    if (!Array.isArray(values) || !values.length) return;
-    const merged = new Set(out[field] || []);
-    values.forEach((v) => merged.add(v));
-    out[field] = [...merged];
-  });
-  return out;
-}
-
-/**
- * Builds per-field Solr facet filters for tag-driven card search
- * (AND within a field when multiple values, AND across fields).
- * `tags_*` keys from block config take precedence; remaining paths use path-prefix fallback.
- * @param {string} [selectedTags] Flat card-tags row (comma-separated)
- * @param {Record<string, unknown>} [blockConfig]
- * @returns {Promise<Record<string, string[]>>}
- */
-async function buildLucidworksFacetFiltersFromTags(selectedTags, blockConfig) {
-  const fromConfig = await collectFacetFiltersFromBlockConfig(blockConfig);
-  const mergedCsv = collectTagPathsForLucidworksQuery(selectedTags, blockConfig);
-  const allPaths = splitFullTagPathsForLucidworks(mergedCsv);
-  const assigned = new Set(Object.values(fromConfig).flat());
-  const remaining = allPaths.filter((p) => !assigned.has(p));
-  const fromPaths = await groupTagPathsByPathPrefix(remaining.join(','));
-  return mergeFacetBuckets(fromConfig, fromPaths);
-}
-
 /**
  * Tag-based card list from Lucidworks (no per-page HTML fetch).
- * Request shape: q=*:* + fq page type + tagged fq per field
- * (AND within field when multiple values) + fl=*&wt=json.
- *
- * @param {string} selectedTags Comma-separated AEM tag ids (optional with tags_* in blockConfig)
+ * @param {string} selectedTags Comma-separated AEM tag ids or cleaned segments
  * @param {number} limit Max cards
- * @param {object} [options]
- * @param {number} [options.maxCards] Hard cap (default 6)
- * @param {string} [options.pageType] attribute_page_type_s value (required)
- * @param {Record<string, unknown>} [options.blockConfig] Flattened config from collectConfigRows
- * @param {boolean} [options.forInsightsCard] Pass true for insights card (fl=*&wt=json on request)
+ * @param {{ maxCards?: number }} [options] Hard cap (default 6)
  * @returns {Promise<NonNullable<ReturnType<typeof cardDataFromLucidworksDoc>>[]>}
  */
 export async function fetchCardsFromTagSearch(selectedTags, limit, options = {}) {
   const maxCards = options.maxCards ?? 6;
-  const { pageType, blockConfig = {}, forInsightsCard = false } = options;
-  if (!pageType) return [];
-
+  const q = cleanAemTagListForSearchQuery(selectedTags);
+  if (!q) return [];
   const capped = Math.min(maxCards, Math.max(1, Number(limit) || maxCards));
-
-  const tagPaths = collectTagPathsForLucidworksQuery(selectedTags, blockConfig);
-  if (!tagPaths) return [];
-
-  const facetFilters = await buildLucidworksFacetFiltersFromTags(selectedTags, blockConfig);
-  if (!Object.keys(facetFilters).length) return [];
 
   try {
     const { default: LucidworksClient } = await import('./lucidworks-client.js');
     const client = new LucidworksClient();
     const data = await client.fetchTags({
-      start: 0,
+      q,
       rows: capped,
-      pageType,
-      facetFilters,
-      forInsightsCard,
+      start: 0,
     });
     if (!data) return [];
     const docs = data?.response?.docs;
