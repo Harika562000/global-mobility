@@ -1,0 +1,385 @@
+/* =============================================================================
+   Brand Shape Card Grid block
+   ============================================================================= */
+
+/* -----------------------------------------------------------------------------
+   Block container
+   ----------------------------------------------------------------------------- */
+
+.brand-shape-card-grid {
+  --bscg-bg: var(--surface-dark, #0a3461);
+  --bscg-card-bg: var(--surface-light, #fff);
+  --bscg-card-radius: var(--radius-sm, 8px);
+  --bscg-card-gap: 16px;
+  --bscg-header-color: var(--typography-inverse, #fff);
+  --bscg-card-title-color: var(--typography-main, #132445);
+  --bscg-card-cta-color: var(--typography-main, #132445);
+  --bscg-arrow-color: var(--typography-accent-1, #0064d2);
+
+  background: var(--bscg-bg);
+  border-radius: var(--radius-sm, 8px);
+  padding: 36px 20px;
+  box-sizing: border-box;
+}
+
+@media (width >= 720px) {
+  .brand-shape-card-grid {
+    padding: 40px 32px;
+  }
+}
+
+@media (width >= 1025px) {
+  .brand-shape-card-grid {
+    padding: 48px 40px;
+  }
+}
+
+@media (width >= 1440px) {
+  .brand-shape-card-grid {
+    padding: 64px 80px;
+  }
+}
+
+/* Clip the overflow so the mobile carousel peek doesn't break the layout */
+.brand-shape-card-grid-container {
+  overflow: hidden;
+}
+
+/* -----------------------------------------------------------------------------
+   Header
+   ----------------------------------------------------------------------------- */
+
+.brand-shape-card-grid .bscg-header {
+  margin-bottom: 32px;
+}
+
+/* Eyebrow */
+.brand-shape-card-grid .bscg-eyebrow {
+  margin-bottom: var(--spacing-300, 12px);
+}
+
+.brand-shape-card-grid .bscg-eyebrow .eye-brow-text {
+  font-family: var(--font-family-accent);
+  font-size: 12px;
+  font-weight: var(--font-weight-regular);
+  text-transform: uppercase;
+  line-height: 1.5;
+  letter-spacing: 0.12em;
+  color: var(--typography-inverse, #fff);
+}
+
+@media (width >= 720px) {
+  .brand-shape-card-grid .bscg-eyebrow .eye-brow-text {
+    font-size: 14px;
+  }
+}
+
+/* Title */
+.brand-shape-card-grid .bscg-title {
+  color: var(--bscg-header-color);
+}
+
+.brand-shape-card-grid .bscg-title h1,
+.brand-shape-card-grid .bscg-title h2,
+.brand-shape-card-grid .bscg-title h3,
+.brand-shape-card-grid .bscg-title h4,
+.brand-shape-card-grid .bscg-title h5,
+.brand-shape-card-grid .bscg-title h6 {
+  margin: 0;
+  color: var(--bscg-header-color);
+  font-weight: 600;
+  font-size: 28px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+@media (width >= 510px) {
+  .brand-shape-card-grid .bscg-title h1,
+  .brand-shape-card-grid .bscg-title h2,
+  .brand-shape-card-grid .bscg-title h3,
+  .brand-shape-card-grid .bscg-title h4,
+  .brand-shape-card-grid .bscg-title h5,
+  .brand-shape-card-grid .bscg-title h6 {
+    font-size: 32px;
+  }
+}
+
+@media (width >= 720px) {
+  .brand-shape-card-grid .bscg-title h1,
+  .brand-shape-card-grid .bscg-title h2,
+  .brand-shape-card-grid .bscg-title h3,
+  .brand-shape-card-grid .bscg-title h4,
+  .brand-shape-card-grid .bscg-title h5,
+  .brand-shape-card-grid .bscg-title h6 {
+    font-size: 36px;
+  }
+}
+
+@media (width >= 1025px) {
+  .brand-shape-card-grid .bscg-title h1,
+  .brand-shape-card-grid .bscg-title h2,
+  .brand-shape-card-grid .bscg-title h3,
+  .brand-shape-card-grid .bscg-title h4,
+  .brand-shape-card-grid .bscg-title h5,
+  .brand-shape-card-grid .bscg-title h6 {
+    font-size: 40px;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   Cards grid — default (inline / stacked) mobile + 3-col grid desktop
+   ----------------------------------------------------------------------------- */
+
+.brand-shape-card-grid .bscg-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bscg-card-gap);
+}
+
+@media (width >= 510px) {
+  .brand-shape-card-grid .bscg-cards {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+
+  .brand-shape-card-grid .bscg-cards > .bscg-card {
+    flex: 0 0 calc(50% - var(--bscg-card-gap) / 2);
+    width: calc(50% - var(--bscg-card-gap) / 2);
+  }
+}
+
+@media (width >= 1025px) {
+  .brand-shape-card-grid .bscg-cards {
+    flex-wrap: nowrap;
+    gap: var(--bscg-card-gap);
+  }
+
+  .brand-shape-card-grid .bscg-cards > .bscg-card {
+    flex: 1 1 0;
+    width: 0;
+  }
+}
+
+/* Slider variation — carousel on mobile, grid on desktop.
+   The JS will wrap cards inside .carousel-track / .carousel-track-inner.
+   Below 720px the carousel viewport clips and shows one card + peek. */
+
+.brand-shape-card-grid.slider .bscg-cards {
+  overflow: visible;
+}
+
+/* Carousel track overrides (mobile) */
+.brand-shape-card-grid.slider .carousel-track {
+  overflow: visible;
+  clip-path: inset(0 -100vw 0 0);
+}
+
+.brand-shape-card-grid.slider .carousel-track-inner {
+  gap: 12px;
+  align-items: stretch;
+}
+
+/* Fixed card width inside the slider strip at mobile */
+.brand-shape-card-grid.slider .carousel-track-inner > .bscg-card {
+  flex: 0 0 calc(100% - 40px);
+  min-width: calc(100% - 40px);
+}
+
+@media (width >= 510px) {
+  .brand-shape-card-grid.slider .carousel-track-inner > .bscg-card {
+    flex: 0 0 calc(50% - 8px);
+    min-width: calc(50% - 8px);
+  }
+}
+
+/* On desktop (>= 1025) — destroy carousel; cards revert to grid */
+@media (width >= 1025px) {
+  /* When carousel-initialized is still present on desktop (shouldn't be,
+     but defensive reset) */
+  .brand-shape-card-grid.slider .bscg-cards.carousel-initialized {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow: visible;
+  }
+
+  .brand-shape-card-grid.slider .bscg-cards > .bscg-card {
+    flex: 1 1 0;
+    width: 0;
+    min-width: 0;
+  }
+}
+
+/* Carousel dots — shown on mobile for slider variation */
+.brand-shape-card-grid.slider .carousel-dots {
+  display: flex;
+  padding: 20px 0 0;
+  justify-content: center;
+}
+
+@media (width >= 1025px) {
+  .brand-shape-card-grid.slider .carousel-dots {
+    display: none;
+  }
+}
+
+/* Hide carousel nav arrows (not needed for this design) */
+.brand-shape-card-grid .carousel-nav {
+  display: none;
+}
+
+/* -----------------------------------------------------------------------------
+   Individual card
+   ----------------------------------------------------------------------------- */
+
+.brand-shape-card-grid .bscg-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--bscg-card-bg);
+  border-radius: var(--bscg-card-radius);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  cursor: default;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+a.bscg-card {
+  cursor: pointer;
+}
+
+a.bscg-card:hover,
+a.bscg-card:focus-visible {
+  box-shadow: 0 4px 20px rgb(0 0 0 / 18%);
+  text-decoration: none;
+  outline-offset: 3px;
+}
+
+/* Card image — fixed aspect ratio */
+.brand-shape-card-grid .bscg-card-image {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.brand-shape-card-grid .bscg-card-image picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.brand-shape-card-grid .bscg-card-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.3s ease;
+}
+
+a.bscg-card:hover .bscg-card-image img {
+  transform: scale(1.03);
+}
+
+/* Card body */
+.brand-shape-card-grid .bscg-card-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 12px;
+}
+
+/* Logo */
+.brand-shape-card-grid .bscg-card-logo {
+  display: flex;
+  align-items: center;
+}
+
+.brand-shape-card-grid .bscg-card-logo picture {
+  display: flex;
+  align-items: center;
+}
+
+.brand-shape-card-grid .bscg-card-logo img {
+  display: block;
+  max-width: 120px;
+  max-height: 40px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Title / body text */
+.brand-shape-card-grid .bscg-card-title {
+  flex: 1 1 auto;
+  font-family: var(--font-family-primary);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--bscg-card-title-color);
+}
+
+@media (width >= 720px) {
+  .brand-shape-card-grid .bscg-card-title {
+    font-size: 15px;
+  }
+}
+
+@media (width >= 1025px) {
+  .brand-shape-card-grid .bscg-card-title {
+    font-size: 16px;
+  }
+}
+
+.brand-shape-card-grid .bscg-card-title p {
+  margin: 0;
+}
+
+/* CTA row */
+.brand-shape-card-grid .bscg-card-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.brand-shape-card-grid .bscg-card-cta-label {
+  font-family: var(--font-family-primary);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--bscg-card-cta-color);
+  line-height: 1.4;
+}
+
+@media (width >= 1025px) {
+  .brand-shape-card-grid .bscg-card-cta-label {
+    font-size: 14px;
+  }
+}
+
+/* Arrow icon */
+.brand-shape-card-grid .bscg-card-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  transition: transform 0.2s ease;
+}
+
+.brand-shape-card-grid .bscg-card-arrow img {
+  display: block;
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+/* Arrow points right by default; ensure it's clearly pointing right on hover */
+a.bscg-card:hover .bscg-card-arrow,
+a.bscg-card:focus-visible .bscg-card-arrow {
+  transform: translateX(4px);
+}

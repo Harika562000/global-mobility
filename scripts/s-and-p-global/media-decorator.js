@@ -11,7 +11,7 @@
  *   decorateMedia(container, variant, overrides) → Promise<void>
  */
 
-import { loadCSS } from './aem.js';
+import { loadCSS } from '../aem.js';
 import { getVariantConfig, isEditMode } from './media-config.js';
 import openVideoModal from './video-modal.js';
 

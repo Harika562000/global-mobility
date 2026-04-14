@@ -71,6 +71,12 @@
     ]
   },
   {
+    "id": "brand-shape-card-grid",
+    "components": [
+      "brand-shape-card-grid-item"
+    ]
+  },
+  {
     "id": "card-grid-carousel",
     "components": [
       "card-grid-carousel-item"

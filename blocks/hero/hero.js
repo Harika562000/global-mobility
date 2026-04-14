@@ -1,5 +1,5 @@
 import { eyebrowDecorator, decorateTags } from '../../scripts/scripts.js';
-import { isVideoLink, resolveVideoSrc } from '../../scripts/media-decorator.js';
+import { isVideoLink, resolveVideoSrc } from '../../scripts/s-and-p-global/media-decorator.js';
 
 /**
  * Hero block: three variations (UE authoring reference).

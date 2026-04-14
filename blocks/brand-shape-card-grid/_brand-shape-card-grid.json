@@ -1,0 +1,142 @@
+{
+  "definitions": [
+    {
+      "title": "Brand Shape Card Grid",
+      "id": "brand-shape-card-grid",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block",
+            "template": {
+              "name": "brand-shape-card-grid",
+              "model": "brand-shape-card-grid",
+              "filter": "brand-shape-card-grid"
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "Brand Shape Card Grid Item",
+      "id": "brand-shape-card-grid-item",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block/item",
+            "template": {
+              "name": "Brand Shape Card Grid Item",
+              "model": "brand-shape-card-grid-item",
+              "title": "Card Title"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "brand-shape-card-grid",
+      "fields": [
+        {
+          "component": "select",
+          "name": "classes",
+          "label": "Mobile Variation",
+          "valueType": "string",
+          "value": "",
+          "description": "Select how cards are displayed on mobile. Default shows cards inline (stacked). Slider shows a swipeable carousel.",
+          "options": [
+            {
+              "name": "Default (Inline)",
+              "value": ""
+            },
+            {
+              "name": "Slider (Swipeable Carousel on Mobile)",
+              "value": "slider"
+            }
+          ]
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "eyebrow",
+          "label": "Eyebrow",
+          "value": "",
+          "required": true,
+          "description": "Short label displayed above the heading (e.g. OUR DIVISIONS)"
+        },
+        {
+          "component": "richtext",
+          "name": "heading",
+          "label": "Heading",
+          "valueType": "string",
+          "required": true,
+          "description": "Main section heading displayed above the cards."
+        }
+      ]
+    },
+    {
+      "id": "brand-shape-card-grid-item",
+      "fields": [
+        {
+          "component": "reference",
+          "valueType": "string",
+          "name": "cardImage",
+          "label": "Card Image",
+          "multi": false,
+          "required": true,
+          "description": "Full-width image displayed at the top of the card."
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "cardImageAlt",
+          "label": "Card Image Alt Text",
+          "value": ""
+        },
+        {
+          "component": "reference",
+          "valueType": "string",
+          "name": "logo",
+          "label": "Logo (Optional)",
+          "multi": false,
+          "description": "Optional brand logo displayed in the card body below the image."
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "logoAlt",
+          "label": "Logo Alt Text",
+          "value": ""
+        },
+        {
+          "component": "richtext",
+          "name": "cardTitle",
+          "label": "Card Title / Description",
+          "valueType": "string",
+          "required": true,
+          "description": "Body text displayed inside the card."
+        },
+        {
+          "component": "aem-content",
+          "valueType": "string",
+          "name": "cardLink",
+          "label": "CTA Link",
+          "description": "Optional. Makes the entire card a clickable link (opens in same tab)."
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "ctaText",
+          "label": "CTA Text",
+          "description": "Optional label shown next to the arrow at the bottom of the card."
+        }
+      ]
+    }
+  ],
+  "filters": [
+    {
+      "id": "brand-shape-card-grid",
+      "components": ["brand-shape-card-grid-item"]
+    }
+  ]
+}
