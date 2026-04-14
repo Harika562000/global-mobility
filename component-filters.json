@@ -50,7 +50,9 @@
       "embed-adaptive-form",
       "dynamic-module",
       "experts-card",
-      "overview"
+      "overview",
+      "brand-shape-card-grid",
+      "card-grid-carousel"
     ]
   },
   {
