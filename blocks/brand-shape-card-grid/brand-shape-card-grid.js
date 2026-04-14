@@ -171,10 +171,13 @@ function createCardElement(row) {
     body.append(titleWrap);
   }
 
-  // CTA row: text link + arrow indicator
-  const ctaText = ctaCell?.querySelector('a')?.textContent?.trim()
-    || ctaCell?.textContent?.trim()
-    || '';
+  // CTA row: text link + arrow indicator.
+  // In EDS document authoring the anchor's textContent is often identical to
+  // its href when no display text was typed — skip it in that case.
+  const rawCtaText = ctaCell?.querySelector('a')?.textContent?.trim() || '';
+  const rawCtaHref = ctaCell?.querySelector('a')?.getAttribute('href') || '';
+  const isCtaTextAUrl = rawCtaText.startsWith('http') || rawCtaText.startsWith('/') || rawCtaText === rawCtaHref;
+  const ctaText = isCtaTextAUrl ? '' : rawCtaText;
 
   const ctaRow = document.createElement('div');
   ctaRow.className = 'bscg-card-cta';

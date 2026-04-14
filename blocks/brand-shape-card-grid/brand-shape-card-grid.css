@@ -4,20 +4,20 @@
 
 /* -----------------------------------------------------------------------------
    Block container
+   Block has no background of its own — background comes from the section
+   (e.g. bg-dark, bg-quiet-light, etc.). Text colours adapt accordingly.
    ----------------------------------------------------------------------------- */
 
 .brand-shape-card-grid {
-  --bscg-bg: var(--surface-dark, #0a3461);
-  --bscg-card-bg: var(--surface-light, #fff);
-  --bscg-card-radius: var(--radius-sm, 8px);
+  --bscg-card-bg: var(--surface-section-backgrounds-quiet-light, #efefe5);
+  --bscg-card-radius: var(--radius-sm, 12px);
   --bscg-card-gap: 16px;
-  --bscg-header-color: var(--typography-inverse, #fff);
+  /* Header colours inherit from section (inverted on dark sections) */
+  --bscg-header-color: currentcolor;
   --bscg-card-title-color: var(--typography-main, #132445);
   --bscg-card-cta-color: var(--typography-main, #132445);
-  --bscg-arrow-color: var(--typography-accent-1, #0064d2);
+  --bscg-arrow-color: var(--typography-accent-1, #1c76d3);
 
-  background: var(--bscg-bg);
-  border-radius: var(--radius-sm, 8px);
   padding: 36px 20px;
   box-sizing: border-box;
 }
@@ -53,7 +53,7 @@
   margin-bottom: 32px;
 }
 
-/* Eyebrow */
+/* Eyebrow — inherits colour from the section (accent on dark via .eye-brow-text.accent-color) */
 .brand-shape-card-grid .bscg-eyebrow {
   margin-bottom: var(--spacing-300, 12px);
 }
@@ -65,7 +65,7 @@
   text-transform: uppercase;
   line-height: 1.5;
   letter-spacing: 0.12em;
-  color: var(--typography-inverse, #fff);
+  /* colour comes from .eye-brow-text or .eye-brow-text.accent-color in styles.css */
 }
 
 @media (width >= 720px) {
@@ -74,7 +74,7 @@
   }
 }
 
-/* Title */
+/* Title — inherits colour from the section via currentcolor */
 .brand-shape-card-grid .bscg-title {
   color: var(--bscg-header-color);
 }
@@ -86,7 +86,6 @@
 .brand-shape-card-grid .bscg-title h5,
 .brand-shape-card-grid .bscg-title h6 {
   margin: 0;
-  color: var(--bscg-header-color);
   font-weight: 600;
   font-size: 28px;
   line-height: 1.2;
@@ -136,6 +135,7 @@
   gap: var(--bscg-card-gap);
 }
 
+/* At 510px show 2-up; cards have a fixed 280px width but grow to fill */
 @media (width >= 510px) {
   .brand-shape-card-grid .bscg-cards {
     flex-direction: row;
@@ -144,11 +144,12 @@
   }
 
   .brand-shape-card-grid .bscg-cards > .bscg-card {
-    flex: 0 0 calc(50% - var(--bscg-card-gap) / 2);
-    width: calc(50% - var(--bscg-card-gap) / 2);
+    flex: 0 0 280px;
+    width: 280px;
   }
 }
 
+/* At 1025px+ three equal-width cards fill the available width */
 @media (width >= 1025px) {
   .brand-shape-card-grid .bscg-cards {
     flex-wrap: nowrap;
@@ -158,6 +159,7 @@
   .brand-shape-card-grid .bscg-cards > .bscg-card {
     flex: 1 1 0;
     width: 0;
+    min-height: unset;
   }
 }
 
@@ -239,9 +241,20 @@
   border-radius: var(--bscg-card-radius);
   overflow: hidden;
   text-decoration: none;
-  color: inherit;
+  color: var(--bscg-card-title-color);
   cursor: default;
+  /* Fixed size for mobile / tablet */
+  width: 280px;
+  min-height: 540px;
   transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+/* On desktop cards fill the row — no fixed width */
+@media (width >= 1025px) {
+  .brand-shape-card-grid .bscg-card {
+    width: 100%;
+    min-height: unset;
+  }
 }
 
 a.bscg-card {
@@ -304,7 +317,7 @@ a.bscg-card:hover .bscg-card-image img {
 
 .brand-shape-card-grid .bscg-card-logo img {
   display: block;
-  max-width: 120px;
+  max-width: 146px;
   max-height: 40px;
   width: auto;
   height: auto;
@@ -315,22 +328,11 @@ a.bscg-card:hover .bscg-card-image img {
 .brand-shape-card-grid .bscg-card-title {
   flex: 1 1 auto;
   font-family: var(--font-family-primary);
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.6;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: var(--letter-spacing-tight, -0.04em);
   color: var(--bscg-card-title-color);
-}
-
-@media (width >= 720px) {
-  .brand-shape-card-grid .bscg-card-title {
-    font-size: 15px;
-  }
-}
-
-@media (width >= 1025px) {
-  .brand-shape-card-grid .bscg-card-title {
-    font-size: 16px;
-  }
 }
 
 .brand-shape-card-grid .bscg-card-title p {
