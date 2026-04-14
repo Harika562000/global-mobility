@@ -159,7 +159,6 @@
   .brand-shape-card-grid .bscg-cards > .bscg-card {
     flex: 1 1 0;
     width: 0;
-    min-height: unset;
   }
 }
 
@@ -232,12 +231,14 @@
 
 /* -----------------------------------------------------------------------------
    Individual card
+   Image fills the entire card area; card body overlaps it with a shaped top.
    ----------------------------------------------------------------------------- */
 
 .brand-shape-card-grid .bscg-card {
   display: flex;
   flex-direction: column;
-  background: var(--bscg-card-bg);
+  position: relative;
+  /* No background — image is full-bleed */
   border-radius: var(--bscg-card-radius);
   overflow: hidden;
   text-decoration: none;
@@ -245,15 +246,14 @@
   cursor: default;
   /* Fixed size for mobile / tablet */
   width: 280px;
-  min-height: 540px;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  min-height: 543px;
+  transition: box-shadow 0.2s ease;
 }
 
 /* On desktop cards fill the row — no fixed width */
 @media (width >= 1025px) {
   .brand-shape-card-grid .bscg-card {
     width: 100%;
-    min-height: unset;
   }
 }
 
@@ -268,12 +268,13 @@ a.bscg-card:focus-visible {
   outline-offset: 3px;
 }
 
-/* Card image — fixed aspect ratio */
+/* Card image — fills the entire card */
 .brand-shape-card-grid .bscg-card-image {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  height: 100%;
   overflow: hidden;
-  flex-shrink: 0;
 }
 
 .brand-shape-card-grid .bscg-card-image picture {
@@ -295,13 +296,28 @@ a.bscg-card:hover .bscg-card-image img {
   transform: scale(1.03);
 }
 
-/* Card body */
+/* Card body — sits above the image, anchored to the bottom */
 .brand-shape-card-grid .bscg-card-body {
-  flex: 1 1 auto;
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
   display: flex;
   flex-direction: column;
-  padding: 20px;
   gap: 12px;
+  /* Default (< 1440px): shaped body with large top-left radius */
+  border-top-left-radius: 50px;
+  padding: 44px 20px 20px;
+  background: #efefe5;
+  height: 316px;
+  box-sizing: border-box;
+}
+
+@media (width >= 1440px) {
+  .brand-shape-card-grid .bscg-card-body {
+    border-top-left-radius: 0;
+    padding: 20px;
+    height: auto;
+  }
 }
 
 /* Logo */

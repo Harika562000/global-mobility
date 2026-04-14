@@ -43,9 +43,7 @@ let aemPublishHostPromise;
 async function loadAemPublishHost() {
   if (aemPublishHostPromise) return aemPublishHostPromise;
   aemPublishHostPromise = (async () => {
-    const value = await getConfigValue('AEM_PUBLISH_HOST')
-      || await getConfigValue('aem-publish-host')
-      || await getConfigValue('aem_publish_host');
+    const value = await getConfigValue('AEM_PUBLISH_HOST');
     aemPublishHost = (value || '').trim() || undefined;
     return aemPublishHost;
   })();

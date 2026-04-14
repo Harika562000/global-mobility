@@ -1,141 +1,88 @@
-let configPromise = null;
+/* eslint-disable no-console */
+import { getSessionStorageItem, setSessionStorageItem } from './s-and-p-global/utils.js';
+
+/** sessionStorage key for flattened config JSON */
 
 export const LOCAL_SITE_CONFIG_KEY = 'configs';
 
-function isPlainObject(value) {
-  return Boolean(value && typeof value === 'object' && !Array.isArray(value));
+const CONFIG_KEY = LOCAL_SITE_CONFIG_KEY;
+
+function getConfigUrl() {
+  const base = typeof window !== 'undefined' ? (window.hlx?.codeBasePath || '') : '';
+  return `${base}/configs.json`;
 }
 
-function readLocalSiteConfigValue(key) {
-  if (typeof window === 'undefined' || !key) return undefined;
+let configFetchPromise = null;
+
+/**
+* @param {string} key
+* @returns {string|undefined}
+*/
+function readConfigKeyFromSession(key) {
+  if (typeof window === 'undefined') return undefined;
+  const raw = getSessionStorageItem(CONFIG_KEY);
+  if (!raw) return undefined;
   try {
-    const raw = window.localStorage.getItem(LOCAL_SITE_CONFIG_KEY);
-    if (!raw) return undefined;
-    const parsed = JSON.parse(raw);
-    if (!isPlainObject(parsed)) return undefined;
-    if (!Object.prototype.hasOwnProperty.call(parsed, key)) return undefined;
-    const value = parsed[key];
-    if (value === undefined || value === null) return undefined;
-    const trimmed = String(value).trim();
-    return trimmed || undefined;
+    const obj = JSON.parse(raw);
+    if (!obj || typeof obj !== 'object') return undefined;
+    const v = obj[key];
+    if (v === undefined || v === null) return undefined;
+    const s = String(v).trim();
+    return s || undefined;
   } catch {
     return undefined;
   }
 }
 
-function persistLocalSiteConfigValue(key, value) {
-  if (typeof window === 'undefined' || !key || !value) return;
-  try {
-    const raw = window.localStorage.getItem(LOCAL_SITE_CONFIG_KEY);
-    let next = {};
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (isPlainObject(parsed)) {
-        next = { ...parsed };
-      }
-    }
-    next[key] = value;
-    window.localStorage.setItem(LOCAL_SITE_CONFIG_KEY, JSON.stringify(next));
-  } catch {
-    /* Quota, private mode, or invalid JSON in storage */
-  }
-}
-
-function getConfigUrls() {
-  const base = typeof window !== 'undefined' ? (window.hlx?.codeBasePath || '') : '';
-  return [
-    // Default Franklin/AEM config mapping (see paths.json mapping to /.helix/config.json)
-    `${base}/.helix/config.json`,
-    // Back-compat / alternate publishing setup
-    `${base}/configs.json`,
-  ];
-}
-
 /**
- * Loads site configuration from the network.
- * Supports `{ data: [{ key, value }] }` (spreadsheet/CMS rows) or a flat JSON object.
- * @returns {Promise<Object>} Configuration object
- */
-const loadConfig = async () => {
-  if (typeof window === 'undefined') {
-    return { data: [] };
-  }
-
+* Fetches and caches configuration from configs.json (flattened key-value object).
+* @returns {Promise<void>}
+*/
+const fetchAndStoreConfig = async () => {
+  if (typeof window === 'undefined') return;
   try {
-    // Try multiple well-known config endpoints. Author-driven config should be available
-    // at `/.helix/config.json` via `paths.json` mappings.
-    const urls = getConfigUrls();
-    let lastStatus = 0;
-    for (let i = 0; i < urls.length; i += 1) {
-      const url = urls[i];
-      // eslint-disable-next-line no-await-in-loop
-      const response = await fetch(url);
-      if (response.ok) {
-        // eslint-disable-next-line no-await-in-loop
-        return response.json();
-      }
-      lastStatus = response.status;
+    const response = await fetch(getConfigUrl());
+    if (!response.ok) throw new Error(`Failed to fetch config: ${response.status}`);
+    const config = await response.json();
+
+    const flatConfig = {};
+    if (Array.isArray(config.data)) {
+      config.data.forEach((item) => {
+        if (item && item.key) flatConfig[item.key] = item.value;
+      });
     }
-    throw new Error(`Failed to load configuration: ${lastStatus || 'unknown'}`);
-  } catch (error) {
-    // eslint-disable-next-line no-console -- surface config fetch failures in devtools
-    console.error('Error loading configuration:', error);
-    return { data: [] };
+    /* Flat object shape: { "google-tag-manager": "GTM-…", … } */
+    Object.keys(config).forEach((k) => {
+      if (k === 'data') return;
+      const v = config[k];
+      if (v !== undefined && v !== null && typeof v !== 'object') {
+        flatConfig[k] = v;
+      }
+    });
+
+    setSessionStorageItem(CONFIG_KEY, JSON.stringify(flatConfig));
+  } catch (e) {
+    console.error('Error fetching config:', e);
   }
 };
 
 /**
- * @param {Object} config
- * @param {string} key
- * @returns {string|undefined}
- */
-function readConfigKey(config, key) {
-  if (!config || typeof config !== 'object') return undefined;
-
-  const rows = config.data;
-  if (Array.isArray(rows)) {
-    const item = rows.find((row) => row && row.key === key);
-    if (item != null && item.value !== undefined && item.value !== null) {
-      const value = String(item.value).trim();
-      return value || undefined;
-    }
-  }
-
-  if (Object.prototype.hasOwnProperty.call(config, key)) {
-    const direct = config[key];
-    if (direct !== undefined && direct !== null && typeof direct !== 'object') {
-      const value = String(direct).trim();
-      return value || undefined;
-    }
-  }
-
-  return undefined;
-}
-
-/**
- * Returns a configuration value by key (after config is loaded once per page).
- * @param {string} key Configuration key (e.g. google-tag-manager, google-tag-analytics)
- * @returns {Promise<string|undefined>}
- */
+* Retrieves a configuration value by key using session storage, then configs.json.
+* @param {string} key Configuration key (e.g. google-tag-manager, google-tag-analytics)
+* @returns {Promise<string|undefined>}
+*/
 export async function getConfigValue(key) {
-  const fromLocal = readLocalSiteConfigValue(key);
-  if (fromLocal !== undefined) return fromLocal;
+  let value = readConfigKeyFromSession(key);
 
-  if (!configPromise) {
-    configPromise = loadConfig();
+  if (!value) {
+    if (!configFetchPromise) {
+      configFetchPromise = fetchAndStoreConfig().finally(() => {
+        configFetchPromise = null;
+      });
+    }
+    await configFetchPromise;
+    value = readConfigKeyFromSession(key);
   }
-  const config = await configPromise;
-  const fromRemote = readConfigKey(config, key);
-  if (fromRemote !== undefined) {
-    persistLocalSiteConfigValue(key, fromRemote);
-  }
-  return fromRemote;
-}
 
-/**
- * Clears the in-memory config promise so the next getConfigValue refetches.
- * @returns {void}
- */
-export function resetConfigCache() {
-  configPromise = null;
+  return value || undefined;
 }
