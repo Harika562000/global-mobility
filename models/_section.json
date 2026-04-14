@@ -30,6 +30,23 @@
           }
         }
       }
+    },
+    {
+      "title": "Footer Section",
+      "id": "footer-section",
+      "description": "Section that only allows the Footer block.",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/section/v1/section",
+            "template": {
+              "name": "Footer Section",
+              "model": "footer-section",
+              "filter": "footer-section"
+            }
+          }
+        }
+      }
     }
   ],
   "models": [
@@ -305,7 +322,8 @@
         "embed-adaptive-form",
         "dynamic-module",
         "experts-card",
-        "overview"
+        "overview",
+        "powerbi"
       ]
     },
     {
@@ -317,6 +335,16 @@
         "header-search",
         "header-menu-item",
         "header-nav-child"
+      ]
+    },
+    {
+      "id": "footer-section",
+      "components": [
+        "footer-logo",
+        "footer-links",
+        "footer-tag-line",
+        "footer-social-links",
+        "footer-copyright"
       ]
     }
   ]

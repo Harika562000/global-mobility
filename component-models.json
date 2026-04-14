@@ -1021,6 +1021,116 @@
     ]
   },
   {
+    "id": "footer-logo",
+    "fields": [
+      {
+        "component": "reference",
+        "name": "image",
+        "label": "Logo Image",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "name": "url",
+        "label": "Logo Link URL",
+        "valueType": "string",
+        "value": "/"
+      },
+      {
+        "component": "text",
+        "name": "alt",
+        "label": "Alt Text",
+        "valueType": "string",
+        "value": ""
+      }
+    ]
+  },
+  {
+    "id": "footer-tag-line",
+    "fields": [
+      {
+        "component": "richtext",
+        "name": "tagline",
+        "label": "Tag Line",
+        "description": "The main tagline displayed in the footer"
+      }
+    ]
+  },
+  {
+    "id": "footer-links",
+    "fields": [
+      {
+        "component": "text",
+        "name": "heading",
+        "label": "Column Heading",
+        "valueType": "string",
+        "value": ""
+      }
+    ]
+  },
+  {
+    "id": "footer-link",
+    "fields": [
+      {
+        "component": "aem-content",
+        "name": "url",
+        "label": "Link URL"
+      },
+      {
+        "component": "text",
+        "name": "text",
+        "label": "Link Text",
+        "valueType": "string",
+        "value": ""
+      }
+    ]
+  },
+  {
+    "id": "footer-social-links",
+    "fields": [
+      {
+        "component": "richtext",
+        "name": "message",
+        "label": "Follow Us Message",
+        "description": "e.g. Follow us"
+      }
+    ]
+  },
+  {
+    "id": "footer-social-link",
+    "fields": [
+      {
+        "component": "reference",
+        "name": "icon",
+        "label": "Social Icon",
+        "multi": false
+      },
+      {
+        "component": "text",
+        "name": "alt",
+        "label": "Alt Text",
+        "valueType": "string",
+        "value": ""
+      },
+      {
+        "component": "aem-content",
+        "name": "url",
+        "label": "Social Link URL"
+      }
+    ]
+  },
+  {
+    "id": "footer-copyright",
+    "fields": [
+      {
+        "component": "richtext",
+        "name": "content",
+        "label": "Copyright Text & Links",
+        "description": "Add copyright text and any associated links"
+      }
+    ]
+  },
+  {
     "id": "form",
     "fields": [
       {

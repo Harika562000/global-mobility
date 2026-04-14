@@ -2,7 +2,9 @@
   {
     "id": "main",
     "components": [
-      "section"
+      "section",
+      "header-section",
+      "footer-section"
     ]
   },
   {
@@ -50,7 +52,8 @@
       "embed-adaptive-form",
       "dynamic-module",
       "experts-card",
-      "overview"
+      "overview",
+      "powerbi"
     ]
   },
   {
@@ -62,6 +65,16 @@
       "header-search",
       "header-menu-item",
       "header-nav-child"
+    ]
+  },
+  {
+    "id": "footer-section",
+    "components": [
+      "footer-logo",
+      "footer-links",
+      "footer-tag-line",
+      "footer-social-links",
+      "footer-copyright"
     ]
   },
   {
@@ -95,6 +108,18 @@
     "id": "customer-stories",
     "components": [
       "fragment"
+    ]
+  },
+  {
+    "id": "footer-links",
+    "components": [
+      "footer-link"
+    ]
+  },
+  {
+    "id": "footer-social-links",
+    "components": [
+      "footer-social-link"
     ]
   },
   {

@@ -1,13 +1,14 @@
 import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
 
-/** Footer section class names, in display order (brand, nav, tagline, social, utility). */
+/** Footer section class names, in display order (brand, nav, tagline, social, utility, section). */
 const FOOTER_SECTION_CLASSES = [
   'footer-brand',
   'footer-nav',
   'footer-tagline',
   'footer-social',
   'footer-utility',
+  'footer-section',
 ];
 
 /** Placeholder authors use for year; replaced at runtime with current year. */
@@ -68,8 +69,38 @@ function normalizeHref(raw) {
 }
 
 /**
- * Loads footer fragment from footer page; first 5 sections get
- * footer-brand, footer-nav, footer-tagline, footer-social, footer-utility.
+ * Processes the footer-logo block: reads the link (row 2) and alt text (row 3),
+ * sets the alt on the img, and wraps the picture in an anchor if a link is present.
+ * The external-link normalisation in decorate() handles target/rel afterwards.
+ */
+function decorateFooterLogo(block) {
+  const rows = Array.from(block.children);
+  if (!rows.length) return;
+
+  const picture = rows[0]?.querySelector('picture');
+  const href = rows[1]?.querySelector('a')?.getAttribute('href') || '';
+  const altText = rows[2]?.textContent?.trim() || '';
+
+  if (!picture) return;
+
+  const img = picture.querySelector('img');
+  if (img && altText) img.alt = altText;
+
+  block.innerHTML = '';
+
+  if (href) {
+    const anchor = document.createElement('a');
+    anchor.href = href;
+    anchor.append(picture);
+    block.append(anchor);
+  } else {
+    block.append(picture);
+  }
+}
+
+/**
+ * Loads footer fragment from footer page; first 6 sections get
+ * footer-brand, footer-nav, footer-tagline, footer-social, footer-utility, footer-section.
  */
 export default async function decorate(block) {
   const footerMeta = getMetadata('footer');
@@ -90,6 +121,10 @@ export default async function decorate(block) {
       section.classList.add(FOOTER_SECTION_CLASSES[index]);
     }
   });
+
+  // Decorate footer-logo block inside footer-section
+  const footerLogoBlock = footer.querySelector('.footer-section .footer-logo');
+  if (footerLogoBlock) decorateFooterLogo(footerLogoBlock);
 
   // Wrap footer-social content in .footer-social-content
   const socialSection = footer.querySelector('.footer-social');

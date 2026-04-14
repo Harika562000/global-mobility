@@ -92,6 +92,23 @@
               }
             }
           }
+        },
+        {
+          "title": "Footer Section",
+          "id": "footer-section",
+          "description": "Section that only allows the Footer block.",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/section/v1/section",
+                "template": {
+                  "name": "Footer Section",
+                  "model": "footer-section",
+                  "filter": "footer-section"
+                }
+              }
+            }
+          }
         }
       ]
     },
@@ -266,6 +283,113 @@
                 "template": {
                   "name": "Embed Form",
                   "model": "embed-form"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Footer Logo",
+          "id": "footer-logo",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Footer Logo",
+                  "model": "footer-logo"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Footer Tag Line",
+          "id": "footer-tag-line",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Footer Tag Line",
+                  "model": "footer-tag-line"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Footer Links",
+          "id": "footer-links",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Footer Links",
+                  "model": "footer-links",
+                  "filter": "footer-links"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Footer Link",
+          "id": "footer-link",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "Footer Link",
+                  "model": "footer-link"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Footer Social Links",
+          "id": "footer-social-links",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Footer Social Links",
+                  "model": "footer-social-links",
+                  "filter": "footer-social-links"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Footer Social Link",
+          "id": "footer-social-link",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block/item",
+                "template": {
+                  "name": "Footer Social Link",
+                  "model": "footer-social-link"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Footer Copyright",
+          "id": "footer-copyright",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Footer Copyright",
+                  "model": "footer-copyright"
                 }
               }
             }
