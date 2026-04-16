@@ -1,16 +1,6 @@
 import { getMetadata, decorateIcons } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
 
-/** Footer section class names, in display order (brand, nav, tagline, social, utility, section). */
-const FOOTER_SECTION_CLASSES = [
-  'footer-brand',
-  'footer-nav',
-  'footer-tagline',
-  'footer-social',
-  'footer-utility',
-  'footer-section',
-];
-
 /** Placeholder authors use for year; replaced at runtime with current year. */
 const COPYRIGHT_YEAR_PLACEHOLDER = 'XXXX';
 
@@ -335,13 +325,8 @@ export default async function decorate(block) {
   while (fragment.firstElementChild) {
     footer.append(fragment.firstElementChild);
   }
-  Array.from(footer.children).forEach((section, index) => {
-    if (FOOTER_SECTION_CLASSES[index]) {
-      section.classList.add(FOOTER_SECTION_CLASSES[index]);
-    }
-  });
-
-  const footerSection = footer.querySelector('.footer-section');
+  const footerSection = footer.firstElementChild;
+  if (footerSection) footerSection.classList.add('footer-section');
 
   // Decorate footer-logo block inside footer-section
   const footerLogoBlock = footer.querySelector('.footer-section .footer-logo');
@@ -409,39 +394,6 @@ export default async function decorate(block) {
     if (newSocialLinksWrapper) socialCopyrightWrapper.append(newSocialLinksWrapper);
     if (newCopyrightWrapper) socialCopyrightWrapper.append(newCopyrightWrapper);
     footerSection.append(socialCopyrightWrapper);
-  }
-
-  // Wrap footer-social content in .footer-social-content
-  const socialSection = footer.querySelector('.footer-social');
-  const defaultContentWrapper = socialSection?.querySelector(':scope > .default-content-wrapper');
-  if (defaultContentWrapper) {
-    const contentWrapper = document.createElement('div');
-    contentWrapper.className = 'footer-social-content';
-    while (defaultContentWrapper.firstElementChild) {
-      contentWrapper.append(defaultContentWrapper.firstElementChild);
-    }
-    defaultContentWrapper.append(contentWrapper);
-  }
-
-  // Group social and utility sections in one wrapper
-  const utilitySection = footer.querySelector('.footer-utility');
-  if (socialSection || utilitySection) {
-    const linksWrapper = document.createElement('div');
-    linksWrapper.className = 'footer-social-utility-wrapper';
-    if (socialSection) linksWrapper.append(socialSection);
-    if (utilitySection) linksWrapper.append(utilitySection);
-    footer.append(linksWrapper);
-  }
-
-  // Clone CTA button into social section for layout
-  const socialContentWrapper = footer.querySelector('.footer-social > .default-content-wrapper');
-  const utilityButton = footer.querySelector('.footer-utility .button');
-  utilityButton?.classList.add('original-button', 'size-40');
-  if (socialContentWrapper && utilityButton) {
-    const clonedButton = utilityButton.cloneNode(true);
-    clonedButton.classList.add('button-clone');
-    clonedButton.classList.remove('original-button');
-    socialContentWrapper.append(clonedButton);
   }
 
   updateCopyrightYear(footer);
