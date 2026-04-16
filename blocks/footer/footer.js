@@ -114,9 +114,11 @@ function decorateFooterTagLine(block) {
     wrapper.append(cell.firstChild);
   }
 
-  const anonymousDiv = block.parentElement;
-  if (anonymousDiv && !anonymousDiv.className) {
-    anonymousDiv.replaceWith(wrapper);
+  // decorateSections() always wraps blocks in a named div (e.g. footer-tag-line-wrapper),
+  // so replace the parent wrapper directly regardless of whether it has a class.
+  const parent = block.parentElement;
+  if (parent) {
+    parent.replaceWith(wrapper);
   } else {
     block.replaceWith(wrapper);
   }
@@ -164,12 +166,17 @@ function decorateFooterSocialLinks(block, tagLineWrapper) {
   const wrapper = document.createElement('div');
   wrapper.className = 'footer-social-links-wrapper';
 
+  // Wrap message + icons in a content div so at 720px+ the content block
+  // and the cloned cookie button sit in the same row (space-between).
+  const content = document.createElement('div');
+  content.className = 'footer-social-links-content';
   if (messageCell?.innerHTML) {
     const message = document.createElement('p');
     message.innerHTML = messageCell.innerHTML;
-    wrapper.append(message);
+    content.append(message);
   }
-  if (ul.children.length) wrapper.append(ul);
+  if (ul.children.length) content.append(ul);
+  if (content.children.length) wrapper.append(content);
 
   decorateIcons(wrapper);
 
@@ -177,13 +184,76 @@ function decorateFooterSocialLinks(block, tagLineWrapper) {
     tagLineWrapper.after(wrapper);
   }
 
-  // Remove the block's anonymous wrapper div from the section
-  const anonymousDiv = block.parentElement;
-  if (anonymousDiv && !anonymousDiv.className) {
-    anonymousDiv.remove();
-  } else {
-    block.remove();
+  // decorateSections() wraps blocks in a named div (e.g. footer-social-links-wrapper).
+  // Remove the whole wrapper so no empty shell is left behind.
+  const outerWrapper = block.parentElement;
+  if (outerWrapper) outerWrapper.remove();
+}
+
+/**
+ * Decorates the footer-copyright block (new implementation).
+ * Row 0 = richtext copyright content (links extracted into a <ul>).
+ * Row 1 = cookieButton container (cells: link, linkText, linkTitle, linkType).
+ * Builds footer-copyright-wrapper and inserts it after footer-links-wrapper.
+ * Returns the cookie button element for cloning, or null.
+ */
+function decorateFooterCopyright(block, footerSection) {
+  const rows = Array.from(block.children);
+  if (!rows.length) return null;
+
+  // Row 0: richtext content — extract <a> elements into a <ul>
+  const contentCell = rows[0]?.querySelector(':scope > div');
+  const ul = document.createElement('ul');
+  if (contentCell) {
+    contentCell.querySelectorAll('a').forEach((link) => {
+      const rawHref = link.getAttribute('href') || '';
+      const href = normalizeHref(rawHref);
+      if (href && href !== rawHref) link.setAttribute('href', href);
+      const li = document.createElement('li');
+      li.append(link.cloneNode(true));
+      ul.append(li);
+    });
   }
+
+  // Row 1: cookieButton container — cells[0]=link, cells[1]=linkText, cells[2]=linkTitle, cells[3]=linkType
+  let cookieButton = null;
+  const buttonRow = rows[1];
+  if (buttonRow) {
+    const cells = Array.from(buttonRow.children);
+    const linkAnchor = cells[0]?.querySelector('a');
+    const linkText = cells[1]?.textContent?.trim()
+      || cells[0]?.textContent?.trim()
+      || '';
+    const linkTitle = cells[2]?.textContent?.trim() || '';
+    const linkType = cells[3]?.textContent?.trim() || 'inverted';
+
+    if (linkText) {
+      const btn = document.createElement('a');
+      const btnHref = normalizeHref(linkAnchor?.getAttribute('href') || '');
+      btn.href = btnHref || '#';
+      if (!btnHref) btn.setAttribute('data-action', 'cookie-preferences');
+      btn.className = `button ${linkType} original-copyright-button size-40`;
+      if (linkTitle) btn.setAttribute('title', linkTitle);
+      btn.textContent = linkText;
+      cookieButton = btn;
+    }
+  }
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'footer-copyright-wrapper';
+  if (ul.children.length) wrapper.append(ul);
+  if (cookieButton) wrapper.append(cookieButton);
+
+  // Always append to the end of footer-section so copyright lands after all other blocks
+  // regardless of the authored order in the fragment.
+  footerSection.append(wrapper);
+
+  // decorateSections() wraps blocks in a named div (e.g. footer-copyright-wrapper).
+  // Remove the whole wrapper so no empty shell is left behind.
+  const outerWrapper = block.parentElement;
+  if (outerWrapper) outerWrapper.remove();
+
+  return cookieButton;
 }
 
 /**
@@ -248,8 +318,8 @@ function decorateFooterLinks(block) {
 }
 
 /**
- * Loads footer fragment from footer page; first 6 sections get
- * footer-brand, footer-nav, footer-tagline, footer-social, footer-utility, footer-section.
+ * Loads footer fragment from footer page and decorates all footer blocks
+ * inside the single footer-section container.
  */
 export default async function decorate(block) {
   const footerMeta = getMetadata('footer');
@@ -313,6 +383,32 @@ export default async function decorate(block) {
     });
     linksWrapper.append(linksRow);
     decorateIcons(linksWrapper);
+  }
+
+  // Decorate new footer-copyright block and insert after footer-links-wrapper
+  const footerCopyrightBlock = footerSection?.querySelector(':scope > div > .footer-copyright');
+  const newCopyrightButton = footerCopyrightBlock
+    ? decorateFooterCopyright(footerCopyrightBlock, footerSection)
+    : null;
+
+  // Clone new copyright button into footer-social-links-wrapper for tablet layout
+  const newSocialLinksWrapper = footer.querySelector('.footer-social-links-wrapper');
+  if (newCopyrightButton && newSocialLinksWrapper) {
+    const clonedCopyrightButton = newCopyrightButton.cloneNode(true);
+    clonedCopyrightButton.classList.add('copyright-button-clone');
+    clonedCopyrightButton.classList.remove('original-copyright-button');
+    newSocialLinksWrapper.append(clonedCopyrightButton);
+  }
+
+  // Group footer-social-links-wrapper and footer-copyright-wrapper in one container,
+  // mirroring the footer-social-utility-wrapper pattern for responsive alignment.
+  const newCopyrightWrapper = footerSection?.querySelector('.footer-copyright-wrapper');
+  if (newSocialLinksWrapper || newCopyrightWrapper) {
+    const socialCopyrightWrapper = document.createElement('div');
+    socialCopyrightWrapper.className = 'footer-social-copyright-wrapper';
+    if (newSocialLinksWrapper) socialCopyrightWrapper.append(newSocialLinksWrapper);
+    if (newCopyrightWrapper) socialCopyrightWrapper.append(newCopyrightWrapper);
+    footerSection.append(socialCopyrightWrapper);
   }
 
   // Wrap footer-social content in .footer-social-content
