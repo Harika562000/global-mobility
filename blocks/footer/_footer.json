@@ -224,7 +224,7 @@
           "valueType": "object",
           "collapsible": true,
           "fields": [
-            { "...": "../../models/elements/_button-fields.json#/fields" }
+            { "...": "../../models/_button.json#/models/button/fields" }
           ]
         }
       ]
