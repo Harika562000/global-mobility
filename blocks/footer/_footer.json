@@ -216,6 +216,16 @@
           "name": "content",
           "label": "Copyright Text & Links",
           "description": "Add copyright text and any associated links"
+        },
+        {
+          "component": "container",
+          "name": "cookieButton",
+          "label": "Cookie Preferences Button",
+          "valueType": "object",
+          "collapsible": true,
+          "fields": [
+            { "...": "../../models/elements/_button-fields.json#/fields" }
+          ]
         }
       ]
     }

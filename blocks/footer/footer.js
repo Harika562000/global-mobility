@@ -78,7 +78,8 @@ function decorateFooterLogo(block) {
   if (!rows.length) return;
 
   const picture = rows[0]?.querySelector('picture');
-  const href = rows[1]?.querySelector('a')?.getAttribute('href') || '';
+  const rawHref = rows[1]?.querySelector('a')?.getAttribute('href') || rows[1]?.textContent?.trim() || '';
+  const href = normalizeHref(rawHref);
   const altText = rows[2]?.textContent?.trim() || '';
 
   if (!picture) return;
@@ -118,6 +119,70 @@ function decorateFooterTagLine(block) {
     anonymousDiv.replaceWith(wrapper);
   } else {
     block.replaceWith(wrapper);
+  }
+}
+
+/**
+ * Decorates the footer-social-links block (new implementation).
+ * Row 0 = "Follow Us" richtext message; rows 1+ = footer-social-link items
+ * (cell[0]=icon picture, cell[1]=alt text, cell[2]=url anchor).
+ * Builds a footer-social-links-wrapper div and inserts it after tagLineWrapper.
+ */
+function decorateFooterSocialLinks(block, tagLineWrapper) {
+  const rows = Array.from(block.children);
+  if (!rows.length) return;
+
+  const messageCell = rows[0]?.querySelector(':scope > div');
+
+  const ul = document.createElement('ul');
+  rows.slice(1).forEach((row) => {
+    const cells = Array.from(row.children);
+    const picture = cells[0]?.querySelector('picture');
+    const altText = cells[1]?.textContent?.trim() || '';
+    const anchor = cells[2]?.querySelector('a');
+
+    if (!picture) return;
+
+    const img = picture.querySelector('img');
+    if (img && altText) img.alt = altText;
+
+    const a = document.createElement('a');
+    const href = normalizeHref(anchor?.getAttribute('href') || '');
+    if (href) {
+      a.href = href;
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener noreferrer');
+    }
+    if (altText) a.setAttribute('aria-label', altText);
+    a.append(picture);
+
+    const li = document.createElement('li');
+    li.append(a);
+    ul.append(li);
+  });
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'footer-social-links-wrapper';
+
+  if (messageCell?.innerHTML) {
+    const message = document.createElement('p');
+    message.innerHTML = messageCell.innerHTML;
+    wrapper.append(message);
+  }
+  if (ul.children.length) wrapper.append(ul);
+
+  decorateIcons(wrapper);
+
+  if (tagLineWrapper) {
+    tagLineWrapper.after(wrapper);
+  }
+
+  // Remove the block's anonymous wrapper div from the section
+  const anonymousDiv = block.parentElement;
+  if (anonymousDiv && !anonymousDiv.className) {
+    anonymousDiv.remove();
+  } else {
+    block.remove();
   }
 }
 
@@ -222,6 +287,11 @@ export default async function decorate(block) {
   // Decorate footer-tag-line block inside footer-section
   const footerTagLineBlock = footerSection?.querySelector(':scope > div > .footer-tag-line');
   if (footerTagLineBlock) decorateFooterTagLine(footerTagLineBlock);
+
+  // Decorate new footer-social-links block and insert it after footer-tag-line-wrapper
+  const footerSocialLinksBlock = footerSection?.querySelector(':scope > div > .footer-social-links');
+  const tagLineWrapper = footer.querySelector('.footer-tag-line-wrapper');
+  if (footerSocialLinksBlock) decorateFooterSocialLinks(footerSocialLinksBlock, tagLineWrapper);
 
   // Collect, decorate, and wrap footer-links blocks inside footer-section.
   // decorateSections() wraps each block in an anonymous <div>, so blocks are
