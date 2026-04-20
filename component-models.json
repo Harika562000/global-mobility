@@ -977,6 +977,26 @@
     ]
   },
   {
+    "id": "embed-video",
+    "fields": [
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "videoId",
+        "label": "Vidyard Video ID or URL",
+        "description": "Paste the Vidyard video UUID or share URL (e.g. https://share.vidyard.com/watch/abc123 or just abc123)",
+        "required": true
+      },
+      {
+        "component": "text",
+        "valueType": "string",
+        "name": "caption",
+        "label": "Caption",
+        "description": "Optional. Displayed below the video and used as the accessible alt text."
+      }
+    ]
+  },
+  {
     "id": "embed-form",
     "fields": [
       {

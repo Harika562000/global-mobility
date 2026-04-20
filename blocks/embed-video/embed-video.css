@@ -1,0 +1,69 @@
+/* ==========================================================================
+   Embed Video Block — Vidyard Player
+   ========================================================================== */
+
+.embed-video {
+  width: 100%;
+}
+
+/* ── Container ── */
+.embed-video-container {
+  width: 100%;
+}
+
+/* ── Responsive 16:9 player wrapper ── */
+.embed-video-player-wrapper {
+  position: relative;
+  width: 100%;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background-color: var(--color-black);
+  /* Maintain 16:9 until the Vidyard script replaces the img with an iframe */
+  aspect-ratio: 16 / 9;
+}
+
+/* Vidyard replaces the placeholder img with a div + iframe.
+   Ensure the generated elements fill the wrapper correctly. */
+.embed-video-player-wrapper > img.vidyard-player-embed {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.embed-video-player-wrapper iframe,
+.embed-video-player-wrapper > div {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ── Caption ── */
+.embed-video-caption {
+  margin-top: var(--spacing-300);
+  font-family: var(--font-family-accent);
+  font-size: var(--body-font-size-s);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-22);
+  color: var(--typography-secondary);
+  text-align: center;
+}
+
+/* ── Placeholder (shown when no valid ID is provided) ── */
+.embed-video-placeholder {
+  padding: var(--spacing-700) var(--spacing-600);
+  border: var(--border-width-100) dashed var(--border-subtle);
+  border-radius: var(--radius-sm);
+  font-size: var(--body-font-size-s);
+  color: var(--typography-disabled);
+  text-align: center;
+}
+
+/* ── Tablet (720px+) ── */
+@media (width >= 720px) {
+  .embed-video-caption {
+    font-size: var(--body-font-size-m);
+    line-height: var(--line-height-26);
+  }
+}
