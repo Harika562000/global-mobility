@@ -980,11 +980,12 @@
     "id": "embed-video",
     "fields": [
       {
-        "component": "text",
+        "component": "reference",
         "valueType": "string",
-        "name": "videoId",
-        "label": "Vidyard Video ID or URL",
-        "description": "Paste the Vidyard video UUID or share URL (e.g. https://share.vidyard.com/watch/abc123 or just abc123)",
+        "name": "video",
+        "label": "Video",
+        "description": "Select a video asset from the DAM. The asset path or URL must contain the Vidyard video UUID.",
+        "multi": false,
         "required": true
       },
       {
