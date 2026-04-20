@@ -39,6 +39,24 @@
   height: 100% !important;
 }
 
+/* ── iFrame wrapper (16:9 responsive container for native iframe embed) ── */
+.embed-video-iframe-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background-color: var(--color-black);
+}
+
+.embed-video-iframe-wrapper iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
 /* ── Caption ── */
 .embed-video-caption {
   margin-top: var(--spacing-300);

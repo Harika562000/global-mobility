@@ -989,11 +989,29 @@
         "required": true
       },
       {
+        "component": "select",
+        "valueType": "string",
+        "name": "embedType",
+        "label": "Embed Type",
+        "description": "Inline renders the Vidyard player directly on the page. iFrame loads it in a sandboxed iframe (no script dependency).",
+        "value": "inline",
+        "options": [
+          {
+            "name": "Inline",
+            "value": "inline"
+          },
+          {
+            "name": "iFrame",
+            "value": "iframe"
+          }
+        ]
+      },
+      {
         "component": "text",
         "valueType": "string",
         "name": "caption",
         "label": "Caption",
-        "description": "Optional. Displayed below the video and used as the accessible alt text."
+        "description": "Optional. Displayed below the video and used as the accessible title/alt text."
       }
     ]
   },
