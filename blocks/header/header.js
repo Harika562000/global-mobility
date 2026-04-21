@@ -156,32 +156,6 @@ async function buildBreadcrumbs() {
 // News strip helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
-function getHeaderBottom() {
-  const headerEl = document.querySelector('header');
-  if (!headerEl) return 0;
-  return headerEl.getBoundingClientRect().bottom;
-}
-
-function positionStrip(stripEl) {
-  stripEl.style.top = `${getHeaderBottom()}px`;
-}
-
-function updateBodyPadding(stripEl) {
-  const currentPadding = parseFloat(document.body.style.paddingTop) || 0;
-  const stripHeight = stripEl.getBoundingClientRect().height;
-  if (!stripEl.dataset.paddingAdded) {
-    document.body.style.paddingTop = `${currentPadding + stripHeight}px`;
-    stripEl.dataset.paddingAdded = 'true';
-    stripEl.dataset.addedHeight = String(stripHeight);
-  }
-}
-
-function restoreBodyPadding(stripEl) {
-  const added = parseFloat(stripEl.dataset.addedHeight) || 0;
-  const current = parseFloat(document.body.style.paddingTop) || 0;
-  document.body.style.paddingTop = `${Math.max(0, current - added)}px`;
-}
-
 /**
  * Reads a header-news-strip block element (UE or published) and returns
  * { contentHtml, hideStrip }.
@@ -208,10 +182,11 @@ function parseNewsStrip(el) {
 }
 
 /**
- * Mounts the news-strip bar into <body> below the header.
+ * Mounts the news-strip bar inside the header block, after the nav-wrapper.
  * @param {{ contentHtml: string, hideStrip: boolean }} data
+ * @param {HTMLElement} headerBlock  The header block element to append into.
  */
-function buildNewsStrip({ contentHtml, hideStrip }) {
+function buildNewsStrip({ contentHtml, hideStrip }, headerBlock) {
   if (hideStrip || !contentHtml) return;
 
   const strip = document.createElement('div');
@@ -230,15 +205,12 @@ function buildNewsStrip({ contentHtml, hideStrip }) {
   closeBtn.innerHTML = '<span class="news-strip-close-icon" aria-hidden="true"></span>';
 
   strip.append(contentWrapper, closeBtn);
-  document.body.append(strip);
 
-  const positionAndPad = () => { positionStrip(strip); updateBodyPadding(strip); };
-  positionAndPad();
-  setTimeout(positionAndPad, 300);
-  window.addEventListener('resize', () => positionStrip(strip));
+  // Append inside the header block, after nav-wrapper
+  const target = headerBlock || document.querySelector('header');
+  target.append(strip);
 
   closeBtn.addEventListener('click', () => {
-    restoreBodyPadding(strip);
     strip.classList.add('news-strip-closing');
     strip.addEventListener('transitionend', () => strip.remove(), { once: true });
   });
@@ -2324,9 +2296,9 @@ export default async function decorate(block) {
     navWrapper.append(await buildBreadcrumbs());
   }
 
-  // Mount news strip if authored
+  // Mount news strip if authored — append inside the header block after nav-wrapper
   if (headerMenuData?.newsStrip) {
-    buildNewsStrip(headerMenuData.newsStrip);
+    buildNewsStrip(headerMenuData.newsStrip, block);
   }
 
   // UE authoring: on the nav page, allow header-section to be added inside sections.
