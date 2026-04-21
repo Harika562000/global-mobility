@@ -18,7 +18,7 @@ button.button {
   font-family: var(--font-family-primary);
   font-size: var(--font-size-300);
   font-style: normal;
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-bold);
   line-height: var(--line-height-103p);
   letter-spacing: var(--letter-spacing-tight);
   text-align: center;
@@ -30,6 +30,7 @@ button.button {
   background-position: 0 100%;
   background-size: 100% 0;
   transition: background-size 0.5s cubic-bezier(0.33, 1, 0.68, 1);
+  text-transform: uppercase;
 }
 
 /* Tablet+ — content-hugging width */

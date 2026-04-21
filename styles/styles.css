@@ -10,271 +10,349 @@
  * governing permissions and limitations under the License.
  */
 
-@import url('./tokens.css');
-@import url('./grid.css');
-@import url('./button.css');
-@import url('./spacing.css');
-@import url('./typography.css');
-
-:root {
-  --nav-height: 64px;
-  --light-color: var(--background-color-alt);
+ @import url('./tokens.css');
+ @import url('./grid.css');
+ @import url('./button.css');
+ @import url('./spacing.css');
+ @import url('./typography.css');
+ 
+ :root {
+   --nav-height: 64px;
+   --light-color: var(--background-color-alt);
+ }
+ 
+ body {
+   display: none;
+   margin: 0;
+   background-color: var(--background-color);
+   color: var(--text-color);
+   font-family: var(--font-family-primary);
+   font-size: var(--body-font-size-m);
+   line-height: 1.6;
+ }
+ 
+ body.appear {
+   display: block;
+ }
+ 
+ header .header,
+ footer .footer {
+   visibility: hidden;
+ }
+ 
+ header .header[data-block-status="loaded"],
+ footer .footer[data-block-status="loaded"] {
+   visibility: visible;
+ }
+ 
+ /* Reset margin and padding for all headings, UL, li and blockquote tags */
+ p,
+ h1,
+ h2,
+ h3,
+ h4,
+ h5,
+ h6,
+ dl,
+ ol,
+ ul,
+ pre,
+ blockquote {
+   margin: 0;
+   padding: 0;
+ }
+ 
+ main {
+   box-sizing: border-box;
+   width: 100%;
+   max-width: var(--main-max-width);
+   margin: 40px auto;
+   padding: 0 var(--main-side-margin-x);
+ }
+ 
+ input,
+ textarea,
+ select,
+ button {
+   font: inherit;
+ }
+ 
+ /* links */
+ a:any-link {
+   color: var(--link-color);
+   text-decoration: none;
+   overflow-wrap: break-word;
+ }
+ 
+ a:hover {
+   color: var(--link-hover-color);
+   text-decoration: underline;
+ }
+ 
+ main img {
+   max-width: 100%;
+   width: auto;
+   height: auto;
+ }
+ 
+ .icon {
+   display: inline-block;
+   height: 24px;
+   width: 24px;
+ }
+ 
+ .icon img {
+   height: 100%;
+   width: 100%;
+ }
+ 
+ /* sections */
+ 
+ /*
+  * Section spacing utility (responsive)
+  * Apply to a Franklin section: add class `section-spacing` to the section.
+  *
+  * Mobile Small + Mobile Large: margin 16px, padding 32px
+  * Tablet + Desktop Small:      margin 24px, padding 32px
+  * Desktop Large:               margin 24px, padding 56px
+  * Desktop XL:                  margin 56px, padding 56px
+  */
+ main > .section {
+   margin: var(--responsive-spacing-between-section) 0;
+   padding: var(--responsive-spacing-vertical) var(--responsive-spacing-horizontal);
+ }
+ 
+ main > .section.reset-margin-left-right {
+   margin-left: var(--spacing-0);
+   margin-right: var(--spacing-0);
+ }
+ 
+ main > .section.reset-padding-left-right {
+   padding-left: var(--spacing-0);
+   padding-right: var(--spacing-0);
+ }
+ 
+ /* Mobile first: sections without background have no left/right padding */
+ main > .section:not([class*="bg-"]) {
+   padding-left: 0;
+   padding-right: 0;
+ }
+ 
+ /* From 1024px: sections without background get same horizontal padding as sections with background */
+ @media (width >= 1024px) {
+   main > .section:not([class*="bg-"]) {
+     padding-left: var(--responsive-spacing-horizontal);
+     padding-right: var(--responsive-spacing-horizontal);
+   }
+ }
+ 
+ /* Sections background colors */
+ main .section.bg-grey {
+   background-color: var(--surface-page-neutral);
+   border-radius: var(--radius-sm);
+ }
+ 
+ main .section.bg-light-grey {
+   background-color: var(--surface-light-grey);
+   border-radius: var(--radius-sm);
+ }
+ 
+ main .section.bg-dark {
+   background-color: var(--surface-dark);
+   border-radius: var(--radius-sm);
+ }
+ 
+ main .section.bg-accent {
+   background-color: var(--surface-page-accent-1);
+   border-radius: var(--radius-sm);
+ }
+ 
+ main .section.bg-light {
+   background-color: var(--surface-light);
+   border-radius: var(--radius-sm);
+ }
+ 
+ main .section.bg-quiet-light {
+   background-color: var(--surface-section-backgrounds-quiet-light, var(--color-brand-100));
+   border-radius: var(--radius-sm);
+ }
+ 
+ /* Inverted sections */
+ main .section.inverted {
+   color: var(--typography-inverse);
+ }
+ 
+ /* Eyebrow — shared by section-title, hero, accordion, banner, cards, embed-form, etc.
+    Use --type-eyebrow-* from tokens.css; blocks should only override color, display, or spacing. */
+ .eye-brow-text {
+   font-family: var(--type-eyebrow-font-family);
+   font-size: var(--type-eyebrow-size);
+   font-weight: var(--type-eyebrow-weight);
+   line-height: var(--type-eyebrow-line-height);
+   letter-spacing: var(--type-eyebrow-letter-spacing);
+   text-transform: var(--type-eyebrow-text-transform);
+   color: var(--typography-main);
+ }
+ 
+ .eye-brow-text.accent-color {
+   color: var(--typography-accent-1);
+ }
+ 
+ .eye-brow-text.accent-color2 {
+   color: var(--typography-accent-2);
+ }
+ 
+ /* Tags — labels with asymmetric rounded corners (top-left + bottom-right) */
+ .tag {
+   display: inline-flex;
+   align-items: center;
+   gap: var(--spacing-200);
+   padding: var(--spacing-300) var(--spacing-400);
+   border-radius: var(--radius-8) 0 var(--radius-8) 0;
+   border: var(--border-width-100) solid transparent;
+   font-family: var(--font-family-accent);
+   font-size: 0.75rem;
+   font-style: normal;
+   font-weight: 400;
+   line-height: var(--line-height-104p);
+   letter-spacing: var(--letter-spacing-tight);
+ }
+ 
+ .tag .icon {
+   width: 0.75rem;
+   height: 0.75rem;
+ }
+ 
+ /* Outline: transparent background with border */
+ .tag-outline {
+   background-color: transparent;
+   color: var(--tag-text-outline);
+   border-color: var(--tag-border-outline);
+ }
+ 
+ /* Fill: solid background */
+ .tag-fill {
+   background-color: var(--tag-bg-fill);
+   color: var(--typography-tertiary);
+ }
+ 
+ /* Glass: translucent, designed for dark backgrounds */
+ .tag-glass {
+   background-color: var(--tag-bg-glass);
+   color: var(--tag-text-glass);
+   border-color: var(--tag-border-glass);
+   backdrop-filter: blur(var(--size-12));
+ }
+ 
+ /* Glass and dark variants have white text — invert icon to match */
+ .tag-fill .icon img,
+ .tag-glass .icon img,
+ .tag-dark .icon img {
+   filter: brightness(0) invert(1);
+ }
+ 
+ /* Dark: solid dark background */
+ .tag-dark {
+   background-color: var(--color-black);
+   color: var(--typography-tertiary);
+   border-color: var(--color-black);
+ }
+ 
+ /* tag as a block element styling */
+ .tag.block > div,
+ .tag.block > div > div {
+   display: contents;
+ }
+ 
+ .default-content-wrapper h1,
+ .default-content-wrapper h2,
+ .default-content-wrapper h3,
+ .default-content-wrapper h4,
+ .default-content-wrapper h5,
+ .default-content-wrapper h6 {
+   margin-bottom: var(--spacing-600);
+ }
+ 
+ main :is(.default-content-wrapper) :is(ul, ol) {
+   padding-inline-start: var(--spacing-500);
+ }
+ 
+ main :is(.default-content-wrapper) ul {
+   list-style: disc;
+ }
+ 
+ main :is(.default-content-wrapper) ul ul {
+   list-style: circle;
+ }
+ 
+ main :is(.default-content-wrapper) ul ul ul {
+   list-style: square;
+ }
+ 
+main :is(.default-content-wrapper) li + li {
+  margin-top: var(--spacing-100);
 }
 
-body {
-  display: none;
-  margin: 0;
-  background-color: var(--background-color);
-  color: var(--text-color);
-  font-family: var(--font-family-primary);
-  font-size: var(--body-font-size-m);
-  line-height: 1.6;
+main :is(.default-content-wrapper) li > :is(ul, ol) {
+  margin-top: var(--spacing-100);
 }
 
-body.appear {
-  display: block;
+ /* Optional hook for custom bullet icon style. */
+ main :is(.default-content-wrapper) ul.list-style-custom {
+   list-style: none;
+   padding-inline-start: 0;
+ }
+ 
+ main :is(.default-content-wrapper) ul.list-style-custom > li {
+   position: relative;
+   padding-inline-start: var(--spacing-500);
+ }
+ 
+ main :is(.default-content-wrapper) ul.list-style-custom > li::before {
+   content: '';
+   position: absolute;
+   left: 0;
+   top: 0.6em;
+   width: var(--size-8);
+   height: var(--size-8);
+   transform: translateY(-50%);
+   border-radius: 50%;
+  background-color: currentcolor;
+ }
+ 
+ main :is(.default-content-wrapper) ol {
+   list-style-position: outside;
+ }
+ 
+ main :is(.default-content-wrapper) ol li::marker {
+   font-variant-numeric: tabular-nums;
+ }
+
+/* Vertical spacing between authored richtext elements. */
+main :is(.default-content-wrapper) :is(ul, ol) + p,
+main :is(.default-content-wrapper) p + p,
+main :is(.default-content-wrapper) p + :is(ul, ol),
+main :is(.default-content-wrapper) :is(h1, h2, h3, h4, h5, h6) + p {
+  margin-top: var(--spacing-400);
 }
 
-header .header,
-footer .footer {
-  visibility: hidden;
-}
-
-header .header[data-block-status="loaded"],
-footer .footer[data-block-status="loaded"] {
-  visibility: visible;
-}
-
-/* Reset margin and padding for all headings, UL, li and blockquote tags */
-p,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-dl,
-ol,
-ul,
-pre,
-blockquote {
-  margin: 0;
-  padding: 0;
-}
-
-main {
-  box-sizing: border-box;
-  width: 100%;
-  max-width: var(--main-max-width);
-  margin: 40px auto;
-  padding: 0 var(--main-side-margin-x);
-}
-
-input,
-textarea,
-select,
-button {
-  font: inherit;
-}
-
-/* links */
-a:any-link {
-  color: var(--link-color);
-  text-decoration: none;
-  overflow-wrap: break-word;
-}
-
-a:hover {
-  color: var(--link-hover-color);
-  text-decoration: underline;
-}
-
-main img {
-  max-width: 100%;
-  width: auto;
-  height: auto;
-}
-
-.icon {
+/* Strong-only lines in richtext should use Body 200 styles. */
+main :is(.default-content-wrapper) :is(p, li) > strong:only-child {
   display: inline-block;
-  height: 24px;
-  width: 24px;
+  font-size: var(--type-body-200-size);
+  line-height: var(--line-height-22);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
 }
 
-.icon img {
-  height: 100%;
-  width: 100%;
-}
-
-/* sections */
-
-/*
- * Section spacing utility (responsive)
- * Apply to a Franklin section: add class `section-spacing` to the section.
- *
- * Mobile Small + Mobile Large: margin 16px, padding 32px
- * Tablet + Desktop Small:      margin 24px, padding 32px
- * Desktop Large:               margin 24px, padding 56px
- * Desktop XL:                  margin 56px, padding 56px
- */
-main > .section {
-  margin: var(--responsive-spacing-between-section) 0;
-  padding: var(--responsive-spacing-vertical) var(--responsive-spacing-horizontal);
-}
-
-main > .section.reset-margin-left-right {
-  margin-left: var(--spacing-0);
-  margin-right: var(--spacing-0);
-}
-
-main > .section.reset-padding-left-right {
-  padding-left: var(--spacing-0);
-  padding-right: var(--spacing-0);
-}
-
-/* Mobile first: sections without background have no left/right padding */
-main > .section:not([class*="bg-"]) {
-  padding-left: 0;
-  padding-right: 0;
-}
-
-/* From 1024px: sections without background get same horizontal padding as sections with background */
-@media (width >= 1024px) {
-  main > .section:not([class*="bg-"]) {
-    padding-left: var(--responsive-spacing-horizontal);
-    padding-right: var(--responsive-spacing-horizontal);
-  }
-}
-
-/* Sections background colors */
-main .section.bg-grey {
-  background-color: var(--surface-page-neutral);
-  border-radius: var(--radius-sm);
-}
-
-main .section.bg-light-grey {
-  background-color: var(--surface-light-grey);
-  border-radius: var(--radius-sm);
-}
-
-main .section.bg-dark {
-  background-color: var(--surface-dark);
-  border-radius: var(--radius-sm);
-}
-
-main .section.bg-accent {
-  background-color: var(--surface-page-accent-1);
-  border-radius: var(--radius-sm);
-}
-
-main .section.bg-light {
-  background-color: var(--surface-light);
-  border-radius: var(--radius-sm);
-}
-
-main .section.bg-quiet-light {
-  background-color: var(--surface-section-backgrounds-quiet-light, #EFEFE5);
-  border-radius: var(--radius-sm);
-}
-
-/* Inverted sections */
-main .section.inverted {
-  color: var(--typography-inverse);
-}
-
-/* Eyebrow */
-.eye-brow-text {
-  font-family: var(--font-family-accent);
-  font-size: var(--type-eyebrow-size);
-  font-weight: var(--font-weight-regular);
-  line-height: var(--type-eyebrow-line-height);
-  color: var(--typography-main);
-  text-transform: var(--text-transform-capitalize);
-  letter-spacing: var(--letter-spacing-tight);
-}
-
-.eye-brow-text.accent-color {
-  color: var(--typography-accent-1);
-}
-
-.eye-brow-text.accent-color2 {
-  color: var(--typography-accent-2);
-}
-
-/* Tags — labels with asymmetric rounded corners (top-left + bottom-right) */
-.tag {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-200);
-  padding: var(--spacing-300) var(--spacing-400);
-  border-radius: var(--radius-8) 0 var(--radius-8) 0;
-  white-space: nowrap;
-  border: var(--border-width-100) solid transparent;
-  font-family: var(--font-family-accent);
-  font-size: 0.75rem;
-  font-style: normal;
-  font-weight: 400;
-  line-height: var(--line-height-104p);
-  letter-spacing: var(--letter-spacing-tight);
-}
-
-.tag .icon {
-  width: 0.75rem;
-  height: 0.75rem;
-}
-
-/* Outline: transparent background with border */
-.tag-outline {
-  background-color: transparent;
-  color: var(--tag-text-outline);
-  border-color: var(--tag-border-outline);
-}
-
-/* Fill: solid background */
-.tag-fill {
-  background-color: var(--tag-bg-fill);
-  color: var(--tag-text-outline);
-}
-
-/* Glass: translucent, designed for dark backgrounds */
-.tag-glass {
-  background-color: var(--tag-bg-glass);
-  color: var(--tag-text-glass);
-  border-color: var(--tag-border-glass);
-  backdrop-filter: blur(var(--size-12));
-}
-
-/* Glass and dark variants have white text — invert icon to match */
-.tag-glass .icon img,
-.tag-dark .icon img {
-  filter: brightness(0) invert(1);
-}
-
-/* Dark: solid dark background */
-.tag-dark {
-  background-color: var(--color-black);
-  color: var(--typography-tertiary);
-  border-color: var(--color-black);
-}
-
-/* tag as a block element styling */
-.tag.block > div,
-.tag.block > div > div {
-  display: contents;
+main :is(.default-content-wrapper) :is(p, li):has(strong:only-child) {
+  margin-top: var(--spacing-600);
 }
 
 .tag.block p {
   display: inline-flex;
+  flex-direction: row-reverse;
   align-items: center;
   gap: var(--spacing-200);
   margin: 0;
-}
-
-.default-content-wrapper h1,
-.default-content-wrapper h2,
-.default-content-wrapper h3,
-.default-content-wrapper h4,
-.default-content-wrapper h5,
-.default-content-wrapper h6 {
-  margin-bottom: var(--spacing-600);
 }

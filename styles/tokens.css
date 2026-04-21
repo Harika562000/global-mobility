@@ -9,12 +9,27 @@
  * - Desktop Small: 1025-1439px
  * - Desktop Large: 1440-1919px
  * - Desktop XL: 1920px+
+ *
+ * Typography (headers / body / specialty):
+ * - Headers H1–H4: desktop sizes from 720px up; below 720px use reduced mobile sizes (H1 72→48, H2 56→40, H4 32→24, H6 24→18).
+ * - Body 400–700: desktop sizes from 720px up; below 720px use reduced sizes; line-heights 26/32/36 scale to 22/26/32 on mobile.
+ * - Font weight: Medium→Regular and Bold→Ultrabold below 1025px (see --responsive-font-weight-*).
+ * - Quote: 32px / 44px lh from 1025px up; 24px below; quote lh 32 (<510), 36 (≥510), 44 (≥1025).
+ * - Eyebrow: Surt Normal Regular, 16% letter-spacing, uppercase; 16px (≥720) / 14px (<720); Label 12px (≥720) / 14px; Display 32px (≥720) / 24px; Number 132px (≥720) / 112px.
+ *
+ * Color architecture (align with design system):
+ * - **Primitives** (`--color-brand-*`, neutrals, scales): brand palette only. Changing a primitive updates
+ *   every semantic token and component that references it. Do not swap primitives for one-off component needs.
+ * - **Semantic** (`--typography-*`, `--surface-*`, `--button-*`, `--graphics-accent-*`, `--tag-*`, etc.):
+ *   map roles (body text, surface, hover, icons) to primitives or neutrals. Prefer these in blocks/CSS so
+ *   component-specific tweaks can be done by adjusting semantics or adding a new semantic alias, without
+ *   forking the brand scale.
  */
 
  :root {
     /* ========================================
        PRIMITIVE COLORS (Base values)
-       Define once, reference everywhere
+       Brand palette — source: Figma brand weights 100–900. Semantic tokens below reference these.
        ======================================== */
     
     /* Neutrals */
@@ -35,7 +50,7 @@
     --color-grey-subtle: #BFBFBF;
     --color-grey-light: #767676;
     
-    /* Brand Colors */
+    /* Brand Colors Premetive */
     --color-brand-100: #F0F0E7;
     --color-brand-200: #172443;
     --color-brand-300: #1C76D3;
@@ -43,6 +58,24 @@
     --color-brand-600: #FFC6AE;
     --color-brand-700: #FF9060;
     --color-brand-800: #46022E;
+    --color-brand-900: #101625;
+
+    /* Brand Colors Semantic */
+    --color-brand-background-100: #EFEFE5;
+    --color-brand-background-200: #132445;
+    --color-brand-background-300: #0064D2;
+    --color-brand-background-400: #B8EAF5;
+    --color-brand-background-600: #FBEDBA;
+    --color-brand-background-700: #FDEBB3;
+    --color-brand-background-800: #51008E;
+    --color-brand-background-900: var(--color-brand-900);
+
+    /* SOME unique Colours which are not part of the brand palette but are used in the project */
+    --color-semantic-1: #17252e; /* range-bubble */
+    --color-semantic-2: #494f50; /* range-track */
+    --color-semantic-3: #969696; /* tnc-text */
+    --color-semantic-4: #b0b0b0;
+    --color-semantic-5: #333;
     
     /* Accent Colors - 200 Series */
     --color-200-225: #BBBEC6;
@@ -155,7 +188,7 @@
     --color-tag-fill: #4A6066;
     --color-footer: #161616;
     --color-gradient-primary: var(--color-white);
-    --color-quiet-light: #EFEFE5;
+    --color-quiet-light: var(--color-brand-100);
   
     /* ========================================
        TYPOGRAPHY - FONT FAMILY
@@ -181,6 +214,10 @@
     --font-weight-bold: 700;
     --font-weight-ultrabold: 800;
     --font-weight-black: 900;
+
+    /* Medium→Regular, Bold→Ultrabold below 1025px; inverted at 1025px+ (see media queries) */
+    --responsive-font-weight-body: var(--font-weight-regular);
+    --responsive-font-weight-bold: var(--font-weight-ultrabold);
   
     /* ========================================
        TYPOGRAPHY - FONT SIZE SCALE
@@ -249,10 +286,10 @@
     /* Named UI Library styles (optional helpers) */
     --type-body-600-size: var(--font-size-600); /* 20 */
     --type-body-600-line-height: var(--line-height-32);
-    --type-body-600-weight: var(--font-weight-medium);
+    --type-body-600-weight: var(--responsive-font-weight-body);
     --type-body-500-size: var(--font-size-500); /* 18 */
     --type-body-500-line-height: var(--line-height-26);
-    --type-body-500-weight: var(--font-weight-medium);
+    --type-body-500-weight: var(--responsive-font-weight-body);
     --type-body-400-size: var(--font-size-300); /* 16 */
     --type-body-400-line-height: var(--line-height-26);
     --type-body-400-weight: var(--font-weight-regular);
@@ -262,9 +299,14 @@
     --type-body-100-size: var(--font-size-100); /* 12px */
     --type-body-100-line-height: var(--line-height-22);
     --type-body-100-weight: var(--font-weight-regular);
-    --type-eyebrow-size: var(--font-size-200); /* 14 */
+
+    /* Eyebrow — Section Title: Surt Normal Regular; 16px / 26px lh @≥720; 14px / 22px <720; 16% tracking; uppercase */
+    --type-eyebrow-font-family: var(--font-family-primary);
+    --type-eyebrow-weight: var(--font-weight-regular);
+    --type-eyebrow-letter-spacing: 0.16em;
+    --type-eyebrow-text-transform: uppercase;
+    --type-eyebrow-size: var(--font-size-200);
     --type-eyebrow-line-height: var(--line-height-22);
-    --type-eyebrow-font-family: var(--font-family-accent);
 
     /* Header element styles */
     --responsive-header1-size: var(--font-size-1000);
@@ -280,12 +322,17 @@
     --responsive-header5-line-height: var(--line-height-140p);
     --responsive-header5-weight: var(--font-weight-semibold);
 
+    /* Header 6 — 24px (≥720) / 18px (mobile) */
+    --responsive-header6-size: var(--font-size-500);
+    --responsive-header6-line-height: var(--line-height-130p);
+    --responsive-header6-weight: var(--font-weight-semibold);
+
     /* ---- Body 700 ---- */
 
     /* Medium — responsive (most used) */
     --responsive-body-700-size: var(--font-size-600);          /* 20px mobile */
     --responsive-body-700-line-height: var(--line-height-32);  /* 32px mobile */
-    --responsive-body-700-weight: var(--font-weight-medium);   /* 500 */
+    --responsive-body-700-weight: var(--responsive-font-weight-body);
 
     /* Semibold — fixed across all breakpoints */
     --fixed-body-700-size: var(--font-size-700);               /* 24px */
@@ -297,19 +344,19 @@
     /* Medium — responsive */
     --responsive-body-600-size: var(--font-size-400);          /* 16px mobile */
     --responsive-body-600-line-height: var(--line-height-26);  /* 26px mobile */
-    --responsive-body-600-weight: var(--font-weight-medium);   /* 500 */
+    --responsive-body-600-weight: var(--responsive-font-weight-body);
 
     /* Bold — mobile base (steps up at 720px) */
     --fixed-body-600-bold-size: var(--font-size-400);          /* 16px mobile */
     --fixed-body-600-bold-line-height: var(--line-height-26);  /* 26px mobile */
-    --fixed-body-600-bold-weight: var(--font-weight-bold);     /* 700 */
+    --fixed-body-600-bold-weight: var(--responsive-font-weight-bold);
 
     /* ---- Body 500 ---- */
 
     /* Medium — responsive */
     --responsive-body-500-size: var(--font-size-300);          /* 16px mobile */
     --responsive-body-500-line-height: var(--line-height-22);  /* 22px mobile */
-    --responsive-body-500-weight: var(--font-weight-medium);   /* 500 */
+    --responsive-body-500-weight: var(--responsive-font-weight-body);
 
     /* ---- Body 400 ---- */
 
@@ -321,7 +368,7 @@
     /* Bold — responsive (mobile base) */
     --body-400-bold-size: var(--font-size-200);                /* 14px mobile */
     --body-400-bold-line-height: var(--line-height-22);        /* 22px mobile */
-    --body-400-bold-weight: var(--font-weight-bold);           /* 700 */
+    --body-400-bold-weight: var(--responsive-font-weight-bold);
 
     /* ---- Body 200 — 3 variants ---- */
 
@@ -334,7 +381,7 @@
     /* Bold — fixed 360-1920 */
     --fixed-body-200-bold-size: var(--font-size-200);          /* 14px */
     --fixed-body-200-bold-line-height: var(--line-height-22);  /* 22px */
-    --fixed-body-200-bold-weight: var(--font-weight-bold);     /* 700 */
+    --fixed-body-200-bold-weight: var(--responsive-font-weight-bold);
 
     /* Mono Std — fixed 360-1920 (NB Akademie Mono Std) */
     --fixed-body-200-mono-size: var(--font-size-200);          /* 14px */
@@ -380,7 +427,7 @@
     --text-decoration-strikethrough: line-through;
   
     /* ========================================
-       TYPOGRAPHY COLORS
+       TYPOGRAPHY COLORS (semantic — use for text roles, not raw brand primitives in components)
        ======================================== */
     --typography-black: var(--color-black);
     --typography-main: var(--color-brand-200);
@@ -394,7 +441,7 @@
     --typography-light-secondary: var(--color-grey-light);
   
     /* ========================================
-       BUTTON TOKENS
+       BUTTON TOKENS (semantic — interactive affordances)
        ======================================== */
     
     /* Primary Button */
@@ -455,7 +502,7 @@
     --divider-border-light: var(--color-brand-400);
   
     /* ========================================
-       SURFACE / SECTION BACKGROUNDS
+       SURFACE / SECTION BACKGROUNDS (semantic — page & region fills; override here for one-off sections)
        ======================================== */
     --surface-white: var(--color-white);
     --surface-light-grey: var(--color-grey-100);
@@ -471,7 +518,7 @@
     --color-scroll-inactive: #797979;
   
     /* ========================================
-       GRAPHICS / ACCENT COLORS
+       GRAPHICS / ACCENT COLORS (semantic — illustrations, charts; maps to brand weights)
        ======================================== */
     --graphics-accent-1: var(--color-brand-400);
     --graphics-accent-2: var(--color-brand-200);
@@ -488,7 +535,7 @@
     --tag-text-glass: var(--color-white);
     --tag-border-outline: var(--color-brand-200);
     --tag-border-glass: rgb(255 255 255 / 40%);
-    --tag-bg-fill: var(--color-brand-400);
+    --tag-bg-fill: var(--color-brand-200);
     --tag-bg-glass: rgb(255 255 255 / 20%);
   
     /* ========================================
@@ -667,7 +714,7 @@
        Used by any default content
        ======================================== */
 
-       --responsive-font-body-700: var(--font-size-500); /* 20px */
+       --responsive-font-body-700: var(--font-size-600); /* 20px */
        --responsive-font-body-600: var(--font-size-400); /* 16px */
        --responsive-font-body-500: var(--font-size-300); /* 16px */
        --responsive-font-body-400: var(--font-size-200); /* 14px */
@@ -676,10 +723,6 @@
        --responsive-line-height-32: var(--line-height-26); /* 26px */
        --responsive-line-height-36: var(--line-height-32); /* 32px */
        --responsive-line-height-44: var(--line-height-32); /* 32px */
-
-       /* Responsive font weights */
-       --responsive-font-weight-body: var(--font-weight-regular);   /* 400 — Regular at mobile */
-       --responsive-font-weight-bold: var(--font-weight-ultrabold);  /* 800 — Ultrabold at mobile */
 
     /* ========================================
        Quote font Size (Responsive)
@@ -697,7 +740,7 @@
        --responsive-display-line-height: var(--line-height-32); /* 32px */
        --responsive-number-size: var(--font-size-1250); /* 112px */
        --responsive-number-weight: var(--font-weight-semibold); /* 600 */
-       --responsive-number-line-height: var(--line-height-100p); /* 32px */
+       --responsive-number-line-height: var(--line-height-100p); /* 1.0 — tight display numerals */
 
     /* ========================================
        MAIN LAYOUT (Responsive)
@@ -725,7 +768,7 @@
     --background-color-alt: var(--surface-light-grey);
     --background-color-dark: var(--surface-dark);
     --background-color-accent: var(--color-brand-400);
-    --background-color-quiet-light: var(--color-quiet-light); /* #EFEFE5 */
+    --background-color-quiet-light: var(--color-quiet-light);
     
     /* Link Colors */
     --link-color: var(--color-brand-300);
@@ -785,7 +828,7 @@
       /* Hero section padding */
       --responsive-spacing-hero: var(--spacing-600); /* 24px */
 
-      /* Eyebrow Text size: 16px on tablet+ */
+      /* Eyebrow: 16px / 26px lh (Section Title spec) */
       --type-eyebrow-size: var(--font-size-300);
       --type-eyebrow-line-height: var(--line-height-26);
       --type-header-1100-responsive-size: var(--font-size-1100);
@@ -820,10 +863,6 @@
       --responsive-line-height-36: var(--line-height-36); /* 36px */
       --responsive-line-height-44: var(--line-height-36); /* 36px at 720-1024 */
 
-      /* Font weights step down at 720-1024: Medium→Regular, Bold→Ultrabold */
-      --responsive-font-weight-body: var(--font-weight-regular);  /* 400 */
-      --responsive-font-weight-bold: var(--font-weight-ultrabold); /* 800 */
-
       /* Specialty fonts: desktop scale */
       --responsive-font-label: var(--font-size-100);   /* 12px */
       --responsive-display-size: var(--font-size-800); /* 32px */
@@ -844,6 +883,7 @@
       --responsive-header2-size: var(--font-size-1100);
       --responsive-header4-size: var(--font-size-800);
       --responsive-header5-size: var(--font-size-700);
+      --responsive-header6-size: var(--font-size-700);
     }
   }
   

@@ -57,15 +57,11 @@ h5 {
   line-height: var(--responsive-header5-line-height);
 }
 
-/* h6 {
-  font-size: var(--type-header-700-responsive-size);
-  font-weight: var(--type-header-700-weight);
-  line-height: var(--type-header-700-line-height);
+h6 {
+  font-size: var(--responsive-header6-size);
+  font-weight: var(--responsive-header6-weight);
+  line-height: var(--responsive-header6-line-height);
 }
-
-h6.varince {
-  font-size: var(--font-size-500);
-} */
 
 /* ================================================
    BODY TYPOGRAPHY CLASSES

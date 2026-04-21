@@ -37,6 +37,13 @@
     flex: 0 0 100%;
 }
 
+/* Vertical carousel — inner strip scrolls top-to-bottom */
+.carousel-vertical .carousel-track-inner > * {
+    flex: 0 0 100%;
+    min-height: 0;
+    box-sizing: border-box;
+}
+
 /* Cards-with-image carousel: show partial cards for peek effect */
 .cards-with-image.carousel-initialized .carousel-track-inner>* {
     flex: 0 0 100%;
@@ -259,6 +266,53 @@
     .three-col.carousel-initialized .carousel-track-inner>*,
     .cards-with-image.carousel-initialized .carousel-track-inner>* {
         flex: 0 0 calc(33.333% - 11px);
+    }
+}
+
+/* ---- Vertical carousel ---- */
+.carousel-vertical {
+    display: flex !important;
+    flex-direction: row;
+    align-items: stretch;
+}
+
+.carousel-vertical .carousel-track-inner {
+    flex-direction: column;
+}
+
+.carousel-vertical .carousel-dots {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-200);
+    padding: 0;
+    width: auto;
+}
+
+.carousel-vertical .carousel-dot {
+    width: var(--size-6, 6px);
+    height: var(--size-6, 6px);
+    aspect-ratio: unset;
+    transition: background-color 150ms ease, height 150ms ease;
+}
+
+.carousel-vertical .carousel-dot.active {
+    width: var(--size-6, 6px);
+    height: var(--size30, 30px);
+    aspect-ratio: unset;
+
+    /* TODO: style token for 3px */
+    border-radius: calc(var(--radius-2) + var(--size-1));
+}
+
+@media (width >= 1025px) {
+    .carousel-vertical .carousel-dots {
+        display: flex;
+    }
+
+    .carousel-vertical .carousel-nav {
+        display: none;
     }
 }
 

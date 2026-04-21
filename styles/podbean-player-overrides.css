@@ -1,0 +1,477 @@
+/* stylelint-disable */
+/* =============================================================
+   PODBEAN PLAYER → FIGMA REDESIGN
+   CSS-only overrides — place AFTER the existing Podbean CSS.
+   Uses #app prefix for ID-level specificity to beat scoped
+   [data-v-*] selectors and existing !important rules.
+   ============================================================= */
+/* ---- CSS variable overrides (cascade to all children) ---- */
+#app {
+  --player-color: #132445;
+  --player-btn-color: #ffffff;
+  --font-color: #ffffff;
+}
+
+/* ---- container ---- */
+#app .pb-audio-player {
+  background-color: #132445 !important;
+  border: none !important;
+  border-radius: 13px !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+#app .pb-audio-player.row.no-gutters {
+  padding: 20px 24px 14px 68px !important;
+  position: relative !important;
+}
+
+/* ---- hide elements absent from Figma ---- */
+#app .pb-audio-player .episode-logo,
+#app .pb-audio-player .episode-logo a,
+#app .pb-audio-player .main .top-title-logo,
+#app #wave-canvas,
+#app .pb-audio-player canvas,
+#app .pb-actions .info,
+#app .player-loading,
+#app .vjs-poster,
+#app .vjs-text-track-display,
+#app .vjs-error-display,
+#app .vjs-modal-dialog.vjs-hidden {
+  display: none !important;
+}
+
+/* ---- break positioning contexts
+        (so absolute children resolve against .pb-audio-player) ---- */
+#app .main.col.min-w-0.p-0 {
+  position: static !important;
+  padding-right: 160px !important;
+}
+
+#app .pb-audio-player .pb-internal-player {
+  position: static !important;
+  margin-top: 0 !important;
+}
+
+#app .pb-player {
+  position: static !important;
+}
+
+#app .pb-audio-player .main .video-js,
+#app .video-js.vjs-audio {
+  position: static !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  height: auto !important;
+  min-height: 0 !important;
+  width: 100% !important;
+  overflow: visible !important;
+}
+
+/* ==============================================================
+   EPISODE TITLE
+   ============================================================== */
+#app .row.no-gutters.pd-episode-name {
+  display: flex !important;
+  align-items: center !important;
+  margin-bottom: 10px !important;
+  flex-wrap: nowrap !important;
+}
+
+#app .pb-audio-player .main h2.episode-name {
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 15px !important;
+}
+
+#app .main h2.episode-name a,
+#app .pb-audio-player .main h2.episode-name a {
+  color: #ffffff !important;
+  text-decoration: none !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  line-height: 1.4 !important;
+  white-space: normal !important;
+  text-overflow: unset !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+/* ==============================================================
+   RIGHT ICON GROUP
+   Both .pb-actions and .player-double-speed are absolutely
+   positioned against .pb-audio-player.
+   Visual order (left→right): [1x]  [RSS]  [share]  [download]
+   ============================================================== */
+/* action icons — anchored right, vertically centred */
+#app .col-auto.pb-actions.pr-2 {
+  position: absolute !important;
+  top: 50% !important;
+  right: 24px !important;
+  transform: translateY(-50%) !important;
+  bottom: auto !important;
+  left: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-shrink: 0 !important;
+  padding: 0 !important;
+}
+
+#app .pb-audio-player .main .pb-actions a {
+  color: #ffffff !important;
+  padding: 4px !important;
+  opacity: 0.85 !important;
+  transition: opacity 0.15s ease !important;
+  align-items: center !important;
+  position: static !important;
+  top: auto !important;
+  line-height: 1 !important;
+}
+
+#app .pb-audio-player .main .pb-actions a.downloadLink {
+  top: auto !important;
+  position: static !important;
+}
+
+#app .pb-audio-player .main .pb-actions a:hover {
+  opacity: 1 !important;
+}
+
+#app .pb-audio-player .main .pb-actions a svg {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+#app .pb-audio-player .main .pb-actions a .bi-share-fill {
+  width: 20px !important;
+  height: 20px !important;
+  margin-right: 0 !important;
+}
+
+#app .pb-audio-player .main .pb-actions a .bi-info-circle {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+#app .pb-audio-player .main .pb-actions a .icon-download {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+/* ---- speed "1x" - just left of the action icons ---- */
+#app .player-double-speed {
+  position: absolute !important;
+  top: 50% !important;
+  right: 128px !important;
+  left: auto !important;
+  transform: translateY(-50%) !important;
+  display: flex !important;
+  align-items: center !important;
+  z-index: 10 !important;
+  max-width: none !important;
+  margin: 0 !important;
+  text-align: left !important;
+}
+
+#app .player-double-speed .left-square,
+#app .player-double-speed .right-square {
+  display: none !important;
+}
+
+#app .main .player-double-speed .double-speed,
+#app .player-double-speed .double-speed {
+  color: #ffffff !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  opacity: 0.85 !important;
+  padding: 2px 6px !important;
+  text-decoration: none !important;
+  width: auto !important;
+  max-width: none !important;
+  min-width: auto !important;
+}
+
+#app .player-double-speed .double-speed:hover {
+  opacity: 1 !important;
+}
+
+/* always visible - override hover-only and mobile-hide rules */
+#app .main .pb-internal-player .player-double-speed,
+#app .main .pb-internal-player:hover .player-double-speed {
+  display: flex !important;
+}
+
+/* ==============================================================
+   PLAY BUTTON — absolute left of card, vertically centred
+   ============================================================== */
+#app .pb-audio-player .video-js .vjs-control-bar .vjs-button.vjs-play-control,
+#app .vjs-play-control.vjs-control.vjs-button {
+  position: absolute !important;
+  left: 18px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 36px !important;
+  height: 36px !important;
+  color: #ffffff !important;
+  background: none !important;
+  background-color: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  z-index: 10 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+  line-height: normal !important;
+  overflow: visible !important;
+  text-align: center !important;
+}
+
+#app .pb-audio-player .video-js .vjs-control-bar .vjs-button .vjs-icon-placeholder {
+  position: static !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+#app .pb-audio-player .video-js .vjs-control-bar .vjs-button .vjs-icon-placeholder::before,
+#app .vjs-play-control .vjs-icon-placeholder::before {
+  font-size: 32px !important;
+  line-height: 1 !important;
+  color: #ffffff !important;
+}
+
+/* ==============================================================
+   CONTROL BAR — progress bar + time stamps
+   ============================================================== */
+#app .pb-audio-player .main .video-js .vjs-control-bar,
+#app .pb-audio-player .video-js .vjs-control-bar {
+  background: transparent !important;
+  background-color: transparent !important;
+  position: static !important;
+  height: auto !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  padding: 0 !important;
+  padding-left: 0 !important;
+  margin: 0 !important;
+}
+
+/* ---- progress bar (full-width first flex row) ---- */
+#app .pb-audio-player .video-js .vjs-control-bar .vjs-progress-control {
+  order: 1 !important;
+  flex: 0 0 100% !important;
+  height: auto !important;
+  position: static !important;
+  margin-top: 0 !important;
+  margin-bottom: 6px !important;
+}
+
+#app .pb-audio-player .video-js .vjs-control-bar .vjs-progress-control .vjs-progress-holder {
+  height: 4px !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-radius: 2px !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  font-size: inherit !important;
+}
+
+#app .vjs-play-progress.vjs-slider-bar,
+#app .vjs-progress-control .vjs-play-progress {
+  background: rgba(255, 255, 255, 0.65) !important;
+  background-color: rgba(255, 255, 255, 0.65) !important;
+  border-radius: 2px !important;
+  padding-left: 0 !important;
+}
+
+#app .vjs-play-progress::before,
+#app .vjs-play-progress.vjs-slider-bar::before {
+  display: none !important;
+}
+
+#app .vjs-load-progress {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-radius: 2px !important;
+}
+
+#app .vjs-load-progress div {
+  background: rgba(255, 255, 255, 0.18) !important;
+  opacity: 1 !important;
+}
+
+/* ---- time controls (second flex row: left + right) ---- */
+#app .pb-audio-player .video-js .vjs-control-bar .vjs-time-control {
+  position: static !important;
+  display: flex !important;
+  height: auto !important;
+  line-height: normal !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+}
+
+#app .pb-audio-player .video-js .vjs-control-bar .vjs-time-control span,
+#app .video-js .vjs-time-control span {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* current time */
+#app .pb-audio-player .video-js .vjs-control-bar .vjs-current-time {
+  order: 2 !important;
+  padding: 0 !important;
+  min-width: auto !important;
+  flex: 0 0 auto !important;
+  left: auto !important;
+}
+
+#app .vjs-current-time .vjs-control-text {
+  clip: rect(0 0 0 0) !important;
+  position: absolute !important;
+}
+
+#app .vjs-current-time-display {
+  color: rgba(255, 255, 255, 0.5) !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+}
+
+/* remaining time */
+#app .pb-audio-player .video-js .vjs-control-bar .vjs-remaining-time {
+  order: 3 !important;
+  padding: 0 !important;
+  min-width: auto !important;
+  flex: 0 0 auto !important;
+  margin-left: auto !important;
+  right: auto !important;
+}
+
+#app .vjs-remaining-time .vjs-control-text {
+  clip: rect(0 0 0 0) !important;
+  position: absolute !important;
+}
+
+#app .vjs-remaining-time span[aria-hidden="true"] {
+  display: none !important;
+}
+
+#app .vjs-remaining-time-display {
+  color: rgba(255, 255, 255, 0.5) !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+}
+
+/* ==============================================================
+   RESPONSIVE — compact / narrow variant (≤520 px)
+   Matches Figma bottom card:
+     Title
+     ━━━━ progress ━━━━
+     0:00          31:00
+     ▶  1x  📡  🔗  ⬇
+   All bottom-row controls are absolutely positioned at the
+   card bottom. Extra bottom-padding on the container makes room.
+   ============================================================== */
+@media (max-width: 520px) {
+  /* container - equal padding, extra at bottom for control row */
+  #app .pb-audio-player.row.no-gutters {
+    padding: 20px 20px 58px 20px !important;
+  }
+
+  /* remove right padding that was reserving space for desktop icons */
+  #app .main.col.min-w-0.p-0 {
+    padding-right: 0 !important;
+  }
+
+  /* title full width */
+  #app .row.no-gutters.pd-episode-name {
+    flex-wrap: wrap !important;
+    margin-bottom: 8px !important;
+  }
+
+  #app .row.no-gutters.pd-episode-name > .col.min-w-0 {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* hide the .pb-actions from the title row - reposition to bottom */
+  #app .col-auto.pb-actions.pr-2 {
+    position: absolute !important;
+    bottom: 16px !important;
+    right: 20px !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    padding: 0 !important;
+    gap: 14px !important;
+  }
+
+  /* play button - absolute bottom-left */
+  #app .pb-audio-player .video-js .vjs-control-bar .vjs-button.vjs-play-control,
+  #app .vjs-play-control.vjs-control.vjs-button {
+    position: absolute !important;
+    left: 20px !important;
+    bottom: 14px !important;
+    top: auto !important;
+    transform: none !important;
+    width: 30px !important;
+    height: 30px !important;
+  }
+
+  #app .pb-audio-player .video-js .vjs-control-bar .vjs-button .vjs-icon-placeholder::before,
+  #app .vjs-play-control .vjs-icon-placeholder::before {
+    font-size: 26px !important;
+  }
+
+  /* speed "1x" - bottom row, just right of play button */
+  #app .player-double-speed {
+    position: absolute !important;
+    bottom: 16px !important;
+    left: 64px !important;
+    top: auto !important;
+    right: auto !important;
+    transform: none !important;
+  }
+
+  #app .main .player-double-speed .double-speed,
+  #app .player-double-speed .double-speed {
+    font-size: 15px !important;
+    line-height: 1.75 !important;
+  }
+
+  /* internal player - normal flow (progress + times stay inline) */
+  #app .pb-audio-player .pb-internal-player {
+    position: static !important;
+    margin-top: 0 !important;
+    display: block !important;
+    padding-top: 0 !important;
+  }
+}
+
+/* override existing rule that hides speed control at <=425px */
+@media (max-width: 425px) {
+  #app .player-double-speed,
+  #app .main .pb-internal-player .player-double-speed,
+  #app .main .pb-internal-player:hover .player-double-speed {
+    display: flex !important;
+  }
+}
+
+.download-dialog[data-v-6e372adc],
+.common-dialog,
+#wave-canvas + .download-dialog,
+#wave-canvas + .common-dialog {
+  display: none !important;
+}
+/* stylelint-enable */
