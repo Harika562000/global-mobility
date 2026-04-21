@@ -22,7 +22,11 @@ export async function fetchPlaceholders(prefix = 'default') {
   window.placeholders = window.placeholders || {};
   if (!window.placeholders[prefix]) {
     window.placeholders[prefix] = new Promise((resolve) => {
-      fetch(`${prefix === 'default' ? '' : prefix}/placeholders.json`)
+      const normalizedPrefix = String(prefix || 'default').trim().replace(/^\/+|\/+$/g, '');
+      const placeholdersPath = normalizedPrefix === 'default'
+        ? '/placeholders.json'
+        : `/${normalizedPrefix}/placeholders.json`;
+      fetch(placeholdersPath)
         .then((resp) => {
           if (resp.ok) {
             return resp.json();
