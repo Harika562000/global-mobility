@@ -77,9 +77,7 @@ export default function decorate(block) {
 
   // If hideStrip === true, remove the block wrapper from DOM entirely
   if (shouldHide) {
-    const section = block.closest('.section') || block.parentElement;
-    section?.remove();
-    return;
+    block.classList.add('hide-strip');
   }
 
   // ── Build strip markup ───────────────────────────────────────────────────

@@ -6,6 +6,11 @@
  * The block wrapper inside <main> is invisible — the actual bar is injected
  * directly into <body> so it can sit between the fixed header and page content.
  */
+
+ .news-strip .hide-strip {
+    display: none;
+ }
+
 .news-strip-wrapper,
 .news-strip {
   display: none;
