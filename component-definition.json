@@ -977,6 +977,21 @@
           }
         },
         {
+          "title": "Header News Strip",
+          "id": "header-news-strip",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/block/v1/block",
+                "template": {
+                  "name": "Header News Strip",
+                  "model": "header-news-strip"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Hero",
           "id": "hero",
           "plugins": {
@@ -1178,21 +1193,6 @@
                 "template": {
                   "name": "Section Title",
                   "model": "section-title"
-                }
-              }
-            }
-          }
-        },
-        {
-          "title": "News Strip",
-          "id": "news-strip",
-          "plugins": {
-            "xwalk": {
-              "page": {
-                "resourceType": "core/franklin/components/block/v1/block",
-                "template": {
-                  "name": "News Strip",
-                  "model": "news-strip"
                 }
               }
             }

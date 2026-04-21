@@ -1,104 +1,119 @@
 /**
- * News Strip block
- * Renders a sticky yellow notification bar below the site header.
+ * News Strip — header sub-component
  *
- * Block table structure (published / authored mode):
- *   Row 1, Col 1: RTE content  (rich text message)
- *   Row 1, Col 2: hideStrip    (Boolean — "true" hides the bar, "false"/empty shows it)
+ * This module does NOT export a block `decorate` function.
+ * It is loaded by header.js which passes the already-parsed strip data.
  *
- * UE mode: fields are read via data-aue-prop attributes.
+ * Exported API:
+ *   parseNewsStrip(el)           — reads a header-news-strip block element
+ *   buildNewsStrip({ content, hideStrip }) — mounts the fixed bar into <body>
  */
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
 /**
- * Calculates the bottom edge of the fixed <header> element.
- * @returns {number} Pixel distance from viewport top to the bottom of the header.
+ * Returns the bottom edge of the fixed <header> element in pixels.
+ * @returns {number}
  */
 function getHeaderBottom() {
   const headerEl = document.querySelector('header');
   if (!headerEl) return 0;
-  const rect = headerEl.getBoundingClientRect();
-  return rect.bottom;
+  return headerEl.getBoundingClientRect().bottom;
 }
 
 /**
- * Positions the strip immediately below the header.
- * @param {HTMLElement} stripEl - The .news-strip-bar element.
+ * Positions the strip bar directly below the header.
+ * @param {HTMLElement} stripEl
  */
 function positionStrip(stripEl) {
-  const top = getHeaderBottom();
-  stripEl.style.top = `${top}px`;
+  stripEl.style.top = `${getHeaderBottom()}px`;
 }
 
 /**
- * Updates body padding so page content is not hidden behind header + strip.
- * @param {HTMLElement|null} stripEl - The .news-strip-bar element, or null when closed.
+ * Adjusts body padding-top so page content is not occluded by header + strip.
+ * @param {HTMLElement} stripEl
  */
 function updateBodyPadding(stripEl) {
-  const headerEl = document.querySelector('header');
-  const headerBottom = headerEl ? parseFloat(getComputedStyle(document.body).paddingTop) || 0 : 0;
-  const stripHeight = stripEl ? stripEl.getBoundingClientRect().height : 0;
-  // Add strip height on top of the existing header-driven body padding
-  const currentPadding = headerBottom;
-  document.body.style.paddingTop = `${currentPadding + stripHeight}px`;
+  const currentPadding = parseFloat(document.body.style.paddingTop) || 0;
+  const stripHeight = stripEl.getBoundingClientRect().height;
+  // Only extend if the strip height has not already been added
+  if (!stripEl.dataset.paddingAdded) {
+    document.body.style.paddingTop = `${currentPadding + stripHeight}px`;
+    stripEl.dataset.paddingAdded = 'true';
+    stripEl.dataset.addedHeight = String(stripHeight);
+  }
 }
 
 /**
- * Removes the extra strip height from body padding when the strip is dismissed.
- * @param {number} stripHeight - Height of the strip in pixels.
+ * Removes the strip's contribution to body padding-top on close.
+ * @param {HTMLElement} stripEl
  */
-function removeBodyPadding(stripHeight) {
+function restoreBodyPadding(stripEl) {
+  const added = parseFloat(stripEl.dataset.addedHeight) || 0;
   const current = parseFloat(document.body.style.paddingTop) || 0;
-  const next = Math.max(0, current - stripHeight);
-  document.body.style.paddingTop = `${next}px`;
+  document.body.style.paddingTop = `${Math.max(0, current - added)}px`;
 }
 
-export default function decorate(block) {
-  // ── Parse authored fields ────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// Parse
+// ─────────────────────────────────────────────────────────────────────────────
 
-  // UE mode: fields carry data-aue-prop attributes
-  const byProp = (name) => block.querySelector(`[data-aue-prop="${name}"]`);
+/**
+ * Reads a header-news-strip block element (UE or published) and returns a plain
+ * data object ready for buildNewsStrip.
+ *
+ * @param {HTMLElement} el  — the header-news-strip block / row element
+ * @returns {{ contentHtml: string, hideStrip: boolean }}
+ */
+export function parseNewsStrip(el) {
+  const byProp = (name) => el.querySelector(`[data-aue-prop="${name}"]`);
   const isUeMode = Boolean(byProp('content') || byProp('hideStrip'));
 
-  let contentEl;
-  let shouldHide;
-
   if (isUeMode) {
-    contentEl = byProp('content');
+    const contentEl = byProp('content');
     const hideRaw = byProp('hideStrip')?.textContent?.trim().toLowerCase() || 'false';
-    shouldHide = hideRaw === 'true';
-  } else {
-    // Published mode: positional columns in first row
-    const firstRow = block.children[0];
-    const cols = firstRow ? [...firstRow.children] : [];
-    contentEl = cols[0] || null;
-    const hideRaw = cols[1]?.textContent?.trim().toLowerCase() || 'false';
-    shouldHide = hideRaw === 'true';
+    return {
+      contentHtml: contentEl ? contentEl.innerHTML : '',
+      hideStrip: hideRaw === 'true',
+    };
   }
 
-  // If hideStrip === true, remove the block wrapper from DOM entirely
-  if (shouldHide) {
-    block.classList.add('hide-strip');
-  }
+  // Published mode: positional columns in the first (and only) row
+  const cols = [...el.children].filter((c) => !c.dataset.aueComponent);
+  const contentHtml = cols[0]?.innerHTML || '';
+  const hideRaw = cols[1]?.textContent?.trim().toLowerCase() || 'false';
+  return {
+    contentHtml,
+    hideStrip: hideRaw === 'true',
+  };
+}
 
-  // ── Build strip markup ───────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// Build
+// ─────────────────────────────────────────────────────────────────────────────
 
+/**
+ * Mounts the news-strip bar into <body> below the header.
+ * Skips mounting if hideStrip is true.
+ *
+ * @param {{ contentHtml: string, hideStrip: boolean }} data
+ */
+export function buildNewsStrip({ contentHtml, hideStrip }) {
+  if (hideStrip) return;
+  if (!contentHtml) return;
+
+  // ── Build DOM ──────────────────────────────────────────────────────────────
   const strip = document.createElement('div');
   strip.className = 'news-strip-bar';
   strip.setAttribute('role', 'region');
   strip.setAttribute('aria-label', 'News notification');
 
-  // Content area
   const contentWrapper = document.createElement('div');
   contentWrapper.className = 'news-strip-content';
+  contentWrapper.innerHTML = contentHtml;
 
-  if (contentEl) {
-    // Clone the authored rich-text content
-    const cloned = contentEl.cloneNode(true);
-    cloned.removeAttribute('data-aue-prop');
-    contentWrapper.append(cloned);
-  }
-
-  // Close button
   const closeBtn = document.createElement('button');
   closeBtn.type = 'button';
   closeBtn.className = 'news-strip-close';
@@ -107,36 +122,24 @@ export default function decorate(block) {
 
   strip.append(contentWrapper, closeBtn);
 
-  // ── Inject strip into <body> as a fixed element ──────────────────────────
-
+  // ── Mount below header ────────────────────────────────────────────────────
   document.body.append(strip);
 
-  // Position below header once header is likely rendered
-  const positionWhenReady = () => {
+  const positionAndPad = () => {
     positionStrip(strip);
     updateBodyPadding(strip);
   };
 
-  // Run immediately and also after a short delay for header async decoration
-  positionWhenReady();
-  setTimeout(positionWhenReady, 300);
+  // Run immediately, then again after header decoration settles
+  positionAndPad();
+  setTimeout(positionAndPad, 300);
 
-  // Reposition on window resize
-  window.addEventListener('resize', () => {
-    positionStrip(strip);
-  });
+  window.addEventListener('resize', () => positionStrip(strip));
 
-  // ── Close button interaction ─────────────────────────────────────────────
-
+  // ── Close button ──────────────────────────────────────────────────────────
   closeBtn.addEventListener('click', () => {
-    const stripHeight = strip.getBoundingClientRect().height;
+    restoreBodyPadding(strip);
     strip.classList.add('news-strip-closing');
-    strip.addEventListener('transitionend', () => {
-      strip.remove();
-      removeBodyPadding(stripHeight);
-    }, { once: true });
+    strip.addEventListener('transitionend', () => strip.remove(), { once: true });
   });
-
-  // ── Clear the original block content ────────────────────────────────────
-  block.textContent = '';
 }

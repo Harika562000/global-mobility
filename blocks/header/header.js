@@ -2,6 +2,7 @@ import { getMetadata } from '../../scripts/aem.js';
 import { fetchPlaceholders } from '../../scripts/placeholders.js';
 import { DESKTOP_BP } from '../../scripts/s-and-p-global/constants.js';
 import { loadFragment } from '../fragment/fragment.js';
+import { parseNewsStrip, buildNewsStrip } from '../news-strip/news-strip.js';
 
 // media query match that indicates mobile/tablet width
 const isDesktop = window.matchMedia(DESKTOP_BP);
@@ -238,6 +239,7 @@ function parseHeaderMenuBlock(block) {
     searchUrl: '/search',
     toolsOrder: [],
     items: [],
+    newsStrip: null,
   };
 
   // When header-section is the section wrapper itself (direct <main> child),
@@ -476,6 +478,11 @@ function parseHeaderMenuBlock(block) {
         target.children.push(parseNavChild(rowRoot));
         target.isChild = true;
       }
+      return;
+    }
+
+    if (aueComp === 'header-news-strip' || blockName === 'header-news-strip') {
+      result.newsStrip = parseNewsStrip(rowRoot);
       return;
     }
 
@@ -1929,6 +1936,12 @@ export default async function decorate(block) {
   if (headerMenuBlock) {
     // ── NEW MEGA-MENU PATH ────────────────────────────────────────────────────
     const data = parseHeaderMenuBlock(headerMenuBlock);
+
+    // Mount news strip (below sticky header) if configured in the nav page.
+    if (data.newsStrip) {
+      buildNewsStrip(data.newsStrip);
+    }
+
     const {
       hamburger, brand, sections, tools,
     } = buildNavFromHeaderMenu(data);

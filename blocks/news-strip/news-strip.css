@@ -1,171 +1,115 @@
-/* ─────────────────────────────────────────────────────────────────────────────
-   News Strip — sticky notification bar rendered below the fixed header
-   ───────────────────────────────────────────────────────────────────────────── */
-
 /*
- * The block wrapper inside <main> is invisible — the actual bar is injected
- * directly into <body> so it can sit between the fixed header and page content.
+ * News Strip Bar
+ * Fixed below the sticky header, yellow background, RTE content + close button.
  */
 
- .news-strip .hide-strip {
-    display: none;
- }
-
-.news-strip-wrapper,
-.news-strip {
-  display: none;
-}
-
-/* ── Bar container ────────────────────────────────────────────────────────── */
+/* ── Bar ── */
 .news-strip-bar {
   position: fixed;
   left: 0;
   right: 0;
-  /* top is set dynamically by JS after header height is known */
-  z-index: 999; /* just below header (z-index 1000) */
-
+  z-index: 99; /* just below the header (z-index: 100) */
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-400, 16px);
-
-  min-height: 44px;
-  padding: var(--spacing-300, 12px) var(--spacing-600, 24px);
-  box-sizing: border-box;
-
-  background-color: var(--color-yellow-300, #FDE047);
-  color: var(--color-grey-900, #171717);
-  font-family: var(--font-family-primary);
-  font-size: var(--font-size-200, 14px);
-  line-height: var(--line-height-22, 22px);
-
-  /* Slide-in from top on first paint */
-  animation: news-strip-slide-in 0.3s ease forwards;
-
-  /* Smooth close transition */
+  gap: 0.75rem;
+  padding: 0.5rem var(--spacing-m, 1.5rem);
+  background-color: var(--color-yellow, #ffcc00);
+  box-shadow: 0 2px 6px rgb(0 0 0 / 10%);
   transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
-/* Slide-in keyframes */
-@keyframes news-strip-slide-in {
-  from {
-    opacity: 0;
-    transform: translateY(-100%);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Closing state — triggered by JS before removal */
+/* Slide-out animation on close */
 .news-strip-bar.news-strip-closing {
   opacity: 0;
   transform: translateY(-100%);
 }
 
-/* ── Content area ─────────────────────────────────────────────────────────── */
+/* ── Content wrapper ── */
 .news-strip-content {
-  flex: 1 1 auto;
-  min-width: 0;
+  flex: 1;
   text-align: center;
+  font-size: var(--body-font-size-s, 0.875rem);
+  line-height: 1.5;
+  color: var(--text-color, #1a1a1a);
 }
 
-/* Reset any margin/padding that EDS default styles might add to child elements */
-.news-strip-content p,
-.news-strip-content h1,
-.news-strip-content h2,
-.news-strip-content h3,
-.news-strip-content h4,
-.news-strip-content h5,
-.news-strip-content h6 {
+/* Strip inline styles for RTE output */
+.news-strip-content p {
   margin: 0;
-  padding: 0;
-  color: inherit;
 }
 
 .news-strip-content a {
   color: inherit;
+  font-weight: 600;
   text-decoration: underline;
-  font-weight: var(--font-weight-bold, 700);
 }
 
-.news-strip-content a:hover {
-  opacity: 0.8;
+.news-strip-content a:hover,
+.news-strip-content a:focus {
   text-decoration: none;
 }
 
-/* ── Close button ─────────────────────────────────────────────────────────── */
+/* ── Close button ── */
 .news-strip-close {
-  flex: 0 0 auto;
-  display: inline-flex;
+  flex-shrink: 0;
+  display: flex;
   align-items: center;
   justify-content: center;
-  width: var(--size-32, 32px);
-  height: var(--size-32, 32px);
+  width: 2rem;
+  height: 2rem;
   padding: 0;
-  border: 0;
-  border-radius: var(--radius-8, 8px);
+  border: none;
+  border-radius: 50%;
   background: transparent;
   cursor: pointer;
-  color: inherit;
-  transition: background-color 0.15s ease;
+  color: var(--text-color, #1a1a1a);
+  transition: background 0.15s ease;
 }
 
 .news-strip-close:hover,
 .news-strip-close:focus-visible {
-  background-color: rgb(0 0 0 / 10%);
+  background: rgb(0 0 0 / 10%);
+  outline: none;
 }
 
-.news-strip-close:focus-visible {
-  outline: 2px solid currentcolor;
-  outline-offset: 2px;
-}
-
-/* ── Close icon (X) — drawn with pseudo-elements ──────────────────────────── */
-.news-strip-close-icon,
-.news-strip-close-icon::before,
-.news-strip-close-icon::after {
-  display: block;
-  position: relative;
-  width: var(--size-16, 16px);
-  height: var(--size-2, 2px);
-  border-radius: var(--size-2, 2px);
-  background: currentcolor;
-}
-
+/* × icon drawn with CSS pseudo-elements */
 .news-strip-close-icon {
-  /* The centre bar is transparent so only the two crossed bars show */
-  background: transparent;
+  position: relative;
+  display: block;
+  width: 1rem;
+  height: 1rem;
 }
 
 .news-strip-close-icon::before,
 .news-strip-close-icon::after {
-  content: "";
+  content: '';
   position: absolute;
-  top: 0;
+  top: 50%;
   left: 0;
+  width: 100%;
+  height: 2px;
+  background: currentcolor;
+  border-radius: 1px;
 }
 
 .news-strip-close-icon::before {
-  transform: rotate(45deg);
+  transform: translateY(-50%) rotate(45deg);
 }
 
 .news-strip-close-icon::after {
-  transform: rotate(-45deg);
+  transform: translateY(-50%) rotate(-45deg);
 }
 
-/* ── Responsive tweaks ────────────────────────────────────────────────────── */
-@media (width >= 720px) {
+/* ── Responsive ── */
+@media (width <= 767px) {
   .news-strip-bar {
-    padding: var(--spacing-300, 12px) var(--spacing-800, 40px);
-    font-size: var(--font-size-300, 16px);
+    padding: 0.5rem 1rem;
+    gap: 0.5rem;
   }
-}
 
-@media (width >= 1025px) {
-  .news-strip-bar {
-    padding: var(--spacing-300, 12px) var(--spacing-950, 56px);
+  .news-strip-content {
+    font-size: var(--body-font-size-xs, 0.8125rem);
+    text-align: left;
   }
 }

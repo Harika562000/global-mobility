@@ -53,8 +53,7 @@
       "dynamic-module",
       "experts-card",
       "overview",
-      "powerbi",
-      "news-strip"
+      "powerbi"
     ]
   },
   {
@@ -157,6 +156,17 @@
     "id": "nav-section",
     "components": [
       "header-section"
+    ]
+  },
+  {
+    "id": "header-section",
+    "components": [
+      "header-logo",
+      "header-contact",
+      "header-login",
+      "header-search",
+      "header-menu-item",
+      "header-news-strip"
     ]
   },
   {
