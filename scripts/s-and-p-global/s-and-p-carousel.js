@@ -11,6 +11,12 @@ export const DEFAULT_CAROUSEL_OPTIONS = Object.freeze({
   swipeCommitPx: 30,
   swipeSlideFactor: 0.3,
   clampToMaxOffset: false,
+  vertical: false,
+  /**
+   * Milliseconds between automatic advances.
+   * Null uses `data-carousel-autoplay-ms` on the container.
+   */
+  autoPlayIntervalMs: null,
 });
 
 let cssReady;
@@ -41,6 +47,24 @@ function createIcon(name) {
 }
 
 let carouselCounter = 0;
+
+/**
+ * Resolve autoplay interval:
+ * explicit option wins, then `data-carousel-autoplay-ms` on the container.
+ * Use `autoPlayIntervalMs: false` or `0` in options to disable even if the attribute is set.
+ * @param {HTMLElement} container
+ * @param {Record<string, unknown>} merged
+ * @returns {number|null}
+ */
+function resolveAutoplayIntervalMs(container, merged) {
+  const v = merged.autoPlayIntervalMs;
+  if (v === false || v === 0) return null;
+  if (typeof v === 'number' && v > 0) return v;
+  const raw = container.getAttribute('data-carousel-autoplay-ms');
+  if (raw == null || raw === '') return null;
+  const n = parseInt(String(raw).trim(), 10);
+  return Number.isFinite(n) && n > 0 ? n : null;
+}
 
 /**
  * Mark off-screen slides as aria-hidden and pull their focusable
@@ -93,12 +117,15 @@ function buildCarousel(container, items, opts) {
     swipeCommitPx,
     swipeSlideFactor,
     clampToMaxOffset,
+    vertical,
+    autoPlayIntervalMs,
   } = opts;
 
   carouselCounter += 1;
   const carouselId = carouselCounter;
 
   container.classList.add('carousel-initialized');
+  if (vertical) container.classList.add('carousel-vertical');
   container.setAttribute('role', 'region');
   container.setAttribute('aria-roledescription', 'carousel');
   if (!container.getAttribute('aria-label')) {
@@ -212,7 +239,12 @@ function buildCarousel(container, items, opts) {
   });
 
   /* ---- Assemble ---- */
-  container.append(nav, track, dots);
+  if (vertical) {
+    nav.hidden = true;
+    container.append(track, dots);
+  } else {
+    container.append(nav, track, dots);
+  }
 
   /* ---- State ---- */
   let currentIndex = 0;
@@ -290,12 +322,16 @@ function buildCarousel(container, items, opts) {
     currentIndex = Math.max(0, Math.min(targetIdx, max));
     const target = items[currentIndex];
     if (target) {
-      const targetOffset = clampToMaxOffset
-        ? Math.min(target.offsetLeft, Math.max(0, inner.scrollWidth - track.offsetWidth))
-        : target.offsetLeft;
       inner.style.transition = shouldAnimate
         ? `transform ${transitionDurationMs}ms ${transitionEasing}` : 'none';
-      inner.style.transform = `translateX(-${targetOffset}px)`;
+      if (vertical) {
+        inner.style.transform = `translateY(-${target.offsetTop}px)`;
+      } else {
+        const targetOffset = clampToMaxOffset
+          ? Math.min(target.offsetLeft, Math.max(0, inner.scrollWidth - track.offsetWidth))
+          : target.offsetLeft;
+        inner.style.transform = `translateX(-${targetOffset}px)`;
+      }
     }
 
     updateActiveCard();
@@ -333,10 +369,12 @@ function buildCarousel(container, items, opts) {
 
   /* ---- Keyboard: arrow keys ---- */
   container.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft') {
+    const prevKey = vertical ? 'ArrowUp' : 'ArrowLeft';
+    const nextKey = vertical ? 'ArrowDown' : 'ArrowRight';
+    if (e.key === prevKey) {
       e.preventDefault();
       slideTo(currentIndex - 1);
-    } else if (e.key === 'ArrowRight') {
+    } else if (e.key === nextKey) {
       e.preventDefault();
       slideTo(currentIndex + 1);
     }
@@ -351,7 +389,8 @@ function buildCarousel(container, items, opts) {
 
   function getBaseOffset() {
     const target = items[currentIndex];
-    return target ? target.offsetLeft : 0;
+    if (!target) return 0;
+    return vertical ? target.offsetTop : target.offsetLeft;
   }
 
   function onDragStart(clientX, clientY) {
@@ -368,31 +407,39 @@ function buildCarousel(container, items, opts) {
     if (!isDragging) return;
     const dx = clientX - dragStartX;
     const dy = clientY - dragStartY;
+    const primary = vertical ? dy : dx;
+    const secondary = vertical ? dx : dy;
 
-    if (!hasMoved && Math.abs(dx) < DRAG_THRESHOLD) return;
-    if (!hasMoved && Math.abs(dy) > Math.abs(dx)) {
+    if (!hasMoved && Math.abs(primary) < DRAG_THRESHOLD) return;
+    if (!hasMoved && Math.abs(secondary) > Math.abs(primary)) {
       isDragging = false;
       track.style.cursor = '';
       return;
     }
 
     hasMoved = true;
-    inner.style.transform = `translateX(${-baseOffset + dx}px)`;
+    if (vertical) {
+      inner.style.transform = `translateY(${-baseOffset + dy}px)`;
+    } else {
+      inner.style.transform = `translateX(${-baseOffset + dx}px)`;
+    }
   }
 
-  function onDragEnd(clientX) {
+  function onDragEnd(clientX, clientY) {
     if (!isDragging) return;
     isDragging = false;
     track.style.cursor = '';
 
     if (!hasMoved) return;
 
-    const dx = clientX - dragStartX;
-    const itemW = items[0] ? items[0].offsetWidth : 1;
-    const slidesMoved = Math.round(Math.abs(dx) / (itemW * swipeSlideFactor));
-    const direction = dx > 0 ? -1 : 1;
+    const delta = vertical ? clientY - dragStartY : clientX - dragStartX;
+    const firstItem = items[0];
+    let itemSize = 1;
+    if (firstItem) itemSize = vertical ? firstItem.offsetHeight : firstItem.offsetWidth;
+    const slidesMoved = Math.round(Math.abs(delta) / (itemSize * swipeSlideFactor));
+    const direction = delta > 0 ? -1 : 1;
 
-    if (Math.abs(dx) > swipeCommitPx && slidesMoved > 0) {
+    if (Math.abs(delta) > swipeCommitPx && slidesMoved > 0) {
       slideTo(currentIndex + direction * slidesMoved);
     } else {
       slideTo(currentIndex);
@@ -414,7 +461,7 @@ function buildCarousel(container, items, opts) {
 
   window.addEventListener('mouseup', (e) => {
     if (!isDragging) return;
-    onDragEnd(e.clientX);
+    onDragEnd(e.clientX, e.clientY);
   }, { signal });
 
   /* Touch drag */
@@ -433,7 +480,7 @@ function buildCarousel(container, items, opts) {
   track.addEventListener('touchend', (e) => {
     if (!isDragging) return;
     const touch = e.changedTouches[0];
-    onDragEnd(touch.clientX);
+    onDragEnd(touch.clientX, touch.clientY);
   }, { passive: true, signal });
 
   /* Prevent click after drag */
@@ -445,19 +492,91 @@ function buildCarousel(container, items, opts) {
     }
   }, { capture: true, signal });
 
+  /* ---- Vertical: constrain track height to one slide ---- */
+  function updateTrackHeight() {
+    if (!vertical) return;
+    const firstItem = items[0];
+    if (firstItem) track.style.height = `${firstItem.offsetHeight}px`;
+  }
+
   /* ---- Resize: recalculate position ---- */
   let resizeTimer;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => slideTo(currentIndex, false), 150);
+    resizeTimer = setTimeout(() => {
+      updateTrackHeight();
+      slideTo(currentIndex, false);
+    }, 150);
   }, { signal });
 
   /* ---- Initial render ---- */
   slideTo(0, false);
   inner.style.transition = `transform ${transitionDurationMs}ms ${transitionEasing}`;
 
+  if (vertical) {
+    const ro = new ResizeObserver(() => {
+      if (!items[0] || !items[0].offsetHeight) return;
+      updateTrackHeight();
+      slideTo(currentIndex, false);
+      ro.disconnect();
+    });
+    ro.observe(items[0]);
+  }
+
+  /* ---- Optional autoplay (`data-carousel-autoplay-ms` or options.autoPlayIntervalMs) ---- */
+  let autoPlayTimer = null;
+  let autoPlayPaused = false;
+
+  const autoPlayMs = typeof autoPlayIntervalMs === 'number' && autoPlayIntervalMs > 0
+    ? autoPlayIntervalMs
+    : 0;
+
+  function advanceAutoPlay() {
+    const max = maxIndex();
+    if (infinite) {
+      slideTo(currentIndex + 1);
+    } else if (currentIndex >= max) {
+      slideTo(0);
+    } else {
+      slideTo(currentIndex + 1);
+    }
+  }
+
+  function tickAutoPlay() {
+    if (autoPlayPaused || document.visibilityState === 'hidden' || isDragging) return;
+    advanceAutoPlay();
+  }
+
+  function stopAutoPlay() {
+    if (autoPlayTimer != null) {
+      window.clearInterval(autoPlayTimer);
+      autoPlayTimer = null;
+    }
+  }
+
+  function startAutoPlay() {
+    stopAutoPlay();
+    if (!autoPlayMs) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    autoPlayTimer = window.setInterval(tickAutoPlay, autoPlayMs);
+  }
+
+  if (autoPlayMs) {
+    startAutoPlay();
+    container.addEventListener('pointerenter', () => { autoPlayPaused = true; }, { signal });
+    container.addEventListener('pointerleave', () => { autoPlayPaused = false; }, { signal });
+    container.addEventListener('focusin', () => { autoPlayPaused = true; }, { signal });
+    container.addEventListener('focusout', (e) => {
+      const next = /** @type {FocusEvent} */ (e).relatedTarget;
+      if (!(next instanceof Node) || !container.contains(next)) {
+        autoPlayPaused = false;
+      }
+    }, { signal });
+  }
+
   /* ---- Destroy function ---- */
   function destroy() {
+    stopAutoPlay();
     ac.abort();
     clearTimeout(resizeTimer);
 
@@ -471,7 +590,8 @@ function buildCarousel(container, items, opts) {
     dots.remove();
 
     // Remove classes & ARIA
-    container.classList.remove('carousel-initialized');
+    if (vertical) track.style.height = '';
+    container.classList.remove('carousel-initialized', 'carousel-vertical');
     container.removeAttribute('role');
     container.removeAttribute('aria-roledescription');
     container.removeAttribute('aria-label');
@@ -493,9 +613,13 @@ function buildCarousel(container, items, opts) {
  *  - carousel-mobile   — JS only renders on mobile; stacked on desktop
  *  - carousel-infinite — loops from last→first and first→last
  *
+ * Autoplay: set `data-carousel-autoplay-ms` on the container (interval in ms), or pass
+ * `opts.autoPlayIntervalMs`.
+ * Use `autoPlayIntervalMs: false` or `0` to disable even if attribute is set.
+ *
  * @param {HTMLElement} container  Element whose children become slides
  * @param {{ infinite?: boolean, mobileOnly?: boolean, mobileOnlyQuery?: string,
- *   showBottomNav?: boolean }} [opts]
+ *   showBottomNav?: boolean, autoPlayIntervalMs?: number|false|null }} [opts]
  * @returns {Promise<{
  *   track: HTMLElement, nav: HTMLElement,
  *   bottomNav?: HTMLElement, dots: HTMLElement
@@ -649,12 +773,16 @@ export async function initCarousel(container, opts = {}) {
     showBottomNav,
   } = options;
 
+  const autoPlayIntervalMs = resolveAutoplayIntervalMs(container, options);
+
   await ensureStyles();
 
   if (mobileOnly) container.classList.add('carousel-mobile');
   if (infinite) container.classList.add('carousel-infinite');
 
-  const buildOpts = { ...options, infinite, showBottomNav };
+  const buildOpts = {
+    ...options, infinite, showBottomNav, autoPlayIntervalMs,
+  };
 
   /* For mobileOnly, only render the carousel on matching viewports.
      Use matchMedia to init/destroy when crossing the breakpoint.
