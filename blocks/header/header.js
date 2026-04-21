@@ -153,6 +153,98 @@ async function buildBreadcrumbs() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// News strip helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+function getHeaderBottom() {
+  const headerEl = document.querySelector('header');
+  if (!headerEl) return 0;
+  return headerEl.getBoundingClientRect().bottom;
+}
+
+function positionStrip(stripEl) {
+  stripEl.style.top = `${getHeaderBottom()}px`;
+}
+
+function updateBodyPadding(stripEl) {
+  const currentPadding = parseFloat(document.body.style.paddingTop) || 0;
+  const stripHeight = stripEl.getBoundingClientRect().height;
+  if (!stripEl.dataset.paddingAdded) {
+    document.body.style.paddingTop = `${currentPadding + stripHeight}px`;
+    stripEl.dataset.paddingAdded = 'true';
+    stripEl.dataset.addedHeight = String(stripHeight);
+  }
+}
+
+function restoreBodyPadding(stripEl) {
+  const added = parseFloat(stripEl.dataset.addedHeight) || 0;
+  const current = parseFloat(document.body.style.paddingTop) || 0;
+  document.body.style.paddingTop = `${Math.max(0, current - added)}px`;
+}
+
+/**
+ * Reads a header-news-strip block element (UE or published) and returns
+ * { contentHtml, hideStrip }.
+ * @param {HTMLElement} el
+ * @returns {{ contentHtml: string, hideStrip: boolean }}
+ */
+function parseNewsStrip(el) {
+  const byProp = (name) => el.querySelector(`[data-aue-prop="${name}"]`);
+  const isUeMode = Boolean(byProp('content') || byProp('hideStrip'));
+  if (isUeMode) {
+    const contentEl = byProp('content');
+    const hideRaw = byProp('hideStrip')?.textContent?.trim().toLowerCase() || 'false';
+    return { contentHtml: contentEl ? contentEl.innerHTML : '', hideStrip: hideRaw === 'true' };
+  }
+  // Published: .block > div(row) > div(col) — unwrap one level
+  const rawCols = [...el.children].filter((c) => !c.dataset.aueComponent);
+  const cols = (rawCols.length === 1 && rawCols[0].children.length > 0)
+    ? [...rawCols[0].children].filter((c) => !c.dataset.aueComponent)
+    : rawCols;
+  return {
+    contentHtml: cols[0]?.innerHTML || '',
+    hideStrip: (cols[1]?.textContent?.trim().toLowerCase() || 'false') === 'true',
+  };
+}
+
+/**
+ * Mounts the news-strip bar into <body> below the header.
+ * @param {{ contentHtml: string, hideStrip: boolean }} data
+ */
+function buildNewsStrip({ contentHtml, hideStrip }) {
+  if (hideStrip || !contentHtml) return;
+
+  const strip = document.createElement('div');
+  strip.className = 'news-strip-bar';
+  strip.setAttribute('role', 'region');
+  strip.setAttribute('aria-label', 'News notification');
+
+  const contentWrapper = document.createElement('div');
+  contentWrapper.className = 'news-strip-content';
+  contentWrapper.innerHTML = contentHtml;
+
+  const closeBtn = document.createElement('button');
+  closeBtn.type = 'button';
+  closeBtn.className = 'news-strip-close';
+  closeBtn.setAttribute('aria-label', 'Close notification');
+  closeBtn.innerHTML = '<span class="news-strip-close-icon" aria-hidden="true"></span>';
+
+  strip.append(contentWrapper, closeBtn);
+  document.body.append(strip);
+
+  const positionAndPad = () => { positionStrip(strip); updateBodyPadding(strip); };
+  positionAndPad();
+  setTimeout(positionAndPad, 300);
+  window.addEventListener('resize', () => positionStrip(strip));
+
+  closeBtn.addEventListener('click', () => {
+    restoreBodyPadding(strip);
+    strip.classList.add('news-strip-closing');
+    strip.addEventListener('transitionend', () => strip.remove(), { once: true });
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Mega-menu helpers (new header-menu block approach)
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -482,6 +574,11 @@ function parseHeaderMenuBlock(block) {
         target.children.push(parseNavChild(rowRoot));
         target.isChild = true;
       }
+      return;
+    }
+
+    if (aueComp === 'header-news-strip') {
+      result.newsStrip = parseNewsStrip(rowRoot);
       return;
     }
 
@@ -2225,6 +2322,11 @@ export default async function decorate(block) {
 
   if (getMetadata('breadcrumbs').toLowerCase() === 'true') {
     navWrapper.append(await buildBreadcrumbs());
+  }
+
+  // Mount news strip if authored
+  if (headerMenuData?.newsStrip) {
+    buildNewsStrip(headerMenuData.newsStrip);
   }
 
   // UE authoring: on the nav page, allow header-section to be added inside sections.
