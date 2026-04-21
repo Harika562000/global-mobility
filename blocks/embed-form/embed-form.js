@@ -1,22 +1,45 @@
 import { eyebrowDecorator } from '../../scripts/scripts.js';
 import { fetchForm, createForm, loadFormBlockStyles } from '../form/form.js';
 
-const NON_STEP_PANEL_NAMES = ['error_panel'];
+// Reroute .af.dermis calls to the AEM publisher (main-thread fetches only)
+const AF_PUBLISH_BASE = 'https://publish-p184787-e1941710.adobeaemcloud.com'; // Change as needed
+(function interceptAfDermisFetch() {
+  const originalFetch = window.fetch;
+  window.fetch = function afDermisFetch(...args) {
+    const [url, options] = args;
+    let urlStr = '';
+    if (typeof url === 'string') {
+      urlStr = url;
+    } else if (url instanceof Request) {
+      urlStr = url.url;
+    }
+    if (urlStr.includes('.af.dermis')) {
+      let newUrl;
+      try {
+        const u = new URL(urlStr, window.location.origin);
+        newUrl = AF_PUBLISH_BASE + u.pathname + u.search;
+      } catch (e) {
+        newUrl = AF_PUBLISH_BASE + urlStr;
+      }
+      const rerouted = url instanceof Request ? new Request(newUrl, url) : newUrl;
+      return originalFetch(rerouted, options);
+    }
+    return originalFetch.apply(this, args);
+  };
+}());
 
-function isSuccessPanel(panel) {
-  return (
-    panel.querySelector('.plain-text-wrapper') !== null
-    && panel.querySelector('button') === null
-  );
-}
+// Panels with these names are NOT steps (hidden, success, error)
+const NON_STEP_PANEL_NAMES = [
+  'form_fragment_hidden',
+  'form_fragment_success',
+  'form_fragment_error',
+];
 
 function initStepDots(form) {
   const allPanels = [...form.querySelectorAll(':scope > .panel-wrapper')];
   const stepPanels = allPanels.filter((p) => {
     const name = p.getAttribute('name') || '';
-    if (NON_STEP_PANEL_NAMES.includes(name)) return false;
-    if (isSuccessPanel(p)) return false;
-    return true;
+    return !NON_STEP_PANEL_NAMES.includes(name);
   });
 
   if (stepPanels.length <= 1) return;
@@ -48,16 +71,35 @@ function initStepDots(form) {
     });
   }
 
-  stepPanels.forEach((panel, i) => {
-    const nextBtn = panel.querySelector('button[name^="next"]');
-    if (nextBtn) {
-      nextBtn.addEventListener('click', () => {
-        stepsContainer.querySelectorAll('.step-dot').forEach((dot, idx) => {
-          dot.classList.toggle('active', idx === i + 1);
-        });
-      });
-    }
+  // Update dots based on which panel is actually visible
+  // This ensures dots only move when validation passes and panel actually switches
+  const updateDotsBasedOnVisibility = () => {
+    // Find the panel that is NOT hidden (data-visible != 'false')
+    const visiblePanel = stepPanels.find(
+      (p) => p.dataset.visible !== 'false',
+    );
+    if (!visiblePanel) return;
+
+    const visibleIndex = stepPanels.indexOf(visiblePanel);
+    stepsContainer.querySelectorAll('.step-dot').forEach((dot, idx) => {
+      dot.classList.toggle('active', idx === visibleIndex);
+    });
+  };
+
+  // Watch for panel visibility changes and update dots accordingly
+  const panelVisibilityObserver = new MutationObserver(() => {
+    updateDotsBasedOnVisibility();
   });
+
+  stepPanels.forEach((panel) => {
+    panelVisibilityObserver.observe(panel, {
+      attributes: true,
+      attributeFilter: ['data-visible', 'style'],
+    });
+  });
+
+  // Set initial dot state
+  updateDotsBasedOnVisibility();
 }
 
 function initFloatingLabels(form) {
@@ -258,6 +300,26 @@ function initConnectPanel(form) {
   syncState();
 }
 
+function injectPanelIcon(form, panelName, iconName) {
+  const panel = form.querySelector(`fieldset[name="${panelName}"]`);
+  if (!panel) return;
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'image-wrapper';
+
+  const img = document.createElement('img');
+  img.src = `${window.hlx?.codeBasePath || ''}/icons/${iconName}.svg`;
+  img.alt = '';
+  wrapper.append(img);
+
+  const firstText = panel.querySelector('.plain-text-wrapper');
+  if (firstText) {
+    panel.insertBefore(wrapper, firstText);
+  } else {
+    panel.prepend(wrapper);
+  }
+}
+
 function initFormButtons(form) {
   form.querySelectorAll('.button-wrapper button').forEach((btn) => {
     const isSubmit = btn.closest('.submit-wrapper') !== null || btn.type === 'submit';
@@ -278,6 +340,17 @@ function initFormButtons(form) {
     btn.setAttribute('aria-hidden', 'true');
     btn.insertAdjacentElement('beforebegin', a);
   });
+}
+
+export function initEmbedFormDomEnhancements(formEl) {
+  if (!formEl) return;
+  initStepDots(formEl);
+  initFloatingLabels(formEl);
+  initCustomDropdowns(formEl);
+  initConnectPanel(formEl);
+  initFormButtons(formEl);
+  injectPanelIcon(formEl, 'form_fragment_success', 'check-mark');
+  injectPanelIcon(formEl, 'form_fragment_error', 'x-mark');
 }
 
 export default async function decorate(block) {
@@ -319,6 +392,9 @@ export default async function decorate(block) {
   // serialised by EDS as an <a href> link to the form path.
   const formLinkRow = rows[4];
   const formLink = formLinkRow?.querySelector('a[href]');
+  if (formLink?.href) {
+    block.dataset.embedFormDefinitionUrl = formLink.href;
+  }
 
   if (formLink) {
     const formDef = await fetchForm(formLink.href);
@@ -335,23 +411,17 @@ export default async function decorate(block) {
   // Initialise step dots, floating labels and button anchors once the adaptive form has rendered.
   const formEl = formDiv.querySelector('form');
   if (formEl) {
-    initStepDots(formEl);
-    initFloatingLabels(formEl);
-    initCustomDropdowns(formEl);
-    initConnectPanel(formEl);
-    initFormButtons(formEl);
+    initEmbedFormDomEnhancements(formEl);
   } else {
     const observer = new MutationObserver(() => {
       const rendered = formDiv.querySelector('form');
       if (rendered) {
         observer.disconnect();
-        initStepDots(rendered);
-        initFloatingLabels(rendered);
-        initCustomDropdowns(rendered);
-        initConnectPanel(rendered);
-        initFormButtons(rendered);
+        initEmbedFormDomEnhancements(rendered);
       }
     });
     observer.observe(formDiv, { childList: true, subtree: true });
   }
+
+  block.dispatchEvent(new CustomEvent('embed-form:decorated', { bubbles: true }));
 }
