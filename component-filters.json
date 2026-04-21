@@ -159,17 +159,6 @@
     ]
   },
   {
-    "id": "header-section",
-    "components": [
-      "header-logo",
-      "header-contact",
-      "header-login",
-      "header-search",
-      "header-menu-item",
-      "header-news-strip"
-    ]
-  },
-  {
     "id": "header-menu-item",
     "components": [
       "header-nav-child"

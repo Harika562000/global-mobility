@@ -6136,38 +6136,10 @@
         "value": false
       },
       {
-        "component": "text",
+        "component": "aem-content",
         "name": "url",
         "label": "URL (used when no child items)",
-        "valueType": "string",
-        "condition": {
-          "!": [
-            {
-              "var": "isChild"
-            }
-          ]
-        }
-      }
-    ]
-  },
-  {
-    "id": "header-news-strip",
-    "fields": [
-      {
-        "component": "richtext",
-        "name": "content",
-        "label": "Content (RTE)",
-        "valueType": "string",
-        "description": "Rich text message displayed in the news strip bar.",
-        "required": true
-      },
-      {
-        "component": "boolean",
-        "name": "hideStrip",
-        "label": "Hide Strip",
-        "description": "When enabled (true), the news strip bar will not be displayed on the page.",
-        "valueType": "boolean",
-        "value": false
+        "description": "Destination URL for the button"
       }
     ]
   },
@@ -6210,6 +6182,27 @@
         "name": "links",
         "label": "Child Links (ul / li items)",
         "valueType": "string"
+      }
+    ]
+  },
+  {
+    "id": "header-news-strip",
+    "fields": [
+      {
+        "component": "richtext",
+        "name": "content",
+        "label": "Content (RTE)",
+        "valueType": "string",
+        "description": "Rich text message displayed in the news strip bar.",
+        "required": true
+      },
+      {
+        "component": "boolean",
+        "name": "hideStrip",
+        "label": "Hide Strip",
+        "description": "When enabled (true), the news strip bar will not be displayed on the page.",
+        "valueType": "boolean",
+        "value": false
       }
     ]
   },
