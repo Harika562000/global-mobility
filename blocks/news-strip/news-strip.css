@@ -1,0 +1,166 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   News Strip — sticky notification bar rendered below the fixed header
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/*
+ * The block wrapper inside <main> is invisible — the actual bar is injected
+ * directly into <body> so it can sit between the fixed header and page content.
+ */
+.news-strip-wrapper,
+.news-strip {
+  display: none;
+}
+
+/* ── Bar container ────────────────────────────────────────────────────────── */
+.news-strip-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  /* top is set dynamically by JS after header height is known */
+  z-index: 999; /* just below header (z-index 1000) */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-400, 16px);
+
+  min-height: 44px;
+  padding: var(--spacing-300, 12px) var(--spacing-600, 24px);
+  box-sizing: border-box;
+
+  background-color: var(--color-yellow-300, #FDE047);
+  color: var(--color-grey-900, #171717);
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-200, 14px);
+  line-height: var(--line-height-22, 22px);
+
+  /* Slide-in from top on first paint */
+  animation: news-strip-slide-in 0.3s ease forwards;
+
+  /* Smooth close transition */
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+/* Slide-in keyframes */
+@keyframes news-strip-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Closing state — triggered by JS before removal */
+.news-strip-bar.news-strip-closing {
+  opacity: 0;
+  transform: translateY(-100%);
+}
+
+/* ── Content area ─────────────────────────────────────────────────────────── */
+.news-strip-content {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: center;
+}
+
+/* Reset any margin/padding that EDS default styles might add to child elements */
+.news-strip-content p,
+.news-strip-content h1,
+.news-strip-content h2,
+.news-strip-content h3,
+.news-strip-content h4,
+.news-strip-content h5,
+.news-strip-content h6 {
+  margin: 0;
+  padding: 0;
+  color: inherit;
+}
+
+.news-strip-content a {
+  color: inherit;
+  text-decoration: underline;
+  font-weight: var(--font-weight-bold, 700);
+}
+
+.news-strip-content a:hover {
+  opacity: 0.8;
+  text-decoration: none;
+}
+
+/* ── Close button ─────────────────────────────────────────────────────────── */
+.news-strip-close {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-32, 32px);
+  height: var(--size-32, 32px);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-8, 8px);
+  background: transparent;
+  cursor: pointer;
+  color: inherit;
+  transition: background-color 0.15s ease;
+}
+
+.news-strip-close:hover,
+.news-strip-close:focus-visible {
+  background-color: rgb(0 0 0 / 10%);
+}
+
+.news-strip-close:focus-visible {
+  outline: 2px solid currentcolor;
+  outline-offset: 2px;
+}
+
+/* ── Close icon (X) — drawn with pseudo-elements ──────────────────────────── */
+.news-strip-close-icon,
+.news-strip-close-icon::before,
+.news-strip-close-icon::after {
+  display: block;
+  position: relative;
+  width: var(--size-16, 16px);
+  height: var(--size-2, 2px);
+  border-radius: var(--size-2, 2px);
+  background: currentcolor;
+}
+
+.news-strip-close-icon {
+  /* The centre bar is transparent so only the two crossed bars show */
+  background: transparent;
+}
+
+.news-strip-close-icon::before,
+.news-strip-close-icon::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.news-strip-close-icon::before {
+  transform: rotate(45deg);
+}
+
+.news-strip-close-icon::after {
+  transform: rotate(-45deg);
+}
+
+/* ── Responsive tweaks ────────────────────────────────────────────────────── */
+@media (width >= 720px) {
+  .news-strip-bar {
+    padding: var(--spacing-300, 12px) var(--spacing-800, 40px);
+    font-size: var(--font-size-300, 16px);
+  }
+}
+
+@media (width >= 1025px) {
+  .news-strip-bar {
+    padding: var(--spacing-300, 12px) var(--spacing-950, 56px);
+  }
+}

@@ -7686,6 +7686,27 @@
     ]
   },
   {
+    "id": "news-strip",
+    "fields": [
+      {
+        "component": "richtext",
+        "name": "content",
+        "label": "Content (RTE)",
+        "valueType": "string",
+        "description": "Rich text message displayed in the news strip bar.",
+        "required": true
+      },
+      {
+        "component": "boolean",
+        "name": "hideStrip",
+        "label": "Hide Strip",
+        "description": "When enabled (true), the news strip bar will not be displayed on the page.",
+        "valueType": "boolean",
+        "value": false
+      }
+    ]
+  },
+  {
     "id": "tag",
     "fields": [
       {
