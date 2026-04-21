@@ -21,7 +21,7 @@ main .form .accordion > fieldset > legend.accordion-legend[data-visible='false']
 main .form .accordion > fieldset > legend::after {
     content: '\221F';
     color: var(--color-accordion-collapse-icon);
-    font-size: 19px;
+    font-size: var(--font-size-500);
     display: inline;
     position: absolute;
     transition: transform 0s;

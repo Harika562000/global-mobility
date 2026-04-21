@@ -22,21 +22,16 @@
         "id": "media-module",
         "fields": [
           {
-            "component": "multiselect",
+            "component": "select",
             "name": "classes",
             "label": "Media Module Variation",
             "valueType": "string",
             "value": "default",
             "options": [
               { "name": "Default", "value": "default" },
-              {
-                "name": "Expert",
-                "children": [
-                  { "name": "Left", "value": "expert, left" },
-                  { "name": "Right", "value": "expert, right" },
-                  { "name": "No Asset (Full Width)", "value": "expert, no-asset" }
-                ]
-              }
+              { "name": "Expert Left", "value": "expert, left" },
+              { "name": "Expert Right", "value": "expert, right" },
+              { "name": "Expert No Asset (Full Width)", "value": "expert, no-asset" }
             ]
           },
           {
@@ -52,7 +47,27 @@
               ]
             },
             "fields": [
-              { "...": "../tag/_tag.json#/models/tag/fields" }
+              {
+                "component": "select",
+                "valueType": "string",
+                "name": "tagVariation",
+                "label": "Tag variation",
+                "value": "",
+                "options": [
+                  { "name": "Outline", "value": "outline" },
+                  { "name": "Fill", "value": "fill" },
+                  { "name": "Glass", "value": "glass" },
+                  { "name": "Dark", "value": "dark" }
+                ]
+              },
+              {
+                "component": "text",
+                "valueType": "string",
+                "name": "tag-title",
+                "label": "Tag title",
+                "value": "",
+                "required": true
+              }
             ]
           },
           {
@@ -68,7 +83,46 @@
               ]
             },
             "fields": [
-              { "...": "../section-title/_section-title.json#/models/section-title/fields" }
+              {
+                "component": "text",
+                "valueType": "string",
+                "name": "defaultEyebrow",
+                "label": "Eyebrow Text",
+                "value": "",
+                "required": true,
+                "condition": {
+                  "or": [
+                    { "===": [{ "var": ["classes", ""] }, "default"] },
+                    { "===": [{ "var": ["classes", ""] }, ""] }
+                  ]
+                }
+              },
+              {
+                "component": "richtext",
+                "name": "section-title",
+                "label": "Title",
+                "valueType": "string",
+                "required": true,
+                "condition": {
+                  "or": [
+                    { "===": [{ "var": ["classes", ""] }, "default"] },
+                    { "===": [{ "var": ["classes", ""] }, ""] }
+                  ]
+                }
+              },
+              {
+                "component": "richtext",
+                "name": "body",
+                "label": "Body Text",
+                "valueType": "string",
+                "description": "Optional. For Default variation, use p tag for text.",
+                "condition": {
+                  "or": [
+                    { "===": [{ "var": ["classes", ""] }, "default"] },
+                    { "===": [{ "var": ["classes", ""] }, ""] }
+                  ]
+                }
+              }
             ]
           },
           {
@@ -106,14 +160,15 @@
           {
             "component": "text",
             "valueType": "string",
-            "name": "eyebrow",
+            "name": "expertEyebrow",
             "label": "Eyebrow Text",
             "value": "",
             "required": true,
             "condition": {
-              "and": [
-                { "!==": [{ "var": ["classes", ""] }, "default"] },
-                { "!==": [{ "var": ["classes", ""] }, ""] }
+              "or": [
+                { "===": [{ "var": ["classes", ""] }, "expert, left"] },
+                { "===": [{ "var": ["classes", ""] }, "expert, right"] },
+                { "===": [{ "var": ["classes", ""] }, "expert, no-asset"] }
               ]
             }
           },

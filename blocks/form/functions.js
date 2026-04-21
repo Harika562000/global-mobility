@@ -1,3 +1,5 @@
+import { COUNTRIES } from './constant.js';
+
 /**
  * Get Full Name
  * @name getFullName Concats first name and last name
@@ -42,5 +44,23 @@ function days(endDate, startDate) {
   return Math.floor(diffInMs / (1000 * 60 * 60 * 24));
 }
 
+/**
+ * @name getCountryCodes Returns the list of country ISO codes for a dropdown enum.
+ * @return {string[]}
+ */
+function getCountryCodes() {
+  return COUNTRIES.enum;
+}
+
+/**
+ * @name getCountryNames Returns the list of country display names for a dropdown enumNames.
+ * @return {string[]}
+ */
+function getCountryNames() {
+  return COUNTRIES.enumNames;
+}
+
 // eslint-disable-next-line import/prefer-default-export
-export { getFullName, days, submitFormArrayToString };
+export {
+  getFullName, days, submitFormArrayToString, getCountryCodes, getCountryNames,
+};

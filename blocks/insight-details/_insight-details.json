@@ -1,0 +1,170 @@
+{
+  "definitions": [
+    {
+      "title": "Insight Details",
+      "id": "insight-details",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block",
+            "template": {
+              "name": "Insight Details",
+              "model": "insight-details"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "insight-details",
+      "fields": [
+        {
+          "component": "select",
+          "name": "authorVariation",
+          "label": "Author Variation",
+          "valueType": "string",
+          "required": true,
+          "value": "page-url",
+          "options": [
+            { "name": "Page URL", "value": "page-url" },
+            { "name": "Manual", "value": "manual" }
+          ]
+        },
+        {
+          "component": "aem-content",
+          "name": "authorProfileLink",
+          "label": "Author profile link",
+          "valueType": "string",
+          "condition": { "===": [{ "var": ["authorVariation", ""] }, "page-url"] }
+        },
+        {
+          "component": "text",
+          "name": "authorName",
+          "label": "Author Name",
+          "valueType": "string",
+          "condition": { "===": [{ "var": ["authorVariation", ""] }, "manual"] }
+        },
+        {
+          "component": "aem-content",
+          "name": "authorLink",
+          "label": "Author link",
+          "valueType": "string",
+          "condition": { "===": [{ "var": ["authorVariation", ""] }, "manual"] }
+        },
+        {
+          "component": "reference",
+          "name": "authorImage",
+          "label": "Author Image",
+          "valueType": "string",
+          "multi": false,
+          "condition": { "===": [{ "var": ["authorVariation", ""] }, "manual"] }
+        },
+        {
+          "component": "select",
+          "name": "showTimeToRead",
+          "label": "Show time to read",
+          "valueType": "string",
+          "value": "yes",
+          "options": [
+            { "name": "Yes", "value": "yes" },
+            { "name": "No", "value": "no" }
+          ],
+          "description": "If enabled, time-to-read is picked from page metadata."
+        },
+        {
+          "component": "select",
+          "name": "showTags",
+          "label": "Show Tags",
+          "valueType": "string",
+          "value": "yes",
+          "options": [
+            { "name": "Yes", "value": "yes" },
+            { "name": "No", "value": "no" }
+          ],
+          "description": "If disabled, tag/taxonomy toggles below are hidden."
+        },
+        {
+          "component": "select",
+          "name": "showInsightsThoughtLeaderContentType",
+          "label": "Insights and thought leader content type",
+          "valueType": "string",
+          "value": "yes",
+          "options": [
+            { "name": "Yes", "value": "yes" },
+            { "name": "No", "value": "no" }
+          ],
+          "description": "If enabled, value is picked from respective Taxonomy metadata.",
+          "condition": { "===": [{ "var": ["showTags", "yes"] }, "yes"] }
+        },
+        {
+          "component": "select",
+          "name": "showTopic",
+          "label": "Topic",
+          "valueType": "string",
+          "value": "yes",
+          "options": [
+            { "name": "Yes", "value": "yes" },
+            { "name": "No", "value": "no" }
+          ],
+          "description": "If enabled, value is picked from respective Taxonomy metadata.",
+          "condition": { "===": [{ "var": ["showTags", "yes"] }, "yes"] }
+        },
+        {
+          "component": "select",
+          "name": "showTheme",
+          "label": "Theme",
+          "valueType": "string",
+          "value": "yes",
+          "options": [
+            { "name": "Yes", "value": "yes" },
+            { "name": "No", "value": "no" }
+          ],
+          "description": "If enabled, value is picked from respective Taxonomy metadata.",
+          "condition": { "===": [{ "var": ["showTags", "yes"] }, "yes"] }
+        },
+        {
+          "component": "select",
+          "name": "showSeries",
+          "label": "Series",
+          "valueType": "string",
+          "value": "yes",
+          "options": [
+            { "name": "Yes", "value": "yes" },
+            { "name": "No", "value": "no" }
+          ],
+          "description": "If enabled, value is picked from respective Taxonomy metadata.",
+          "condition": { "===": [{ "var": ["showTags", "yes"] }, "yes"] }
+        },
+        {
+          "component": "select",
+          "name": "showRegionMarket",
+          "label": "Region / Market",
+          "valueType": "string",
+          "value": "yes",
+          "options": [
+            { "name": "Yes", "value": "yes" },
+            { "name": "No", "value": "no" }
+          ],
+          "description": "If enabled, value is picked from respective Taxonomy metadata.",
+          "condition": { "===": [{ "var": ["showTags", "yes"] }, "yes"] }
+        },
+        {
+          "component": "select",
+          "name": "showEventFormat",
+          "label": "Event format",
+          "valueType": "string",
+          "value": "yes",
+          "options": [
+            { "name": "Yes", "value": "yes" },
+            { "name": "No", "value": "no" }
+          ],
+          "description": "If enabled, value is picked from respective Taxonomy metadata.",
+          "condition": { "===": [{ "var": ["showTags", "yes"] }, "yes"] }
+        }
+      ]
+    }
+  ],
+  "filters": []
+}

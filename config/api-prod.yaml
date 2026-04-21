@@ -1,0 +1,6 @@
+kind: "API"
+version: "1"
+data:
+  allowedClientIDs:
+    author:
+      - "experience-catalyst-prod"

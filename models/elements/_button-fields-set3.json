@@ -4,27 +4,25 @@
       "component": "aem-content",
       "valueType": "string",
       "name": "button3",
-      "label": "Button 3 Link",
-      "required": true
+      "label": "Button Link"
     },      
     {
       "component": "text",
       "valueType": "string",
       "name": "button3Title",
-      "label": "Button 3 Title",
+      "label": "Button Title",
       "description": "Accessibility title attribute (optional)"
     },
     {
       "component": "text",
       "valueType": "string",
       "name": "button3Text",
-      "label": "Button 3 Text",
-      "required": true
+      "label": "Button Text"
     },
     {
       "component": "select",
       "name": "button3Type",
-      "label": "Button 3 Variation",
+      "label": "Button Variation",
       "valueType": "string",
       "value": "",
       "options": [

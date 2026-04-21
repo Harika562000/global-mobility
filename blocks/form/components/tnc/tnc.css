@@ -1,11 +1,11 @@
 .tnc-text-decoration {
-    color: #969696;
-    border: 1px solid #ccc;
+    color: var(--color-semantic-3);
+    border: var(--border-width-100) solid var(--border-subtle, #ccc);
     border-radius: .25rem;
     max-height: 160px;
     margin-bottom: .25rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    font-size: .875rem;
+    padding-inline: var(--spacing-400);   /* 16px */
+    font-size: var(--font-size-200);
+    line-height: var(--line-height-22);
     overflow: auto;
 }

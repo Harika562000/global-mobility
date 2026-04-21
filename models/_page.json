@@ -4,30 +4,2823 @@
       "id": "page-metadata",
       "fields": [
         {
-          "component": "text",
+          "component": "select",
+          "name": "pageType",
+          "label": "Page Type",
           "valueType": "string",
-          "name": "jcr:title",
-          "label": "Title"
+          "value": "",
+          "options": [
+            {
+              "name": "Experts Page",
+              "value": "Experts Page"
+            },
+            {
+              "name": "Product Page",
+              "value": "Product Page"
+            },
+            {
+              "name": "Insights Details Page",
+              "value": "Insights Details Page"
+            },
+            {
+              "name": "Industry",
+              "value": "Industry"
+            },
+            {
+              "name": "Event details",
+              "value": "Event details"
+            },
+            {
+              "name": "Theme",
+              "value": "Theme"
+            },
+            {
+              "name": "Campaign",
+              "value": "Campaign"
+            },
+            {
+              "name": "Data Sample",
+              "value": "Data Sample"
+            },
+            {
+              "name": "Contact Us",
+              "value": "Contact Us"
+            },
+            {
+              "name": "Need State",
+              "value": "Need State"
+            },
+            {
+              "name": "About us",
+              "value": "About us"
+            },
+            {
+              "name": "Insights Landing Page",
+              "value": "Insights Landing Page"
+            },
+            {
+              "name": "Podcast Landing Page",
+              "value": "Podcast Landing Page"
+            },
+            {
+              "name": "Events Landing page",
+              "value": "Events Landing page"
+            },
+            {
+              "name": "Expert Landing Page",
+              "value": "Expert Landing Page"
+            },
+            {
+              "name": "Homepage",
+              "value": "Homepage"
+            },
+            {
+              "name": "Search",
+              "value": "Search"
+            },
+            {
+              "name": "Legal",
+              "value": "Legal"
+            },
+            {
+              "name": "Overview",
+              "value": "Overview"
+            },
+            {
+              "name": "Product Catalog",
+              "value": "Product Catalog"
+            },
+            {
+              "name": "Podcast Details Page",
+              "value": "Podcast Details Page"
+            },
+            {
+              "name": "Generic",
+              "value": "Generic"
+            }
+          ]
         },
         {
-          "component": "text",
-          "valueType": "string",
-          "name": "jcr:description",
-          "label": "Description"
+          "component": "container",
+          "name": "core",
+          "label": "Core",
+          "valueType": "object",
+          "collapsible": true,
+          "fields": [
+            {
+              "component": "text",
+              "valueType": "string",
+              "name": "jcr:title",
+              "label": "Title",
+              "description": "Page title. og:title and twitter:title use this value by default when not set at site level."
+            },
+            {
+              "component": "text",
+              "valueType": "string",
+              "name": "jcr:description",
+              "label": "Description",
+              "description": "Used for meta description, og:description, and twitter:description."
+            },
+            {
+              "component": "reference",
+              "valueType": "string",
+              "name": "image",
+              "label": "Image",
+              "value": "",
+              "multi": false,
+              "description": "Social share image. Used for og:image and twitter:image."
+            }
+          ]
         },
         {
-          "component": "text",
-          "valueType": "string",
-          "name": "keywords",
-          "multi": true,
-          "label": "Keywords"
+          "component": "container",
+          "name": "seoSocial",
+          "label": "SEO & social",
+          "valueType": "object",
+          "collapsible": true,
+          "condition": {
+            "or": [
+              {
+                "===": [
+                  {
+                    "var": [
+                      "pageType"
+                    ]
+                  },
+                  "Experts Page"
+                ]
+              },
+              {
+                "===": [
+                  {
+                    "var": [
+                      "pageType"
+                    ]
+                  },
+                  "Event details"
+                ]
+              },
+              {
+                "===": [
+                  {
+                    "var": [
+                      "pageType"
+                    ]
+                  },
+                  "Insights Details Page"
+                ]
+              }
+            ]
+          },
+          "fields": [
+            {
+              "component": "text",
+              "value": "",
+              "valueType": "string",
+              "name": "titlePosition",
+              "label": "Title Position",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Experts Page"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "component": "date-time",
+              "value": "",
+              "valueType": "date",
+              "name": "eventDateTime",
+              "label": "Event date & time",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Event details"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "component": "text",
+              "value": "",
+              "valueType": "string",
+              "name": "eventLocation",
+              "label": "Event Location",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Event details"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "component": "text",
+              "value": "",
+              "valueType": "string",
+              "name": "timeToRead",
+              "label": "Time to read",
+              "description": "Reading time for this insights article (e.g. 5 min). Stored as page metadata.",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Insights Details Page"
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
         },
         {
-          "component": "text",
-          "valueType": "string",
-          "name": "assets",
-          "multi": true,
-          "label": "assets"
+          "component": "container",
+          "name": "taxonomy",
+          "label": "Taxonomy",
+          "valueType": "object",
+          "collapsible": true,
+          "fields": [
+            {
+              "component": "aem-tag",
+              "name": "assetAttributes",
+              "label": "Asset Attributes",
+              "value": "",
+              "valueType": "string",
+              "rootPath": "/content/cq:tags/mobility-global/system-and-structural-tags/asset-attributes-structural-attributes-or-delivery-mechanisms",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Campaign"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Data Sample"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Search"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Catalog"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Generic"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "component": "aem-tag",
+              "name": "audienceRole",
+              "label": "Audience Role",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/contextual-variables/segmentation-and-user-context/audience-role",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Insights Details Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Event details"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Campaign"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Data Sample"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Insights Landing Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Events Landing page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Search"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Catalog"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Generic"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Podcast Details Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Podcast Landing Page"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "component": "aem-tag",
+              "name": "brandDataSource",
+              "label": "Brand / Data Source",
+              "value": "",
+              "valueType": "string",
+              "rootPath": "/content/cq:tags/mobility-global/system-and-structural-tags/brand-or-data-source",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Campaign"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Data Sample"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Search"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Catalog"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Generic"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "component": "aem-tag",
+              "name": "campaignType",
+              "label": "Campaign Type",
+              "value": "",
+              "valueType": "string",
+              "rootPath": "/content/cq:tags/mobility-global/system-and-structural-tags/campaign-type",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Campaign"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Generic"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "component": "aem-tag",
+              "name": "contentFormat",
+              "label": "Content Format",
+              "value": "",
+              "valueType": "string",
+              "rootPath": "/content/cq:tags/mobility-global/system-and-structural-tags/content-formats",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Insights Details Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Event details"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Campaign"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Data Sample"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Insights Landing Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Events Landing page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Search"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Generic"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Podcast Details Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Podcast Landing Page"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "component": "aem-tag",
+              "name": "eventFormat",
+              "label": "Event Format",
+              "value": "",
+              "valueType": "string",
+              "rootPath": "/content/cq:tags/mobility-global/system-and-structural-tags/content-formats/event-formats",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Insights Details Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Event details"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Campaign"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Insights Landing Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Events Landing page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Search"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Generic"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Podcast Landing Page"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "component": "aem-tag",
+              "name": "industrySector",
+              "label": "Industry / Sector",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/contextual-variables/segmentation-and-user-context/industry-or-sector",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Experts Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Insights Details Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Industry"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Event details"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Campaign"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Data Sample"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Insights Landing Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Events Landing page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Expert Landing Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Search"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Catalog"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Generic"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Podcast Details Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Podcast Landing Page"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "component": "aem-tag",
+              "name": "insightsThoughtLeaderContentType",
+              "label": "Insights and Thought Leader Content Type",
+              "value": "",
+              "valueType": "string",
+              "rootPath": "/content/cq:tags/mobility-global/insights-and-intelligence/insight-and-thought-leader-content-type",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Insights Details Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Event details"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Campaign"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Insights Landing Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Events Landing page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Search"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Generic"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Podcast Details Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Podcast Landing Page"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "component": "aem-tag",
+              "name": "marketConditions",
+              "label": "Market Conditions",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/contextual-variables/market-context/market-conditions",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Campaign"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Data Sample"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Search"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Catalog"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Generic"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "component": "aem-tag",
+              "name": "needStates",
+              "label": "Need States",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/need-states",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Campaign"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Data Sample"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Need State"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Expert Landing Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Experts Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Search"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Catalog"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Generic"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "component": "aem-tag",
+              "name": "pillars",
+              "label": "Pillars",
+              "value": "",
+              "valueType": "string",
+              "multi": false,
+              "rootPath": "/content/cq:tags/mobility-global/pillars",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Experts Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Insights Details Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Industry"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Event details"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Campaign"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Data Sample"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Need State"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Insights Landing Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Events Landing page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Expert Landing Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Overview"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Catalog"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Generic"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Podcast Details Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Podcast Landing Page"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "component": "aem-tag",
+              "name": "platforms",
+              "label": "Platforms",
+              "value": "",
+              "valueType": "string",
+              "rootPath": "/content/cq:tags/mobility-global/products-and-platforms/platforms",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Campaign"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Data Sample"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Search"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Catalog"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Generic"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "component": "aem-tag",
+              "name": "productCapability",
+              "label": "Product Capability",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/products-and-platforms/product-capabilities",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Experts Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Campaign"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Data Sample"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Expert Landing Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Search"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Catalog"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Generic"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "component": "aem-tag",
+              "name": "productFamily",
+              "label": "Product Family",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/products-and-platforms/product-families",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Campaign"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Data Sample"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Search"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Catalog"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Generic"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "component": "aem-tag",
+              "name": "marketSalesRegion",
+              "label": "Market Sales Region",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/contextual-variables/market-context/market-sales-region",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Experts Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Insights Details Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Event details"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Campaign"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Data Sample"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Insights Landing Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Events Landing page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Expert Landing Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Search"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Catalog"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Generic"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Podcast Details Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Podcast Landing Page"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "component": "aem-tag",
+              "name": "marketRegion",
+              "label": "Market Region",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/contextual-variables/market-context/market-region",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Experts Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Insights Details Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Event details"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Campaign"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Data Sample"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Insights Landing Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Events Landing page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Expert Landing Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Search"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Catalog"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Generic"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Podcast Details Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Podcast Landing Page"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "component": "aem-tag",
+              "name": "marketCountry",
+              "label": "Market Country",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/contextual-variables/market-context/market-country",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Experts Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Insights Details Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Event details"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Campaign"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Data Sample"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Insights Landing Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Events Landing page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Expert Landing Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Search"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Catalog"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Generic"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Podcast Details Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Podcast Landing Page"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "component": "aem-tag",
+              "name": "regulatoryContext",
+              "label": "Regulatory Context",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/contextual-variables/regulatory-and-operating-context/regulatory-context",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Insights Details Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Event details"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Campaign"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Data Sample"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Insights Landing Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Events Landing page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Search"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Generic"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Podcast Details Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Podcast Landing Page"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "component": "aem-tag",
+              "name": "segmentationUserContext",
+              "label": "Segmentation and User Context",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/contextual-variables/segmentation-and-user-context",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Generic"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "component": "aem-tag",
+              "name": "series",
+              "label": "Series",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/insights-and-intelligence/series",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Insights Details Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Campaign"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Insights Landing Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Search"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Generic"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Podcast Details Page"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "component": "aem-tag",
+              "name": "servicesAdvisory",
+              "label": "Services and Advisory",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/products-and-platforms/services-and-advisory",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Experts Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Campaign"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Data Sample"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Expert Landing Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Search"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Catalog"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Generic"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "component": "aem-tag",
+              "name": "theme",
+              "label": "Theme",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/insights-and-intelligence/theme",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Insights Details Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Event details"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Theme"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Campaign"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Insights Landing Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Events Landing page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Search"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Generic"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Podcast Details Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Podcast Landing Page"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "component": "aem-tag",
+              "name": "timeHorizon",
+              "label": "Time Horizon",
+              "value": "",
+              "valueType": "string",
+              "rootPath": "/content/cq:tags/mobility-global/contextual-variables/market-context/time-horizon",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Campaign"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Data Sample"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Search"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Catalog"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Generic"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "component": "aem-tag",
+              "name": "topic",
+              "label": "Topic",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/insights-and-intelligence/topic",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Experts Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Insights Details Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Event details"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Campaign"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Insights Landing Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Events Landing page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Expert Landing Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Search"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Generic"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Podcast Details Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Podcast Landing Page"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "component": "aem-tag",
+              "name": "vehicleTypeSegment",
+              "label": "Vehicle Type / Segment",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/contextual-variables/segmentation-and-user-context/vehicle-type-or-segment",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Campaign"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Data Sample"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Search"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Catalog"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Generic"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "component": "aem-tag",
+              "name": "workflowStage",
+              "label": "Workflow Stage",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/system-and-structural-tags/workflow-stage-how-i-do-it",
+              "condition": {
+                "or": [
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Page"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Campaign"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Data Sample"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Product Catalog"
+                    ]
+                  },
+                  {
+                    "===": [
+                      {
+                        "var": [
+                          "pageType"
+                        ]
+                      },
+                      "Generic"
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
         }
       ]
     }

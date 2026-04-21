@@ -12,21 +12,22 @@ const ROWS_OPTIONS = [10, 20, 50];
  * @param {number} end
  * @param {number} total
  */
-function setViewingLineContent(el, start, end, total) {
+function setViewingLineContent(el, start, end, total, labels = {}) {
   el.replaceChildren();
   const intro = document.createElement('span');
   intro.className = 'dm-pagination-viewing-intro';
-  intro.textContent = 'Viewing ';
+  intro.textContent = labels.viewing || 'Viewing ';
 
   const detail = document.createElement('span');
   detail.className = 'dm-pagination-viewing-detail';
-  detail.textContent = `${start.toLocaleString()}-${end.toLocaleString()} of ${total.toLocaleString()} items`;
+  detail.textContent = `${start.toLocaleString()}-${end.toLocaleString()} of ${total.toLocaleString()} ${labels.items || 'items'}`;
 
   el.append(intro, detail);
 }
 
 /**
- * Shared numeric listbox (items-per-page + mobile current-page). Same markup/CSS as design system select.
+ * Shared numeric listbox (items-per-page + mobile current-page).
+ * Same markup/CSS as design system select.
  * @param {object} opts
  * @param {string | null} opts.labelId - `<label id>`; when null, use `ariaLabel` on trigger + list.
  * @param {string} opts.ariaLabel - required when `labelId` is null.
@@ -273,6 +274,7 @@ export default function createPaginationControls({
   totalPages,
   totalItems,
   rowsPerPage,
+  labels = {},
   onPageChange,
   onRowsChange,
 }) {
@@ -287,17 +289,16 @@ export default function createPaginationControls({
   const safeTotal = Math.max(0, Number(totalItems) || 0);
   const start = safeTotal === 0 ? 0 : (currentPage - 1) * rowsPerPage + 1;
   const end = safeTotal === 0 ? 0 : Math.min(currentPage * rowsPerPage, safeTotal);
-  setViewingLineContent(viewing, start, end, safeTotal);
+  setViewingLineContent(viewing, start, end, safeTotal, labels);
 
   const perWrap = document.createElement('div');
   perWrap.className = 'dm-pagination-per-wrap';
   const labelId = `dm-pagination-pl-${Math.random().toString(36).slice(2, 9)}`;
   const triggerId = `dm-pagination-pt-${Math.random().toString(36).slice(2, 9)}`;
-  const perLabel = document.createElement('label');
+  const perLabel = document.createElement('span');
   perLabel.className = 'dm-pagination-per-label';
   perLabel.id = labelId;
-  perLabel.htmlFor = triggerId;
-  perLabel.textContent = 'Items per page:';
+  perLabel.textContent = labels.itemsPerPage || 'Items per page:';
 
   const perCombo = createRowsPerPageCombobox({
     labelId,
@@ -401,7 +402,7 @@ export default function createPaginationControls({
 
   const mobileViewing = document.createElement('p');
   mobileViewing.className = 'dm-pagination-mobile-viewing';
-  setViewingLineContent(mobileViewing, start, end, safeTotal);
+  setViewingLineContent(mobileViewing, start, end, safeTotal, labels);
 
   root.append(mobileNav, mobileViewing, bar);
 

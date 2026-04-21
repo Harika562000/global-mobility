@@ -34,7 +34,10 @@ function createFilterItem(field, selected, option, onChange) {
 
   const text = document.createElement('span');
   text.className = 'search-results-filter-item-label';
-  text.textContent = option.value;
+  const displayLabel = (option.label != null && option.label !== '')
+    ? option.label
+    : option.value;
+  text.textContent = displayLabel;
 
   label.append(input, text);
   return label;
@@ -52,7 +55,9 @@ function createFilterGroup(field, selected, options, onChange, facetLabels = {})
   dot.setAttribute('aria-hidden', 'true');
   const text = document.createElement('span');
   text.className = 'search-results-filter-group-label';
-  text.textContent = facetLabels[field] || prettyFacetLabelUpper(field) || toTitleCase(field).toUpperCase();
+  text.textContent = facetLabels[field]
+    || prettyFacetLabelUpper(field)
+    || toTitleCase(field).toUpperCase();
   summary.append(text, dot);
   if ((Array.isArray(selected) && selected.length) || (!Array.isArray(selected) && selected)) {
     details.classList.add('has-filter');
@@ -73,6 +78,7 @@ export default function createSearchFilters({
   facetFields,
   selectedFilters,
   facetLabels = {},
+  labels = {},
   onChange,
   onClear,
   onApply,
@@ -108,7 +114,7 @@ export default function createSearchFilters({
 
     const text = document.createElement('span');
     text.className = 'search-results-filter-toggle-text';
-    text.textContent = 'Filter';
+    text.textContent = labels.filter || 'Filter';
 
     const caret = document.createElement('span');
     caret.className = 'search-results-filter-toggle-caret';
@@ -142,7 +148,9 @@ export default function createSearchFilters({
   const fields = ordered;
   fields.forEach((field) => {
     if (!facetFields[field]?.length) return;
-    wrapper.append(createFilterGroup(field, selectedFilters[field], facetFields[field], onChange, facetLabels));
+    wrapper.append(
+      createFilterGroup(field, selectedFilters[field], facetFields[field], onChange, facetLabels),
+    );
   });
 
   const actions = document.createElement('div');

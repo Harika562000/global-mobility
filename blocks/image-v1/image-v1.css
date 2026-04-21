@@ -1,0 +1,23 @@
+.image-v1 .image-v1-figure {
+  display: block;
+  margin: 0;
+}
+
+.image-v1 picture,
+.image-v1 a {
+  display: block;
+}
+
+.image-v1 img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+}
+
+.image-v1 .image-v1-caption {
+  margin-top: var(--spacing-300);
+  font-family: var(--font-family-primary);
+  font-size: var(--body-font-size-s);
+  color: var(--typography-secondary, var(--text-color));
+}

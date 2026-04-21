@@ -1,0 +1,99 @@
+{
+  "definitions": [
+    {
+      "title": "Card Grid Carousel",
+      "id": "card-grid-carousel",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block",
+            "template": {
+              "name": "card-grid-carousel",
+              "model": "card-grid-carousel",
+              "filter": "card-grid-carousel"
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "Card Grid Carousel Item",
+      "id": "card-grid-carousel-item",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block/item",
+            "template": {
+              "name": "Card Grid Carousel Item",
+              "model": "card-grid-carousel-item",
+              "title": "Card Label"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "card-grid-carousel",
+      "fields": [
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "eyebrow",
+          "label": "Eyebrow Text",
+          "value": "",
+          "description": "Short label displayed above the title (e.g. OUR HISTORY)"
+        },
+        {
+          "component": "richtext",
+          "name": "title",
+          "label": "Title",
+          "valueType": "string",
+          "required": true,
+          "description": "Main heading displayed to the left of the navigation buttons on desktop."
+        }
+      ]
+    },
+    {
+      "id": "card-grid-carousel-item",
+      "fields": [
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "label",
+          "label": "Label / Year",
+          "required": true,
+          "description": "Text displayed at the top of the card (e.g. 1984)"
+        },
+        {
+          "component": "reference",
+          "valueType": "string",
+          "name": "image",
+          "label": "Image / Logo",
+          "multi": false,
+          "description": "Brand logo or image displayed in the centre of the card."
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "imageAlt",
+          "label": "Image Alt Text"
+        },
+        {
+          "component": "richtext",
+          "name": "description",
+          "label": "Description",
+          "valueType": "string",
+          "description": "Short body text shown at the bottom of the card (e.g. Founded in 1960.)"
+        }
+      ]
+    }
+  ],
+  "filters": [
+    {
+      "id": "card-grid-carousel",
+      "components": ["card-grid-carousel-item"]
+    }
+  ]
+}

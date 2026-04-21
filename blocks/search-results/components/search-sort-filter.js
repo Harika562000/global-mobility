@@ -14,6 +14,7 @@ export default function createSearchSortFilter({
   showSort = true,
   facetLabels,
   facetOrder,
+  labels = {},
   onFilterChange,
   onFilterClear,
   onSortChange,
@@ -49,7 +50,7 @@ export default function createSearchSortFilter({
 
   const text = document.createElement('span');
   text.className = 'search-results-sort-filter-toggle-text';
-  text.textContent = showSort ? 'Filter & Sort' : 'Filter';
+  text.textContent = showSort ? (labels.filterAndSort || 'Filter & Sort') : (labels.filter || 'Filter');
 
   iconWrap.append(icon, dot);
   toggle.append(iconWrap, text);
@@ -108,6 +109,7 @@ export default function createSearchSortFilter({
     selectedFilters,
     facetLabels,
     facetOrder,
+    labels,
     onChange: (field, value, checked) => {
       onFilterChange(field, value, checked);
     },
@@ -126,7 +128,7 @@ export default function createSearchSortFilter({
   header.className = 'search-results-sort-filter-header';
   const title = document.createElement('h3');
   title.className = 'search-results-sort-filter-title';
-  title.textContent = showSort ? 'Filter & Sort' : 'Filter';
+  title.textContent = showSort ? (labels.filterAndSort || 'Filter & Sort') : (labels.filter || 'Filter');
   const closeBtn = document.createElement('button');
   closeBtn.type = 'button';
   closeBtn.className = 'search-results-sort-filter-close';

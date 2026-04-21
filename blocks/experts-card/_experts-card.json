@@ -1,0 +1,246 @@
+{
+  "definitions": [
+    {
+      "title": "Experts Card Grid",
+      "id": "experts-card",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block",
+            "template": {
+              "name": "experts-card",
+              "model": "experts-card",
+              "filter": "experts-card"
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "Expert Card Item",
+      "id": "experts-card-item",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block/item",
+            "template": {
+              "name": "Expert Card Item",
+              "model": "experts-card-item",
+              "title": "Expert name"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "models": [
+    {
+      "id": "experts-card",
+      "fields": [
+        {
+          "component": "container",
+          "name": "sectionHeader",
+          "label": "Section Header",
+          "valueType": "object",
+          "collapsible": true,
+          "fields": [
+            {
+              "component": "text",
+              "valueType": "string",
+              "name": "eyebrow",
+              "label": "Eyebrow Text",
+              "value": "",
+              "required": true
+            },
+            {
+              "component": "richtext",
+              "name": "section-title",
+              "label": "Section title",
+              "valueType": "string",
+              "required": true,
+              "description": "Use H4 or another heading tag as needed."
+            },
+            {"...": "../../models/elements/_button-fields-set1.json#/fields"}
+          ]
+        },
+        {
+          "component": "select",
+          "name": "contentSource",
+          "label": "Content Source",
+          "valueType": "string",
+          "value": "",
+          "description": "Default is Manual Authoring (use + to add expert cards). For Manual Page Selection, add up to 4 pages in Manual Page Configuration. For Tags, open Tags Configuration and complete the required fields.",
+          "options": [
+            { "name": "Manual Authoring (Default)", "value": "" },
+            { "name": "Tags", "value": "tags" },
+            {
+              "name": "Manual Page Selection",
+              "value": "manual-page-selection"
+            }
+          ]
+        },
+        {
+          "component": "container",
+          "name": "tags",
+          "label": "Tags Configuration",
+          "valueType": "object",
+          "collapsible": true,
+          "condition": { "===": [{ "var": ["contentSource", ""] }, "tags"] },
+          "fields": [
+            {
+              "component": "aem-tag",
+              "name": "pillars",
+              "label": "Pillars",
+              "value": "",
+              "valueType": "string",
+              "multi": false,
+              "rootPath": "/content/cq:tags/mobility-global/pillars-and-need-states"
+            },
+            {
+              "component": "aem-tag",
+              "name": "needStates",
+              "label": "Need States",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/pillars-and-need-states"
+            },
+            {
+              "component": "aem-tag",
+              "name": "productCapability",
+              "label": "Product Capability",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/products-and-platforms/product-capabilities"
+            },
+            {
+              "component": "aem-tag",
+              "name": "topic",
+              "label": "Topic",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/insights-and-intelligence/topic"
+            },
+            {
+              "component": "aem-tag",
+              "name": "servicesAdvisory",
+              "label": "Services & Advisory",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/products-and-platforms/services-and-advisory"
+            },
+            {
+              "component": "aem-tag",
+              "name": "industrySector",
+              "label": "Industry / Sector",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/contextual-variables/segmentation-and-user-context/industry-or-sector"
+            },
+            {
+              "component": "aem-tag",
+              "name": "marketSalesRegion",
+              "label": "Market Sales Region",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/contextual-variables/market-context/market-sales-region"
+            },
+            {
+              "component": "aem-tag",
+              "name": "marketRegion",
+              "label": "Market Region",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/contextual-variables/market-context/market-region"
+            },
+            {
+              "component": "aem-tag",
+              "name": "marketCountry",
+              "label": "Market Country",
+              "value": "",
+              "valueType": "string[]",
+              "rootPath": "/content/cq:tags/mobility-global/contextual-variables/market-context/market-country"
+            }
+          ]
+        },
+        {
+          "component": "container",
+          "name": "manualPageSelection",
+          "label": "Manual Page Configuration",
+          "valueType": "object",
+          "collapsible": true,
+          "condition": { "===": [{ "var": ["contentSource", ""] }, "manual-page-selection"] },
+          "fields": [
+            {
+              "component": "aem-content",
+              "valueType": "string",
+              "name": "pageUrl1",
+              "label": "Page URL 1"
+            },
+            {
+              "component": "aem-content",
+              "valueType": "string",
+              "name": "pageUrl2",
+              "label": "Page URL 2"
+            },
+            {
+              "component": "aem-content",
+              "valueType": "string",
+              "name": "pageUrl3",
+              "label": "Page URL 3"
+            },
+            {
+              "component": "aem-content",
+              "valueType": "string",
+              "name": "pageUrl4",
+              "label": "Page URL 4"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "experts-card-item",
+      "fields": [
+        {
+          "component": "reference",
+          "valueType": "string",
+          "name": "featuredImage",
+          "label": "Photo",
+          "multi": false
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "featuredImageAlt",
+          "label": "Photo alt text"
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "cardTitle",
+          "label": "Name / Title",
+          "required": true
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "cardDescription",
+          "label": "Description / Role"
+        },
+        {
+          "component": "aem-content",
+          "valueType": "string",
+          "name": "cardLink",
+          "label": "Profile link",
+          "required": true
+        }
+      ]
+    }
+  ],
+  "filters": [
+    {
+      "id": "experts-card",
+      "components": ["experts-card-item"]
+    }
+  ]
+}

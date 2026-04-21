@@ -304,7 +304,13 @@ function parseHeaderMenuBlock(block) {
     const rowRoot = blockEl || row;
     const blockName = rowRoot.dataset?.blockName || rowRoot.getAttribute('data-block-name');
     const aueComp = rowRoot.dataset?.aueComponent || blockNameToAueComp[blockName];
-    const cols = [...rowRoot.children].filter((c) => !c.dataset.aueComponent);
+    let cols = [...rowRoot.children].filter((c) => !c.dataset.aueComponent);
+    // Row blocks authored/published via block/item markup often render as:
+    //   .block > div(row) > div(col)
+    // Unwrap one level so parsers read actual field columns.
+    if (cols.length === 1 && cols[0].children.length > 0) {
+      cols = [...cols[0].children].filter((c) => !c.dataset.aueComponent);
+    }
     const colCount = cols.length;
 
     /* ── A: UE mode — dedicated sub-blocks ── */
@@ -623,6 +629,7 @@ const HEADER_MENU_ACTIVE_BODY_CLASS = 'header-menu-active';
 const INTERACTION_DELAY_MS = 500;
 const MOBILE_SUBPANEL_OPEN_CLASS = 'nav-mobile-subpanel-open';
 const MOBILE_FIRST_L0_OPEN_CLASS = 'nav-first-l0-open';
+const navColLinksSourceMap = new WeakMap();
 
 function setDesktopMenuActiveState(active) {
   if (!isDesktop.matches) return;
@@ -677,6 +684,26 @@ function closeAllMegaMenus(nav) {
     header.classList.remove('has-active-child');
   });
 
+  nav?.querySelectorAll('.nav-col-link-group').forEach((group) => {
+    group.classList.remove('is-active');
+  });
+  nav?.querySelectorAll('.nav-col-links-heading').forEach((heading) => {
+    heading.setAttribute('aria-expanded', 'false');
+    if (heading.getAttribute('role') === 'tab') {
+      heading.setAttribute('aria-selected', 'false');
+    }
+  });
+  nav?.querySelectorAll('.nav-col-links-list').forEach((list) => {
+    list.hidden = true;
+  });
+  nav?.querySelectorAll('.nav-col-links-tab').forEach((tab) => {
+    tab.classList.remove('is-active');
+  });
+  nav?.querySelectorAll('.nav-col-links-panel').forEach((panel) => {
+    panel.classList.remove('is-active');
+    panel.hidden = true;
+  });
+
   nav?.querySelectorAll('.nav-item-has-children[aria-expanded="true"]').forEach((li) => {
     li.setAttribute('aria-expanded', 'false');
     li.querySelector('.nav-mega-menu')?.setAttribute('aria-hidden', 'true');
@@ -707,6 +734,12 @@ function closeOpenLoginDropdowns(nav) {
  */
 function enhanceNavColLinks(linksRoot) {
   if (!linksRoot) return;
+
+  if (!navColLinksSourceMap.has(linksRoot)) {
+    navColLinksSourceMap.set(linksRoot, linksRoot.innerHTML);
+  } else {
+    linksRoot.innerHTML = navColLinksSourceMap.get(linksRoot);
+  }
 
   const nodes = [...linksRoot.childNodes].filter((node) => {
     if (node.nodeType !== Node.TEXT_NODE) return true;
@@ -892,6 +925,33 @@ function enhanceNavColLinks(linksRoot) {
  * Build the full nav element from parsed header-menu data.
  */
 function buildNavFromHeaderMenu(data) {
+  const isFirstPartyHost = (hostname = '') => {
+    const host = hostname.toLowerCase();
+    return host.endsWith('.aem.page')
+      || host.endsWith('.aem.live')
+      || host.endsWith('.hlx.page')
+      || host.endsWith('.hlx.live')
+      || host.endsWith('.adobeaemcloud.com');
+  };
+
+  const isExternalChildLink = (url = '') => {
+    const value = url.trim();
+    if (!value) return false;
+    if (/^(\/|#|mailto:|tel:)/i.test(value)) return false;
+    if (/^www\./i.test(value)) return true;
+    if (/^https?:\/\//i.test(value)) {
+      try {
+        const parsed = new URL(value, window.location.origin);
+        if (parsed.origin === window.location.origin) return false;
+        if (isFirstPartyHost(parsed.hostname)) return false;
+        return true;
+      } catch {
+        return true;
+      }
+    }
+    return false;
+  };
+
   const setActiveMegaCol = (megaInner, activeIndex = null) => {
     const hasActive = activeIndex !== null;
     megaInner.classList.toggle('has-active-col', hasActive);
@@ -1025,7 +1085,11 @@ function buildNavFromHeaderMenu(data) {
       trigger.setAttribute('aria-haspopup', 'true');
 
       const triggerLabel = document.createElement('span');
-      triggerLabel.textContent = item.label;
+      const triggerText = document.createElement('span');
+      triggerText.className = 'nav-trigger-text';
+      triggerText.textContent = item.label;
+      triggerText.dataset.text = item.label;
+      triggerLabel.append(triggerText);
       const chevron = document.createElement('span');
       chevron.className = 'nav-item-chevron';
       chevron.setAttribute('aria-hidden', 'true');
@@ -1135,6 +1199,7 @@ function buildNavFromHeaderMenu(data) {
         const hasDetailContent = hasDescription || hasExplore || hasLinks;
         const childUrl = child.childUrl?.trim() || '';
         const isLinkedStaticItem = !hasDetailContent && Boolean(childUrl);
+        const hasExternalChildLink = isLinkedStaticItem && isExternalChildLink(childUrl);
         childHeaderMeta[index] = {
           label: child.label || '',
           exploreLabel: '',
@@ -1152,6 +1217,9 @@ function buildNavFromHeaderMenu(data) {
           col.type = 'button';
         } else if (isLinkedStaticItem) {
           col.classList.add('nav-mega-col-link', 'nav-mega-col-static');
+          if (hasExternalChildLink) {
+            col.classList.add('nav-mega-col-link-external');
+          }
           col.href = childUrl;
         } else {
           col.classList.add('nav-mega-col-static');
@@ -1166,8 +1234,15 @@ function buildNavFromHeaderMenu(data) {
           title.className = 'nav-col-title';
           if (isLinkedStaticItem) {
             title.classList.add('nav-col-title-has-link');
+            if (hasExternalChildLink) {
+              title.classList.add('nav-col-title-has-external-link');
+            }
           }
-          title.textContent = child.label;
+          const titleText = document.createElement('span');
+          titleText.className = 'nav-trigger-text';
+          titleText.textContent = child.label;
+          titleText.dataset.text = child.label;
+          title.append(titleText);
           col.append(title);
         }
 
@@ -1290,10 +1365,16 @@ function buildNavFromHeaderMenu(data) {
 
       li.addEventListener('mouseenter', () => {
         if (!isDesktop.matches) return;
+        li.setAttribute('aria-expanded', 'true');
+        trigger.setAttribute('aria-expanded', 'true');
+        megaMenu.setAttribute('aria-hidden', 'false');
         clearDetailHideTimer();
       });
       li.addEventListener('mouseleave', () => {
         if (!isDesktop.matches) return;
+        li.setAttribute('aria-expanded', 'false');
+        trigger.setAttribute('aria-expanded', 'false');
+        megaMenu.setAttribute('aria-hidden', 'true');
         clearDetailHideTimer();
         setActiveMegaCol(megaInner, null);
       });
@@ -1306,6 +1387,14 @@ function buildNavFromHeaderMenu(data) {
       megaBackButton.addEventListener('click', () => {
         if (isDesktop.matches) return;
         clearDetailHideTimer();
+
+        // If a child detail pane is open, step back to the mega list first.
+        if (megaInner.classList.contains('has-active-col')) {
+          setActiveMegaCol(megaInner, null);
+          syncMobileMegaHeader(null, true);
+          return;
+        }
+
         li.setAttribute('aria-expanded', 'false');
         trigger.setAttribute('aria-expanded', 'false');
         megaMenu.setAttribute('aria-hidden', 'true');
@@ -1318,6 +1407,9 @@ function buildNavFromHeaderMenu(data) {
       trigger.addEventListener('click', () => {
         const isOpen = li.getAttribute('aria-expanded') === 'true';
         const navRoot = li.closest('nav');
+        // On desktop the mega-menu is hover-driven; clicks should only open
+        // (keyboard accessibility), never close — hover/blur handles that.
+        if (isDesktop.matches && isOpen) return;
         // Close other open items before opening a new one
         if (isDesktop.matches || !isOpen) closeAllMegaMenus(navRoot);
         const next = !isOpen;
@@ -1574,7 +1666,7 @@ function buildNavFromHeaderMenu(data) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default async function decorate(block) {
-  const navMeta = getMetadata('nav');
+  const navMeta = getMetadata('header');
   const navPath = navMeta ? new URL(navMeta, window.location).pathname : '/nav';
   const fragment = await loadFragment(navPath);
 
@@ -2017,6 +2109,11 @@ export default async function decorate(block) {
 
     const syncHamburger = () => {
       syncMobileLoginPlacement();
+      // Rebuild child links UI for the current breakpoint mode
+      // (desktop tabs vs mobile accordion) to avoid stale structures on resize.
+      nav.querySelectorAll('.nav-col-links').forEach((linksRoot) => {
+        enhanceNavColLinks(linksRoot);
+      });
       if (isDesktop.matches) {
         resetNavState();
         hamburger.remove();
@@ -2061,6 +2158,7 @@ export default async function decorate(block) {
     const brandLink = navBrand?.querySelector('.button');
     if (brandLink) {
       brandLink.className = '';
+      brandLink.setAttribute('data-analytics-cta', '');
       const buttonContainer = brandLink.closest('.button-container');
       if (buttonContainer) buttonContainer.className = '';
     }
@@ -2080,7 +2178,10 @@ export default async function decorate(block) {
       navSections.querySelectorAll('.button-container').forEach((buttonContainer) => {
         buttonContainer.classList.remove('button-container');
         const btn = buttonContainer.querySelector('.button');
-        if (btn) btn.classList.remove('button');
+        if (btn) {
+          btn.classList.remove('button');
+          btn.setAttribute('data-analytics-cta', '');
+        }
       });
     }
 

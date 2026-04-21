@@ -41,6 +41,42 @@
           "label": "Tag title",
           "value": "",
           "required": true
+        },
+        {
+          "component": "select",
+          "valueType": "string",
+          "name": "tagIcon",
+          "label": "Tag icon",
+          "value": "",
+          "options": [
+            { "name": "None", "value": "" },
+            { "name": "Arrow down", "value": "arrow-down" },
+            { "name": "Arrow left", "value": "arrow-left" },
+            { "name": "Arrow right", "value": "arrow-right" },
+            { "name": "Arrow up", "value": "arrow-up" },
+            { "name": "Arrow up right", "value": "arrow-up-right" },
+            { "name": "Asterisk", "value": "asterisk" },
+            { "name": "Atomic icon", "value": "atomic-icon" },
+            { "name": "Binoculars icon", "value": "binoculars-icon" },
+            { "name": "Check mark", "value": "check-mark" },
+            { "name": "Cone icon", "value": "cone-icon" },
+            { "name": "Download", "value": "download" },
+            { "name": "Filter", "value": "filter" },
+            { "name": "Geotag", "value": "geotag" },
+            { "name": "Geotag hover", "value": "geotag-hover" },
+            { "name": "Lightning icon", "value": "lightning-icon" },
+            { "name": "Linked in", "value": "linked-in" },
+            { "name": "Pentagon icon", "value": "pentagon-icon" },
+            { "name": "Person head", "value": "person-head" },
+            { "name": "Phone", "value": "phone" },
+            { "name": "Plus", "value": "plus" },
+            { "name": "Plus thin", "value": "plus-thin" },
+            { "name": "Search", "value": "search" },
+            { "name": "Stack icon", "value": "stack-icon" },
+            { "name": "Video player", "value": "video-player" },
+            { "name": "X", "value": "x" },
+            { "name": "Youtube", "value": "youtube" }
+          ]
         }
       ]
     }

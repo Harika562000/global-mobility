@@ -7,6 +7,8 @@ export default function createSearchActiveFilters({
   order,
   onRemove,
   onRemoveAll,
+  /** Optional: map facet value (e.g. AEM tag id) to a display string for chips. */
+  formatFilterValue,
 }) {
   const hasAny = Object.values(selectedFilters || {}).some((v) => (
     Array.isArray(v) ? v.length : Boolean(v)
@@ -37,15 +39,18 @@ export default function createSearchActiveFilters({
     if (Array.isArray(current) && !current.includes(value)) return;
     if (!Array.isArray(current) && String(current || '') !== String(value)) return;
     seen.add(key);
+    const displayValue = typeof formatFilterValue === 'function'
+      ? formatFilterValue(value)
+      : value;
     const chip = document.createElement('span');
     chip.className = 'search-results-active-filters-chip';
     const label = document.createElement('span');
     label.className = 'search-results-active-filters-chip-label';
-    label.textContent = value;
+    label.textContent = displayValue;
     const removeBtn = document.createElement('button');
     removeBtn.type = 'button';
     removeBtn.className = 'search-results-active-filters-chip-remove';
-    removeBtn.setAttribute('aria-label', `Remove ${value} filter`);
+    removeBtn.setAttribute('aria-label', `Remove ${displayValue} filter`);
     removeBtn.innerHTML = '\u2715';
     removeBtn.addEventListener('click', () => onRemove(field, value));
     chip.append(label, removeBtn);

@@ -55,34 +55,18 @@
               "value": "secondary"
             },
             {
-              "name": "Tertiary",
-              "value": "tertiary"
+              "name": "Inverted",
+              "value": "inverted"
             }
           ]
-        },
-        {
-          "component": "boolean",
-          "name": "hasIcon",
-          "label": "Do you need icon?",
-          "description": "Enable to add an icon to the button",
-          "valueType": "boolean",
-          "value": false
-        },
-        {
-          "component": "select",
-          "name": "iconName",
-          "label": "Icon name",
-          "description": "Select an icon",
-          "valueType": "string",
-          "required": true,
-          "condition": { "===": [{ "var": ["hasIcon", false] }, true] },
-          "options": [
-            {
-              "name": "Search",
-              "value": "search"
-            }
-          ]
-        },
+        }
+      ]
+    },
+    {
+      "component": "container",
+      "name": "targetSettings",
+      "label": "Target settings",
+      "fields": [
         {
           "component": "boolean",
           "name": "targetLink",

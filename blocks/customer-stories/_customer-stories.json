@@ -15,11 +15,39 @@
           }
         }
       }
+    },
+    {
+      "title": "Customer Story",
+      "id": "customer-story",
+      "plugins": {
+        "xwalk": {
+          "page": {
+            "resourceType": "core/franklin/components/block/v1/block/item",
+            "template": {
+              "name": "Customer Story",
+              "model": "customer-story"
+            }
+          }
+        }
+      }
     }
   ],
   "models": [
     {
       "id": "customer-stories",
+      "fields": [
+        {
+          "component": "text",
+          "name": "eyebrow",
+          "label": "Eyebrow Text",
+          "valueType": "string",
+          "value": "",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "customer-story",
       "fields": [
         {
           "component": "richtext",
@@ -29,34 +57,40 @@
           "required": true
         },
         {
+          "component": "text",
+          "name": "authorName",
+          "label": "Customer Name",
+          "valueType": "string",
+          "required": true
+        },
+        {
+          "component": "text",
+          "name": "designation",
+          "label": "Designation",
+          "valueType": "string",
+          "required": true
+        },
+        {
           "component": "reference",
-          "name": "authorImage",
-          "label": "Author Image",
+          "name": "image",
+          "label": "Customer Image",
           "valueType": "string",
           "multi": false,
           "required": true
         },
         {
           "component": "text",
-          "name": "authorName",
-          "label": "Author Name",
-          "valueType": "string",
-          "required": true
-        },
-        {
-          "component": "text",
-          "name": "authorDesignation",
-          "label": "Author Designation",
-          "valueType": "string",
-          "required": true
-        },
-        {
-          "component": "text",
-          "name": "productTitle",
+          "name": "productLabel",
           "label": "Product Section Label",
           "valueType": "string",
-          "description": "Label shown above the product cards section (e.g. \"Products we use\")",
-          "required": true
+          "description": "Label shown above the product cards section (e.g. \"Products we use\")"
+        },
+        {
+          "component": "aem-content",
+          "name": "productFragment",
+          "label": "Product Fragment",
+          "valueType": "string",
+          "description": "Select the product fragment containing product cards"
         }
       ]
     }
@@ -65,7 +99,7 @@
     {
       "id": "customer-stories",
       "components": [
-        "fragment"
+        "customer-story"
       ]
     }
   ]

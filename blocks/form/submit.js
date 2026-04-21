@@ -18,6 +18,7 @@ export function submitSuccess(e, form) {
       thankYouMessage.scrollIntoView({ behavior: 'smooth' });
     }
     form.reset();
+    form.dispatchEvent(new CustomEvent('form:success', { bubbles: true }));
   }
   form.setAttribute('data-submitting', 'false');
   form.querySelector('button[type="submit"]').disabled = false;

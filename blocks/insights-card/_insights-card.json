@@ -71,7 +71,39 @@
               "required": true,
               "description": "For Default variation, use H4 tag. Any heading tag will be used."
             },
-            {"...": "../../models/elements/_button-fields-set1.json#/fields"}
+            {
+              "component": "aem-content",
+              "valueType": "string",
+              "name": "button1",
+              "label": "Button Link",
+              "required": true
+            },      
+            {
+              "component": "text",
+              "valueType": "string",
+              "name": "button1Title",
+              "label": "Button Title",
+              "description": "Accessibility title attribute (optional)"
+            },
+            {
+              "component": "text",
+              "valueType": "string",
+              "name": "button1Text",
+              "label": "Button Text",
+              "required": true
+            },
+            {
+              "component": "select",
+              "name": "button1Type",
+              "label": "Button Variation",
+              "valueType": "string",
+              "value": "",
+              "options": [
+                { "name": "Primary", "value": "primary" },
+                { "name": "Secondary", "value": "secondary" },
+                { "name": "Inverted", "value": "inverted" }
+              ]
+            }
           ]
         },
         {
@@ -295,6 +327,12 @@
           "name": "publishDate",
           "label": "Publish Date",
           "description": "ISO date format recommended (YYYY-MM-DD)"
+        },
+        {
+          "component": "text",
+          "valueType": "string",
+          "name": "timeToRead",
+          "label": "Time to Read"
         },
         {
           "component": "aem-content",

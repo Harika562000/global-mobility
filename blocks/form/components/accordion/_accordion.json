@@ -1,7 +1,7 @@
 {
     "definitions": [
         {
-            "title": "Accordion",
+            "title": "Form Accordion",
             "id": "form-accordion",
             "plugins": {
                 "xwalk": {
@@ -30,7 +30,7 @@
     ],
     "models": [
         {
-            "id": "accordion",
+            "id": "form-accordion",
             "fields": [
                 {
                     "component": "tab",
