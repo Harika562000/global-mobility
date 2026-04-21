@@ -1,57 +1,87 @@
 {
-  "definitions": [
-    {
-      "title": "Banner",
-      "id": "banner",
-      "model": "banner",
-      "plugins": {
-        "xwalk": {
-          "page": {
-            "resourceType": "core/franklin/components/block/v1/block",
-            "template": {
-              "name": "Banner",
-              "model": "banner"
+    "definitions": [
+      {
+        "title": "Banner",
+        "id": "banner",
+        "model": "banner",
+        "plugins": {
+          "xwalk": {
+            "page": {
+              "resourceType": "core/franklin/components/block/v1/block",
+              "template": {
+                "name": "Banner",
+                "model": "banner"
+              }
             }
           }
         }
       }
-    }
-  ],
-  "models": [
-    {
-      "id": "banner",
-      "fields": [
-        {
-          "component": "reference",
-          "valueType": "string",
-          "name": "icon",
-          "label": "Icon",
-          "multi": false
-        },
-        {
-          "component": "text",
-          "valueType": "string",
-          "name": "eyebrow",
-          "label": "Eyebrow Text",
-          "value": ""
-        },
-        {
-          "component": "richtext",
-          "name": "heading",
-          "label": "Heading",
-          "valueType": "string"
-        },
-        {
-          "component": "richtext",
-          "name": "description",
-          "label": "Long Description",
-          "valueType": "string"
-        },
-        {
-          "...": "../../models/elements/_button-fields.json#/fields"
-        }
-      ]
-    }
-  ],
-  "filters": []
-}
+    ],
+    "models": [
+      {
+        "id": "banner",
+        "fields": [
+          {
+            "component": "reference",
+            "valueType": "string",
+            "name": "icon",
+            "label": "Icon",
+            "multi": false
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "eyebrow",
+            "label": "Eyebrow Text",
+            "value": ""
+          },
+          {
+            "component": "richtext",
+            "name": "heading",
+            "label": "Heading",
+            "valueType": "string"
+          },
+          {
+            "component": "richtext",
+            "name": "description",
+            "label": "Long Description",
+            "valueType": "string"
+          },
+          {
+            "component": "aem-content",
+            "valueType": "string",
+            "name": "button1",
+            "label": "Button Link",
+            "required": true
+          },      
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "button1Title",
+            "label": "Button Title",
+            "description": "Accessibility title attribute (optional)"
+          },
+          {
+            "component": "text",
+            "valueType": "string",
+            "name": "button1Text",
+            "label": "Button Text",
+            "required": true
+          },
+          {
+            "component": "select",
+            "name": "button1Type",
+            "label": "Button Variation",
+            "valueType": "string",
+            "value": "",
+            "options": [
+              { "name": "Primary", "value": "primary" },
+              { "name": "Secondary", "value": "secondary" },
+              { "name": "Inverted", "value": "inverted" }
+            ]
+          }
+        ]
+      }
+    ],
+    "filters": []
+  }

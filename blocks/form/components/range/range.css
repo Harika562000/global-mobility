@@ -18,10 +18,10 @@ main .form .range-widget-wrapper.decorated input[type="range"]:focus {
     width: 25px;
     height: 25px;
     border-radius: 50%;
-    background: #fff;
+    background: var(--color-white);
     border: 3px solid var(--button-primary-color);
     cursor: pointer;
-    outline: 3px solid #fff;
+    outline: 3px solid var(--color-white);
 }
  
 .range-widget-wrapper.decorated input[type="range"]:focus::-webkit-slider-thumb {
@@ -29,9 +29,9 @@ main .form .range-widget-wrapper.decorated input[type="range"]:focus {
 }
  
 .range-widget-wrapper.decorated .range-bubble {
-    color: #17252e;
-    font-size: 20px;
-    line-height: 28px;
+    color: var(--color-semantic-1);
+    font-size: var(--responsive-body-700-size);
+    line-height: var(--responsive-body-700-line-height);
     position: relative;
     display: inline-block;
     padding-bottom: 12px;
@@ -39,9 +39,9 @@ main .form .range-widget-wrapper.decorated input[type="range"]:focus {
  
 .range-widget-wrapper.decorated .range-min,
 .range-widget-wrapper.decorated .range-max {
-    font-size: 14px;
-    line-height: 22px;
-    color: #494f50;
+    font-size: var(--font-size-200);
+    line-height: var(--line-height-22);
+    color: var(--color-semantic-2);
     margin-top: 16px;
     display: inline-block;
 }

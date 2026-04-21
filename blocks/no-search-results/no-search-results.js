@@ -13,9 +13,7 @@ export default function decorate(block) {
   // If the block isn't authored as 2 rows yet, don't break existing markup.
   if (!headerCell && !bodyCell) return;
 
-  const container = document.createElement('div');
-  container.className = 'no-search-results-container';
-  container.hidden = true;
+  block.hidden = true;
 
   const header = document.createElement('div');
   header.className = 'header';
@@ -43,7 +41,7 @@ export default function decorate(block) {
     header.innerHTML = headerTemplate;
     body.innerHTML = bodyTemplate;
     // Header: append query at end of the <p> text (preferred),
-    // falling back to placeholder replacement, then to appending to the container.
+    // falling back to placeholder replacement, then to appending to the header.
     if (!replacement) return;
 
     const headerP = header.querySelector('p');
@@ -61,8 +59,7 @@ export default function decorate(block) {
     }
   };
 
-  container.append(header, body);
-  block.replaceChildren(container);
+  block.replaceChildren(header, body);
 
   const SEARCH_EVENT_SCOPE = 'search';
   const NO_RESULTS_EVENT = 'search-results:no-results';
@@ -71,11 +68,11 @@ export default function decorate(block) {
   const subs = [
     events.on(NO_RESULTS_EVENT, (payload) => {
       applyQuery(payload?.query);
-      container.hidden = false;
+      block.hidden = false;
       section?.classList.add('is-visible');
     }, { scope: SEARCH_EVENT_SCOPE, eager: true }),
     events.on(HAS_RESULTS_EVENT, () => {
-      container.hidden = true;
+      block.hidden = true;
       section?.classList.remove('is-visible');
     }, { scope: SEARCH_EVENT_SCOPE, eager: true }),
   ];

@@ -11,13 +11,13 @@
  * Footer sits beside `main` (not inside it); hide it in Overview tab via :has().
  * Classes are toggled on `main` (or section.parentElement fallback) from overview.js.
  */
-@media (width <= 1024px) {
+@media (width < 1440px) {
   .section.overview-container > .overview-wrapper {
     display: none !important;
   }
 }
 
-@media (width >= 1025px) {
+@media (width >= 1440px) {
   .overview-page-overview > .section:not(.overview-container) {
     display: none !important;
   }
@@ -42,10 +42,24 @@
   body:has(.overview-page-fullview) footer {
     display: revert !important;
   }
+
+  body:has(.overview-page-overview) {
+    background-color: var(--color-grey-50);
+  }
+
+  main.overview-page-overview {
+    padding: 0;
+    margin-bottom: 0;
+  }
 }
 
 .overview-body {
   width: 100%;
+}
+
+main > .section.overview-container{
+  padding: 0;
+  margin-bottom: 0;
 }
 
 /* Primary switcher lives inside `.overview-hero` (see buildOverviewLayout + overview-hero-switcher) */
@@ -71,7 +85,7 @@
 
 /* —— Hero (navy band + stat card; primary switcher is first child of .overview-hero-main) —— */
 .overview-hero {
-  background-color: var(--color-brand-200);
+  background-color: var(--tag-bg-fill);
   color: var(--color-white);
   padding: var(--spacing-700);
   border-radius: var(--radius-0);
@@ -80,11 +94,12 @@
 
 .overview-hero-inner {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(calc(13.75 * var(--font-size-300)), calc(20 * var(--font-size-300)));
-  gap: var(--spacing-600);
-  align-items: start;
+  grid-template-columns: 67% 32%;
+  gap: var(--spacing-400);
+  align-items: center;
   max-width: var(--main-max-width);
   margin-inline: auto;
+  min-height: 28vh;
 }
 
 .overview-hero-main {
@@ -96,47 +111,74 @@
 
 /* Cloned from page hero `.hero-em-accent-content` (see scheduleInjectHeroEmAccentContent) */
 .overview-hero-main .hero-em-accent-content {
-  max-width: calc(52 * var(--font-size-300));
+  max-width: 100%;
+  padding: 0;
+  margin-top: var(--spacing-400);
 }
 
+.overview-hero-main .hero-em-accent-content .button-container {
+  display: none;
+}
+
+@media (width >= 720px) {
+  .overview-hero-main .hero-em-accent-content h1 {
+    font-size: var(--responsive-header2-size);
+    line-height: var(--responsive-header2-line-height);
+  }
+
+  .overview-hero-main .hero-em-accent-content p:not(.button-container > p) {
+    margin-top: var( --spacing-300);
+    line-height: calc(var(--line-height-26) + var(--size-2));
+  }
+}
+
+/* Stat carousel — block-specific layout glue */
+.overview-hero-stat.carousel-initialized {
+  gap: var(--spacing-300);
+  height: 100%;
+  align-items: center;
+}
+
+.overview-hero-stat .carousel-track {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+}
 
 /* Credibility / stat card */
 .overview-hero-stat {
-  background-color: var(--color-grey-50);
+  background-color: var(--color-quiet-light);
   color: var(--color-brand-200);
   border-radius: var(--radius-12);
-  padding: var(--spacing-600);
-  min-height: calc(var(--spacing-1200) + var(--spacing-600));
+  padding: var(--spacing-950) var(--spacing-600);
   box-sizing: border-box;
 }
 
-.overview-hero-stat :is(h2, h3, p) {
-  margin: 0;
-  color: var(--color-brand-200);
+.overview-hero-stat .stat-item {
+  text-align: center;
 }
 
-.overview-hero-stat :is(h2, h3):first-child {
-  font-size: clamp(var(--font-size-900), 5vw, calc(4 * var(--font-size-300)));
+.overview-hero-stat .numeralia-number {
   font-weight: var(--font-weight-bold);
-  line-height: var(--line-height-104p);
-  letter-spacing: var(--letter-spacing-tight);
+  color: var(--tag-bg-fill);
+  font-size: calc(var(--font-size-900) + var(--font-size-1000));
+}
+
+.overview-hero-stat .numeralia-description {
+  color: var(--tag-bg-fill);
 }
 
 .overview-hero-stat p {
-  margin-top: var(--spacing-300);
-  font-size: var(--font-size-300);
-  line-height: var(--line-height-150p);
-  color: var(--color-brand-200);
+  margin-top: var(--spacing-400);
 }
 
 /* —— Main: left column (cards + insights + products) | right column (contact) —— */
 .overview-main {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(calc(16.25 * var(--font-size-300)), calc(22 * var(--font-size-300)));
+  grid-template-columns: 66.4% 32.6%;
   gap: var(--spacing-400);
   align-items: stretch;
-  padding: var(--spacing-600);
-  background-color: var(--color-grey-50);
+  padding: var(--spacing-400) 0;
   box-sizing: border-box;
 }
 
@@ -149,7 +191,7 @@
 
 .overview-main-cards {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--overview-cards-count, 4), minmax(0, 1fr));
   gap: var(--spacing-400);
   width: 100%;
 }
@@ -169,13 +211,90 @@
 }
 
 /* Card tiles (light blue action cards) */
-.overview-grid-card {
-  background: linear-gradient(180deg, var(--color-blue-light) 0%, var(--color-blue-50) 100%);
+.overview-main-cards .card-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--color-brand-background-400);
   border-radius: var(--radius-12);
-  padding: var(--spacing-500);
-  min-height: var(--spacing-1200);
+  padding: var(--spacing-400);
+  min-height: 20.2vh;
   box-sizing: border-box;
   border: var(--border-width-100) solid var(--color-blue-200);
+  text-decoration: none;
+  color: inherit;
+}
+
+.overview-main-cards .card-head {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.overview-main-cards .card-head .icon {
+  display: block;
+  margin-bottom: var(--size-8);
+}
+
+.overview-main-cards .card-title {
+  font-weight: var(--font-weight-bold);
+  color: var(--tag-bg-fill);
+  font-size: var(--responsive-font-body-400);
+  line-height: var(--responsive-body-400-line-height);
+  flex: 1;
+}
+
+.overview-main-cards .card-bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--size-6);
+  width: 100%;
+  margin-top: auto;
+}
+
+.overview-main-cards .card-bottom-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.overview-main-cards .card-bottom .icon-arrow-right {
+  flex-shrink: 0;
+  width: var(--size-12);
+  height: var(--size-12);
+  transform: rotate(324deg);
+  transition: transform 0.3s ease;
+  display: inline-flex;
+  margin-bottom: 0;
+}
+
+.overview-main-cards .card-item:hover .card-bottom .icon-arrow-right,
+.overview-main-cards .card-item:focus-visible .card-bottom .icon-arrow-right {
+  transform: rotate(360deg);
+}
+
+.overview-main-cards .card-description {
+  color: var(--tag-bg-fill);
+  font-size: var(--responsive-body-100-size);
+  line-height: var(--line-height-150p);
+  margin: 0;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.3s ease, max-height 0.3s ease;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.overview-main-cards .card-item:hover .card-description,
+.overview-main-cards .card-item:focus-visible .card-description {
+  opacity: 1;
+  max-height: var(--size-157);
 }
 
 /* Large white blocks */
@@ -184,9 +303,16 @@
   background-color: var(--color-white);
   border-radius: var(--radius-12);
   padding: var(--spacing-500);
-  min-height: calc(var(--spacing-1200) + var(--spacing-700));
   box-sizing: border-box;
   border: var(--border-width-100) solid var(--color-grey-200);
+  height: 27.5vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.overview-grid-insights {
+  padding-right: 0;
+  overflow: hidden;
 }
 
 .overview-grid-contact {
@@ -195,12 +321,444 @@
   border-radius: var(--radius-12);
   padding: var(--spacing-500);
   min-height: 0;
+  min-width: 0;
   box-sizing: border-box;
   border: var(--border-width-100) solid var(--color-grey-200);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/*
+ * Second AF instance: override global .embed-form (row layout + fixed .form height) so the
+ * block fits the overview column without overlapping adjacent content.
+ */
+.overview-grid-contact .overview-grid-contact-embed.embed-form {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  align-self: stretch;
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
+  gap: 0;
+}
+
+@media (width >= 1025px) {
+  .overview-grid-contact .overview-grid-contact-embed.embed-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.overview-grid-contact .overview-grid-contact-embed .form {
+  padding: 0;
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  max-height: none;
+  overflow: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+  justify-content: center;
+}
+
+@media (width >= 720px) {
+  .overview-grid-contact .overview-grid-contact-embed .form {
+    padding: 0;
+  }
+}
+
+.overview-grid-contact .overview-grid-contact-embed .form form {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  gap: initial;
+}
+
+.overview-grid-contact .embed-form .form-steps {
+  display: none;
 }
 
 .overview-slot-inner {
   min-width: 0;
+}
+
+/* Products slot */
+.overview-grid-products .overview-products-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.overview-grid-products .overview-products-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-400);
+}
+
+.overview-grid-products .overview-products-title,
+.overview-grid-products .overview-products-row-title,
+.overview-insights-header .overview-insights-eyebrow .overview-insights-eyebrow-label {
+  font-weight: var(--font-weight-bold);
+  font-size: var(--responsive-font-body-400);
+  line-height: var(--responsive-body-400-line-height);
+  color: var(--color-black);
+}
+
+/* .overview-products-cta shares styles with .text-link-button in lazy-styles.css */
+.overview-grid-products .overview-products-cta {
+  justify-content: flex-end;
+}
+
+.overview-grid-products .overview-products-divider {
+  border: none;
+  border-top: var(--border-width-100) solid var(--color-grey-subtle);
+  margin: 0;
+}
+
+.overview-grid-products .overview-products-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--spacing-200);
+  text-decoration: none;
+  padding: var(--spacing-400) var(--spacing-300) var(--spacing-300);
+}
+
+.overview-grid-products .overview-products-row-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--spacing-100);
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.overview-grid-products .overview-products-row-title {
+  min-width: 0;
+}
+
+/* Overview card–like color; micro body + --line-height-104p (2-line clamp on inner span). */
+.overview-grid-products .overview-products-row-description {
+  display: flex;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  color: var(--tag-bg-fill);
+  font-size: var(--responsive-body-50-size);
+  line-height: var(--line-height-104p);
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.3s ease, max-height 0.3s ease;
+}
+
+.overview-grid-products .overview-products-row-description-text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.overview-grid-products .overview-products-row:hover .overview-products-row-description,
+.overview-grid-products .overview-products-row:focus-visible .overview-products-row-description {
+  opacity: 1;
+  max-height: calc(2 * var(--responsive-body-50-size) * var(--line-height-104p) + var(--spacing-100));
+}
+
+.overview-grid-products .overview-products-row-lottie {
+  flex-shrink: 0;
+  width: var(--size-48, 48px);
+  height: var(--size-48, 48px);
+  overflow: hidden;
+}
+
+.overview-grid-products .overview-products-row-lottie > div {
+  width: 100%;
+  height: 100%;
+  transform: scale(1.5);
+}
+
+/* Insights slot — cloned insights cards + carousel (dots + next only; one slide) */
+@media (width >= 1025px) {
+  .overview-grid-insights .insights-card .card .insights-card-title .insights-card-title-time {
+    font-size: var(--type-body-100-size);
+    line-height: var(--type-body-200-line-height);
+  }
+}
+
+.overview-insights-root {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  gap: var(--spacing-400);
+  overflow: hidden;
+}
+
+.overview-insights-header {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-300);
+}
+
+.overview-insights-header .overview-insights-eyebrow {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.overview-insights-header .overview-insights-eyebrow .overview-insights-eyebrow-label {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.overview-insights-header .overview-insights-cta {
+  flex-shrink: 0;
+  margin-right: var(--spacing-500);
+}
+
+.overview-insights-cards-shell {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+.overview-insights-cards-shell.insights-card {
+  /* Flex column so the carousel fills space below the fixed-height header row */
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Single-card path (no carousel init): host fills shell, card fills host */
+.overview-grid-insights .overview-insights-carousel:not(.carousel-initialized) {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.overview-grid-insights .overview-insights-carousel:not(.carousel-initialized) > .card {
+  flex: 1 1 auto;
+  align-self: stretch;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  height: 100% !important;
+}
+
+@media (width >= 1025px) {
+  .overview-grid-insights .overview-insights-carousel:not(.carousel-initialized) > .card {
+    min-height: auto;
+  }
+}
+
+.overview-grid-insights .insights-card .card .insights-card-title .insights-card-title-text {
+  font-size: var(--responsive-font-body-400);
+  line-height: var(--responsive-body-400-line-height);
+}
+
+.overview-grid-insights .insights-card .card .insights-card-footer .insights-card-footer-date {
+  font-size: var(--responsive-body-100-size);
+}
+
+.overview-grid-insights .insights-card .card .insights-card-description .insights-card-description-text {
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+/*
+ * Top row wrapper (footer start + tag end) — built in overview.js.
+ * Absolute on card so it sits above media/body like the former overlay layout.
+ */
+.overview-grid-insights .insights-card .card > .overview-insights-card-toprow {
+  position: absolute;
+  inset-inline: var(--spacing-400);
+  top: var(--spacing-400);
+  z-index: 2;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-300);
+  box-sizing: border-box;
+  width: calc(100% - 2 * var(--spacing-400));
+}
+
+.overview-grid-insights .insights-card .card .overview-insights-card-toprow .insights-card-footer {
+  position: static;
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  justify-content: flex-start;
+  margin: 0;
+}
+
+.overview-grid-insights .insights-card .card .overview-insights-card-toprow .insights-card-tag-overlay {
+  position: static;
+  top: auto;
+  right: auto;
+  flex: 0 0 auto;
+}
+
+/* Tag-only cards: keep pill on the end (same as when footer is present) */
+.overview-grid-insights .insights-card .card .overview-insights-card-toprow:not(:has(.insights-card-footer)) {
+  justify-content: flex-end;
+}
+
+.overview-grid-insights .insights-card .card .overview-insights-card-toprow .insights-card-footer .icon-arrow-right {
+  display: none !important;
+}
+
+.overview-grid-insights .insights-card .card .body {
+  position: relative;
+  min-height: 0;
+  padding: var(--spacing-400);
+  padding-top: calc(var(--spacing-400) + var(--line-height-22) + var(--spacing-200));
+}
+
+/* Carousel: track on top; dots + next-only on one row */
+.overview-grid-insights .overview-insights-carousel.carousel-initialized {
+  display: grid !important;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: minmax(0, 1fr) auto;
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Full-view insights use overflow visible + clip-path for peek; overview must clip slides */
+.overview-grid-insights .insights-card .carousel-track {
+  overflow: hidden;
+  clip-path: none;
+  height: 100%;
+  min-height: 0;
+}
+
+/* Stretch slides to the track viewport so card height matches available space */
+.overview-grid-insights .insights-card .carousel-track-inner {
+  height: 100%;
+  align-items: stretch;
+
+  /* ~5% of track shows the next slide (peek) */
+  gap: var(--spacing-200);
+}
+
+.overview-grid-insights .overview-insights-carousel .carousel-track {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  min-height: 0;
+  overflow: hidden;
+  height: 100%;
+}
+
+.overview-grid-insights .overview-insights-carousel .carousel-dots {
+  grid-column: 1;
+  grid-row: 2;
+  display: flex !important;
+  width: auto;
+  padding: var(--spacing-300) 0 0;
+  align-self: center;
+}
+
+.overview-grid-insights .overview-insights-carousel .carousel-nav {
+  grid-column: 2;
+  grid-row: 2;
+  display: flex !important;
+  position: static;
+  inset: auto;
+  top: auto;
+  right: auto;
+  align-self: center;
+  justify-content: flex-end;
+  padding-top: var(--spacing-300);
+}
+
+.overview-grid-insights .overview-insights-carousel .carousel-nav > .button-container:first-of-type {
+  display: none !important;
+}
+
+/* Next control: anchor + icon only (carousel still injects <a>, we strip .button chrome in JS) */
+.overview-grid-insights .overview-insights-carousel .carousel-nav > .button-container:last-of-type {
+  margin: 0 var(--spacing-300) 0;
+}
+
+.overview-grid-insights .overview-insights-carousel .carousel-nav > .button-container:last-of-type em {
+  font-style: normal;
+  display: inline-flex;
+}
+
+.overview-grid-insights a.overview-insights-carousel-next-link.carousel-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  background: transparent;
+  border: 0;
+  min-height: auto;
+  min-width: auto;
+  width: auto;
+  box-shadow: none;
+  text-decoration: none;
+}
+
+.overview-grid-insights a.overview-insights-carousel-next-link.carousel-btn .icon {
+  display: flex;
+  width: var(--size-16);
+  height: var(--size-16);
+}
+
+.overview-grid-insights a.overview-insights-carousel-next-link.carousel-btn .icon img {
+  display: block;
+  width: 13.33px;
+  height: 13.33px;
+  filter: none;
+}
+
+@media (width >= 1025px) {
+  .overview-grid-insights .overview-insights-carousel .carousel-dots {
+    display: flex !important;
+  }
+}
+
+/* One primary slide + ~5% peek of next; fill track height (override insights --card-height) */
+.overview-grid-insights .overview-insights-carousel .carousel-track-inner > .card {
+  flex: 0 0 95% !important;
+  width: 95% !important;
+  max-width: 95% !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  align-self: stretch;
+  box-sizing: border-box;
+}
+
+@media (width >= 1025px) {
+  .overview-grid-insights .overview-insights-carousel .carousel-track-inner > .card,
+  .overview-grid-insights .insights-card .carousel-track-inner > .card.active {
+    min-height: auto;
+  }
 }
 
 /* Full View tab stack */

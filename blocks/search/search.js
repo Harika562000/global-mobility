@@ -1,4 +1,5 @@
 import { decorateIcons } from '../../scripts/aem.js';
+import { pushAnalyticsCustomEvent } from '../../scripts/google-tag-manager.js';
 import { fetchPlaceholders } from '../../scripts/placeholders.js';
 import { DESKTOP_BP } from '../../scripts/s-and-p-global/constants.js';
 import LucidworksClient from '../../scripts/s-and-p-global/lucidworks-client.js';
@@ -13,6 +14,7 @@ const PLACEHOLDER_WIDE = 'Search all products, services and insights';
 
 const lucidworksClient = new LucidworksClient();
 const SEARCH_EVENT_SCOPE = 'search';
+const SEARCH_RELATED_BLOCKS = new Set(['search', 'search-results', 'no-search-results', 'dynamic-module']);
 
 /* Default path for the search page */
 const DEFAULT_SEARCH_PAGE_PATH = '/search';
@@ -29,6 +31,9 @@ function runSearch(block, query) {
   const q = query != null ? String(query).trim() : '';
   const input = block?.querySelector('.search-input');
   if (input) input.value = q;
+  if (q.length >= TYPEAHEAD_MIN_CHARS) {
+    pushAnalyticsCustomEvent('search_term', { search_query: q });
+  }
   events.emit('init-search', { query: q }, { scope: SEARCH_EVENT_SCOPE });
 }
 
@@ -144,9 +149,10 @@ function handleSearch(e) {
 }
 
 // Sets placeholder and aria-label by viewport (narrow vs wide).
-function setSearchPlaceholderForViewport(input) {
+function setSearchPlaceholderForViewport(input, placeholders = {}) {
   const wide = window.matchMedia(DESKTOP_BP).matches;
-  const text = wide ? PLACEHOLDER_WIDE : PLACEHOLDER_NARROW;
+  const searchLabel = placeholders.search || PLACEHOLDER_NARROW;
+  const text = wide ? PLACEHOLDER_WIDE : searchLabel;
   input.placeholder = text;
   input.setAttribute('aria-label', text);
 }
@@ -157,9 +163,9 @@ function searchInput(block, config) {
   input.setAttribute('type', 'search');
   input.className = 'search-input';
 
-  setSearchPlaceholderForViewport(input);
+  setSearchPlaceholderForViewport(input, config.placeholders);
   const mq = window.matchMedia(DESKTOP_BP);
-  mq.addEventListener('change', () => setSearchPlaceholderForViewport(input));
+  mq.addEventListener('change', () => setSearchPlaceholderForViewport(input, config.placeholders));
 
   const debouncedTypeahead = debounce((val) => {
     handleTypeaheadInput(val, block, config);
@@ -215,8 +221,9 @@ function searchButton(block, config) {
   btn.type = 'button';
   btn.className = 'button primary search-submit';
   btn.disabled = true;
-  btn.setAttribute('aria-label', config.placeholders?.searchPlaceholder || 'Search');
-  btn.textContent = 'Search';
+  const searchLabel = config.placeholders?.search || 'Search';
+  btn.setAttribute('aria-label', searchLabel);
+  btn.textContent = searchLabel;
   btn.addEventListener('click', () => {
     hideTypeahead(block);
     const input = block.querySelector('.search-input');
@@ -246,6 +253,26 @@ function searchBox(block, config) {
   box.append(bar);
   box.append(searchTypeaheadDropdown());
   return box;
+}
+
+function getSectionSiblingWrappersToToggle(block) {
+  const section = block.closest('.section');
+  if (!section) return [];
+  const wrappers = [...section.querySelectorAll(':scope > div')];
+
+  return wrappers.filter((wrapper) => {
+    const blockEl = wrapper.querySelector(':scope > div.block');
+    if (!blockEl || blockEl === block) return false;
+    const name = blockEl.dataset.blockName || blockEl.classList[0] || '';
+    return !SEARCH_RELATED_BLOCKS.has(name);
+  });
+}
+
+function setSiblingWrappersHidden(block, hidden) {
+  const wrappers = getSectionSiblingWrappersToToggle(block);
+  wrappers.forEach((wrapper) => {
+    wrapper.hidden = hidden;
+  });
 }
 
 // Entry: build search UI, wire events, run search if ?q= in URL.
@@ -292,6 +319,18 @@ export default async function decorate(block) {
     if (!block.contains(e.target)) hideTypeahead(block);
   });
 
+  const subscriptions = [
+    events.on('search-results:has-results', () => {
+      setSiblingWrappersHidden(block, true);
+    }, { scope: SEARCH_EVENT_SCOPE, eager: true }),
+    events.on('search-results:no-results', () => {
+      setSiblingWrappersHidden(block, true);
+    }, { scope: SEARCH_EVENT_SCOPE, eager: true }),
+    events.on('search-results:error', () => {
+      setSiblingWrappersHidden(block, false);
+    }, { scope: SEARCH_EVENT_SCOPE, eager: true }),
+  ];
+
   /* Arrow Up/Down + Enter: navigate/select typeahead when open */
   block.addEventListener('keydown', (e) => {
     const dropdown = getTypeaheadDropdown(block);
@@ -312,6 +351,10 @@ export default async function decorate(block) {
       e.preventDefault();
       links[curr].click();
     }
+  });
+
+  block.addEventListener('DOMNodeRemovedFromDocument', () => {
+    subscriptions.forEach((sub) => sub?.off?.());
   });
 
   decorateIcons(block);

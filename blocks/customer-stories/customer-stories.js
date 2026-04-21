@@ -1,5 +1,6 @@
 import { loadFragment } from '../fragment/fragment.js';
 import { buildStoryCarousel } from '../../scripts/s-and-p-global/s-and-p-carousel.js';
+import { eyebrowDecorator, moveInstrumentation } from '../../scripts/scripts.js';
 
 function applyProductCardsVariant(root, variant) {
   if (!root) return;
@@ -11,129 +12,350 @@ function applyProductCardsVariant(root, variant) {
 }
 
 /**
- * Decorate a single 3-column row (quote | image | name+role).
+ * Bundles that imported whole fragment sections could leave section chrome (e.g.
+ * `.section-title-wrapper`) inside `.product-cards-wrapper`. That is never valid here.
+ * Removes it so stage/dev parity issues or cached scripts do not leave duplicate headers.
+ * Does not touch `moveInstrumentation` targets on the block rows.
  */
-function decorateStoryRow(row) {
-  row.classList.add('customer-stories-slide');
-
-  const cells = [...row.children];
-
-  /* Col 1 – quote text */
-  if (cells[0]) {
-    cells[0].classList.add('customer-stories-quote');
-  }
-
-  /* Col 2 – author image */
-  if (cells[1]) {
-    cells[1].classList.add('customer-stories-author-image');
-    const img = cells[1].querySelector('img');
-    if (img) img.setAttribute('loading', 'eager');
-  }
-
-  /* Col 3 – author info (first <p> = name, second <p> = role) */
-  if (cells[2]) {
-    cells[2].classList.add('customer-stories-author-info');
-    const paragraphs = cells[2].querySelectorAll('p');
-    if (paragraphs[0]) paragraphs[0].classList.add('customer-stories-author-name');
-    if (paragraphs[1]) paragraphs[1].classList.add('customer-stories-author-role');
-  }
-
-  /* Wrap image + info in a shared author container for flex layout */
-  if (cells[1] && cells[2]) {
-    const author = document.createElement('div');
-    author.classList.add('customer-stories-author');
-    cells[1].after(author);
-    author.append(cells[1], cells[2]);
-  }
+function removeMisplacedSectionChromeInProductCards(block) {
+  block.querySelectorAll('.product-cards-wrapper .section-title-wrapper').forEach((el) => {
+    el.remove();
+  });
 }
 
 /**
- * Load fragment pages, wrap each in a carousel slide, and init carousel.
+ * Get a field element from a child-item row by prop name or cell index.
+ * UE authoring renders fields with data-aue-prop (most types) or
+ * data-richtext-prop (richtext fields). The prop attribute may also appear
+ * on a deeply nested element (e.g. data-aue-prop="image" on the <img> tag),
+ * so we always walk up to the direct child of the row.
+ * Publish mode uses cell order as a fallback.
  */
-async function decorateCarousel(block, variant) {
-  const rows = [...block.children];
+function getField(row, propName, cellIndex) {
+  const el = row.querySelector(`[data-aue-prop="${propName}"]`)
+    || row.querySelector(`[data-richtext-prop="${propName}"]`);
+  if (el) {
+    // Walk up to the direct child of row so callers get the wrapper div
+    let target = el;
+    while (target.parentElement && target.parentElement !== row) {
+      target = target.parentElement;
+    }
+    return target;
+  }
+  // Only use index fallback in publish mode (no UE attributes present).
+  // In UE mode, missing fields shift indices so index lookup is unreliable.
+  const isUEMode = row.querySelector('[data-aue-prop], [data-richtext-prop]');
+  if (!isUEMode) {
+    return row.children[cellIndex] || null;
+  }
+  return null;
+}
 
-  /* Collect fragment paths from each row */
-  const fragmentPaths = rows.map((row) => {
-    const link = row.querySelector('a');
-    return link ? link.getAttribute('href') : row.textContent.trim();
-  });
-
-  /* Load all fragments in parallel */
-  const fragments = await Promise.all(
-    fragmentPaths.map((path) => loadFragment(path)),
-  );
-
-  /* Build one slide per fragment */
-  const slides = [];
-  fragments.forEach((fragment) => {
-    if (!fragment) return;
-
-    const slide = document.createElement('div');
-    slide.classList.add('customer-stories-carousel-slide');
-
-    /* Move every section's children into the slide */
-    [...fragment.querySelectorAll(':scope .section')].forEach((section) => {
-      /* Preserve wrapper divs so inner blocks keep their styles */
-      [...section.children].forEach((wrapper) => slide.append(wrapper));
-    });
-
-    /* Group author fields (UE/5-row format) into author-inline layout.
-       When content is authored via UE each field is a separate row, so the
-       inner cs block produces 5 separate .customer-stories-slide elements:
-       [0] quote, [1] image, [2] name, [3] role/designation, [4] product label */
-    const storyBlock = slide.querySelector('.customer-stories-wrapper .customer-stories');
-    if (storyBlock) {
-      const csSlides = [...storyBlock.querySelectorAll(':scope > .customer-stories-slide')];
-      const imageSlide = csSlides[1];
-      const nameSlide = csSlides[2];
-      const roleSlide = csSlides[3];
-
-      if (imageSlide && nameSlide && roleSlide && imageSlide.querySelector('picture, img')) {
-        imageSlide.classList.replace('customer-stories-slide', 'customer-stories-author-image');
-        nameSlide.classList.replace('customer-stories-slide', 'customer-stories-author-name');
-        roleSlide.classList.replace('customer-stories-slide', 'customer-stories-author-designation');
-
-        const info = document.createElement('div');
-        info.className = 'customer-stories-author-inline-info';
-        const author = document.createElement('div');
-        author.className = 'customer-stories-author-inline';
-        imageSlide.after(author);
-        author.append(imageSlide, info);
-        info.append(nameSlide, roleSlide);
+/**
+ * Locate the product-fragment cell inside a child-item row.
+ * aem-content fields do not emit a data-aue-prop wrapper in UE, so we
+ * look for the last child that contains an anchor pointing to a content path.
+ */
+function getFragmentCell(row) {
+  // Try explicit prop first (future-proof)
+  const propEl = row.querySelector('[data-aue-prop="productFragment"]');
+  if (propEl) {
+    let target = propEl;
+    while (target.parentElement && target.parentElement !== row) {
+      target = target.parentElement;
+    }
+    return target;
+  }
+  // Scan children from the end — fragment anchor contains "/fragments/" or "/content/"
+  const children = [...row.children];
+  for (let i = children.length - 1; i >= 0; i -= 1) {
+    const a = children[i].querySelector('a');
+    if (a) {
+      const href = a.getAttribute('href') || '';
+      if (href.includes('/fragments/') || href.includes('/content/')) {
+        return children[i];
       }
+    }
+  }
+  // Last resort: fixed index
+  return row.children[5] || null;
+}
 
-      /* Move product label (slides[4]) into product-cards-wrapper */
-      const pcWrapperCs = slide.querySelector('.product-cards-wrapper');
-      if (pcWrapperCs && csSlides[4]) {
-        csSlides[4].classList.replace('customer-stories-slide', 'product-cards-label');
-        pcWrapperCs.prepend(csSlides[4]);
+/** Same cell pick as section-title.js (two-column UE vs single cell). */
+function getEyebrowValueCell(row) {
+  if (!row) return null;
+  return row.children.length > 1 ? row.children[1] : row.children[0] || row;
+}
+
+/**
+ * Block-level eyebrow (row 1 in the block model) vs customer-story rows (quote, author, …).
+ * Uses the same detection as section-title: explicit `eyebrow` prop,
+ * else first row with fewer than three cells.
+ * Decorated output matches section-title.js:
+ * eyebrowDecorator(..., 'accent-color margin-bottom-400').
+ */
+function splitEyebrowAndStoryRows(rows) {
+  if (!rows.length) return { eyebrowText: '', storyRows: rows };
+  const first = rows[0];
+  const eyebrowField = getField(first, 'eyebrow', 0);
+  if (eyebrowField) {
+    const text = eyebrowField.textContent?.trim() || '';
+    return { eyebrowText: text, storyRows: rows.slice(1), eyebrowSourceRow: first };
+  }
+  const second = rows[1];
+  const looksLikeBlockLevelEyebrow = first.children.length < 3
+    && !!second
+    && second.children.length >= 3;
+  if (looksLikeBlockLevelEyebrow) {
+    const cell = getEyebrowValueCell(first);
+    const scope = cell || first;
+    const p = scope.querySelector('p');
+    const text = (p?.textContent?.trim() || scope.textContent?.trim() || '').trim();
+    return { eyebrowText: text, storyRows: rows.slice(1), eyebrowSourceRow: first };
+  }
+  return { eyebrowText: '', storyRows: rows, eyebrowSourceRow: null };
+}
+
+/**
+ * Prepend the same header shell as logo-set / section-title so .section-title-wrapper exists
+ * for carousel nav and existing customer-stories-container styles.
+ */
+function prependBlockEyebrowToSection(section, eyebrowText, eyebrowSourceRow = null) {
+  const text = (eyebrowText || '').trim();
+  if (!section || !text) return;
+  const existingWrapper = section.querySelector(':scope > .section-title-wrapper');
+  if (existingWrapper) {
+    // In UE, block re-decoration can run multiple times; update existing eyebrow text in place.
+    const existingEyebrow = existingWrapper.querySelector('.eye-brow-text');
+    if (existingEyebrow) existingEyebrow.textContent = text;
+    return;
+  }
+
+  const formatted = eyebrowDecorator(text, 'accent-color margin-bottom-400');
+  if (!formatted) return;
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'section-title-wrapper';
+
+  const sectionTitleBlock = document.createElement('div');
+  sectionTitleBlock.className = 'section-title block';
+  sectionTitleBlock.dataset.blockName = 'section-title';
+  sectionTitleBlock.dataset.blockStatus = 'loaded';
+  if (eyebrowSourceRow) moveInstrumentation(eyebrowSourceRow, sectionTitleBlock);
+
+  const row = document.createElement('div');
+  const col = document.createElement('div');
+  col.append(formatted);
+  row.append(col);
+  sectionTitleBlock.append(row);
+  wrapper.append(sectionTitleBlock);
+  section.prepend(wrapper);
+}
+
+/**
+ * Build a structured slide DOM from a customer-story child item row.
+ *
+ * Child-item model field order:
+ *   [0] quote (richtext)
+ *   [1] authorName (text)
+ *   [2] designation (text)
+ *   [3] image (reference)
+ *   [4] productLabel (text)
+ *   [5] productFragment (aem-content)
+ */
+function buildSlide(row) {
+  const slide = document.createElement('div');
+  slide.classList.add('customer-stories-carousel-slide');
+  moveInstrumentation(row, slide);
+
+  /* ---- Testimonial wrapper (quote + author) ---- */
+  const storyWrapper = document.createElement('div');
+  storyWrapper.classList.add('customer-stories-wrapper');
+
+  const storyInner = document.createElement('div');
+  storyInner.classList.add('customer-stories');
+
+  // Quote
+  const quoteCell = getField(row, 'quote', 0);
+  const quoteEl = document.createElement('div');
+  quoteEl.classList.add('customer-stories-quote');
+  if (quoteCell) {
+    // Preserve richtext HTML (may contain <p>, <strong>, etc.)
+    [...quoteCell.childNodes].forEach((node) => quoteEl.append(node.cloneNode(true)));
+  }
+  storyInner.append(quoteEl);
+
+  // Author inline container (image + name + designation)
+  const authorInline = document.createElement('div');
+  authorInline.classList.add('customer-stories-author-inline');
+
+  const nameCell = getField(row, 'authorName', 1);
+  const authorNameText = nameCell?.textContent?.trim() || '';
+
+  // Author image
+  const imageCell = getField(row, 'image', 3);
+  const authorImage = document.createElement('div');
+  authorImage.classList.add('customer-stories-author-image');
+  if (imageCell) {
+    // imageCell may be the wrapper <div> or the <img> itself (UE puts prop on <img>)
+    const picture = imageCell.tagName === 'PICTURE' ? imageCell
+      : imageCell.querySelector('picture') || imageCell.closest?.('picture');
+    const img = imageCell.tagName === 'IMG' ? imageCell
+      : imageCell.querySelector('img');
+    if (picture) {
+      authorImage.append(picture.cloneNode(true));
+    } else if (img) {
+      authorImage.append(img.cloneNode(true));
+    }
+    const imgEl = authorImage.querySelector('img');
+    if (imgEl) {
+      imgEl.setAttribute('loading', 'eager');
+      if (!(imgEl.getAttribute('alt') || '').trim() && authorNameText) {
+        imgEl.setAttribute('alt', `Portrait of ${authorNameText}`);
       }
+    }
+  }
 
-      /* Remove empty slides produced by blank trailing rows in authored content */
-      storyBlock.querySelectorAll(':scope > .customer-stories-slide').forEach((emptySlide) => {
-        if (!emptySlide.textContent?.trim() && !emptySlide.querySelector('picture, img, video, iframe')) {
-          emptySlide.remove();
-        }
+  // Author info (name + designation)
+  const authorInfo = document.createElement('div');
+  authorInfo.classList.add('customer-stories-author-inline-info');
+  const authorName = document.createElement('div');
+  authorName.classList.add('customer-stories-author-name');
+  if (nameCell) {
+    const p = document.createElement('p');
+    p.textContent = authorNameText;
+    authorName.append(p);
+  }
+
+  const designationCell = getField(row, 'designation', 2);
+  const authorDesignation = document.createElement('div');
+  authorDesignation.classList.add('customer-stories-author-designation');
+  if (designationCell) {
+    const p = document.createElement('p');
+    p.textContent = designationCell.textContent.trim();
+    authorDesignation.append(p);
+  }
+
+  authorInfo.append(authorName, authorDesignation);
+  authorInline.append(authorImage, authorInfo);
+  storyInner.append(authorInline);
+  storyWrapper.append(storyInner);
+  slide.append(storyWrapper);
+
+  /* ---- Extract product label and fragment reference ---- */
+  const productLabelCell = getField(row, 'productLabel', 4);
+  const productLabel = productLabelCell?.textContent?.trim() || '';
+
+  const fragmentCell = getFragmentCell(row);
+  const fragmentLink = fragmentCell?.querySelector('a');
+  let fragmentRef = fragmentLink?.getAttribute('href') || fragmentCell?.textContent?.trim() || '';
+  // Normalise: loadFragment appends .plain.html, so strip any trailing .html
+  if (fragmentRef.endsWith('.html')) {
+    fragmentRef = fragmentRef.slice(0, -5);
+  }
+
+  return { slide, productLabel, fragmentRef };
+}
+
+/**
+ * Load a product fragment and append its content into the slide's product-cards wrapper.
+ */
+async function loadProductSection(slide, productLabel, fragmentRef) {
+  const pcWrapper = document.createElement('div');
+  pcWrapper.classList.add('product-cards-wrapper');
+
+  // Product section label (e.g. "Products we use")
+  if (productLabel) {
+    const labelDiv = document.createElement('div');
+    labelDiv.classList.add('product-cards-label');
+    const p = document.createElement('p');
+    p.textContent = productLabel;
+    labelDiv.append(p);
+    pcWrapper.append(labelDiv);
+  }
+
+  if (fragmentRef && fragmentRef.startsWith('/')) {
+    try {
+      const fragment = await loadFragment(fragmentRef);
+      if (fragment) {
+        [...fragment.querySelectorAll(':scope .section')].forEach((section) => {
+          [...section.children].forEach((wrapper) => {
+            const firstBlock = wrapper.firstElementChild;
+            // Only the column whose first block is product-cards — avoids pulling in sibling
+            // section-title / customer-stories wrappers from the same fragment section.
+            if (firstBlock?.classList?.contains('product-cards')) {
+              pcWrapper.append(wrapper);
+            }
+          });
+        });
+      }
+    } catch {
+      // Fragment load failed — show a visible placeholder
+      const placeholder = document.createElement('div');
+      placeholder.className = 'customer-stories-fragment-placeholder';
+      placeholder.textContent = fragmentRef.split('/').pop();
+      pcWrapper.append(placeholder);
+    }
+  }
+
+  // Strip product-cards carousel — cards should stack vertically inside customer stories
+  pcWrapper.querySelectorAll('.product-cards').forEach((pc) => {
+    pc.classList.remove('carousel', 'carousel-mobile', 'carousel-infinite', 'carousel-initialized');
+    pc.removeAttribute('role');
+    pc.removeAttribute('aria-roledescription');
+    pc.removeAttribute('aria-label');
+    pc.querySelectorAll('.carousel-footer, .carousel-nav, .carousel-bottom-nav, .carousel-dots').forEach((el) => el.remove());
+    const inner = pc.querySelector('.carousel-track-inner') || pc.querySelector('.carousel-inner');
+    const track = pc.querySelector('.carousel-track');
+    if (inner) {
+      [...inner.children].forEach((child) => {
+        child.removeAttribute('aria-hidden');
+        pc.append(child);
       });
     }
-
-    /* Move product-cards title into product-cards-wrapper so they stay together */
-    const titleWrapper = slide.querySelector('.product-cards-title-wrapper');
-    const pcWrapper = slide.querySelector('.product-cards-wrapper');
-    if (titleWrapper && pcWrapper) {
-      pcWrapper.prepend(titleWrapper);
-    }
-
-    slides.push(slide);
+    if (track) track.remove();
   });
 
-  /* Replace block content with the slides */
+  // Only append if we have label or loaded content
+  if (pcWrapper.children.length > 0) {
+    slide.append(pcWrapper);
+  }
+}
+
+export default async function decorate(block) {
+  const productCardsVariant = block.dataset.productCardsVariant?.trim();
+  const allRows = [...block.children];
+  const {
+    eyebrowText,
+    storyRows,
+    eyebrowSourceRow,
+  } = splitEyebrowAndStoryRows(allRows);
+
+  // Build structured slides from each customer-story child item (skip block-level eyebrow row)
+  const slideData = storyRows
+    .filter((row) => row.children.length >= 3) // Skip empty/invalid rows
+    .map((row) => buildSlide(row));
+
+  // Load product fragments in parallel
+  await Promise.all(
+    slideData.map((data) => loadProductSection(
+      data.slide,
+      data.productLabel,
+      data.fragmentRef,
+    )),
+  );
+
+  // Replace block content with the decorated slides
+  const slides = slideData.map(({ slide }) => slide);
   block.replaceChildren(...slides);
 
-  applyProductCardsVariant(block, variant);
+  prependBlockEyebrowToSection(block.closest('.section'), eyebrowText, eyebrowSourceRow);
 
-  /* Force product-cards layout: 2-col at tablet (md), 1-col at desktop (lg/xl) */
+  removeMisplacedSectionChromeInProductCards(block);
+
+  applyProductCardsVariant(block, productCardsVariant);
+
+  // Force product-cards to single-column layout inside customer stories
   block.querySelectorAll('.product-cards').forEach((pc) => {
     pc.classList.remove(
       'col-md-2',
@@ -146,24 +368,24 @@ async function decorateCarousel(block, variant) {
       'col-xl-3',
       'col-xl-4',
     );
-    pc.classList.add(
-      'col-md-2',
-      'col-lg-1',
-      'col-xl-1',
-    );
+    pc.classList.add('col-md-2', 'col-lg-1', 'col-xl-1');
   });
 
-  /* Only build carousel when there are 2+ slides */
+  // Build carousel navigation when 2+ slides are present
   if (slides.length >= 2) {
     const nav = buildStoryCarousel(block, slides);
-
-    /* Add inverted class to buttons when section has bg-dark */
+    const track = block.querySelector('.cs-carousel-track');
+    if (track) {
+      track.setAttribute('role', 'region');
+      track.setAttribute('aria-roledescription', 'carousel');
+      track.setAttribute('aria-label', 'Customer stories');
+    }
     const section = block.closest('.section');
+
     if (section?.classList.contains('bg-dark')) {
       nav.querySelectorAll('.carousel-btn').forEach((btn) => btn.classList.add('inverted'));
     }
 
-    /* Place nav arrows in section header (top-right, next to "Customer Stories") */
     if (section) {
       const headerArea = section.querySelector(':scope > .section-title-wrapper')
         || section.querySelector(':scope > .default-content-wrapper');
@@ -172,149 +394,64 @@ async function decorateCarousel(block, variant) {
         headerArea.append(nav);
       }
     }
-  }
-}
 
-export default async function decorate(block) {
-  const isCarousel = block.classList.contains('carousel')
-    || block.classList.contains('carousel-mobile');
+    // Mobile dot pagination (hidden on desktop, visible on mobile).
+    // Use role="group" + aria-current, not tablist/tab.
+    // Tablist semantics require tabpanels and trigger ARIA violations in audits.
+    const dots = document.createElement('div');
+    dots.className = 'cs-carousel-dots';
+    dots.setAttribute('role', 'group');
+    dots.setAttribute('aria-label', 'Slide indicators');
+    slides.forEach((_, idx) => {
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = `cs-carousel-dot${idx === 0 ? ' active' : ''}`;
+      dot.dataset.slide = idx;
+      dot.setAttribute('aria-label', `Go to slide ${idx + 1} of ${slides.length}`);
+      if (idx === 0) dot.setAttribute('aria-current', 'true');
+      dots.append(dot);
+    });
+    block.append(dots);
 
-  const productCardsVariant = block.dataset.productCardsVariant?.trim();
-
-  /* In UE with fragment children, load fragment content inline while
-     preserving the outer data-aue-* wrapper so the content tree stays intact */
-  const hasUEFragments = block.querySelector('[data-aue-component="fragment"]');
-  if (hasUEFragments) {
-    const fragmentRows = [...block.querySelectorAll('[data-aue-component="fragment"]')];
-    await Promise.all(fragmentRows.map(async (row) => {
-      const refEl = row.querySelector('[data-aue-prop="reference"]');
-      const path = refEl?.textContent?.trim() || row.textContent?.trim();
-      if (!path || !path.startsWith('/')) return;
-
-      let fragment;
-      try {
-        fragment = await loadFragment(path);
-      } catch (e) {
-        // loadFragment can throw on AEM author if .plain.html is not available
-      }
-
-      if (!fragment) {
-        // Show a visible placeholder with the fragment path
-        row.classList.add('customer-stories-carousel-slide');
-        const placeholder = document.createElement('div');
-        placeholder.className = 'customer-stories-fragment-placeholder';
-        placeholder.textContent = path.split('/').pop();
-        row.prepend(placeholder);
-        return;
-      }
-
-      // Clear the row content (JCR path text) but keep the row element + its UE attributes
-      const savedAttrs = {};
-      [...row.attributes].forEach((attr) => { savedAttrs[attr.name] = attr.value; });
-      row.innerHTML = '';
-      Object.entries(savedAttrs).forEach(([k, v]) => row.setAttribute(k, v));
-      row.classList.add('customer-stories-carousel-slide');
-
-      [...fragment.querySelectorAll(':scope .section')].forEach((section) => {
-        [...section.children].forEach((wrapper) => row.append(wrapper));
+    // Helper to update dot active state
+    const inner = block.querySelector('.cs-carousel-inner');
+    const setActiveDot = (activeIdx) => {
+      dots.querySelectorAll('.cs-carousel-dot').forEach((d, i) => {
+        d.classList.toggle('active', i === activeIdx);
+        if (i === activeIdx) d.setAttribute('aria-current', 'true');
+        else d.removeAttribute('aria-current');
       });
+    };
 
-      const storyBlock = row.querySelector('.customer-stories-wrapper .customer-stories');
-      let slides = [];
-      if (storyBlock) {
-        slides = [...storyBlock.querySelectorAll(':scope .customer-stories-slide')];
-        const imageSlide = slides[1];
-        const nameSlide = slides[2];
-        const roleSlide = slides[3];
-
-        if (imageSlide && nameSlide && roleSlide && imageSlide.querySelector('picture, img')) {
-          const author = document.createElement('div');
-          author.className = 'customer-stories-author-inline';
-
-          imageSlide.classList.replace('customer-stories-slide', 'customer-stories-author-image');
-          nameSlide.classList.replace('customer-stories-slide', 'customer-stories-author-name');
-          roleSlide.classList.replace('customer-stories-slide', 'customer-stories-author-designation');
-
-          // Remove customer-stories-quote from image, name and designation children
-          [imageSlide, nameSlide, roleSlide].forEach((el) => {
-            el.querySelectorAll('.customer-stories-quote').forEach((q) => q.classList.remove('customer-stories-quote'));
-          });
-
-          const info = document.createElement('div');
-          info.className = 'customer-stories-author-inline-info';
-
-          imageSlide.after(author);
-          author.append(imageSlide, info);
-          info.append(nameSlide, roleSlide);
-        }
-      }
-
-      // Move "Products we use" label (slides[4] = productTitle field) into product-cards-wrapper
-      const pcWrapper = row.querySelector('.product-cards-wrapper');
-      if (pcWrapper && slides[4]) {
-        const productLabelSlide = slides[4];
-        productLabelSlide.classList.replace('customer-stories-slide', 'product-cards-label');
-        // Remove inherited customer-stories-quote from the label
-        productLabelSlide.querySelectorAll('.customer-stories-quote').forEach((q) => q.classList.remove('customer-stories-quote'));
-        pcWrapper.prepend(productLabelSlide);
-      }
-
-      // Remove empty customer-story placeholder slides (no real content)
-      if (storyBlock) {
-        storyBlock.querySelectorAll(':scope > [data-aue-component="customer-story"], :scope > .customer-stories-slide').forEach((el) => {
-          if (!el.textContent?.trim() && !el.querySelector('img, picture, svg, video, iframe')) {
-            el.remove();
+    // Sync dots when arrows or swipe change the slide (observe transform)
+    if (inner) {
+      const syncDots = () => {
+        const match = (inner.style.transform || '').match(/translateX\((-?[\d.]+)px\)/);
+        const offset = match ? Math.abs(parseFloat(match[1])) : 0;
+        let activeIdx = 0;
+        for (let i = slides.length - 1; i >= 0; i -= 1) {
+          if (slides[i].offsetLeft <= offset + 10) {
+            activeIdx = i;
+            break;
           }
-        });
-      }
+        }
+        setActiveDot(activeIdx);
+      };
+      const observer = new MutationObserver(syncDots);
+      observer.observe(inner, { attributes: true, attributeFilter: ['style'] });
+    }
 
-      // Move product-cards title into product-cards-wrapper so they stay together
-      const titleWrapper = row.querySelector('.product-cards-title-wrapper');
-      if (titleWrapper && pcWrapper) {
-        pcWrapper.prepend(titleWrapper);
-      }
-    }));
-
-    // Remove empty non-fragment rows (e.g. empty eyebrow placeholder)
-    [...block.children].forEach((row) => {
-      if (!row.hasAttribute('data-aue-component') && !row.textContent?.trim()
-        && !row.querySelector('img, picture, svg, video, iframe')) {
-        row.remove();
+    // Dot click navigates the carousel
+    dots.addEventListener('click', (e) => {
+      const dot = e.target.closest('.cs-carousel-dot');
+      if (!dot || !inner) return;
+      const idx = parseInt(dot.dataset.slide, 10);
+      const target = slides[idx];
+      if (target) {
+        setActiveDot(idx);
+        inner.style.transition = 'transform 0.45s ease';
+        inner.style.transform = `translateX(-${target.offsetLeft}px)`;
       }
     });
-
-    // Build carousel when 2+ fragments are present
-    if (fragmentRows.length >= 2) {
-      const nav = buildStoryCarousel(block, fragmentRows);
-
-      /* Add inverted class to buttons when section has bg-dark */
-      const section = block.closest('.section');
-      if (section?.classList.contains('bg-dark')) {
-        nav.querySelectorAll('.carousel-btn').forEach((btn) => btn.classList.add('inverted'));
-      }
-      if (section) {
-        const headerArea = section.querySelector(':scope > .section-title-wrapper')
-          || section.querySelector(':scope > .default-content-wrapper');
-        if (headerArea) {
-          headerArea.classList.add('carousel-header');
-          headerArea.append(nav);
-        }
-      }
-    }
-    return;
-  }
-
-  /* Detect fragment-based authoring: any row whose only content is a link */
-  const hasFragmentRows = [...block.children].some((row) => {
-    const a = row.querySelector('a');
-    return a && row.textContent.trim() === a.textContent.trim();
-  });
-
-  if (isCarousel || hasFragmentRows) {
-    await decorateCarousel(block, productCardsVariant);
-  } else {
-    /* Inline mode – each row is a 3-column customer testimonial */
-    [...block.children].forEach((row) => decorateStoryRow(row));
-    applyProductCardsVariant(block.closest('.section') || block, productCardsVariant);
   }
 }

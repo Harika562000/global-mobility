@@ -1025,7 +1025,11 @@ function buildNavFromHeaderMenu(data) {
       trigger.setAttribute('aria-haspopup', 'true');
 
       const triggerLabel = document.createElement('span');
-      triggerLabel.textContent = item.label;
+      const triggerText = document.createElement('span');
+      triggerText.className = 'nav-trigger-text';
+      triggerText.textContent = item.label;
+      triggerText.dataset.text = item.label;
+      triggerLabel.append(triggerText);
       const chevron = document.createElement('span');
       chevron.className = 'nav-item-chevron';
       chevron.setAttribute('aria-hidden', 'true');
@@ -1167,7 +1171,11 @@ function buildNavFromHeaderMenu(data) {
           if (isLinkedStaticItem) {
             title.classList.add('nav-col-title-has-link');
           }
-          title.textContent = child.label;
+          const titleText = document.createElement('span');
+          titleText.className = 'nav-trigger-text';
+          titleText.textContent = child.label;
+          titleText.dataset.text = child.label;
+          title.append(titleText);
           col.append(title);
         }
 
@@ -1290,10 +1298,16 @@ function buildNavFromHeaderMenu(data) {
 
       li.addEventListener('mouseenter', () => {
         if (!isDesktop.matches) return;
+        li.setAttribute('aria-expanded', 'true');
+        trigger.setAttribute('aria-expanded', 'true');
+        megaMenu.setAttribute('aria-hidden', 'false');
         clearDetailHideTimer();
       });
       li.addEventListener('mouseleave', () => {
         if (!isDesktop.matches) return;
+        li.setAttribute('aria-expanded', 'false');
+        trigger.setAttribute('aria-expanded', 'false');
+        megaMenu.setAttribute('aria-hidden', 'true');
         clearDetailHideTimer();
         setActiveMegaCol(megaInner, null);
       });
@@ -1318,6 +1332,9 @@ function buildNavFromHeaderMenu(data) {
       trigger.addEventListener('click', () => {
         const isOpen = li.getAttribute('aria-expanded') === 'true';
         const navRoot = li.closest('nav');
+        // On desktop the mega-menu is hover-driven; clicks should only open
+        // (keyboard accessibility), never close — hover/blur handles that.
+        if (isDesktop.matches && isOpen) return;
         // Close other open items before opening a new one
         if (isDesktop.matches || !isOpen) closeAllMegaMenus(navRoot);
         const next = !isOpen;
@@ -1574,7 +1591,7 @@ function buildNavFromHeaderMenu(data) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default async function decorate(block) {
-  const navMeta = getMetadata('nav');
+  const navMeta = getMetadata('header');
   const navPath = navMeta ? new URL(navMeta, window.location).pathname : '/nav';
   const fragment = await loadFragment(navPath);
 

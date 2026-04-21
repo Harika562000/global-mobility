@@ -5,8 +5,8 @@
 
 .dm-pagination {
   /* Color overrides only (sizes/spacing use literals or tokens inline in rules below) */
-  --dm-pagination-page-indicator-color: #0064d2;
-  --dm-pagination-nav-icon-color: #132445;
+  --dm-pagination-page-indicator-color: var(--color-brand-background-300);
+  --dm-pagination-nav-icon-color: var(--color-brand-background-200);
 
   margin-top: var(--spacing-600);
   padding-top: var(--spacing-500);
@@ -35,25 +35,31 @@
   border-radius: var(--radius-10, 10px);
   background: var(--color-white);
   color: var(--color-grey-800);
-  font-size: var(--font-size-200);
+  font-family: var(--font-family-primary);
+  font-size: var(--responsive-font-body-400);
+  line-height: var(--responsive-body-400-line-height);
   font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-tight);
   cursor: pointer;
 }
 
 .dm-pagination-mobile-of {
   color: var(--typography-secondary);
-  font-size: var(--font-size-200);
+  font-family: var(--font-family-primary);
+  font-size: var(--responsive-font-body-400);
+  line-height: var(--responsive-body-400-line-height);
   font-weight: var(--font-weight-medium);
-  letter-spacing: -0.04em;
+  letter-spacing: var(--letter-spacing-tight);
 }
 
 .dm-pagination-mobile-viewing {
   margin: var(--spacing-300) 0 0;
   text-align: center;
   color: var(--color-grey-800);
-  font-size: var(--font-size-300);
-  line-height: 28px;
-  letter-spacing: -0.04em;
+  font-family: var(--font-family-primary);
+  font-size: var(--responsive-font-body-500);
+  line-height: var(--line-height-30);
+  letter-spacing: var(--letter-spacing-tight);
   white-space: nowrap;
 }
 
@@ -76,9 +82,10 @@
 .dm-pagination-viewing {
   margin: 0;
   color: var(--typography-secondary);
+  font-family: var(--font-family-primary);
   font-size: var(--responsive-body-400-size);
   line-height: var(--responsive-body-400-line-height);
-  letter-spacing: -0.04em;
+  letter-spacing: var(--letter-spacing-tight);
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -108,10 +115,12 @@
 }
 
 .dm-pagination-per-label {
-  font-size: var(--font-size-200);
+  font-family: var(--font-family-primary);
+  font-size: var(--responsive-font-body-400);
+  line-height: var(--responsive-body-400-line-height);
   font-weight: var(--font-weight-medium);
   color: var(--typography-secondary);
-  letter-spacing: -0.04em;
+  letter-spacing: var(--letter-spacing-tight);
   white-space: nowrap;
 }
 
@@ -136,10 +145,11 @@
   background: var(--color-white);
   color: var(--color-grey-800);
   cursor: pointer;
-  font-family: inherit;
-  font-size: var(--font-size-200);
+  font-family: var(--font-family-primary);
+  font-size: var(--responsive-font-body-400);
+  line-height: var(--responsive-body-400-line-height);
   font-weight: var(--font-weight-medium);
-  line-height: 1;
+  letter-spacing: var(--letter-spacing-tight);
   text-align: left;
 }
 
@@ -166,6 +176,7 @@
   width: 0.75rem;
   height: 0.5rem;
   background-color: transparent;
+
   /* Stroke matches var(--color-grey-800) */
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23262626' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-position: center;
@@ -209,10 +220,11 @@
   background: var(--color-white);
   color: var(--color-grey-800);
   cursor: pointer;
-  font-family: inherit;
-  font-size: var(--font-size-200);
+  font-family: var(--font-family-primary);
+  font-size: var(--responsive-font-body-400);
+  line-height: var(--responsive-body-400-line-height);
   font-weight: var(--font-weight-medium);
-  line-height: 1;
+  letter-spacing: var(--letter-spacing-tight);
   text-align: left;
 }
 
@@ -250,13 +262,15 @@
   align-items: center;
   justify-content: center;
   padding: 0;
-  border: 1px solid transparent;
+  border: var(--border-width-100) solid transparent;
   background: transparent;
   color: var(--typography-secondary);
   cursor: pointer;
-  font-size: var(--font-size-100);
+  font-family: var(--font-family-primary);
+  font-size: var(--responsive-body-100-size);
   font-weight: var(--font-weight-semibold);
-  line-height: 1;
+  line-height: var(--line-height-103p);
+  letter-spacing: var(--letter-spacing-tight);
 }
 
 .dm-page-btn:disabled {
@@ -317,9 +331,11 @@
 }
 
 .dm-page-nav-icon {
-  font-size: var(--font-size-600);
+  font-family: var(--font-family-primary);
+  font-size: var(--responsive-font-body-700);
+  line-height: var(--line-height-100p);
   font-weight: var(--font-weight-medium);
-  line-height: 1;
+  letter-spacing: var(--letter-spacing-tight);
 }
 
 .dm-page-ellipsis {
@@ -329,8 +345,11 @@
   justify-content: center;
   padding: 0 var(--spacing-100);
   color: var(--color-grey-500);
-  font-size: var(--font-size-200);
+  font-family: var(--font-family-primary);
+  font-size: var(--responsive-font-body-400);
+  line-height: var(--responsive-body-400-line-height);
   font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-tight);
   user-select: none;
 }
 

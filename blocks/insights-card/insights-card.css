@@ -83,9 +83,17 @@
   flex-direction: column;
 }
 
+.insights-card .header-content .section-title h4 {
+  margin-bottom: var(--spacing-0);
+}
+
 .insights-card .carousel-header .actions {
   display: flex;
   gap: var(--spacing-200);
+
+  p {
+    margin: var(--spacing-0);
+  }
 
   .carousel-nav {
     position: relative;
@@ -306,8 +314,10 @@
   filter: brightness(0) invert(1);
 }
 
-.insights-card .card .insights-card-footer .insights-card-footer-time {
-  display: none;
+@media (width >= 1025px) {
+  .insights-card .card .insights-card-footer .insights-card-footer-time {
+    display: none;
+  }
 }
 
 /* -----------------------------------------------------------------------------
@@ -364,6 +374,7 @@
   }
 
   .insights-card .card .insights-card-title .insights-card-title-time {
+    display: block;
     font-size: var(--font-size-200);
     font-weight: var(--font-weight-regular);
     color: var(--typography-tertiary);

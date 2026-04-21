@@ -42,7 +42,9 @@ export function mergeFacetOptions(prev, next, selectedFilters = {}) {
       });
     });
     const sel = selectedFilters[field];
-    const selArr = Array.isArray(sel) ? sel : (sel ? [sel] : []);
+    let selArr = [];
+    if (Array.isArray(sel)) selArr = sel;
+    else if (sel) selArr = [sel];
     selArr.forEach((val) => {
       if (val != null && val !== '' && !byValue.has(val)) {
         byValue.set(val, { value: val, count: 0 });

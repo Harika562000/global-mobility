@@ -131,9 +131,9 @@
           "component": "richtext",
           "name": "text",
           "value": "",
-          "label": "Accordion Text",
+          "label": "Accordion Text Optional",
           "valueType": "string",
-          "required": true
+          "description":"Optional"
         },
         {
           "component": "boolean",

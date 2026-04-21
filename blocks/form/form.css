@@ -6,9 +6,9 @@
     --button-primary-color: #5F8DDA;
     --button-secondary-color: #666;
     --button-primary-hover-color: #035fe6;
-    --form-font-size-m: 22px;
-    --form-font-size-s: 18px;
-    --form-font-size-xs: 16px;
+    --form-font-size-m: var(--font-size-600);
+    --form-font-size-s: var(--font-size-500);
+    --form-font-size-xs: var(--font-size-400);
     --form-background-color: var(--background-color-primary);
     --form-padding: 0 10px;
     --form-columns: 12;
@@ -16,7 +16,7 @@
     --form-field-vert-gap: 20px;
     --form-invalid-border-color: #ff5f3f;
     --form-input-padding: 0.75rem 0.6rem;
-    --form-input-font-size: 1rem;
+    --form-input-font-size: var(--responsive-font-body-400);
     --form-input-disable-color: #ebebe4;
     --form-input-border-size: 1px;
     --form-input-border-color: var(--border-color);
@@ -55,7 +55,7 @@
     --form-wizard-padding: 0px;
     --form-wizard-padding-bottom: 160px;
     --form-wizard-step-legend-padding: 10px;
-    --form-wizard-step-legend-font-size: 1.1rem;
+    --form-wizard-step-legend-font-size: var(--font-size-500);
     --form-field-gap: 5px;
     
     /* Card styling variables */
@@ -81,8 +81,9 @@ main .form pre {
 
 form output {
     display: block;
-    font-weight: 700;
-    font-size: 1.625rem;
+    font-weight: var(--font-weight-bold);
+    font-size: var(--responsive-body-700-size);
+    line-height: var(--responsive-body-700-line-height);
 }
 
 form:not(.edit-mode) [data-visible="false"] {
@@ -315,7 +316,7 @@ main .form form fieldset.cards > .checkbox-wrapper > label {
     transition: var(--form-card-transition);
     font-weight: normal;
     color: var(--form-label-color);
-    font-size: 0.95em;
+    font-size: var(--responsive-font-body-400);
 }
 
 main .form form fieldset.cards > .radio-wrapper > label:hover,
@@ -527,8 +528,8 @@ main .form .button-wrapper button {
 }
 
 main .form .button-wrapper button:hover {
-    border: 3px solid #fff;
-    color: #fff;
+    border: 3px solid var(--color-white);
+    color: var(--color-white);
     background-color: var(--button-secondary-color);
 }
 

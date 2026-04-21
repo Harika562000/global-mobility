@@ -73,6 +73,7 @@
           "value": "",
           "label": "Logo",
           "options": [
+            { "name": "none", "value": "" },
             { "name": "atomic-icon", "value": ":atomic-icon:" },
             { "name": "binoculars-icon", "value": ":binoculars-icon:" },
             { "name": "cone-icon", "value": ":cone-icon:" },

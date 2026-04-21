@@ -40,8 +40,8 @@ main .embed-form-container {
   letter-spacing: var(--letter-spacing-tight);
 
   @media (width >= 1025px) {
-    line-height: var(--line-height-120p);
-    font-size: var(--font-size-1100);
+    font-size: var(--responsive-header2-size);
+    line-height: var(--responsive-header2-line-height);
     font-weight: var(--font-weight-bold);
     margin-top: var(--spacing-600);
   }
@@ -105,6 +105,11 @@ main .embed-form-container {
 .embed-form .form-steps .step-dot.active {
   width: 30px;
   background-color: var(--color-black);
+}
+
+/* Hide dots when viewing success/error panels */
+.embed-form .form-steps[data-visible="false"] {
+  display: none;
 }
 
 /* ─── Hide auto-generated labels ─── */
@@ -181,7 +186,7 @@ main .embed-form-container {
 .embed-form .form .email-wrapper.has-value > label.field-label {
   top: 0;
   transform: translateY(0);
-  font-size: 11px;
+  font-size: var(--font-size-75);
   color: var(--typography-secondary);
   background-color: var(--color-white);
   left: 0;
@@ -225,6 +230,20 @@ main .embed-form-container {
 .embed-form .form input[type="email"]:focus,
 .embed-form .form input[type="tel"]:focus {
   border-color: var(--border-hover);
+}
+
+/* Error state — red border on invalid input */
+.embed-form .form .text-wrapper.field-invalid > input,
+.embed-form .form .email-wrapper.field-invalid > input {
+  border-color: var(--border-error);
+}
+
+/* Error message spacing for input fields */
+.embed-form .form .text-wrapper.field-invalid > .field-description,
+.embed-form .form .email-wrapper.field-invalid > .field-description {
+  display: block;
+  margin-top: var(--spacing-200);
+  color: var(--color-danger-dark);
 }
 
 /* Override form.css height/margin on inputs inside embed-form */
@@ -279,7 +298,7 @@ main .embed-form .form input[type="tel"] {
 .embed-form .form .drop-down-wrapper.has-value > label.field-label {
   top: 0;
   transform: translateY(0);
-  font-size: 11px;
+  font-size: var(--font-size-75);
   color: var(--typography-secondary);
   background-color: var(--color-white);
   left: 0;
@@ -524,7 +543,7 @@ main .embed-form .form input[type="tel"] {
 
 .embed-form .form .checkbox-wrapper {
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   align-items: flex-start;
   gap: var(--spacing-300);
 }
@@ -567,11 +586,18 @@ main .embed-form .form input[type="tel"] {
 
 .embed-form .form .checkbox-wrapper label.field-label {
   font-family: var(--font-family-primary);
-  font-size: var(--font-size-200);
+  font-size: var(--responsive-font-body-400);
   line-height: var(--responsive-body-400-line-height);
   color: var(--typography-secondary);
   cursor: pointer;
   flex: 1;
+}
+
+.embed-form .form .checkbox-wrapper .field-description {
+  width: 100%;
+  margin-top: var(--spacing-200);
+  color: var(--color-danger-dark);
+  font-size: var(--font-size-200);
 }
 
 /* ─── Buttons ─── */
@@ -596,7 +622,7 @@ main .embed-form .form input[type="tel"] {
   padding: 0 var(--spacing-650);
   border-radius: var(--radius-8);
   font-family: var(--font-family-accent);
-  font-size: var(--font-size-400);
+  font-size: var(--responsive-font-body-400);
   font-weight: var(--font-weight-bold);
   text-transform: uppercase;
   letter-spacing: var(--letter-spacing-tight);
@@ -620,7 +646,7 @@ main .embed-form .form input[type="tel"] {
 }
 
 .embed-form .form [name="error_panel"] .plain-text-wrapper p {
-  color: var(--color-danger);
+  color: var(--color-danger-dark);
 }
 
 .embed-form .form .panel-wrapper:has(.plain-text-wrapper):not(:has(button, a.button)) .plain-text-wrapper p {
@@ -643,7 +669,7 @@ main .embed-form .form input[type="tel"] {
 .embed-form .form .field-invalid .field-description {
   font-weight: var(--font-weight-regular);
   font-style: var(--font-style-regular);
-  font-size: var(--font-size-200);
+  font-size: var(--responsive-font-body-400);
   line-height: var(--line-height-150);
   letter-spacing: var(--letter-spacing-minus-4);
   margin-top: var(--spacing-200);

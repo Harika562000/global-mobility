@@ -71,11 +71,6 @@
 
 .media-module .media-module-eyebrow .eye-brow-text {
   display: block;
-  font-family: var(--font-family-accent);
-  font-size: var(--type-eyebrow-size);
-  line-height: var(--type-eyebrow-line-height);
-  letter-spacing: var(--letter-spacing-tight);
-  text-transform: var(--text-transform-uppercase);
 }
 
 .media-module .media-module-title {
@@ -160,7 +155,7 @@
 }
 
 .media-module .media-module-video img {
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 1 / 1;
   object-position: center;
 }
 
@@ -220,7 +215,6 @@
   .media-module:has(.media-module-video) .media-module-video img,
   .media-module:has(.media-module-video) .media-module-video picture img {
     width: 100%;
-    height: 100%;
     border-radius: var(--radius-12);
     object-fit: cover;
   }

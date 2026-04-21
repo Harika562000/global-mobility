@@ -26,16 +26,16 @@
           "label": "Hero Block Variation",
           "valueType": "string",
           "options": [
-            { "name": "Image as background", "value": "" },
-            { "name": "Image on the right (two-colored)", "value": "hero-two-colored-right" },
-            { "name": "Image on the right (black-colored)", "value": "hero-black-colored-right" }
+            { "name": "Media as background", "value": "" },
+            { "name": "Media on the right (two-colored)", "value": "hero-two-colored-right" },
+            { "name": "Media on the right (black-colored)", "value": "hero-black-colored-right" }
           ]
         },
         {
           "component": "reference",
           "valueType": "string",
           "name": "image",
-          "label": "Image",
+          "label": "Image / Video",
           "multi": false,
           "required": true
         },
@@ -99,8 +99,35 @@
           "collapsible": true,
           "condition": { "===": [{ "var": ["classes", ""] }, "hero-black-colored-right"] },
           "fields": [
-            { "...": "../tag/_tag.json#/models/tag/fields" }
+            {
+              "component": "select",
+              "valueType": "string",
+              "name": "tagVariation",
+              "label": "Tag variation",
+              "value": "",
+              "options": [
+                { "name": "Outline", "value": "outline" },
+                { "name": "Fill", "value": "fill" },
+                { "name": "Glass", "value": "glass" },
+                { "name": "Dark", "value": "dark" }
+              ]
+            },
+            {
+              "component": "text",
+              "valueType": "string",
+              "name": "tag-title",
+              "label": "Tag title",
+              "value": "",
+              "required": true
+            }
           ]
+        },
+        {
+          "component": "boolean",
+          "name": "playOnce",
+          "label": "Play one time",
+          "valueType": "boolean",
+          "value": false
         }
       ]
     }

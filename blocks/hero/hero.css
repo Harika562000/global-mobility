@@ -93,6 +93,78 @@ main > div.hero-section {
   padding: 0;
 }
 
+/* Video background — same full-bleed treatment as the background image */
+.hero .hero-em-accent-background video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  margin: 0;
+  padding: 0;
+}
+
+/* ---- Mute / Unmute button overlay ---- */
+
+/* Button is appended directly on .hero (above the ::before gradient overlay) */
+.hero .hero-video-mute-btn {
+  position: absolute;
+  bottom: var(--spacing-600, 24px);
+  right: var(--spacing-600, 24px);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 50%);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+
+.hero .hero-video-mute-btn:hover,
+.hero .hero-video-mute-btn:focus-visible {
+  background: rgb(0 0 0 / 75%);
+  outline: 2px solid var(--color-white, #fff);
+  outline-offset: 2px;
+}
+
+/* Speaker icon via CSS — filled when muted, outlined when unmuted */
+.hero .hero-video-mute-btn::before {
+  content: '';
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-color: var(--color-white, #fff);
+
+  /* Unmuted: speaker with sound waves (mask-image) */
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='11 5 6 9 2 9 2 15 6 15 11 19 11 5'/%3E%3Cpath d='M19.07 4.93a10 10 0 0 1 0 14.14'/%3E%3Cpath d='M15.54 8.46a5 5 0 0 1 0 7.07'/%3E%3C/svg%3E");
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  /* stylelint-disable-next-line property-no-vendor-prefix */
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='11 5 6 9 2 9 2 15 6 15 11 19 11 5'/%3E%3Cpath d='M19.07 4.93a10 10 0 0 1 0 14.14'/%3E%3Cpath d='M15.54 8.46a5 5 0 0 1 0 7.07'/%3E%3C/svg%3E");
+  /* stylelint-disable-next-line property-no-vendor-prefix */
+  -webkit-mask-repeat: no-repeat;
+  /* stylelint-disable-next-line property-no-vendor-prefix */
+  -webkit-mask-position: center;
+  /* stylelint-disable-next-line property-no-vendor-prefix */
+  -webkit-mask-size: contain;
+}
+
+/* Muted: speaker with X */
+.hero .hero-video-mute-btn.is-muted::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='11 5 6 9 2 9 2 15 6 15 11 19 11 5'/%3E%3Cline x1='23' y1='9' x2='17' y2='15'/%3E%3Cline x1='17' y1='9' x2='23' y2='15'/%3E%3C/svg%3E");
+  /* stylelint-disable-next-line property-no-vendor-prefix */
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='11 5 6 9 2 9 2 15 6 15 11 19 11 5'/%3E%3Cline x1='23' y1='9' x2='17' y2='15'/%3E%3Cline x1='17' y1='9' x2='23' y2='15'/%3E%3C/svg%3E");
+}
+
 .hero:not(.hero-two-colored-right, .hero-black-colored-right)::before {
   content: '';
   position: absolute;
@@ -101,7 +173,7 @@ main > div.hero-section {
   background: linear-gradient(270deg, rgb(0 0 0 / var(--opacity-0)) 0%, rgb(0 0 0 / var(--opacity-90)) 100%);
 }
 
-.hero .hero-em-accent-content {
+.hero-em-accent-content {
   position: relative;
   z-index: 1;
   width: 100%;
@@ -111,45 +183,46 @@ main > div.hero-section {
   margin: 0;
 }
 
-.hero .hero-em-accent-content > div {
+.hero-em-accent-content > div {
   max-width: 100%;
 }
 
-.hero .hero-em-accent-content h1 {
-  font-size: var(--font-size-900);  /* TO DO : Need to handled from typography */
-  line-height: var(--line-height-120p);  /* TO DO : Need to handled from typography */
+.hero-em-accent-content h1 {
+  font-size: var(--responsive-header2-size);
+  line-height: var(--responsive-header2-line-height);
   padding: 0;
   color: var(--typography-inverse);
   max-width: 100%;
 }
 
-.hero .hero-em-accent-content h1 em {
+.hero-em-accent-content h1 em {
   font-style: normal;
-  background: linear-gradient(88.41deg, #1C76D3 -2.79%, #B8D6DF 89.07%);
+  background: linear-gradient(88.41deg, var(--color-brand-300) -2.79%, var(--color-brand-400) 89.07%);
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.hero .hero-em-accent-content p {
+.hero-em-accent-content p {
   margin: 0;
   padding: 0;
   color: var(--color-grey-300);
-  font-size: var(--type-body-500-size);
-  line-height: var(--type-body-500-line-height);
-  font-weight: var(--type-body-500-weight);
+  font-size: var(--responsive-body-500-size);
+  line-height: var(--responsive-body-500-line-height);
+  font-weight: var(--responsive-body-500-weight);
 }
 
 /* TO DO : Need to handled from typography */
 @media (width >= 510px) {
-  .hero .hero-em-accent-content h1 {
+  .hero-em-accent-content h1 {
     line-height: var(--line-height-104p);
   }
 }
 
 /* TO DO : Need to handled from typography */
 @media (width >= 720px) {
-  .hero .hero-em-accent-content h1 {
-    font-size: var(--font-size-1200);
+  .hero-em-accent-content h1 {
+    font-size: var(--responsive-header1-size);
+    line-height: var(--responsive-header1-line-height);
   }
 }
 
@@ -164,7 +237,7 @@ main > div.hero-section {
     min-height: 640px;
   }
 
-  .hero .hero-em-accent-content {
+  .hero-em-accent-content {
     max-width: 50%;
   }
 }
@@ -174,7 +247,7 @@ main > div.hero-section {
     min-height: 737px;
   }
 
-  .hero .hero-em-accent-content {
+  .hero-em-accent-content {
     max-width: 50%;
   }
 }
@@ -210,7 +283,8 @@ main > div.hero-section {
   display: block;
 }
 
-.hero .hero-two-colored-right-image img {
+.hero .hero-two-colored-right-image img,
+.hero .hero-two-colored-right-image video {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -232,9 +306,9 @@ main > div.hero-section {
   margin: var(--spacing-400) 0 0;
   padding: 0;
   color: var(--typography-secondary);
-  font-size: var(--type-body-400-size);
-  line-height: var(--type-body-400-line-height);
-  font-weight: var(--type-body-400-weight);
+  font-size: var(--responsive-body-400-size);
+  line-height: var(--responsive-body-400-line-height);
+  font-weight: var(--responsive-body-400-weight);
 }
 
 @media (width >= 720px) {
@@ -355,7 +429,8 @@ main > div.hero-section {
   display: block;
 }
 
-.hero .hero-black-colored-right-image img {
+.hero .hero-black-colored-right-image img,
+.hero .hero-black-colored-right-image video {
   width: 100%;
   height: 100%;
   object-fit: cover;

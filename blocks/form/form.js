@@ -435,13 +435,7 @@ function extractFormDefinition(block) {
 export async function fetchForm(pathname) {
   // get the main form
   let data;
-  let path = pathname;
-  if (path.startsWith(window.location.origin) && !path.includes('.json')) {
-    if (path.endsWith('.html')) {
-      path = path.substring(0, path.lastIndexOf('.html'));
-    }
-    path += '/jcr:content/root/section/form.html';
-  }
+  const path = pathname;
   let resp = await fetch(path);
 
   if (resp?.headers?.get('Content-Type')?.includes('application/json')) {

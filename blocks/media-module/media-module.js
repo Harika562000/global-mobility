@@ -92,6 +92,182 @@ function getText(row) {
   return text;
 }
 
+function getValueText(row) {
+  if (!row) return '';
+  const c2 = row.children?.[1];
+  const preferred = c2 || row.children?.[0] || row;
+  const directText = (c2?.textContent || '').trim();
+  if (directText) return directText;
+
+  const attrSources = [
+    preferred,
+    preferred?.querySelector?.('[data-richtext-value], [data-aue-value], [value]') || null,
+    row.querySelector?.('[data-richtext-value], [data-aue-value], [value]') || null,
+  ].filter(Boolean);
+
+  for (let i = 0; i < attrSources.length; i += 1) {
+    const el = attrSources[i];
+    const val = (
+      el.getAttribute?.('data-richtext-value')
+      || el.getAttribute?.('data-aue-value')
+      || el.getAttribute?.('value')
+      || ''
+    ).trim();
+    if (val) return val;
+  }
+  return '';
+}
+
+function getRowLabel(row) {
+  if (!row) return '';
+  const c1 = row.children?.[0];
+  return (c1?.textContent || '')
+    .trim()
+    .toLowerCase()
+    .replace(/\*+$/g, '')
+    .replace(/:+$/g, '')
+    .trim();
+}
+
+function getRowPropName(row) {
+  if (!row) return '';
+  const propNode = row.querySelector('[data-aue-prop], [data-richtext-prop]');
+  if (!propNode) return '';
+  const prop = (
+    propNode.getAttribute('data-aue-prop')
+    || propNode.getAttribute('data-richtext-prop')
+    || ''
+  ).trim().toLowerCase();
+  return prop;
+}
+
+function getPropNodeValue(node) {
+  if (!node) return '';
+  const text = (node.textContent || '').trim();
+  if (text) return text;
+  return (
+    node.getAttribute?.('data-richtext-value')
+    || node.getAttribute?.('data-aue-value')
+    || node.getAttribute?.('value')
+    || ''
+  ).trim();
+}
+
+function findValueByProps(rows, propNames) {
+  const wanted = (propNames || []).map((p) => (p || '').trim().toLowerCase()).filter(Boolean);
+  if (!wanted.length) return '';
+  for (let i = 0; i < rows.length; i += 1) {
+    const row = rows[i];
+    const propNodes = row.querySelectorAll('[data-aue-prop], [data-richtext-prop]');
+    for (let j = 0; j < propNodes.length; j += 1) {
+      const node = propNodes[j];
+      const prop = (
+        node.getAttribute('data-aue-prop')
+        || node.getAttribute('data-richtext-prop')
+        || ''
+      ).trim().toLowerCase();
+      if (prop) {
+        const isMatch = wanted.some((name) => prop === name || prop.endsWith(`.${name}`));
+        if (isMatch) {
+          const value = getPropNodeValue(node);
+          if (value) return value;
+        }
+      }
+    }
+  }
+  return '';
+}
+
+function findRowByProps(rows, propNames) {
+  const wanted = new Set((propNames || []).map((p) => (p || '').trim().toLowerCase()));
+  if (!wanted.size) return null;
+  return rows.find((row) => {
+    const prop = getRowPropName(row);
+    if (!prop) return false;
+    if (wanted.has(prop)) return true;
+    return [...wanted].some((name) => prop.endsWith(`.${name}`));
+  }) || null;
+}
+
+function findRowByPropsWithValue(rows, propNames, valueGetter = getValueText) {
+  const wanted = new Set((propNames || []).map((p) => (p || '').trim().toLowerCase()));
+  if (!wanted.size) return null;
+  const matches = rows.filter((row) => {
+    const prop = getRowPropName(row);
+    if (!prop) return false;
+    if (wanted.has(prop)) return true;
+    return [...wanted].some((name) => prop.endsWith(`.${name}`));
+  });
+  if (!matches.length) return null;
+  return matches.find((row) => (valueGetter(row) || '').trim()) || null;
+}
+
+function getEyebrowValue(row) {
+  if (!row) return '';
+  const valueText = getValueText(row);
+  if (valueText) return valueText;
+  const hasSeparateLabelAndValue = row.children && row.children.length > 1;
+  // For standard labeled rows, never use label text as value.
+  if (hasSeparateLabelAndValue) return '';
+  const fullText = (row.textContent || '').trim();
+  if (!fullText) return '';
+  // Handles flattened single-cell authoring text like:
+  // "Eyebrow Text * fjsdakf" or "Eyebrow: fjsdakf".
+  const labelPatterns = [
+    /^eyebrow(?:\s+text)?\s*\*?\s*:\s*/i, // "Eyebrow: value", "Eyebrow Text *: value"
+    /^eyebrow\s+text\s*\*?\s+/i, // "Eyebrow Text * value"
+    /^eyebrow\s+\*?\s+/i, // "Eyebrow * value"
+  ];
+  for (let i = 0; i < labelPatterns.length; i += 1) {
+    const pattern = labelPatterns[i];
+    if (pattern.test(fullText)) {
+      const stripped = fullText.replace(pattern, '').trim();
+      return stripped;
+    }
+  }
+  // Some author DOM states keep value in attributes on inline-edit wrappers.
+  const attrNode = row.querySelector?.('[data-richtext-value], [data-aue-value], [value]');
+  if (attrNode) {
+    const attrValue = (
+      attrNode.getAttribute('data-richtext-value')
+      || attrNode.getAttribute('data-aue-value')
+      || attrNode.getAttribute('value')
+      || ''
+    ).trim();
+    if (attrValue) return attrValue;
+  }
+  return fullText;
+}
+
+function isNonEyebrowToken(text) {
+  const lower = (text || '').trim().toLowerCase();
+  return (
+    !lower
+    || lower === 'video'
+    || lower === 'image'
+    || lower === 'gif'
+    || lower === 'outline'
+    || lower === 'fill'
+    || lower === 'glass'
+    || lower === 'dark'
+  );
+}
+
+function getRichBlockCount(row) {
+  if (!row) return 0;
+  const scope = getValueCell(row) || row;
+  return scope.querySelectorAll('h1, h2, h3, h4, h5, h6, p, ul, ol').length;
+}
+
+function isLikelyRichBodyRow(row) {
+  if (!row) return false;
+  const richBlockCount = getRichBlockCount(row);
+  if (richBlockCount >= 2) return true;
+  const text = (getText(row) || '').trim();
+  if (richBlockCount >= 1 && text.length > 120) return true;
+  return false;
+}
+
 function isMediaLink(anchor) {
   const href = (anchor.getAttribute('href')
     || '').trim();
@@ -227,18 +403,96 @@ export default function decorate(block) {
     const copyWrap = document.createElement('div');
     copyWrap.className = 'media-module-copy';
 
-    // Eyebrow: pick the first short non-empty text row (excluding media type words).
-    const eyebrowRow = rows.find((r) => {
-      const text = getText(r);
-      if (!text) return false;
-      const t = text.toLowerCase();
-      if (t === 'video' || t === 'image' || t === 'gif') return false;
-      return text.length <= 60 && !r.querySelector('picture, img');
+    const isEyebrowLabel = (label) => label.includes('eyebrow');
+    const isIgnoredExpertLabel = (label) => (
+      label === 'classes'
+      || label.includes('tag variation')
+      || label === 'tag'
+      || label.includes('tag title')
+      || label.includes('section title')
+      || label.startsWith('cta')
+      || label === 'media asset'
+      || label === 'profile image'
+      || label === 'image alt text'
+      || label === 'profile image alt text'
+    );
+
+    // Restrict body selection to expert RTE field only. This prevents default-variation
+    // body content from leaking when switching to expert without authoring expert RTE.
+    const isExpertRteLabel = (label) => (
+      label === 'rte'
+      || label === 'body (rte)'
+      || label === 'body rte'
+      || label === 'body'
+    );
+    const explicitRteRowByProp = findRowByProps(rows, ['rte']);
+    const explicitRteRowByLabel = rows.find((r) => {
+      if (r.querySelector('picture, img')) return false;
+      const label = getRowLabel(r);
+      if (!isExpertRteLabel(label)) return false;
+      if (isIgnoredExpertLabel(label)) return false;
+      const valueText = getValueText(r);
+      const hasRichNodes = r.querySelectorAll('h1, h2, h3, h4, h5, h6, p, ul, ol, li').length >= 1;
+      return !!valueText || hasRichNodes;
     }) || null;
+    const explicitRteStructuralRow = [...rows]
+      .reverse()
+      .find((r) => isLikelyRichBodyRow(r)) || null;
+    const explicitRteRow = explicitRteRowByProp
+      || explicitRteRowByLabel
+      || explicitRteStructuralRow;
+
+    // Primary source: read explicit expert eyebrow field value from prop nodes.
+    const explicitExpertEyebrowValue = findValueByProps(rows, ['expertEyebrow']);
+
+    // Secondary source: explicit expert eyebrow row by prop/label.
+    const expertEyebrowPropRow = findRowByPropsWithValue(rows, ['expertEyebrow'], getEyebrowValue)
+      || findRowByPropsWithValue(rows, ['eyebrow'], getEyebrowValue)
+      || null;
+    let eyebrowRow = expertEyebrowPropRow
+      || rows.find((r) => {
+        if (!isEyebrowLabel(getRowLabel(r))) return false;
+        return !!getEyebrowValue(r);
+      })
+      || null;
+    // Fallback 1: in flattened markup, expert eyebrow is usually right before expert RTE.
+    if (!eyebrowRow && explicitRteRow) {
+      const rteIndex = rows.indexOf(explicitRteRow);
+      for (let i = rteIndex - 1; i >= 0; i -= 1) {
+        const row = rows[i];
+        if (row && !row.querySelector('picture, img')) {
+          const text = (getEyebrowValue(row) || '').trim();
+          if (text && !isNonEyebrowToken(text)) {
+            eyebrowRow = row;
+            break;
+          }
+        }
+      }
+    }
+
+    // Fallback 2: in flattened/label-less markup, use the last authored textual row
+    // (any length), excluding media/config rows and the explicit expert RTE row.
+    // In UE flattened DOM, expert eyebrow often appears near the end of authored rows.
+    if (!eyebrowRow) {
+      const eyebrowCandidates = rows.filter((r) => {
+        if (r === explicitRteRow) return false;
+        if (r.querySelector('picture, img')) return false;
+        if (isLikelyRichBodyRow(r)) return false;
+        const label = getRowLabel(r);
+        if (isIgnoredExpertLabel(label) || isExpertRteLabel(label) || label.includes('tag')) return false;
+        const text = (getEyebrowValue(r) || '').trim();
+        if (!text || isNonEyebrowToken(text)) return false;
+        return true;
+      });
+      eyebrowRow = eyebrowCandidates.length
+        ? eyebrowCandidates[eyebrowCandidates.length - 1]
+        : null;
+    }
 
     const eyebrowWrap = document.createElement('div');
     eyebrowWrap.className = 'media-module-eyebrow';
-    const eyebrowText = getText(eyebrowRow);
+    // Never use label text as eyebrow content when the row is labeled.
+    const eyebrowText = explicitExpertEyebrowValue || (eyebrowRow ? getEyebrowValue(eyebrowRow) : '');
     if (eyebrowText) {
       const span = eyebrowDecorator(eyebrowText, 'accent-color');
       if (span) eyebrowWrap.appendChild(span);
@@ -250,7 +504,7 @@ export default function decorate(block) {
       const titleWrap = document.createElement('div');
       titleWrap.className = 'media-module-title';
       const h4 = document.createElement('h4');
-      h4.textContent = metaTitle;
+      h4.textContent = metaTitle.replace(/\s*\|\s*mobility global\s*$/i, '').trim();
       titleWrap.appendChild(h4);
       copyWrap.appendChild(titleWrap);
     }
@@ -264,32 +518,28 @@ export default function decorate(block) {
       copyWrap.appendChild(descWrap);
     }
 
-    // RTE: pick the row that has rich content.
-    // UE/editor variants sometimes store richtext as headings/lists (not just <p>),
-    // so we detect any meaningful rich nodes + non-trivial text.
-    let rteRow = rows.find((r) => {
+    let rteRow = explicitRteRow || rows.find((r) => {
       if (r === eyebrowRow) return false;
       if (r.querySelector('picture, img')) return false;
-
-      const t = (getText(r) || '').trim();
-      if (!t) return false;
-      const lower = t.toLowerCase();
-      if (lower === 'video' || lower === 'image' || lower === 'gif') return false;
-
-      const richNodes = r.querySelectorAll(
-        'h1, h2, h3, h4, h5, h6, p, ul, ol, li',
-      );
-
-      // Prefer a "real" RTE chunk (longer text) but still allow lists/headings-only.
-      return richNodes.length >= 1 && (t.length >= 40 || richNodes.length >= 3);
+      const label = getRowLabel(r);
+      if (!isExpertRteLabel(label)) return false;
+      if (isIgnoredExpertLabel(label)) return false;
+      const valueText = getValueText(r);
+      const hasRichNodes = r.querySelectorAll('h1, h2, h3, h4, h5, h6, p, ul, ol, li').length >= 1;
+      return !!valueText || hasRichNodes;
     }) || null;
 
-    // Fallback: if strict matching fails, take the first row that actually contains rich nodes.
+    // Fallback for flattened authoring where label/value cells are not preserved.
+    // Keep it safe: only accept unlabeled single-cell richtext rows.
     if (!rteRow) {
       rteRow = rows.find((r) => {
         if (r === eyebrowRow) return false;
         if (r.querySelector('picture, img')) return false;
-        return r.querySelectorAll('h1, h2, h3, h4, h5, h6, p, ul, ol, li').length >= 1;
+        const label = getRowLabel(r);
+        const isSingleCell = (r.children?.length || 0) <= 1;
+        if (!isSingleCell || label) return false;
+        const hasRichNodes = r.querySelectorAll('h1, h2, h3, h4, h5, h6, p, ul, ol, li').length >= 1;
+        return hasRichNodes;
       }) || null;
     }
 
@@ -351,7 +601,24 @@ export default function decorate(block) {
     return;
   }
 
-  const tenRow = isTenRowLayout(rows);
+  // Default variation: ignore expert-only authored fields so row mapping stays scoped
+  // to default variation content.
+  const isExpertOnlyLabel = (label) => (
+    label === 'rte'
+    || label === 'body (rte)'
+    || label === 'body rte'
+    || label === 'profile image'
+    || label === 'image'
+    || label === 'image alt text'
+    || label === 'profile image alt text'
+  );
+  const defaultRows = rows.filter((r) => {
+    const label = getRowLabel(r);
+    if (!label) return true;
+    return !isExpertOnlyLabel(label);
+  });
+
+  const tenRow = isTenRowLayout(defaultRows);
   const idx = tenRow
     ? {
       eyebrow: 4, title: 5, body: 6, btn1: 7, btn2: 8, video: 9,
@@ -362,21 +629,25 @@ export default function decorate(block) {
 
   /* Video row: find from end so 8/9/10-row layouts work. */
   const firstPossibleButton = Math.min(idx.btn1, 5);
-  const mediaRowIndex = getMediaRowIndex(rows, firstPossibleButton);
+  const mediaRowIndex = getMediaRowIndex(defaultRows, firstPossibleButton);
   let actualVideoRow;
   if (mediaRowIndex >= 0) actualVideoRow = mediaRowIndex;
-  else if (rows[idx.video]) actualVideoRow = idx.video;
-  else actualVideoRow = rows.length - 1;
-  const buttonSearchEnd = actualVideoRow >= 0 ? actualVideoRow : rows.length;
+  else if (defaultRows[idx.video]) actualVideoRow = idx.video;
+  else actualVideoRow = defaultRows.length - 1;
+  const buttonSearchEnd = actualVideoRow >= 0 ? actualVideoRow : defaultRows.length;
 
   const content = document.createElement('div');
   content.className = 'media-module-content';
 
   const firstButtonRow = idx.btn1;
+  const defaultEyebrowRow = findRowByPropsWithValue(defaultRows, ['defaultEyebrow'], getEyebrowValue)
+    || findRowByPropsWithValue(defaultRows, ['eyebrow'], getEyebrowValue)
+    || defaultRows.find((r) => getRowLabel(r).includes('eyebrow') && !!getEyebrowValue(r))
+    || null;
 
-  const tagVariation = (getText(rows[0]) || '').trim();
-  let tagTitle = getText(rows[1]);
-  if (!tagTitle && rows[0] && !tagVariation) tagTitle = getText(rows[0]);
+  const tagVariation = (getText(defaultRows[0]) || '').trim();
+  let tagTitle = getText(defaultRows[1]);
+  if (!tagTitle && defaultRows[0] && !tagVariation) tagTitle = getText(defaultRows[0]);
   const tagWrap = document.createElement('div');
   tagWrap.className = 'media-module-tag';
   if (tagTitle) {
@@ -395,8 +666,22 @@ export default function decorate(block) {
 
   const eyebrowWrap = document.createElement('div');
   eyebrowWrap.className = 'media-module-eyebrow';
-  if (rows[idx.eyebrow]) {
-    const eyebrowText = getText(rows[idx.eyebrow]);
+  let authoredDefaultEyebrowRow = defaultEyebrowRow || defaultRows[idx.eyebrow] || null;
+  if (!authoredDefaultEyebrowRow || !getEyebrowValue(authoredDefaultEyebrowRow)) {
+    const reserved = new Set([idx.title, idx.body]);
+    for (let i = 2; i < firstButtonRow; i += 1) {
+      const row = defaultRows[i];
+      if (!reserved.has(i) && row && !row.querySelector('picture, img')) {
+        const text = (getEyebrowValue(row) || '').trim();
+        if (text && !isNonEyebrowToken(text)) {
+          authoredDefaultEyebrowRow = row;
+          break;
+        }
+      }
+    }
+  }
+  if (authoredDefaultEyebrowRow) {
+    const eyebrowText = getEyebrowValue(authoredDefaultEyebrowRow);
     if (eyebrowText) {
       const span = eyebrowDecorator(eyebrowText, 'accent-color');
       if (span) eyebrowWrap.appendChild(span);
@@ -406,12 +691,12 @@ export default function decorate(block) {
 
   const titleWrap = document.createElement('div');
   titleWrap.className = 'media-module-title';
-  if (rows[idx.title]) appendContent(rows[idx.title], titleWrap, true);
+  if (defaultRows[idx.title]) appendContent(defaultRows[idx.title], titleWrap, true);
   copyWrap.appendChild(titleWrap);
 
   const bodyWrap = document.createElement('div');
   bodyWrap.className = 'media-module-body';
-  if (rows[idx.body]) appendContent(rows[idx.body], bodyWrap, false);
+  if (defaultRows[idx.body]) appendContent(defaultRows[idx.body], bodyWrap, false);
   copyWrap.appendChild(bodyWrap);
 
   content.appendChild(copyWrap);
@@ -419,7 +704,7 @@ export default function decorate(block) {
   const buttonsWrap = document.createElement('div');
   buttonsWrap.className = 'media-module-buttons';
   for (let r = firstButtonRow; r < buttonSearchEnd; r += 1) {
-    const row = rows[r];
+    const row = defaultRows[r];
     if (row) {
       const cell = getValueCell(row) || row;
       const anchors = [...(cell.querySelectorAll('a') || [])].filter((a) => !isMediaLink(a));
@@ -458,13 +743,13 @@ export default function decorate(block) {
     return '';
   }
 
-  const mediaRow = rows[actualVideoRow];
+  const mediaRow = defaultRows[actualVideoRow];
   let mediaUrl = getMediaUrlFromRow(mediaRow);
 
   /* Image/GIF: media row may be empty; scan all rows and block for any media. */
   if (!mediaUrl) {
-    for (let i = firstPossibleButton; i < rows.length; i += 1) {
-      mediaUrl = getMediaUrlFromRow(rows[i]);
+    for (let i = firstPossibleButton; i < defaultRows.length; i += 1) {
+      mediaUrl = getMediaUrlFromRow(defaultRows[i]);
       if (mediaUrl) break;
     }
   }

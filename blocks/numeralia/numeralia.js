@@ -6,9 +6,9 @@ function animateCounter(element, targetValue, duration = 2000) {
   const suffix = targetValue.replace(numberMatch[0], '');
   // Create wrapper structure
   const wrapper = document.createElement('span');
-  wrapper.className = 'number-wrapper';
+  wrapper.className = 'numeralia-number-wrapper';
   const scrollContainer = document.createElement('span');
-  scrollContainer.className = 'number-scroll';
+  scrollContainer.className = 'numeralia-number-scroll';
 
   const numbers = [];
   if (targetNumber < 10) {
@@ -29,7 +29,7 @@ function animateCounter(element, targetValue, duration = 2000) {
   const finalIndex = numbers.length - 1;
   numbers.forEach((num, idx) => {
     const numEl = document.createElement('span');
-    numEl.className = 'number-item';
+    numEl.className = 'numeralia-number-item';
     const isLast = idx === finalIndex;
     numEl.textContent = formatNum(num) + (isLast && suffix ? suffix : '');
     scrollContainer.appendChild(numEl);
@@ -57,7 +57,7 @@ function observeStats(statsSection) {
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          const numbers = entry.target.querySelectorAll('.number');
+          const numbers = entry.target.querySelectorAll('.numeralia-number');
           numbers.forEach((numberEl) => {
             const targetValue = numberEl.getAttribute('data-target');
             if (targetValue && !numberEl.classList.contains('animated')) {
@@ -100,12 +100,12 @@ export default function decorate(block) {
       statItem.className = 'stat-item';
 
       const numberDiv = document.createElement('div');
-      numberDiv.className = 'number';
+      numberDiv.className = 'numeralia-number';
       numberDiv.setAttribute('data-target', numberText);
       statItem.append(numberDiv);
 
       const descriptionDiv = document.createElement('div');
-      descriptionDiv.className = 'description';
+      descriptionDiv.className = 'numeralia-description';
       descriptionDiv.innerHTML = descriptionHtml;
       statItem.append(descriptionDiv);
 
@@ -117,4 +117,5 @@ export default function decorate(block) {
   block.appendChild(statsSection);
 
   observeStats(statsSection);
+  block.dispatchEvent(new CustomEvent('numeralia:decorated', { bubbles: true }));
 }
