@@ -221,7 +221,9 @@ function decorateFooterCopyright(block, footerSection) {
       const btn = document.createElement('a');
       const btnHref = normalizeHref(linkAnchor?.getAttribute('href') || '');
       btn.href = btnHref || '#';
-      if (!btnHref) btn.setAttribute('data-action', 'cookie-preferences');
+      // Always set data-action so initCookieButtons() can wire OneTrust
+      // and open the href (when present) in a new tab as fallback.
+      btn.setAttribute('data-action', 'cookie-preferences');
       btn.className = `button ${linkType} original-copyright-button size-40`;
       if (linkTitle) btn.setAttribute('title', linkTitle);
       btn.textContent = linkText;
