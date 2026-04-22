@@ -1,10 +1,55 @@
 /**
  * OneTrust Cookie Consent helpers.
  *
- * Provides utilities to open the OneTrust preference centre and wire
- * footer cookie-preference buttons to open in a new tab (or trigger
- * the OneTrust modal when the SDK is available).
+ * Dynamically injects the OneTrust SDK script using the domain-script ID
+ * read from configs.json (key: "onetrust-domain-script"), then provides
+ * utilities to open the preference centre and wire footer cookie buttons.
  */
+
+import { getConfigValue } from './configs.js';
+
+/** CDN URL for the OneTrust stub script. */
+const ONETRUST_CDN = 'https://cdn.cookielaw.org/scripttemplates/otSDKStub.js';
+
+/** Config key that holds the OneTrust data-domain-script UUID. */
+const CONFIG_KEY = 'onetrust-domain-script';
+
+/**
+ * Injects the OneTrust SDK <script> tag into <head> using the domain-script
+ * UUID from configs.json.  The mandatory OptanonWrapper stub is also injected.
+ * Resolves immediately if the script is already present or no UUID is found.
+ *
+ * @returns {Promise<void>}
+ */
+export async function loadOneTrust() {
+  // Avoid double-injection
+  if (document.querySelector(`script[src="${ONETRUST_CDN}"]`)) return;
+
+  const domainScript = await getConfigValue(CONFIG_KEY);
+  if (!domainScript) {
+    // eslint-disable-next-line no-console
+    console.warn('OneTrust: no domain-script UUID found in configs.json (key: onetrust-domain-script)');
+    return;
+  }
+
+  // Inject OptanonWrapper stub first (OneTrust calls it after consent is set)
+  const wrapperScript = document.createElement('script');
+  wrapperScript.type = 'text/javascript';
+  wrapperScript.textContent = 'function OptanonWrapper() {}';
+  document.head.insertBefore(wrapperScript, document.head.firstChild);
+
+  // Inject the OneTrust SDK stub as the very first element in <head>
+  await new Promise((resolve) => {
+    const script = document.createElement('script');
+    script.src = ONETRUST_CDN;
+    script.type = 'text/javascript';
+    script.charset = 'UTF-8';
+    script.setAttribute('data-domain-script', domainScript);
+    script.onload = resolve;
+    script.onerror = resolve; // resolve on error too — non-blocking
+    document.head.insertBefore(script, document.head.firstChild);
+  });
+}
 
 /**
  * Opens the OneTrust preference centre modal when the SDK is available,
